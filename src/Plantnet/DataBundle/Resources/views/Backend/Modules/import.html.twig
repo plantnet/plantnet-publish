@@ -1,0 +1,138 @@
+{% extends "PlantnetDataBundle::layout.html.twig" %}
+{% block stylesheets %}
+        {{ parent() }}
+        {% endblock %}
+{% block body %}
+
+<h2>Module Form</h2>
+
+
+
+<form method="post" action="{{ path("modules_index") }}" {{ form_enctype(form) }}>
+
+
+    {{ form_row(form.name)       }}
+    {{ form_row(form.type)       }}
+
+    {#{{ form_row(form.attachment) }}#}
+    <div id="dropbox"></div>
+<input id="multiple" type="file" multiple>
+    {% macro prototype(property) %}
+    <tr>
+        <td>
+            {{ form_row(property.attribute) }}
+        </td>
+
+
+        <td>
+            <ul>
+                <li><a id='add' href="#">Add</a></li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+    
+
+    </tr>
+  
+    {% endmacro %}
+
+    <script type="text/html">
+        {{ _self.prototype(form.properties['$$name$$']) }}
+    </script>
+
+    <table>
+        <caption>{{ form_label(form.properties) }}</caption>
+        <thead>
+            <tr>
+                <th>Nom</th> {#- should be better to get the label #}
+                <th>Type</th> {#- here too #}
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key, property in form.properties %}
+                {% if key != "$$name$$" %}
+                    {{ _self.prototype(property) }}
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {{ form_rest(form) }}
+
+    <input type="submit" />
+</form>
+
+
+{% endblock %}
+{% block javascripts %}
+             {{ parent() }}
+             <script>
+    /* add module */
+    var add = function() {
+        var index = $('table tbody tr').length;
+        var row = $('script[type="text/html"]').text().replace(/\$\$name\$\$/g, index);
+
+        $('table tbody').append(row);
+    };
+
+    $('table tbody a#add').live('click', function(event) {
+        add();
+        event.preventDefault();
+    });
+
+    add();
+
+    $('input[type=file]').change(function(e){
+       /*$(this).closest("form").submit();*/
+    });
+
+</script>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery.html5uploader.min.js') }}"></script>
+
+<script type="text/javascript">
+$(function() {
+	$("#dropbox, #multiple").html5Uploader({
+		name: "foo",
+		postUrl: "{{ asset('bundles/plantnetdata/js/upload.php') }}"
+	});
+});
+</script>
+
+<script>
+  function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+
+    // Loop through the FileList and render image files as thumbnails.
+    for (var i = 0, f; f = files[i]; i++) {
+
+      // Only process image files.
+      if (!f.type.match('image.*')) {
+        continue;
+      }
+
+      var reader = new FileReader();
+
+      // Closure to capture the file information.
+      reader.onload = (function(theFile) {
+        return function(e) {
+          // Render thumbnail.
+          var span = document.createElement('span');
+          span.innerHTML = ['<img class="thumb" src="', e.target.result,
+                            '" title="', theFile.name, '"/>'].join('');
+          document.getElementById('list').insertBefore(span, null);
+        };
+      })(f);
+
+      // Read in the image file as a data URL.
+      reader.readAsDataURL(f);
+    }
+  }
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+</script>
+
+{% endblock %}

@@ -3,8 +3,8 @@ imports:
     - { resource: security.yml }
 
 framework:
-    #esi:             ~
-    #translator:      { fallback: %locale% }
+    esi:             ~
+    translator:      { fallback: %locale% }
     secret:          %secret%
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -14,8 +14,9 @@ framework:
     validation:      { enable_annotations: true }
     templating:      { engines: ['twig'] } #assets_version: SomeVersionScheme
     default_locale:  "%locale%"
-    trusted_proxies: ~
+    trusted_proxies: ['127.0.0.1']
     session:         ~
+
 
 # Twig Configuration
 twig:
@@ -26,14 +27,20 @@ twig:
 assetic:
     debug:          %kernel.debug%
     use_controller: false
-    bundles:        [ ]
+    bundles:        [ PlantnetDataBundle ]
     #java: /usr/bin/java
     filters:
         cssrewrite: ~
         #closure:
         #    jar: %kernel.root_dir%/Resources/java/compiler.jar
-        #yui_css:
-        #    jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.7.jar
+        yui_css:
+            jar: "%kernel.root_dir%/Resources/java/yuicompressor-2.4.2.jar"
+        yui_js:
+            jar: "%kernel.root_dir%/Resources/java/yuicompressor-2.4.2.jar"
+        less: 
+            node: /usr/local/bin/node
+            node_paths: [/usr/local/lib/node_modules]
+        lessphp: ~
 
 # Doctrine Configuration
 doctrine:
@@ -53,6 +60,20 @@ doctrine:
         auto_generate_proxy_classes: %kernel.debug%
         auto_mapping: true
 
+doctrine_mongodb:
+    connections:
+        default:
+            server: mongodb://localhost:27017
+            options:
+                connect: true
+    default_database: bota
+    document_managers:
+        default:
+            auto_mapping: true
+            mappings:
+                StofDoctrineExtensionsBundle: false
+                #PlantnetBotaBundle: false
+
 # Swiftmailer Configuration
 swiftmailer:
     transport: %mailer_transport%
@@ -60,3 +81,147 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
+
+
+# Extra bundles configuration
+
+services:
+    plantnet_security.wsse_request_matcher:
+        class: Plantnet\UserBundle\Security\WsseHeaderRequestMatcher
+
+jms_i18n_routing:
+    default_locale: en
+    locales: [en, fr]
+    strategy: prefix_except_default
+
+
+
+sensio_framework_extra:
+    router:  { annotations: true }
+    request: { converters: true }
+    view:    { annotations: false }  # More info at https://github.com/FriendsOfSymfony/FOSRestBundle/issues/95
+    cache:   { annotations: true }
+
+stof_doctrine_extensions:
+    default_locale: %locale%
+    translation_fallback: true
+    mongodb:
+        default:
+            translatable: true
+
+jms_translation:
+    configs:
+        app:
+            dirs: [%kernel.root_dir%, %kernel.root_dir%/../src]
+            output_dir: %kernel.root_dir%/Resources/translations
+            ignored_domains: []
+            excluded_names: [*TestCase.php, *Test.php]
+            excluded_dirs: [cache, data, logs]
+            extractors: []
+
+bazinga_expose_translation: ~
+
+fos_user:
+    db_driver: mongodb
+    firewall_name: main
+    user_class: Plantnet\UserBundle\Document\User
+    use_listener:           true
+    use_username_form_type: true
+    from_email:
+        address:        support@plantnet-project.org
+        sender_name:    plantnet-project.org
+    profile:
+        form:
+            type:               fos_user_profile
+            handler:            fos_user.profile.form.handler.default
+            name:               fos_user_profile_form
+            validation_groups:  [Profile]
+    change_password:
+        form:
+            type:               fos_user_change_password
+            handler:            fos_user.change_password.form.handler.default
+            name:               fos_user_change_password_form
+            validation_groups:  [ChangePassword]
+    registration:
+        confirmation:
+            enabled:    true
+            template:   FOSUserBundle:Registration:email.txt.twig
+        form:
+            type:               fos_user_registration
+            handler:            fos_user.registration.form.handler.default
+            name:               fos_user_registration_form
+            validation_groups:  [Registration]
+
+    resetting:
+        token_ttl: 86400
+        email:
+            template:   FOSUserBundle:Resetting:email.txt.twig
+        form:
+            type:               fos_user_resetting
+            handler:            fos_user.resetting.form.handler.default
+            name:               fos_user_resetting_form
+            validation_groups:  [ResetPassword]
+
+    service:
+        mailer:                 fos_user.mailer.default
+        email_canonicalizer:    fos_user.util.canonicalizer.default
+        username_canonicalizer: fos_user.util.canonicalizer.default
+        user_manager:           fos_user.user_manager.default
+
+    template:
+        engine: twig
+
+fos_rest:
+    view:
+        view_response_listener: true
+        failed_validation: HTTP_BAD_REQUEST
+        default_engine: php
+        formats:
+            json: true
+            xml: true
+            rss: false
+    format_listener:
+        prefer_extension: true
+    body_listener:
+        decoders:
+            json: fos_rest.decoder.json
+    param_fetcher_listener: true
+    allowed_methods_listener: true
+
+#nelmio_api_doc: 
+#    name:   Identify API documentation
+
+escape_wsse_authentication:
+    authentication_provider_class: Escape\WSSEAuthenticationBundle\Security\Core\Authentication\Provider\Provider
+    authentication_listener_class: Escape\WSSEAuthenticationBundle\Security\Http\Firewall\Listener
+
+raul_fraile_ladybug:  
+    general:              
+        expanded:             true 
+    object:               
+        max_nesting_level:    3 
+        show_data:            true 
+        show_classinfo:       true 
+        show_constants:       true 
+        show_methods:         true 
+        show_properties:      true 
+    array:                
+        max_nesting_level:    8 
+    processor:            
+        active:               true 
+    bool:                 
+        html_color:           #008 
+        cli_color:            blue 
+    float:                
+        html_color:           #800 
+        cli_color:            red 
+    int:                  
+        html_color:           #800 
+        cli_color:            red 
+    string:               
+        html_color:           #080 
+        cli_color:            green 
+        show_quotes:          true
+
+vich_geographical:
+    db_driver: mongodb

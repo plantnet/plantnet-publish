@@ -1,0 +1,8 @@
+plantnet_userrest:
+    resource: Plantnet\UserBundle\Controller\UserRestController
+    type: rest
+
+plantnet_userrolrest:
+    resource: Plantnet\UserBundle\Controller\UserRoleRestController
+    type: rest
+    parent: plantnet_userrest

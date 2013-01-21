@@ -1,4 +1,8 @@
 web/bundles/
+web/css/*
+web/js/*
+src/Plantnet/DataBundle/Resources/uploads/*
+src/Plantnet/DataBundle/Resources/public/data_images/*
 app/bootstrap.php.cache
 app/cache/*
 app/logs/*

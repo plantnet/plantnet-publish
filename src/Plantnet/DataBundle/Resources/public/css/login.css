@@ -1,0 +1,101 @@
+a{
+    text-decoration: none;
+    color: #7B1645;
+}
+
+a:hover{
+    text-decoration: none;
+    color: #914D6B;
+}
+
+
+#login {
+    float: right;
+    margin-right: 347px;
+    margin-top: 10px;
+}
+
+#loginform {
+    margin: 2em auto;
+    width: 320px;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 7px;
+    box-shadow: 0 4px 6px #C8C8C8;
+    padding: 16px 16px 40px;
+}
+
+#message {
+    margin: 2em auto;
+    width: 320px;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 7px;
+    box-shadow: 0 4px 6px #C8C8C8;
+    padding: 16px 16px 20px;
+}
+
+#flash {
+    margin: 2em auto;
+    width: 320px;
+    background: none repeat scroll 0 0 #FFFFFF;
+    text-shadow: 1px 1px 2px #C6C8C8;
+    padding: 16px 16px 0px;
+}
+
+form {  
+    font-weight: normal;
+    margin-left: 8px;
+}
+
+label {
+    color: #777777;
+    font-size: 13px;
+}
+
+.credential {
+    background: none repeat scroll 0 0 #FBFBFB;
+    border: 1px solid #E5E5E5;
+    font-size: 24px;
+    margin-bottom: 16px;
+    margin-right: 6px;
+    margin-top: 2px;
+    padding: 3px;
+    width: 97%;
+}
+
+
+#loginform form p {
+    margin-bottom: 0;
+}
+
+form p {
+    margin-bottom: 24px;
+}
+
+form .forgetmenot {
+    float: left;
+    font-weight: normal;
+    margin-bottom: 0;
+}
+
+form .forgetmenot label {
+    font-size: 11px;
+    line-height: 19px;
+}
+
+#remember_me{
+    margin-right: 5px;
+}
+
+#user input{
+    background: none repeat scroll 0 0 #FBFBFB;
+    border: 1px solid #E5E5E5;
+    font-size: 24px;
+    margin-bottom: 16px;
+    margin-right: 6px;
+    margin-top: 2px;
+    padding: 3px;
+    width: 97%;
+}
+

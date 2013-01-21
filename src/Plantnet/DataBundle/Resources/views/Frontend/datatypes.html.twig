@@ -1,0 +1,53 @@
+{% extends "PlantnetDataBundle::layout.html.twig" %}
+
+
+{% block header %}<h1>{{ collection.Name }}</h1>{% endblock %}
+{% block breadcrumb %}
+ <ul class="breadcrumb">
+    <li><a href="{{ path('_collection', { 'collection': collection.Name }) }}">{{ collection.Name }}</a><span class="divider">/</span></li>
+
+    <li class="active"><a href="{{ path('_module', { 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a><span class="divider">></span></li>
+
+    <li>{{ type }}</li><div id="page-loading"></div>
+ </ul>
+
+{% endblock %}
+{% block main %}
+
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+            <script type="text/javascript">
+
+                        $(".pagerfanta").on("click","a", function(event){
+
+                                event.preventDefault();
+                                if($(this).attr('href').length){
+                                    var $url = $(this).attr('href');
+
+                                ajaxLoader();
+                                    $(".span10").load($url);
+
+                                }
+
+                    });
+
+                     function ajaxLoader(){
+                                var opts = {
+                                  lines: 10, // The number of lines to draw
+                                  length: 2, // The length of each line
+                                  width: 3, // The line thickness
+                                  radius: 7, // The radius of the inner circle
+                                  color: '#2B5261', // #rgb or #rrggbb
+                                  speed: 1.2, // Rounds per second
+                                  trail: 50, // Afterglow percentage
+                                  shadow: false // Whether to render a shadow
+                                };
+                                var target = document.getElementById("page-loading");
+                                var spinner = new Spinner(opts).spin(target);
+                                }
+
+                </script>
+{% endblock %}

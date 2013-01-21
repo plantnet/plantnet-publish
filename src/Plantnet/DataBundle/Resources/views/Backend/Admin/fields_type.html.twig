@@ -1,0 +1,65 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+
+
+{% block form %}
+
+<div id="title-form"><em>Module: {{ module.name }}</em> > Properties configuration</div>
+<form action="{{ path('save_fields', { 'id': collection.id, 'idmodule': module.id }) }}" method="post" {{ form_enctype(form) }}>
+    {{ form_errors(form) }}
+    <div class="field-form">
+    {{ form_label(form.name) }}<br>
+    {{ form_errors(form.name) }}
+    {{ form_widget(form.name) }}
+    </div >
+    <div class="field-form">
+    {{ form_label(form.type) }}<br>
+    {{ form_errors(form.type) }}
+    {{ form_widget(form.type) }}
+    </div>
+    <table id="table-form">
+        <thead>
+            <tr>
+                <td>Field</td>
+                <td>Type</td>
+                <td>Display</td>
+                <td></td>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>Main</td>
+                        <td>Details</td>
+                    <tr>
+            </tr>
+        </thead>
+        <tbody>
+    {% for property in form.properties %}
+        <tr>
+
+            <td>
+            {{ form_errors(property.name) }}
+            {{ form_widget(property.name) }}
+            </td>
+            <td>
+            {{ form_errors(property.type) }}
+            {{ form_widget(property.type) }}
+            </td>
+            <td>
+            {{ form_errors(property.main) }}
+            {{ form_widget(property.main) }}
+            </td>
+            <td>
+            {{ form_errors(property.details) }}
+            {{ form_widget(property.details) }}
+            </td>
+
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{{ form_rest(form) }}
+    <p>
+        <button type="submit">Save</button>
+    </p>
+</form>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+
+
+
+
+{% block breadcrumb %}
+ <ul class="breadcrumb">
+    <li><a href="{{ path('_collection', { 'collection': collection.Name }) }}">{{ collection.Name }}</a><span class="divider">/</span></li>
+
+    <li class="active"><a href="{{ path('_module', { 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a><span class="divider">></span></li>
+
+    <li>{{ type }}</li><div id="page-loading"></div>
+ </ul>
+
+{% endblock %}
+
+                        {% block main %}{% endblock %}
+
+                        
+{% block javascripts %}
+
+                <script type="text/javascript">
+
+                        $(".pagerfanta").on("click","a", function(event){
+
+                                event.preventDefault();
+                                if($(this).attr('href').length){
+                                    var $url = $(this).attr('href');
+
+                                ajaxLoader();
+                                    $(".span10").load($url);
+
+                                }
+
+                    });
+
+                </script>
+{% endblock %}

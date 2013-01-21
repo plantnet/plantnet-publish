@@ -1,0 +1,22 @@
+{% extends "PlantnetDataBundle::layout.html.twig" %}
+
+{% block title collection.Name %}
+{% block stylesheets %}
+        {{ parent() }}
+        
+{% endblock %}
+
+{% block header %}<h1>{{ collection.Name }}</h1>{% endblock %}
+{% block main %}
+
+
+                        {% for row in module %}
+
+                                <li class="module"><a href="{{ path('_module', { 'collection': collection.Name, 'module': row.Name }) }}">{{ row.Name }}</a></li>
+
+                        {% endfor %}
+
+{% endblock %}
+{% block javascripts %}
+             {{ parent() }}
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "PlantnetDataBundle::layout.html.twig" %}
+
+{% block title type.Name %}
+{% block stylesheets %}
+        {{ parent() }}
+        <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/tablesorter/style.css') }}" type="text/css" />
+{% endblock %}
+
+{% block body %}
+{{ collection.Name }}
+{{ type.Name }}
+                        {% for row in type %}
+
+                                <li class="vtop">{{ row.Name }}</li>
+
+                        {% endfor %}
+
+
+    
+
+    
+{% endblock %}
+{% block javascripts %}
+             {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery-latest.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.pager.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+                $("table")
+                        .tablesorter({widthFixed: false, widgets: ['zebra'] })
+                        .tablesorterPager({container: $("#pager")});
+
+                        //  Adds "over" class to rows on mouseover
+                        $("table tr").mouseover(function(){
+                          $(this).addClass("over");
+                        });
+
+                        //  Removes "over" class from rows on mouseout
+                        $("table tr").mouseout(function(){
+                          $(this).removeClass("over");
+                });
+        });
+    </script>
+{% endblock %}

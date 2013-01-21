@@ -1,0 +1,13 @@
+
+
+
+{% for collection in list %}
+        <a href="{{ path('_collection', { 'collection': collection.collection }) }}"><h3>{{ collection.collection }}</h3></a>
+        {% for type in collection %}
+            {% for row in type %}
+            <li class="vtop"><a href="{{ path('_module', { 'collection': collection.collection, 'module': row.Name }) }}">{{ row.Name }}</a></li>
+
+            {% endfor %}
+        {% endfor %}
+
+{% endfor %}

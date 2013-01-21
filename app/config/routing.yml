@@ -1,0 +1,47 @@
+_proxy:
+    resource: "@FrameworkBundle/Resources/config/routing/proxy.xml"
+    prefix:   /proxy
+
+PlantnetDataBundle:
+    resource: "@PlantnetDataBundle/Controller/"
+    type:     annotation
+    prefix:   /
+    
+_bazinga_exposetranslation:
+    resource: "@BazingaExposeTranslationBundle/Resources/config/routing/routing.yml"
+
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+    prefix:   /
+
+fos_user_profile:
+    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
+    prefix: /profile
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /register
+
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_change_password:
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile
+
+fos_user_group:
+    resource: "@FOSUserBundle/Resources/config/routing/group.xml"
+    prefix: /group
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
+plantnet_securityrest:
+    resource: Plantnet\UserBundle\Controller\WsseSecurityController
+    type: rest
+
+plantnet_userrest:
+    resource: "@PlantnetUserBundle/Resources/config/routing.yml"
+    type: rest
+    prefix: /api

@@ -1,0 +1,77 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+
+
+{% block form %}
+
+<div id="title-form"><em>Module: {{ entity.name }}</em> > Properties configuration</div>
+<form action="{{ path('modules_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+    {{ form_errors(edit_form) }}
+    <div class="field-form">
+    {{ form_label(edit_form.name) }}<br>
+    {{ form_errors(edit_form.name) }}
+    {{ form_widget(edit_form.name) }}
+    </div >
+    <div class="field-form">
+    {{ form_label(edit_form.type) }}<br>
+    {{ form_errors(edit_form.type) }}
+    {{ form_widget(edit_form.type) }}
+    </div>
+    <table id="table-form">
+        <thead>
+            <tr>
+                <td>Field</td>
+                <td>Type</td>
+                <td>Display</td>
+                <td></td>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>Main</td>
+                        <td>Details</td>
+                    <tr>
+            </tr>
+        </thead>
+        <tbody>
+
+    {% for property in edit_form.properties %}
+        <tr>
+
+            <td>
+            {{ form_errors(property.name) }}
+            {{ form_widget(property.name) }}
+            </td>
+            <td>
+            {{ form_errors(property.type) }}
+            {{ form_widget(property.type) }}
+            </td>
+            <td>
+            {{ form_errors(property.main) }}
+            {{ form_widget(property.main) }}
+            </td>
+            <td>
+            {{ form_errors(property.details) }}
+            {{ form_widget(property.details) }}
+            </td>
+
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{{ form_rest(edit_form) }}
+    <p>
+        <button type="submit">Update</button>
+    </p>
+</form>
+
+
+
+<ul class="record_actions">
+    
+    <li>
+        <form action="{{ path('modules_delete', { 'id': entity.id }) }}" method="post">
+            {{ form_widget(delete_form) }}
+            <button type="submit">Delete</button>
+        </form>
+    </li>
+</ul>
+{% endblock %}

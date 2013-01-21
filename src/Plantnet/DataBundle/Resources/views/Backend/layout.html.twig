@@ -1,0 +1,147 @@
+<!DOCTYPE html">
+<!--[if lt IE 7 ]> <html class="ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html> <!--<![endif]-->
+
+<head>
+    {% block head %}
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <!--[if IE]><![endif]-->
+        <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+        Remove this if you use the .htaccess -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+        <meta name="description" content=""/>
+        <meta name="author" content="Barbe Julien (AMAP)"/>
+        <title>{% block title %}Plantnet{% endblock %}</title>
+        <link type="image/x-icon" rel="shortcut icon" href="{{ asset('bundles/plantnetdata/images/favicon.ico') }}" />
+        {% block stylesheets %}
+	<link rel="stylesheet" type="text/css" href="{{ asset('bundles/plantnetdata/css/admin.css') }}" media="screen" />
+    
+      {% endblock %}
+    {% endblock %}
+</head>
+
+
+    <body>
+      <section role="navigation">
+
+           {% block header %}
+                <header>
+                    <a title="Back to Homepage" href="{{ path('admin_index') }}"></a>
+                        <h1>[Publish]</h1>
+
+                </header>
+           {% endblock %}
+
+            <section id="user-info">
+			    <img alt="Sample User Avatar" src="{{ asset('bundles/plantnetdata/images/sample_user.png') }}">
+			    <div>
+				    <a title="Account Settings and Profile Page" href="#">{{ app.user.username }}</a>
+				    <em>Administrator</em>
+				    <ul>
+					    <li><a rel="tooltip" title="Public Website" href="{{ path('_index') }}" class="button-link">view website</a></li>
+					    
+					    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+
+                            {% block user_panel %}
+                                    <li><a rel="tooltip" title="Logout" href="{{ path('fos_user_security_logout') }}" class="button-link">{{ 'layout.logout'|trans([], 'FOSUserBundle') }}</a></li>
+                            {% endblock %}
+
+                        {% endif %}
+				    </ul>
+			    </div>
+		    </section>
+            <nav id="main-nav">
+                <ul id="nav" >
+                {% block sidebar %}
+
+                     {% include "PlantnetDataBundle:Backend/Collection:collectionlist.html.twig" with {'list': list, 'collections' : collections } %}
+                    
+                {% endblock %}
+                 </ul>
+             </nav>
+
+    </section>
+                <section id='content' role="main">
+                {% block body %}{% endblock %}
+                </section>
+
+
+
+                
+
+
+
+         
+
+
+	</section>	
+
+
+    </body>
+{% block javascripts %}
+                        <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-1.7.min.js') }}"></script>
+                        <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.min.js') }}"></script>
+                        <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/hideshow.js') }}"></script>
+                         <script type="text/javascript">
+
+                            $('#nav a').click(function(e) {
+
+                                e.preventDefault();
+                                var $url = $(this).attr('href');
+
+                                $(this).prev().append('<div class="page-loading"></div>');
+                                    $.get($url, function(data) {
+                                        $('#content').html(data);
+                                        $(".page-loading").remove();
+                                    });
+
+                                });
+
+                                
+      (function () {
+        if (/Microsoft/.test(navigator.appName)) { return }
+
+        window.onload = function () {
+          var menu = document.getElementById('nav');
+          var init = menu.offsetTop;
+          var docked;
+
+          window.onscroll = function () {
+            if (!docked && (menu.offsetTop - scrollTop() < 0)) {
+              menu.style.top = 0;
+              menu.style.position = 'fixed';
+              menu.className = 'docked';
+              docked = true;
+            } else if (docked && scrollTop() <= init) {
+              menu.style.position = 'absolute';
+              menu.style.top = init + 'px';
+              menu.className = menu.className.replace('docked', 'topbar');
+              docked = false;
+            }
+          };
+
+
+          (function () {
+            var link     = document.getElementById('guide-link'),
+                menu     = document.getElementById('menu'),
+                dropdown = document.getElementById('dropdown');
+
+
+
+          })();
+        };
+
+        function scrollTop() {
+          return document.body.scrollTop || document.documentElement.scrollTop;
+        }
+      })();
+    </script>
+
+
+
+
+                {% endblock %}  
+</html>

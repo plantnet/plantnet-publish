@@ -1,0 +1,96 @@
+
+/* This is the moving lens square underneath the mouse pointer. */
+.cloud-zoom-lens {
+	border: 4px solid #888;
+	margin:-4px;	/* Set this to minus the border thickness. */
+	background-color:#fff;	
+	cursor:move;		
+}
+
+/* This is for the title text. */
+.cloud-zoom-title {
+	font-family:Arial, Helvetica, sans-serif;
+	position:absolute !important;
+	background-color:#000;
+	color:#fff;
+	padding:3px;
+	width:100%;
+	text-align:center;	
+	font-weight:bold;
+	font-size:10px;
+	top:0px;
+}
+
+/* This is the zoom window. */
+.cloud-zoom-big {
+	border:4px solid #ccc;
+	overflow:hidden;
+}
+
+/* This is the loading message. */
+.cloud-zoom-loading {
+	color:white;	
+	background:#222;
+	padding:3px;
+	border:1px solid #000;
+}
+
+.mousetrap{
+        -moz-box-shadow:  2px 3px 4px rgba(0,0,0,0.6);
+        -webkit-box-shadow: 2px 3px 4px rgba(0,0,0,0.6);
+        box-shadow: 2px 3px 4px #999;
+        
+}
+
+.anypos{
+    position:absolute;
+    top:-128px;
+    left: 128px;
+    width:100px;
+    height:100px;
+}
+
+#wrap{
+    margin-left: 1%;
+    margin-bottom: 2%;
+    float:left;
+    margin-top: 22px;
+
+}
+
+
+.gallery{
+    margin: 1em 0 1em 4em;
+    border-top: 1px solid #416371;
+    float:left;
+    clear:both;
+    
+    
+}
+.gallery img{
+    -moz-box-shadow:  2px 3px 4px rgba(0,0,0,0.6);
+    -webkit-box-shadow: 2px 3px 4px rgba(0,0,0,0.6);
+    box-shadow: 2px 3px 4px #999;
+    -webkit-transform:scale(0.8); /*Webkit: Scale down image to 0.8x original size*/
+    -moz-transform:scale(0.8); /*Mozilla scale version*/
+    -o-transform:scale(0.8); /*Opera scale version*/
+    -webkit-transition-duration: 0.3s; /*Webkit: Animation duration*/
+    -moz-transition-duration: 0.5s; /*Mozilla duration version*/
+    -o-transition-duration: 0.5s; /*Opera duration version*/
+    opacity: 0.8; /*initial opacity of images*/
+    margin: 0 -5px 5px 0; /*margin between images*/
+
+
+}
+
+.gallery img:hover{
+    -webkit-transform:scale(1.1); /*Webkit: Scale up image to 1.2x original size*/
+    -moz-transform:scale(1.1); /*Mozilla scale version*/
+    -o-transform:scale(1.1); /*Opera scale version*/
+    -moz-box-shadow:  2px 3px 4px rgba(0,0,0,0.6);
+    -webkit-box-shadow: 2px 3px 4px rgba(0,0,0,0.6);
+    box-shadow: 2px 3px 4px #999;
+    opacity: 1;
+}
+
+

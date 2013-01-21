@@ -19,6 +19,27 @@ class AppKernel extends Kernel
             new JMS\AopBundle\JMSAopBundle(),
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
+
+            new RaulFraile\Bundle\LadybugBundle\RaulFraileLadybugBundle(),
+
+            new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle(),
+
+            new Bazinga\ExposeTranslationBundle\BazingaExposeTranslationBundle(),
+            new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new JMS\I18nRoutingBundle\JMSI18nRoutingBundle(),
+            new JMS\TranslationBundle\JMSTranslationBundle(),
+            new WhiteOctober\PagerfantaBundle\WhiteOctoberPagerfantaBundle(),
+            new Vich\GeographicalBundle\VichGeographicalBundle(),
+
+            new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
+            new Escape\WSSEAuthenticationBundle\EscapeWSSEAuthenticationBundle(),
+            new FOS\RestBundle\FOSRestBundle(),
+            new JMS\SerializerBundle\JMSSerializerBundle($this),
+            //new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
+            
+            new Plantnet\UserBundle\PlantnetUserBundle(),
+            new Plantnet\DataBundle\PlantnetDataBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
