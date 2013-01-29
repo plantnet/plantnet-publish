@@ -1,0 +1,7 @@
+parameters:
+#    plantnet_file_manager.example.class: Plantnet\FileManagerBundle\Example
+
+services:
+#    plantnet_file_manager.example:
+#        class: %plantnet_file_manager.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

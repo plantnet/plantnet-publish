@@ -1,0 +1,6 @@
+{# src/Plantnet/FileManagerBundle/Resources/views/Default/progress.html.twig #}
+{% if form.zipFile.vars.errors|length %}
+	{{ form_errors(form.zipFile) }}
+{% else %}
+	<p>Done !</p>
+{% endif %}

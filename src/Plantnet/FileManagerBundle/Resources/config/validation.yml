@@ -1,0 +1,8 @@
+# src/Plantnet/FileManagerBundle/Resources/config/validation.yml
+Plantnet\FileManagerBundle\Entity\ZipData:
+    properties:
+        zipFile:
+            - NotBlank: ~
+            - File:
+                maxSize: 500M
+                mimeTypes: [application/zip,application/x-zip]

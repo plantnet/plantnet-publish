@@ -1,3 +1,7 @@
+plantnet_file_manager:
+    resource: "@PlantnetFileManagerBundle/Resources/config/routing.yml"
+    prefix:   /
+
 _proxy:
     resource: "@FrameworkBundle/Resources/config/routing/proxy.xml"
     prefix:   /proxy

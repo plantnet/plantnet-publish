@@ -1,0 +1,12 @@
+plantnet_file_manager_homepage:
+    pattern:  /{name}/file_manager/
+    defaults: { _controller: PlantnetFileManagerBundle:Default:index }
+    requirements:
+        name:   \w+
+
+plantnet_file_manager_upload:
+    pattern:  /{name}/file_upload/
+    defaults: { _controller: PlantnetFileManagerBundle:Default:upload }
+    requirements:
+        name:   \w+
+    methods:    [POST]
