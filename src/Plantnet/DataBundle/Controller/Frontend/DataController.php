@@ -15,7 +15,7 @@ use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
 /**
  * Default  controller.
  *
- * @Route("")
+ * @Route("", host="test.publish.local")
  */
 class DataController extends Controller
 {
