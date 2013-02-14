@@ -180,8 +180,7 @@ class DataController extends Controller
                 $locations=array();
                 foreach($plantunits as $plantunit)
                 {
-                    $locs=$dm->getRepository('PlantnetDataBundle:Location')
-                        ->findBy(array('plantunit.id'=>$plantunit->getId()));
+                    $locs=$plantunit->getLocations();
                     foreach($locs as $point)
                     {
                         $locations[]=$point;
