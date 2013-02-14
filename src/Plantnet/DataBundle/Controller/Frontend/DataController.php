@@ -175,17 +175,24 @@ class DataController extends Controller
                 return $this->render('PlantnetDataBundle:Frontend:gallery.html.twig', array('paginator' => $paginator, 'field' => $field, 'collection' => $collection, 'module' => $module, 'type' => 'images', 'display' => $display));
                 break;
             case "locality":
-            $localised = $dm->getRepository('PlantnetDataBundle:Plantunit')->findBy(array('modules'=>$module->getId()));
-                
-                $location = array();
-                foreach($localised as $plantunit){
-                    $point = $dm->getRepository('PlantnetBotaBundle:DataMap')
-                                ->findLocalisation($plantunit);
-                    array_push($location, $point[0]);
-
+                $plantunits=$dm->getRepository('PlantnetDataBundle:Plantunit')
+                    ->findBy(array('module.id'=>$module->getId()));
+                $locations=array();
+                foreach($plantunits as $plantunit)
+                {
+                    $locs=$dm->getRepository('PlantnetDataBundle:Location')
+                        ->findBy(array('plantunit.id'=>$plantunit->getId()));
+                    foreach($locs as $point)
+                    {
+                        $locations[]=$point;
+                    }
                 }
-                
-                return $this->render('PlantnetDataBundle:Frontend:map.html.twig', array('collection' => $collection, 'module' => $module, 'type' => 'localisation', 'location' => $location));
+                return $this->render('PlantnetDataBundle:Frontend:map.html.twig',array(
+                    'collection' => $collection,
+                    'module' => $module,
+                    'type' => 'localisation',
+                    'locations' => $locations
+                ));
                 break;
 
         }

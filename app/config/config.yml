@@ -1,6 +1,7 @@
 imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
+    - { resource: "@PlantnetDataBundle/Resources/config/map.xml" }
 
 framework:
     esi:             ~
@@ -225,3 +226,7 @@ raul_fraile_ladybug:
 
 vich_geographical:
     db_driver: mongodb
+#     map_renderer: vich_geographical.map_renderer.leaflet
+#     icon_generator: vich_geographical.icon_generator.default
+#     leaflet:
+#         api_key: BC9A493B41014CAABB98F0471D759707

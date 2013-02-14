@@ -13,6 +13,7 @@ use Plantnet\DataBundle\Document\Collection;
 use Plantnet\DataBundle\Document\Module;
 use Plantnet\DataBundle\Document\Property;
 use Plantnet\DataBundle\Document\Image;
+use Plantnet\DataBundle\Document\Location;
 use Symfony\Component\HttpFoundation\Response;
 
 use
@@ -472,6 +473,55 @@ $count='';
                                     $plantunit->setIdentifier($image->getIdentifier());
                                     $plantunit->addImages($image);
                                     $dm->persist($plantunit);
+                                }
+                            }elseif ($module->getType() == 'locality'){
+                                $location = new Location();
+
+                                $attributes = array();
+                                for ($c=0; $c < $num; $c++) {
+                                    $value = $this->data_encode($data[$c]);
+                                    $attributes[$fields[$c]->getName()] = $value;
+                                    switch($fields[$c]->getType()){
+                                        case "lon":
+                                            $location->setLongitude(str_replace(',','.',$value));
+                                            break;
+                                        case "lat":
+                                            $location->setLatitude(str_replace(',','.',$value));
+                                            break;
+                                        case "idparent":
+                                            $location->setIdparent($value);
+                                            break;
+                                        case "idmodule":
+                                            $location->setIdentifier($value);
+                                            break;
+                                    }
+                                }
+                                $location->setProperty($attributes);
+
+                                $dm->persist($location);
+
+
+                                if($module->getParent()){
+
+                                    // $dm->persist($location);
+                                    $moduleid = $module->getParent()->getId();
+                                    $parent = $dm->getRepository('PlantnetDataBundle:Plantunit')
+                                        ->findOneBy(array('module.id' => $moduleid, 'identifier' => $location->getIdparent()));
+                                   if($parent){
+                                       $parent->addLocations($location);
+                                   }
+
+
+                                }else{
+                                    echo 'ok';
+                                    $plantunit = new Plantunit();
+                                    $plantunit->setModule($module);
+                                    $plantunit->setAttributes($attributes);
+                                    $plantunit->setIdentifier($location->getIdentifier());
+                                    $plantunit->addLocations($location);
+                                    $dm->persist($plantunit);
+                                    $location->setPlantunit($plantunit);
+                                    $dm->persist($location);
                                 }
                             }
 
