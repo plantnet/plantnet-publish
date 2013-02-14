@@ -175,8 +175,13 @@ class DataController extends Controller
                 return $this->render('PlantnetDataBundle:Frontend:gallery.html.twig', array('paginator' => $paginator, 'field' => $field, 'collection' => $collection, 'module' => $module, 'type' => 'images', 'display' => $display));
                 break;
             case "locality":
-                $plantunits=$dm->getRepository('PlantnetDataBundle:Plantunit')
-                    ->findBy(array('module.id'=>$module->getId()));
+                // $plantunits=$dm->getRepository('PlantnetDataBundle:Plantunit')
+                //     ->findBy(array('module.id'=>$module->getId()));
+                $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                    ->field('module.id')->equals($module->getId())
+                    ->field('locations')->prime(true)
+                    ->getQuery()
+                    ->execute();
                 $locations=array();
                 foreach($plantunits as $plantunit)
                 {
