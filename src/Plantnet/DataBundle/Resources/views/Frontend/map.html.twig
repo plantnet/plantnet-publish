@@ -22,6 +22,10 @@
       .leaflet-control-zoom-fullscreen{
         background-image:url({{ asset('bundles/plantnetdata/images/leaflet/icon-fullscreen.png') }});
       }
+      .leaflet-control-layers-base label{
+        clear:both;
+        text-align:left;
+      }
     </style>
     {# /leaflet_css #}
   {% endblock %}
@@ -72,8 +76,8 @@
     var osm_attrib_2='Thunderforest <a href="http://thunderforest.com/">OpenCycleMap</a>. Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
     var layer_2=new L.TileLayer(osm_url_2,{attribution:osm_attrib_2});
     // LAYER 3
-    var osm_url_3='http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png';
-    var osm_attrib_3='Tiles by <a href="http://stamen.com/">Stamen Design</a>.Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    var osm_url_3='http://{s}.tiles.mapbox.com/v3/mapbox.mapbox-warden/{z}/{x}/{y}.png';
+    var osm_attrib_3='Tiles by <a href="http://mapbox.com/">MapBox</a>.Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
     var layer_3=new L.TileLayer(osm_url_3,{attribution:osm_attrib_3});
     // LAYER 4
     var osm_url_4='http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png';
@@ -91,9 +95,9 @@
     map.addLayer(markers);
     // CONTROLS
     var base_maps={
-      'OSM':layer_1,
-      'OCM':layer_2,
-      'Stamen WaterC':layer_3,
+      'OpenStreetMap':layer_1,
+      'OpenCycleMap':layer_2,
+      'MapBox Warden':layer_3,
       'Esri ArcGIS':layer_4
     };
     L.control.layers(base_maps).addTo(map);
