@@ -13,10 +13,14 @@
     <!--[if lte IE 8]>
       <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.Default.ie.css') }}" />
     <![endif]-->
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/mini_map/Control.MiniMap.css') }}" />
     <style type="text/css">
       #map{
         width:600px;
         height:400px;
+      }
+      .leaflet-control-zoom-fullscreen{
+        background-image:url({{ asset('bundles/plantnetdata/images/leaflet/icon-fullscreen.png') }});
       }
     </style>
     {# /leaflet_css #}
@@ -49,15 +53,33 @@
   {# leaflet_js #}
   <script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
   <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/marker_cluster/leaflet.markercluster.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/full_screen/Control.FullScreen.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/mini_map/Control.MiniMap.js') }}"></script>
   <script type="text/javascript">
+    // MAP
     var map=L.map('map',{
       center:[0,0],
-      zoom:1
+      zoom:1,
+      minZoom:1
     });
-    var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-    var osm=new L.TileLayer(osmUrl,{attribution:osmAttrib});
-    map.addLayer(osm);
+    // LAYER 1
+    var osm_url_1='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    var osm_attrib_1='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    var layer_osm_1=new L.TileLayer(osm_url_1,{attribution:osm_attrib_1});
+    map.addLayer(layer_osm_1);
+    // LAYER 2
+    var osm_url_2='http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png';
+    var osm_attrib_2='Thunderforest <a href="http://thunderforest.com/">OpenCycleMap</a>. Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    var layer_osm_2=new L.TileLayer(osm_url_2,{attribution:osm_attrib_2});
+    // LAYER 3
+    var osm_url_3='http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png';
+    var osm_attrib_3='Tiles by <a href="http://stamen.com/">Stamen Design</a>.Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    var layer_osm_3=new L.TileLayer(osm_url_3,{attribution:osm_attrib_3});
+    // LAYER 4
+    var osm_url_4='http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png';
+    var osm_attrib_4='Tiles © <a href="http://www.esri.com/">Esri</a>';
+    var layer_osm_4=new L.TileLayer(osm_url_4,{attribution:osm_attrib_4});
+    // MARKERS
     var markers=new L.MarkerClusterGroup({
       showCoverageOnHover:false
     });
@@ -67,6 +89,22 @@
       markers.addLayer(marker_{{ location.getId() }});
     {% endfor %}
     map.addLayer(markers);
+    // CONTROLS
+    var base_maps={
+      'OSM 1':layer_osm_1,
+      'OSM 2':layer_osm_2,
+      'OSM 3':layer_osm_3,
+      'OSM 4':layer_osm_4
+    };
+    L.control.layers(base_maps).addTo(map);
+    // FULL SCREEN
+    var full_screen=new L.Control.FullScreen();
+    map.addControl(full_screen);
+    // MINI MAP
+    var osm_url_mm='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    var osm_attrib_mm='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    var layer_osm_mm=new L.TileLayer(osm_url_mm,{attribution:osm_attrib_mm});
+    var mini_map=new L.Control.MiniMap(layer_osm_mm,{zoomLevelOffset:-4,toggleDisplay:true}).addTo(map);
   </script>
   {# /leaflet_js #}
 {% endblock %}
