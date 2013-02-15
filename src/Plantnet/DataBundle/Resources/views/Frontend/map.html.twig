@@ -65,20 +65,20 @@
     // LAYER 1
     var osm_url_1='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     var osm_attrib_1='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-    var layer_osm_1=new L.TileLayer(osm_url_1,{attribution:osm_attrib_1});
-    map.addLayer(layer_osm_1);
+    var layer_1=new L.TileLayer(osm_url_1,{attribution:osm_attrib_1});
+    map.addLayer(layer_1);
     // LAYER 2
     var osm_url_2='http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png';
     var osm_attrib_2='Thunderforest <a href="http://thunderforest.com/">OpenCycleMap</a>. Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-    var layer_osm_2=new L.TileLayer(osm_url_2,{attribution:osm_attrib_2});
+    var layer_2=new L.TileLayer(osm_url_2,{attribution:osm_attrib_2});
     // LAYER 3
     var osm_url_3='http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.png';
     var osm_attrib_3='Tiles by <a href="http://stamen.com/">Stamen Design</a>.Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-    var layer_osm_3=new L.TileLayer(osm_url_3,{attribution:osm_attrib_3});
+    var layer_3=new L.TileLayer(osm_url_3,{attribution:osm_attrib_3});
     // LAYER 4
     var osm_url_4='http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png';
     var osm_attrib_4='Tiles © <a href="http://www.esri.com/">Esri</a>';
-    var layer_osm_4=new L.TileLayer(osm_url_4,{attribution:osm_attrib_4});
+    var layer_4=new L.TileLayer(osm_url_4,{attribution:osm_attrib_4});
     // MARKERS
     var markers=new L.MarkerClusterGroup({
       showCoverageOnHover:false
@@ -91,10 +91,10 @@
     map.addLayer(markers);
     // CONTROLS
     var base_maps={
-      'OSM 1':layer_osm_1,
-      'OSM 2':layer_osm_2,
-      'OSM 3':layer_osm_3,
-      'OSM 4':layer_osm_4
+      'OSM':layer_1,
+      'OCM':layer_2,
+      'Stamen WaterC':layer_3,
+      'Esri ArcGIS':layer_4
     };
     L.control.layers(base_maps).addTo(map);
     // FULL SCREEN
