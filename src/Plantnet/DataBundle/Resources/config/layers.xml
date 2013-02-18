@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<layers fullscreen="true" centerlat="0" centerlng="0" defaultzoom="1" minzoom="1">
+	<layer name="OpenStreetMap" alias="OSM" minimap="false">
+		<url><![CDATA[http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
+	</layer>
+	<layer name="OpenCycleMap" alias="OCM" minimap="false">
+		<url><![CDATA[http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Thunderforest <a href="http://thunderforest.com/">OpenCycleMap</a>. Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
+	</layer>
+	<layer name="MapBox Warden" alias="MBW" minimap="false">
+		<url><![CDATA[http://{s}.tiles.mapbox.com/v3/mapbox.mapbox-warden/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Tiles by <a href="http://mapbox.com/">MapBox</a>.Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
+	</layer>
+	<layer name="Esri ArcGIS" alias="EAGIS" minimap="false">
+		<url><![CDATA[http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png]]></url>
+		<attrib><![CDATA[Tiles © <a href="http://www.esri.com/">Esri</a>]]></attrib>
+	</layer>
+	<layer name="Mini Map" alias="MM" minimap="true">
+		<url><![CDATA[http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
+	</layer>
+</layers>

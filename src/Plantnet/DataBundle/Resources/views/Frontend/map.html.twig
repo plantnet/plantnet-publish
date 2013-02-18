@@ -62,27 +62,32 @@
   <script type="text/javascript">
     // MAP
     var map=L.map('map',{
-      center:[0,0],
-      zoom:1,
-      minZoom:1
+      center:[{{ layers.attributes().centerlat }},{{ layers.attributes().centerlng }}],
+      zoom:{{ layers.attributes().defaultzoom }},
+      minZoom:{{ layers.attributes().minzoom }}
     });
-    // LAYER 1
-    var osm_url_1='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    var osm_attrib_1='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-    var layer_1=new L.TileLayer(osm_url_1,{attribution:osm_attrib_1});
-    map.addLayer(layer_1);
-    // LAYER 2
-    var osm_url_2='http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png';
-    var osm_attrib_2='Thunderforest <a href="http://thunderforest.com/">OpenCycleMap</a>. Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-    var layer_2=new L.TileLayer(osm_url_2,{attribution:osm_attrib_2});
-    // LAYER 3
-    var osm_url_3='http://{s}.tiles.mapbox.com/v3/mapbox.mapbox-warden/{z}/{x}/{y}.png';
-    var osm_attrib_3='Tiles by <a href="http://mapbox.com/">MapBox</a>.Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-    var layer_3=new L.TileLayer(osm_url_3,{attribution:osm_attrib_3});
-    // LAYER 4
-    var osm_url_4='http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png';
-    var osm_attrib_4='Tiles © <a href="http://www.esri.com/">Esri</a>';
-    var layer_4=new L.TileLayer(osm_url_4,{attribution:osm_attrib_4});
+    // CONTROLS
+    var base_maps=new Array();
+    // LAYERS
+    {% set default=0 %}
+    {% for layer in layers %}
+      {% set alias=layer.attributes().alias %}
+      {% autoescape false %}
+      var layer_url_{{ alias }}='{{ layer.url.__toString()|escape('js') }}';
+      var layer_attrib_{{ alias }}='{{ layer.attrib.__toString()|escape('js') }}';
+      {% endautoescape %}
+      var layer_{{ alias }}=new L.TileLayer(layer_url_{{ alias }},{attribution:layer_attrib_{{ alias }}});
+      {% if layer.attributes().minimap=='false' %}
+        base_maps['{{ layer.attributes().name }}']=layer_{{ alias }};
+        {% if default==0 %}
+          map.addLayer(layer_{{ alias }});
+        {% endif %}
+        {% set default=1 %}
+      {% else %}
+        var mini_map=new L.Control.MiniMap(layer_{{ alias }},{zoomLevelOffset:-4,toggleDisplay:true}).addTo(map);
+      {% endif %}
+    {% endfor %}
+    L.control.layers(base_maps).addTo(map);
     // MARKERS
     var markers=new L.MarkerClusterGroup({
       showCoverageOnHover:false
@@ -93,22 +98,11 @@
       markers.addLayer(marker_{{ location.getId() }});
     {% endfor %}
     map.addLayer(markers);
-    // CONTROLS
-    var base_maps={
-      'OpenStreetMap':layer_1,
-      'OpenCycleMap':layer_2,
-      'MapBox Warden':layer_3,
-      'Esri ArcGIS':layer_4
-    };
-    L.control.layers(base_maps).addTo(map);
     // FULL SCREEN
-    var full_screen=new L.Control.FullScreen();
-    map.addControl(full_screen);
-    // MINI MAP
-    var osm_url_mm='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    var osm_attrib_mm='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-    var layer_osm_mm=new L.TileLayer(osm_url_mm,{attribution:osm_attrib_mm});
-    var mini_map=new L.Control.MiniMap(layer_osm_mm,{zoomLevelOffset:-4,toggleDisplay:true}).addTo(map);
+    {% if layers.attributes().fullscreen=='true' %}
+      var full_screen=new L.Control.FullScreen();
+      map.addControl(full_screen);
+    {% endif %}
   </script>
   {# /leaflet_js #}
 {% endblock %}
