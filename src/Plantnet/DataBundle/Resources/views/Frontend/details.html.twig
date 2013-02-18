@@ -9,6 +9,8 @@
 
         <link href="{{ asset('bundles/plantnetdata/js/cloud-zoom/cloud-zoom.css') }}" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/comments.css') }}" type="text/css" />
+
+        {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
         
 	{% endblock %}
 
@@ -92,7 +94,8 @@
 
     {#{% render "FOSCommentBundle:Thread:show" with {"id": idplantunit} %}#}
 
-
+    {# LEAFLET MAP #}
+    <div id="map"></div>
     </section>
 {% endblock %}
 
@@ -128,4 +131,5 @@
        {# {% javascripts '@FOSCommentBundle/Resources/assets/js/comments.js' %}
             <script type="text/javascript" src="{{ asset_url }}"></script>
         {% endjavascripts %}#}
+    {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
 {% endblock %}

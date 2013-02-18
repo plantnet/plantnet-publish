@@ -3,31 +3,7 @@
   {% block stylesheets %}
     {{ parent() }}
     {#{{ vichgeo_include_css() }}#}
-    {# leaflet_css #}
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
-    <!--[if lte IE 8]>
-      <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
-    <![endif]-->
-    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.css') }}" />
-    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.Default.css') }}" />
-    <!--[if lte IE 8]>
-      <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.Default.ie.css') }}" />
-    <![endif]-->
-    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/mini_map/Control.MiniMap.css') }}" />
-    <style type="text/css">
-      #map{
-        width:600px;
-        height:400px;
-      }
-      .leaflet-control-zoom-fullscreen{
-        background-image:url({{ asset('bundles/plantnetdata/images/leaflet/icon-fullscreen.png') }});
-      }
-      .leaflet-control-layers-base label{
-        clear:both;
-        text-align:left;
-      }
-    </style>
-    {# /leaflet_css #}
+    {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
   {% endblock %}
   <title>{% block title module.Name%}</title>
   {#{{ vichgeo_include_js() }}#}
@@ -48,61 +24,10 @@
     <a href="{{ path('_module', { 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a>
   </section>
   {#{{ vichgeo_map('location') }}#}
-  {# leaflet_map #}
+  {# LEAFLET MAP #}
   <div id="map"></div>
-  {# /leaflet_map #}
 {% endblock %}
 {% block javascripts %}
   {{ parent() }}
-  {# leaflet_js #}
-  <script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
-  <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/marker_cluster/leaflet.markercluster.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/full_screen/Control.FullScreen.js') }}"></script>
-  <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/mini_map/Control.MiniMap.js') }}"></script>
-  <script type="text/javascript">
-    // MAP
-    var map=L.map('map',{
-      center:[{{ layers.attributes().centerlat }},{{ layers.attributes().centerlng }}],
-      zoom:{{ layers.attributes().defaultzoom }},
-      minZoom:{{ layers.attributes().minzoom }}
-    });
-    // CONTROLS
-    var base_maps=new Array();
-    // LAYERS
-    {% set default=0 %}
-    {% for layer in layers %}
-      {% set alias=layer.attributes().alias %}
-      {% autoescape false %}
-      var layer_url_{{ alias }}='{{ layer.url.__toString()|escape('js') }}';
-      var layer_attrib_{{ alias }}='{{ layer.attrib.__toString()|escape('js') }}';
-      {% endautoescape %}
-      var layer_{{ alias }}=new L.TileLayer(layer_url_{{ alias }},{attribution:layer_attrib_{{ alias }}});
-      {% if layer.attributes().minimap=='false' %}
-        base_maps['{{ layer.attributes().name }}']=layer_{{ alias }};
-        {% if default==0 %}
-          map.addLayer(layer_{{ alias }});
-        {% endif %}
-        {% set default=1 %}
-      {% else %}
-        var mini_map=new L.Control.MiniMap(layer_{{ alias }},{zoomLevelOffset:-4,toggleDisplay:true}).addTo(map);
-      {% endif %}
-    {% endfor %}
-    L.control.layers(base_maps).addTo(map);
-    // MARKERS
-    var markers=new L.MarkerClusterGroup({
-      showCoverageOnHover:false
-    });
-    {% for location in locations %}
-      var marker_{{ location.getId() }}=L.marker([{{ location.getLatitude() }},{{ location.getLongitude() }}]);
-      marker_{{ location.getId() }}.bindPopup('<b>{{ location.getProperty().Taxon }}</b><br />{{ location.getProperty().Family }}');
-      markers.addLayer(marker_{{ location.getId() }});
-    {% endfor %}
-    map.addLayer(markers);
-    // FULL SCREEN
-    {% if layers.attributes().fullscreen=='true' %}
-      var full_screen=new L.Control.FullScreen();
-      map.addControl(full_screen);
-    {% endif %}
-  </script>
-  {# /leaflet_js #}
+  {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
 {% endblock %}

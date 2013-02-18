@@ -232,6 +232,16 @@ class DataController extends Controller
         $plantunit = $dm->getRepository('PlantnetDataBundle:Plantunit')
                     ->findOneBy(array('module.id' => $module->getId(), 'id' => $id));
 
+        $locations=array();
+        $locs=$plantunit->getLocations();
+        foreach($locs as $point)
+        {
+            $locations[]=$point;
+        }
+
+        $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
+        $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
+
         //$data = $plantunit->getAttributes();
 
 
@@ -245,6 +255,8 @@ class DataController extends Controller
                      'idplantunit' => $plantunit->getId(),
                      'display'  => $display,
                      'data'     => $data,
+                     'locations' => $locations,
+                     'layers' => $layers,
                      'collection' => $coll,
                      'module'   => $module,
                      'modules'  => $modules));
