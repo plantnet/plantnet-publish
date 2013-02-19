@@ -1,23 +1,54 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<layers fullscreen="true" centerlat="0" centerlng="0" defaultzoom="1" minzoom="1">
+<layers scale="true" fullscreen="true" centerlat="0" centerlng="0" defaultzoom="1" minzoom="1">
+	<!-- Base Maps -->
 	<layer name="OpenStreetMap" alias="OSM" minimap="false">
 		<url><![CDATA[http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png]]></url>
 		<attrib><![CDATA[Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
-	</layer>
+	</layer><!-- http://www.openstreetmap.org/copyright : Open Data Commons Open Database License || Creative Commons paternité – partage à l’identique 2.0 -->
 	<layer name="OpenCycleMap" alias="OCM" minimap="false">
 		<url><![CDATA[http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png]]></url>
 		<attrib><![CDATA[Thunderforest <a href="http://thunderforest.com/">OpenCycleMap</a>. Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
-	</layer>
+	</layer><!-- http://www.thunderforest.com/terms/ : Creative Commons licence, specifically CC-BY-SA 2.0 -->
+	<layer name="MapQuest-OSM" alias="MQOSM" minimap="false">
+		<url><![CDATA[http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Tiles Courtesy of <a href="http://thunderforest.com/">MapQuest</a>. Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
+	</layer><!-- http://developer.mapquest.com/web/products/open/map : Free -->
+	<!--
 	<layer name="MapBox Warden" alias="MBW" minimap="false">
 		<url><![CDATA[http://{s}.tiles.mapbox.com/v3/mapbox.mapbox-warden/{z}/{x}/{y}.png]]></url>
-		<attrib><![CDATA[Tiles by <a href="http://mapbox.com/">MapBox</a>.Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
+		<attrib><![CDATA[Tiles by <a href="http://mapbox.com/">MapBox</a>. Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
 	</layer>
+	-->
+	<!--
 	<layer name="Esri ArcGIS" alias="EAGIS" minimap="false">
 		<url><![CDATA[http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}.png]]></url>
 		<attrib><![CDATA[Tiles © <a href="http://www.esri.com/">Esri</a>]]></attrib>
 	</layer>
-	<layer name="Mini Map" alias="MM" minimap="true">
+	-->
+	<!-- Mini Map -->
+	<layer name="Mini Map" alias="MM" minimap="true" zoomoffset="-4">
 		<url><![CDATA[http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png]]></url>
 		<attrib><![CDATA[Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
-	</layer>
+	</layer><!-- http://www.openstreetmap.org/copyright : Open Data Commons Open Database License || Creative Commons paternité – partage à l’identique 2.0 -->
+	<!-- Overlay Maps -->
+	<layer name="Température" alias="temp" minimap="false" opacity="0.6">
+		<url><![CDATA[http://{s}.tile.openweathermap.org/map/temp/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Weather from <a href="http://openweathermap.org/">OpenWeatherMap</a>]]></attrib>
+		<legend><![CDATA[http://openweathermap.org/img/a/TT.png]]></legend>
+	</layer><!-- http://openweathermap.org/copyright : CC-BY-SA 2.0 -->
+	<layer name="Précipitation" alias="precipitation_cls" minimap="false" opacity="0.6">
+		<url><![CDATA[http://{s}.tile.openweathermap.org/map/precipitation_cls/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Weather from <a href="http://openweathermap.org/">OpenWeatherMap</a>]]></attrib>
+		<legend><![CDATA[http://openweathermap.org/img/a/PR.png]]></legend>
+	</layer><!-- http://openweathermap.org/copyright : CC-BY-SA 2.0 -->
+	<layer name="Nébulosité" alias="clouds_cls" minimap="false" opacity="0.6">
+		<url><![CDATA[http://{s}.tile.openweathermap.org/map/clouds_cls/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Weather from <a href="http://openweathermap.org/">OpenWeatherMap</a>]]></attrib>
+		<legend><![CDATA[http://openweathermap.org/img/a/NT.png]]></legend>
+	</layer><!-- http://openweathermap.org/copyright : CC-BY-SA 2.0 -->
+	<layer name="Pression" alias="pressure" minimap="false" opacity="0.6">
+		<url><![CDATA[http://{s}.tile.openweathermap.org/map/pressure/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Weather from <a href="http://openweathermap.org/">OpenWeatherMap</a>]]></attrib>
+		<legend><![CDATA[http://openweathermap.org/img/a/PN.png]]></legend>
+	</layer><!-- http://openweathermap.org/copyright : CC-BY-SA 2.0 -->
 </layers>

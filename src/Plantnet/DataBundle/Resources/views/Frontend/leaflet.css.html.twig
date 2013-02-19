@@ -10,14 +10,25 @@
 <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/mini_map/Control.MiniMap.css') }}" />
 <style type="text/css">
   #map{
-    width:600px;
-    height:400px;
+    width:650px;
+    height:450px;
   }
   .leaflet-control-zoom-fullscreen{
     background-image:url({{ asset('bundles/plantnetdata/images/leaflet/icon-fullscreen.png') }});
   }
-  .leaflet-control-layers-base label{
+  .leaflet-control-layers-base label,.leaflet-control-layers-overlays label{
     clear:both;
     text-align:left;
+  }
+  .leaflet-control-layers-separator{
+    clear:both;
+  }
+  .legend{
+    background:#FFFFFF;
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .legend img{
+    margin-left:-10px;
   }
 </style>

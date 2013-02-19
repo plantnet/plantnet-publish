@@ -1,49 +1,104 @@
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-1.7.min.js') }}"></script>
 <script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
 <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/marker_cluster/leaflet.markercluster.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/full_screen/Control.FullScreen.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/mini_map/Control.MiniMap.js') }}"></script>
 <script type="text/javascript">
-  {# MAP #}
-  var map=L.map('map',{
-    center:[{{ layers.attributes().centerlat }},{{ layers.attributes().centerlng }}],
-    zoom:{{ layers.attributes().defaultzoom }},
-    minZoom:{{ layers.attributes().minzoom }}
-  });
-  {# CONTROLS #}
-  var base_maps=new Array();
-  {# LAYERS #}
-  {% set default=0 %}
-  {% for layer in layers %}
-    {% set alias=layer.attributes().alias %}
-    {% autoescape false %}
-    var layer_url_{{ alias }}='{{ layer.url.__toString()|escape('js') }}';
-    var layer_attrib_{{ alias }}='{{ layer.attrib.__toString()|escape('js') }}';
-    {% endautoescape %}
-    var layer_{{ alias }}=new L.TileLayer(layer_url_{{ alias }},{attribution:layer_attrib_{{ alias }}});
-    {% if layer.attributes().minimap=='false' %}
-      base_maps['{{ layer.attributes().name }}']=layer_{{ alias }};
-      {% if default==0 %}
-        map.addLayer(layer_{{ alias }});
-      {% endif %}
-      {% set default=1 %}
-    {% else %}
-      var mini_map=new L.Control.MiniMap(layer_{{ alias }},{zoomLevelOffset:-4,toggleDisplay:true}).addTo(map);
-    {% endif %}
-  {% endfor %}
-  L.control.layers(base_maps).addTo(map);
-  {# MARKERS #}
-  var markers=new L.MarkerClusterGroup({
-    showCoverageOnHover:false
-  });
-  {% for location in locations %}
-    var marker_{{ location.getId() }}=L.marker([{{ location.getLatitude() }},{{ location.getLongitude() }}]);
-    marker_{{ location.getId() }}.bindPopup('<b>{{ location.getProperty().Taxon }}</b><br />{{ location.getProperty().Family }}');
-    markers.addLayer(marker_{{ location.getId() }});
-  {% endfor %}
-  map.addLayer(markers);
-  {# FULL SCREEN #}
-  {% if layers.attributes().fullscreen=='true' %}
-    var full_screen=new L.Control.FullScreen();
-    map.addControl(full_screen);
-  {% endif %}
+	{####### MAP #################################################}
+	var map=L.map('map',{
+		center:[{{ layers.attributes().centerlat }},{{ layers.attributes().centerlng }}],
+		zoom:{{ layers.attributes().defaultzoom }},
+		minZoom:{{ layers.attributes().minzoom }}
+	});
+	{####### FULL SCREEN #################################################}
+	{% if layers.attributes().fullscreen=='true' %}
+		var full_screen=new L.Control.FullScreen();
+		map.addControl(full_screen);
+	{% endif %}
+	{####### SCALE #################################################}
+	{% if layers.attributes().scale=='true' %}
+		L.control.scale({
+			imperial:false
+		}).addTo(map);
+	{% endif %}
+	{####### BASE MAPS #################################################}
+	var base_maps=new Array();
+	{####### OVERLAY MAPS #################################################}
+	var overlay_maps=new Array();
+	{####### LEGENDS #################################################}
+	var legends=new Array();
+	{####### LAYERS #################################################}
+	{% set default=0 %}
+	{% for layer in layers %}
+		{% set alias=layer.attributes().alias %}
+		{% autoescape false %}
+			var layer_url_{{ alias }}='{{ layer.url.__toString()|escape('js') }}';
+			var layer_attrib_{{ alias }}='{{ layer.attrib.__toString()|escape('js') }}';
+		{% endautoescape %}
+		{% if layer.attributes().opacity is defined %}
+			{% if layer.legend is defined %}
+				{% autoescape false %}
+					var legend_url_{{ alias }}='{{ layer.legend.__toString()|escape('js') }}';
+				{% endautoescape %}
+				var Legend_{{ alias }}=L.Control.extend({
+					options:{
+						position:'bottomleft'
+					},
+					onAdd:function(map){
+						var container=L.DomUtil.create('div','legend legend_{{ alias }}');
+						return container;
+					}
+				});
+				map.addControl(new Legend_{{ alias }}());
+				$('.legend_{{ alias }}').html('<img src="'+legend_url_{{ alias }}+'" alt="legend" class="legend" id="legend_{{ alias }}" />');
+				$('.legend_{{ alias }}').hide();
+				legends[layer_url_{{ alias }}]='{{ alias }}';
+			{% endif %}
+			var layer_{{ alias }}=new L.TileLayer(layer_url_{{ alias }},{
+				attribution:layer_attrib_{{ alias }},
+				opacity:{{ layer.attributes().opacity }},
+				unloadInvisibleTiles:true
+			});
+			overlay_maps['{{ layer.attributes().name }}']=layer_{{ alias }};
+		{% else %}
+			var layer_{{ alias }}=new L.TileLayer(layer_url_{{ alias }},{
+				attribution:layer_attrib_{{ alias }},
+				unloadInvisibleTiles:true
+			});
+			{% if layer.attributes().minimap=='false' %}
+				base_maps['{{ layer.attributes().name }}']=layer_{{ alias }};
+				{% if default==0 %}
+					map.addLayer(layer_{{ alias }});
+				{% endif %}
+				{% set default=1 %}
+			{% else %}
+				var mini_map=new L.Control.MiniMap(layer_{{ alias }},{
+					{% if layer.attributes().zoomoffset is defined %}
+						zoomLevelOffset:{{ layer.attributes().zoomoffset }},
+					{% endif %}
+					toggleDisplay:true
+				}).addTo(map);
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+	L.control.layers(base_maps,overlay_maps).addTo(map);
+	{####### MARKERS #################################################}
+	var markers=new L.MarkerClusterGroup({
+		showCoverageOnHover:false
+	});
+	{% for location in locations %}
+		var marker_{{ location.getId() }}=L.marker([{{ location.getLatitude() }},{{ location.getLongitude() }}]);
+		marker_{{ location.getId() }}.bindPopup('<b>{{ location.getProperty().Taxon }}</b><br />{{ location.getProperty().Family }}');
+		markers.addLayer(marker_{{ location.getId() }});
+	{% endfor %}
+	map.addLayer(markers);
+	{####### LEGENDS #################################################}
+	map.on('layeradd',function(e){
+		var layer=legends[e.layer._url];
+		$('.legend_'+layer).show();
+	});
+	map.on('layerremove',function(e){
+		var layer=legends[e.layer._url];
+		$('.legend_'+layer).hide();
+	});
 </script>
