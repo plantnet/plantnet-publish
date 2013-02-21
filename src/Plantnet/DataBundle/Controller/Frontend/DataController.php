@@ -175,9 +175,25 @@ class DataController extends Controller
                 return $this->render('PlantnetDataBundle:Frontend:gallery.html.twig', array('paginator' => $paginator, 'field' => $field, 'collection' => $collection, 'module' => $module, 'type' => 'images', 'display' => $display));
                 break;
             case "locality":
-                $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                $m=new \Mongo();
+                $c_plantunits=$m->bota->Plantunit->find(
+                    array('module.$id'=>new \MongoId($module->getId())),
+                    array('_id'=>1)
+                );
+                $id_plantunits=array();
+                foreach($c_plantunits as $p)
+                {
+                    $mdbid=$p['_id'];
+                    $id_plantunits[]=$mdbid->{'$id'};
+                }
+                $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+                    ->field('plantunit.id')->in($id_plantunits)
+                    ->getQuery()
+                    ->execute();
+                /*$plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                     ->field('module.id')->equals($module->getId())
                     ->field('locations')->prime(true)
+                    ->limit(10)
                     ->getQuery()
                     ->execute();
                 $locations=array();
@@ -189,6 +205,7 @@ class DataController extends Controller
                         $locations[]=$point;
                     }
                 }
+                */
                 $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
                 return $this->render('PlantnetDataBundle:Frontend:map.html.twig',array(

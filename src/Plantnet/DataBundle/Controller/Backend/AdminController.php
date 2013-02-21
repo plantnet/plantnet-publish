@@ -428,6 +428,7 @@ $count='';
                                         ->findOneBy(array('module.id' => $moduleid, 'identifier' => $plantunit->getIdparent()));
 
                                     $plantunit->setParent($parent);
+                                    $dm->persist($plantunit);
                                 }
 
                         }elseif ($module->getType() == 'image'){
@@ -476,7 +477,6 @@ $count='';
                                 }
                             }elseif ($module->getType() == 'locality'){
                                 $location = new Location();
-
                                 $attributes = array();
                                 for ($c=0; $c < $num; $c++) {
                                     $value = $this->data_encode($data[$c]);
@@ -497,24 +497,30 @@ $count='';
                                     }
                                 }
                                 $location->setProperty($attributes);
-
-                                $dm->persist($location);
-
-
-                                if($module->getParent()){
-
-                                    // $dm->persist($location);
-                                    $moduleid = $module->getParent()->getId();
-                                    $parent = $dm->getRepository('PlantnetDataBundle:Plantunit')
-                                        ->findOneBy(array('module.id' => $moduleid, 'identifier' => $location->getIdparent()));
-                                   if($parent){
-                                       $parent->addLocations($location);
-                                   }
-
-
+                                $moduleid='';
+                                if($module->getParent())
+                                {
+                                    $moduleid=$module->getParent()->getId();
+                                }
+                                $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                                    ->field('module.id')->equals($moduleid)
+                                    ->field('identifier')->equals($location->getIdparent())
+                                    ->field('locations')->prime(true)
+                                    ->getQuery()
+                                    ->execute();
+                                    // ->findOneBy(array('module.id'=>$moduleid,'identifier'=>$location->getIdparent()));
+                                $parent=null;
+                                foreach($parent_q as $p)
+                                {
+                                    $parent=$p;
+                                }
+                                if($parent){
+                                    $parent->addLocations($location);
+                                    $dm->persist($parent);
+                                    $location->setPlantunit($parent);
+                                    $dm->persist($location);
                                 }else{
-                                    echo 'ok';
-                                    $plantunit = new Plantunit();
+                                    $plantunit=new Plantunit();
                                     $plantunit->setModule($module);
                                     $plantunit->setAttributes($attributes);
                                     $plantunit->setIdentifier($location->getIdentifier());
@@ -524,22 +530,15 @@ $count='';
                                     $dm->persist($location);
                                 }
                             }
-
                             if (($rowCount % $batchSize) == 0) {
                                 $dm->flush();
                                 $dm->clear();
+                                $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
                                 //$dm->detach($plantunit);
                                 //unset($plantunit);
                                 //gc_collect_cycles();
-
                             }
-
                         }
-                    
-
-
-
-
 
         $dm->flush();
         $dm->clear();

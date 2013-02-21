@@ -3,6 +3,7 @@
 <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/marker_cluster/leaflet.markercluster.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/full_screen/Control.FullScreen.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/mini_map/Control.MiniMap.js') }}"></script>
+<script src="http://openweathermap.org/js/leaflet-layer.js"></script>
 <script type="text/javascript">
 	{####### MAP #################################################}
 	var map=L.map('map',{
@@ -35,6 +36,7 @@
 			var layer_url_{{ alias }}='{{ layer.url.__toString()|escape('js') }}';
 			var layer_attrib_{{ alias }}='{{ layer.attrib.__toString()|escape('js') }}';
 		{% endautoescape %}
+		{####### OVERLAY MAPS #################################################}
 		{% if layer.attributes().opacity is defined %}
 			{% if layer.legend is defined %}
 				{% autoescape false %}
@@ -60,6 +62,7 @@
 				unloadInvisibleTiles:true
 			});
 			overlay_maps['{{ layer.attributes().name }}']=layer_{{ alias }};
+		{####### BASE MAPS #################################################}
 		{% else %}
 			var layer_{{ alias }}=new L.TileLayer(layer_url_{{ alias }},{
 				attribution:layer_attrib_{{ alias }},
@@ -71,6 +74,7 @@
 					map.addLayer(layer_{{ alias }});
 				{% endif %}
 				{% set default=1 %}
+			{####### MINI MAP #################################################}
 			{% else %}
 				var mini_map=new L.Control.MiniMap(layer_{{ alias }},{
 					{% if layer.attributes().zoomoffset is defined %}
@@ -81,6 +85,10 @@
 			{% endif %}
 		{% endif %}
 	{% endfor %}
+	{####### WEATHER #################################################}
+	var validatorsLayer=new OsmJs.Weather.LeafletLayer({lang:'en'});
+	overlay_maps['Météo']=validatorsLayer;
+	{####### MAP #################################################}
 	L.control.layers(base_maps,overlay_maps).addTo(map);
 	{####### MARKERS #################################################}
 	var markers=new L.MarkerClusterGroup({
@@ -88,7 +96,8 @@
 	});
 	{% for location in locations %}
 		var marker_{{ location.getId() }}=L.marker([{{ location.getLatitude() }},{{ location.getLongitude() }}]);
-		marker_{{ location.getId() }}.bindPopup('<b>{{ location.getProperty().Taxon }}</b><br />{{ location.getProperty().Family }}');
+		{# marker_{{ location.getId() }}.bindPopup('<b>{{ location.getProperty().Taxon }}</b><br />{{ location.getProperty().Family }}'); #}
+		marker_{{ location.getId() }}.bindPopup('<b>Taxon</b><br />Family');
 		markers.addLayer(marker_{{ location.getId() }});
 	{% endfor %}
 	map.addLayer(markers);
