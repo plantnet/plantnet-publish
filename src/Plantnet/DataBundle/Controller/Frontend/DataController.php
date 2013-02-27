@@ -188,7 +188,7 @@ class DataController extends Controller
                 unset($c_plantunits);
                 $locations=array();
                 $c_locations=$m->bota->Location->find(
-                    array('plantunit'=>array('$in'=>$id_plantunits)),
+                    array('plantunit.$id'=>array('$in'=>$id_plantunits)),
                     array('_id'=>1,'latitude'=>1,'longitude'=>1)
                 );
                 unset($id_plantunits);

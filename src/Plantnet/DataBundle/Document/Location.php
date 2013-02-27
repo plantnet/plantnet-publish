@@ -32,7 +32,7 @@ class Location
     protected $longitude;
     
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Plantunit", simple=true)
+     * @MongoDB\ReferenceOne(targetDocument="Plantunit")
      */
     private $plantunit;
 
