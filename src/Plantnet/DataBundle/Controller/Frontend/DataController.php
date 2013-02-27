@@ -181,31 +181,27 @@ class DataController extends Controller
                     array('_id'=>1)
                 );
                 $id_plantunits=array();
-                foreach($c_plantunits as $p)
+                foreach($c_plantunits as $id=>$p)
                 {
-                    $mdbid=$p['_id'];
-                    $id_plantunits[]=$mdbid->{'$id'};
+                    $id_plantunits[]=new \MongoId($id);
                 }
-                $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
-                    ->field('plantunit.id')->in($id_plantunits)
-                    ->getQuery()
-                    ->execute();
-                /*$plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                    ->field('module.id')->equals($module->getId())
-                    ->field('locations')->prime(true)
-                    ->limit(10)
-                    ->getQuery()
-                    ->execute();
+                unset($c_plantunits);
                 $locations=array();
-                foreach($plantunits as $plantunit)
+                $c_locations=$m->bota->Location->find(
+                    array('plantunit.$id'=>array('$in'=>$id_plantunits)),
+                    array('_id'=>1,'latitude'=>1,'longitude'=>1)
+                );
+                unset($id_plantunits);
+                foreach($c_locations as $id=>$l)
                 {
-                    $locs=$plantunit->getLocations();
-                    foreach($locs as $point)
-                    {
-                        $locations[]=$point;
-                    }
+                    $loc=array();
+                    $loc['id']=$id;
+                    $loc['latitude']=$l['latitude'];
+                    $loc['longitude']=$l['longitude'];
+                    $locations[]=$loc;
                 }
-                */
+                unset($c_locations);
+                unset($m);
                 $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
                 return $this->render('PlantnetDataBundle:Frontend:map.html.twig',array(
