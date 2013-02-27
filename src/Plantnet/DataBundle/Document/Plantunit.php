@@ -47,7 +47,7 @@ class Plantunit
     private $images = array();
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Location", cascade={"remove"})
+     * @MongoDB\ReferenceMany(targetDocument="Location", cascade={"remove"}, simple=true)
      */
     private $locations = array();
 
