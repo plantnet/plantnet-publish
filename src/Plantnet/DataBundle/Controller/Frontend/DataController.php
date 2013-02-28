@@ -28,8 +28,8 @@ class DataController extends Controller
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
 
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-                                ->findAll();
-            $modules = array();
+                            ->findAll();
+        $modules = array();
         foreach($collections as $collection){
             $coll = array('collection'=>$collection->getName(), 'id'=>$collection->getId());
 
@@ -92,10 +92,10 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/collection/{collection}", name="_collection")
+     * @Route("/projet/{owner}/collection/{collection}", name="_collection")
      * @Template()
      */
-    public function collectionAction($collection)
+    public function collectionAction($owner,$collection)
     {
             $dm = $this->get('doctrine.odm.mongodb.document_manager');
 

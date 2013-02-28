@@ -40,9 +40,11 @@ class AdminController extends Controller
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
 
+        $user=$this->container->get('security.context')->getToken()->getUser();
+
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-                                ->findAll();
-            $modules = array();
+                            ->findBy(array('user.id'=>$user->getId()));
+        $modules = array();
         foreach($collections as $collection){
             $coll = array('collection'=>$collection->getName(), 'id'=>$collection->getId());
 
@@ -93,7 +95,8 @@ class AdminController extends Controller
 
             if ($form->isValid()) {
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
-                //$entity->setUser($this->get('security.context')->getToken()->getUser());
+                $user=$this->container->get('security.context')->getToken()->getUser();
+                $document->setUser($user);
                 $dm->persist($document);
                 $dm->flush();
 

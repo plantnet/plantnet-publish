@@ -218,7 +218,10 @@ class DefaultController extends Controller
                                 ->findAll();
             $list = array();
         foreach($collections as $collection){
-            $coll = array('collection'=>$collection->getName());
+            $coll = array(
+                'collection'=>$collection->getName(),
+                'user'=>$collection->getUser()->getUsernameCanonical()
+            );
 
             $module = $dm->getRepository('PlantnetDataBundle:Module')
                                 ->findBy(array('collection' => $collection->getId()));

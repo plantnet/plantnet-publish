@@ -858,12 +858,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/escapestudios/EscapeWSSEAuthenticationBundle.git",
-                "reference": "deff327641a882f6c6f637b1f1183c52430ac60e"
+                "reference": "b0e4cf0e6da9265daa4bbfec7427618175129d5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/escapestudios/EscapeWSSEAuthenticationBundle/zipball/deff327641a882f6c6f637b1f1183c52430ac60e",
-                "reference": "deff327641a882f6c6f637b1f1183c52430ac60e",
+                "url": "https://api.github.com/repos/escapestudios/EscapeWSSEAuthenticationBundle/zipball/b0e4cf0e6da9265daa4bbfec7427618175129d5d",
+                "reference": "b0e4cf0e6da9265daa4bbfec7427618175129d5d",
                 "shasum": ""
             },
             "require": {
@@ -884,7 +884,7 @@
                     "Escape\\WSSEAuthenticationBundle": ""
                 }
             },
-            "notification-url": "http://packagist.org/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -905,7 +905,7 @@
                 "bundle",
                 "wsse"
             ],
-            "time": "2013-02-21 17:03:53"
+            "time": "2013-02-28 11:50:44"
         },
         {
             "name": "friendsofsymfony/jsrouting-bundle",

@@ -2,12 +2,10 @@
 namespace Plantnet\DataBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use Vich\GeographicalBundle\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @MongoDB\Document
- * @Vich\Geographical
  */
 class Location
 {
