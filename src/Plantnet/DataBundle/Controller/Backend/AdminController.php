@@ -46,7 +46,11 @@ class AdminController extends Controller
                             ->findBy(array('user.id'=>$user->getId()));
         $modules = array();
         foreach($collections as $collection){
-            $coll = array('collection'=>$collection->getName(), 'id'=>$collection->getId());
+            $coll = array(
+                'collection'=>$collection->getName(),
+                'id'=>$collection->getId(),
+                'owner'=>$collection->getUser()->getUsernameCanonical()
+            );
 
             $module = $dm->getRepository('PlantnetDataBundle:Module')
                                 ->findBy(array('collection.id' => $collection->getId()));

@@ -5,11 +5,11 @@
         {% for collection in list %}
     <li>
 
-                <a  class="collection" href="{{ path('_collection', { 'collection': collection.collection }) }}">{{ collection.collection }}</a>
+                <a  class="collection" href="{{ path('_collection', { 'owner': collection.owner, 'collection': collection.collection }) }}">{{ collection.collection }}</a>
                 {% if is_granted('ROLE_USER') %}
                 <a  class="edit" href="{{ path('collection_edit', { 'id': collection.id }) }}"></a>
                 {% endif %}
-                <a  class="view" href="{{ path('_collection', { 'collection': collection.collection }) }}"></a>
+                <a  class="view" href="{{ path('_collection', { 'owner': collection.owner, 'collection': collection.collection }) }}"></a>
 
                 <div class="arrow"></div>
 
@@ -20,7 +20,7 @@
             {% for row in type %}
 
             <li class='row-module'>
-                <a  class="{{ row.type }}" href="{{ path('_module', { 'collection': collection.collection, 'module': row.Name }) }}">{{ row.Name }}</a>
+                <a  class="{{ row.type }}" href="{{ path('_module', { 'owner': collection.owner, 'collection': collection.collection, 'module': row.Name }) }}">{{ row.Name }}</a>
                 {% if is_granted('ROLE_USER') %}
                 <a  class="edit" href="{{ path('modules_edit', { 'id': row.id }) }}"></a>
                 {% endif %}

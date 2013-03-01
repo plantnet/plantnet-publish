@@ -26,139 +26,98 @@ class DataController extends Controller
     public function indexAction()
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-                            ->findAll();
+            ->findAll();
         $modules = array();
         foreach($collections as $collection){
-            $coll = array('collection'=>$collection->getName(), 'id'=>$collection->getId());
-
+            $coll = array(
+                'collection'=>$collection->getName(),
+                'id'=>$collection->getId()
+            );
             $module = $dm->getRepository('PlantnetDataBundle:Module')
-                                ->findBy(array('collection.id' => $collection->getId()));
+                ->findBy(array('collection.id' => $collection->getId()));
             array_push($coll, $module);
-
             array_push($modules, $coll);
         }
-
-                    return $this->render('PlantnetDataBundle:Frontend:index.html.twig', array('collections' => $collections, 'list' => $modules, 'current' => 'index'));
-
+        return $this->render('PlantnetDataBundle:Frontend:index.html.twig', array('collections' => $collections, 'list' => $modules, 'current' => 'index'));
     }
 
-
-    public function listAction()
+    public function menuCollectionListAction()
     {
-            $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-            $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-                                ->findAll();
-            $list = array();
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $collections = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findAll();
+        $list = array();
         foreach($collections as $collection){
-            $coll = array('collection'=>$collection->getName());
-
+            $coll = array(
+                'collection'=>$collection->getName(),
+                'owner'=>$collection->getUser()->getUsernameCanonical()
+            );
             $module = $dm->getRepository('PlantnetDataBundle:Module')
-                                ->findBy(array('collection' => $collection->getId()));
+                ->findBy(array('collection' => $collection->getId()));
             array_push($coll, $module);
             array_push($list, $coll);
         }
-
-
-            return $this->render('PlantnetDataBundle:Frontend:collectionList.html.twig', array('collections' => $collections, 'list' => $list, 'current' => 'collections'));
-
-    }
-
-    /**
-     * @Route("/collections", name="_collectionList")
-     * @Template()
-     */
-    public function collectionListAction()
-    {
-            $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-            $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-                                ->findAll();
-            $list = array();
-        foreach($collections as $collection){
-            $coll = array('collection'=>$collection->getName());
-
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
-                                ->findBy(array('collection' => $collection->getId()));
-            array_push($coll, $module);
-            array_push($list, $coll);
-        }
-
-
-            return $this->render(new ControllerReference('PlantnetDataBundle:Frontend:collectionList.html.twig', array('collections' => $collections, 'list' => $list, 'current' => 'collections')));
-
+        return $this->render('PlantnetDataBundle:Frontend:menuCollectionList.html.twig', array('collections' => $collections, 'list' => $list, 'current' => 'collections'));
     }
 
     /**
      * @Route("/projet/{owner}/collection/{collection}", name="_collection")
      * @Template()
      */
-    public function collectionAction($owner,$collection)
+    public function collectionAction($owner, $collection)
     {
-            $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-            $coll = $dm->getRepository('PlantnetDataBundle:Collection')
-                                ->findOneByName($collection);
-
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
-                                ->findBy(array('collection.id' => $coll->getId()));
-
-            $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-                                ->findAll();
-            $list = array();
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $coll = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findBy(array('collection.id' => $coll->getId()));
+        $collections = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findAll();
+        $list = array();
         foreach($collections as $collection){
-            $collArray = array('collection'=>$collection->getName());
-
+            $collArray = array(
+                'collection'=>$collection->getName()
+            );
             $mod = $dm->getRepository('PlantnetDataBundle:Module')
-                                ->findBy(array('collection' => $collection->getId()));
+                ->findBy(array('collection' => $collection->getId()));
             array_push($collArray, $module);
             array_push($list, $collArray);
         }
-
-            return $this->render('PlantnetDataBundle:Frontend:collection.html.twig', array('list'=>$list, 'collections' => $collections, 'collection' => $coll, 'module' => $module, 'current' => 'collection'));
-
+        return $this->render('PlantnetDataBundle:Frontend:collection.html.twig', array('list'=>$list, 'collections' => $collections, 'collection' => $coll, 'module' => $module, 'current' => 'collection'));
     }
 
     /**
-     * @Route("/collection/{collection}/{module}", name="_module")
+     * @Route("/projet/{owner}/collection/{collection}/{module}", name="_module")
      * @Template()
      */
-    public function moduleAction($collection, $module)
+    public function moduleAction($owner, $collection, $module)
     {
-            $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-            $collection = $dm->getRepository('PlantnetDataBundle:Collection')
-                          ->findOneByName($collection);
-
-            $mod = $dm->getRepository('PlantnetDataBundle:Module')
-                       ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
-        
-            if($mod->getParent()){
-                $module = $dm->getRepository('PlantnetDataBundle:Module')
-                       ->find($mod->getParent()->getId());
-            }else{
-                $module = $dm->getRepository('PlantnetDataBundle:Module')
-                       ->find($mod->getId());
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        $mod = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
+        if($mod->getParent()){
+            $module = $dm->getRepository('PlantnetDataBundle:Module')
+                ->find($mod->getParent()->getId());
+        }else{
+            $module = $dm->getRepository('PlantnetDataBundle:Module')
+                ->find($mod->getId());
+        }
+        $display = array();
+        $field = $module->getProperties();
+        foreach($field as $row){
+            if($row->getMain() == true){
+                $display[] = $row->getName();
             }
-
-
-            $display = array();
-            $field = $module->getProperties();
-            foreach($field as $row){
-                if($row->getMain() == true){
-                    $display[] = $row->getName();
-                }
-
-            }
-
+        }
         switch ($mod->getType())
         {
             case "text":
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->field('module')->references($module)
-                ->hydrate(false);
+                    ->field('module')->references($module)
+                    ->hydrate(false);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(50);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
@@ -166,9 +125,9 @@ class DataController extends Controller
                 break;
             case "image":
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->field('module')->references($module)
-                ->field('images')->exists(true)
-                ->hydrate(false);
+                    ->field('module')->references($module)
+                    ->field('images')->exists(true)
+                    ->hydrate(false);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(20);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
@@ -212,77 +171,54 @@ class DataController extends Controller
                     'layers' => $layers
                 ));
                 break;
-
         }
-
-
-
     }
 
     /**
-     * @Route("/collection/{collection}/{module}/details/{id}", name="_details")
+     * @Route("/projet/{owner}/collection/{collection}/{module}/details/{id}", name="_details")
      * @Template()
      */
-    public function detailsAction($collection, $module, $id)
+    public function detailsAction($owner, $collection, $module, $id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $coll = $dm->getRepository('PlantnetDataBundle:Collection')
-                                ->findOneByName($collection);
+            ->findOneByName($collection);
         $modules = $dm->getRepository('PlantnetDataBundle:Module')
-                                ->findBy(array('collection' => $coll->getId()));
-
+            ->findBy(array('collection' => $coll->getId()));
         $module = $dm->getRepository('PlantnetDataBundle:Module')
-                                ->findOneBy(array('name' => $module, 'collection.id' => $coll->getId()));
+            ->findOneBy(array('name' => $module, 'collection.id' => $coll->getId()));
         $display = array();
-            $field = $module->getProperties();
-            foreach($field as $row){
-                if($row->getDetails() == true){
-                    $display[] = $row->getName();
-                }
-
+        $field = $module->getProperties();
+        foreach($field as $row){
+            if($row->getDetails() == true){
+                $display[] = $row->getName();
             }
-
+        }
         $plantunit = $dm->getRepository('PlantnetDataBundle:Plantunit')
-                    ->findOneBy(array('module.id' => $module->getId(), 'id' => $id));
-
+            ->findOneBy(array('module.id' => $module->getId(), 'id' => $id));
         $locations=array();
         $locs=$plantunit->getLocations();
         foreach($locs as $point)
         {
             $locations[]=$point;
         }
-
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
-
         //$data = $plantunit->getAttributes();
-
-
         $data = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->field('module')->references($module)
-                ->field('id')->equals($id)
-                ->hydrate(false)->getQuery()->execute();
-
+            ->field('module')->references($module)
+            ->field('id')->equals($id)
+            ->hydrate(false)->getQuery()->execute();
         return $this->render('PlantnetDataBundle:Frontend:details.html.twig', array(
-
-                     'idplantunit' => $plantunit->getId(),
-                     'display'  => $display,
-                     'data'     => $data,
-                     'locations' => $locations,
-                     'layers' => $layers,
-                     'collection' => $coll,
-                     'module'   => $module,
-                     'modules'  => $modules));
-        
-    }
-
-    /**
-     * @Route("/taxa", name="_taxa")
-     * @Template()
-     */
-    public function taxonomyAction()
-    {
-        return $this->render('PlantnetDataBundle:Default:taxonomy.html.twig', array('current' => 'taxonomy'));
+            'idplantunit' => $plantunit->getId(),
+            'display' => $display,
+            'data' => $data,
+            'locations' => $locations,
+            'layers' => $layers,
+            'collection' => $coll,
+            'module' => $module,
+            'modules' => $modules
+        ));
     }
 
     /**
@@ -294,31 +230,106 @@ class DataController extends Controller
         return $this->render('PlantnetDataBundle:Default:search.html.twig', array('current' => 'taxonomy'));
     }
 
+
+
+
+
+
+
+
+
+    /*
+    public function listAction()
+    {
+            $dm = $this->get('doctrine.odm.mongodb.document_manager');
+
+            $collections = $dm->getRepository('PlantnetDataBundle:Collection')
+                                ->findAll();
+            $list = array();
+        foreach($collections as $collection){
+            $coll = array('collection'=>$collection->getName());
+
+            $module = $dm->getRepository('PlantnetDataBundle:Module')
+                                ->findBy(array('collection' => $collection->getId()));
+            array_push($coll, $module);
+            array_push($list, $coll);
+        }
+
+
+            return $this->render('PlantnetDataBundle:Frontend:collectionList.html.twig', array('collections' => $collections, 'list' => $list, 'current' => 'collections'));
+
+    }
+    */
+
+    /**
+     * @Route("/collections", name="_collectionList")
+     * @Template()
+     */
+    /*
+    public function collectionListAction()
+    {
+            $dm = $this->get('doctrine.odm.mongodb.document_manager');
+
+            $collections = $dm->getRepository('PlantnetDataBundle:Collection')
+                                ->findAll();
+            $list = array();
+        foreach($collections as $collection){
+            $coll = array('collection'=>$collection->getName());
+
+            $module = $dm->getRepository('PlantnetDataBundle:Module')
+                                ->findBy(array('collection' => $collection->getId()));
+            array_push($coll, $module);
+            array_push($list, $coll);
+        }
+
+
+            return $this->render(new ControllerReference('PlantnetDataBundle:Frontend:collectionList.html.twig', array('collections' => $collections, 'list' => $list, 'current' => 'collections')));
+
+    }
+    */
+
+    /**
+     * @Route("/taxa", name="_taxa")
+     * @Template()
+     */
+    /*
+    public function taxonomyAction()
+    {
+        return $this->render('PlantnetDataBundle:Default:taxonomy.html.twig', array('current' => 'taxonomy'));
+    }
+    */
+
     /**
      * @Route("/credits", name="_credits")
      * @Template()
      */
+    /*
     public function creditsAction()
     {
         return $this->render('PlantnetDataBundle:Default:credits.html.twig', array('current' => 'taxonomy'));
     }
+    */
 
     /**
      * @Route("/mentions", name="_mentions")
      * @Template()
      */
+    /*
     public function mentionsAction()
     {
         return $this->render('PlantnetDataBundle:Default:mentions.html.twig', array('current' => 'taxonomy'));
     }
+    */
 
     /**
      * @Route("/contacts", name="_contacts")
      * @Template()
      */
+    /*
     public function contactsAction()
     {
         return $this->render('PlantnetDataBundle:Default:contacts.html.twig', array('current' => 'taxonomy'));
     }
+    */
 
 }

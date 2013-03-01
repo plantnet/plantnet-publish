@@ -1,22 +1,20 @@
 {% extends "PlantnetDataBundle::layout.html.twig" %}
-
 {% block title collection.Name %}
 {% block stylesheets %}
-        {{ parent() }}
-        
+	{{ parent() }}
 {% endblock %}
-
 {% block header %}<h1>{{ collection.Name }}</h1>{% endblock %}
 {% block main %}
-
-
-                        {% for row in module %}
-
-                                <li class="module"><a href="{{ path('_module', { 'collection': collection.Name, 'module': row.Name }) }}">{{ row.Name }}</a></li>
-
-                        {% endfor %}
-
+	<ul>
+		{% for row in module %}
+			<li class="module">
+				<a href="{{ path('_module', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': row.Name }) }}">
+					{{ row.Name }}
+				</a>
+			</li>
+		{% endfor %}
+	</ul>
 {% endblock %}
 {% block javascripts %}
-             {{ parent() }}
+	{{ parent() }}
 {% endblock %}

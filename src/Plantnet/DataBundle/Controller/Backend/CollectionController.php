@@ -36,7 +36,11 @@ class CollectionController extends Controller
                                 ->findAll();
             $modules = array();
         foreach($collections as $collection){
-            $coll = array('collection'=>$collection->getName(), 'id'=>$collection->getId());
+            $coll = array(
+                'collection'=>$collection->getName(),
+                'id'=>$collection->getId(),
+                'owner'=>$collection->getUser()->getUsernameCanonical()
+            );
 
             $module = $dm->getRepository('PlantnetDataBundle:Module')
                                 ->findBy(array('collection.id' => $collection->getId()));
@@ -94,15 +98,17 @@ class CollectionController extends Controller
         $editForm   = $this->createForm(new CollectionType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
 
+
         $request = $this->getRequest();
 
         if ('POST' === $request->getMethod()) {
             $editForm->bindRequest($request);
 
+
             if ($editForm->isValid()) {
-                $em = $this->getDoctrine()->getEntityManager();
-                $em->persist($entity);
-                $em->flush();
+                // $em = $this->getDoctrine()->getEntityManager();
+                $dm->persist($entity);
+                $dm->flush();
 
                 return $this->redirect($this->generateUrl('collection_edit', array('id' => $id)));
             }

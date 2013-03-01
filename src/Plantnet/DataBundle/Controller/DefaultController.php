@@ -23,6 +23,7 @@ class DefaultController extends Controller
      * @Route("/mongo")
      * @Template()
      */
+    /*
     public function indexAction()
     {
         $product = new Plantunit();
@@ -32,11 +33,13 @@ class DefaultController extends Controller
             $dm->flush();
         return new Response('Created product id '.$product->getId());
     }
+    */
 
     /**
      * @Route("/mongo_import")
      * @Template()
      */
+    /*
     public function mongo_importAction()
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
@@ -110,35 +113,37 @@ class DefaultController extends Controller
         $e = microtime(true);
         echo ' Inserted '.$rowCount.' objects in ' . ($e - $s) . ' seconds' . PHP_EOL;
 
-        /*$file = new SplFileObject(__DIR__."/../Resources/uploads/species_full.csv");
-        $file->setFlags(SplFileObject::READ_CSV);
-        $file->setCsvControl(';');
+        // $file = new SplFileObject(__DIR__."/../Resources/uploads/species_full.csv");
+        // $file->setFlags(SplFileObject::READ_CSV);
+        // $file->setCsvControl(';');
             
-        foreach($file as $line)
-            {
-                $plantunit = new Plantunit();
+        // foreach($file as $line)
+        //     {
+        //         $plantunit = new Plantunit();
 
-            }*/
+        //     }
 
         return new Response('Plantunit imported');
     }
+    */
 
     /**
      * @Route("/mongo_show/{collection}/{module}")
      * @Template()
      */
+    /*
     public function mongo_showAction($collection, $module)
     {
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
-        /*$coll = $dm->getRepository('PlantnetAdminBundle:Collection')
-                                ->findOneByName($collection);
+        // $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        // $coll = $dm->getRepository('PlantnetAdminBundle:Collection')
+        //                         ->findOneByName($collection);
         
-        $modules = 'vide';
+        // $modules = 'vide';
 
-        $module = $dm->getRepository('PlantnetAdminBundle:Module')
-                                ->findOneBy(array('name' => $module, 'collection' => $coll->getId()));
+        // $module = $dm->getRepository('PlantnetAdminBundle:Module')
+        //                         ->findOneBy(array('name' => $module, 'collection' => $coll->getId()));
 
-        */
+        
 
         $collection = $dm->getRepository('PlantnetAdminBundle:Collection')
                                 ->findOneByName($collection);
@@ -159,11 +164,13 @@ class DefaultController extends Controller
         return $this->render('PlantnetAdminBundle::datagrid.html.twig', array('paginator' => $paginator, 'module'=>$module));
 
     }
+    */
 
     /**
      * @Route("/mongo_image")
      * @Template()
      */
+    /*
     public function mongo_imageAction()
     {
 
@@ -188,8 +195,9 @@ class DefaultController extends Controller
             $dm->flush();
 
     }
+    */
 
-    
+    /*
     public function collectionListAction()
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
@@ -209,7 +217,9 @@ class DefaultController extends Controller
 
         return $this->render('PlantnetDataBundle:Backend\Collection:collectionlist.html.twig',array('collections' => $collections, 'list' => $modules, 'current' => 'administration'));
     }
+    */
 
+    /*
     public function menuCollectionListAction()
     {
             $dm = $this->get('doctrine.odm.mongodb.document_manager');
@@ -219,8 +229,7 @@ class DefaultController extends Controller
             $list = array();
         foreach($collections as $collection){
             $coll = array(
-                'collection'=>$collection->getName(),
-                'user'=>$collection->getUser()->getUsernameCanonical()
+                'collection'=>$collection->getName()
             );
 
             $module = $dm->getRepository('PlantnetDataBundle:Module')
@@ -233,4 +242,5 @@ class DefaultController extends Controller
             return $this->render('PlantnetDataBundle:Frontend:menuCollectionList.html.twig', array('collections' => $collections, 'list' => $list, 'current' => 'collections'));
 
     }
+    */
 }

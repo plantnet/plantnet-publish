@@ -1,60 +1,40 @@
 
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
-
-
-
-
 {% block main %}
-
-<div class="results">
-    {% if paginator|length > 0 %}
-
-    <div class="pagerfanta">
-            {{ pagerfanta(paginator, 'twitter_bootstrap') }}
-        </div>
-
-    <table cellpadding="3" class="zebra-striped">
-    <colgroup>
-          <col width=1%>
-          <col width=12%>
-          <col width=14%>
-
-    </colgroup>
-			<thead>
-
-			<tr class="rowtop">
+    <div class="results">
+        {% if paginator|length > 0 %}
+            <div class="pagerfanta">
+                {{ pagerfanta(paginator, 'twitter_bootstrap') }}
+            </div>
+             <table cellpadding="3" class="zebra-striped">
+                <colgroup>
+                    <col width=1%>
+                    <col width=12%>
+                    <col width=14%>
+                </colgroup>
+                <thead>
+                    <tr class="rowtop">
                         {% for row in display %}
-
-                                <th class="vtop">{{ row }}</th>
-
+                            <th class="vtop">{{ row }}</th>
                         {% endfor %}
-			</tr>
-
-			</thead>
-			<tbody>
-    {% for row in paginator %}
-        <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'collection': collection.Name, 'module': module.Name, 'id': row._id }) }}'">
-
-                        {% for field in display %}
-
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in paginator %}
+                        <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': module.Name, 'id': row._id }) }}'">
+                            {% for field in display %}
                                 <td>{{ row.attributes[field] }}</td>
-
-                        {% endfor %}
-
-        </tr>
-    {% endfor %}
-    </tbody>
-    </table>
-    <div class="pagerfanta">
-            {{ pagerfanta(paginator, 'twitter_bootstrap') }}
-        </div>
-    {% endif %}
-
-</div>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagerfanta">
+                {{ pagerfanta(paginator, 'twitter_bootstrap') }}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
-
 {% block javascripts %}
-{{ parent() }}
-
-
+    {{ parent() }}
 {% endblock %}
