@@ -88,19 +88,18 @@
                          <script type="text/javascript">
 
                             $('#nav a').click(function(e) {
-
-                                e.preventDefault();
-                                var $url = $(this).attr('href');
-
+                              e.preventDefault();
+                              var $url = $(this).attr('href');
+                              if($url!='#')
+                              {
                                 $(this).prev().append('<div class="page-loading"></div>');
-                                    $.get($url, function(data) {
-                                        $('#content').html(data);
-                                        $(".page-loading").remove();
-                                    });
-
+                                $.get($url, function(data) {
+                                  $('#content').html(data);
+                                  $(".page-loading").remove();
                                 });
+                              }
+                            });
 
-                                
       (function () {
         if (/Microsoft/.test(navigator.appName)) { return }
 

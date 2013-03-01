@@ -9,7 +9,8 @@
 	var map=L.map('map',{
 		center:[{{ layers.attributes().centerlat }},{{ layers.attributes().centerlng }}],
 		zoom:{{ layers.attributes().defaultzoom }},
-		minZoom:{{ layers.attributes().minzoom }}
+		minZoom:{{ layers.attributes().minzoom }},
+		worldCopyJump:true
 	});
 	{####### FULL SCREEN #################################################}
 	{% if layers.attributes().fullscreen=='true' %}
