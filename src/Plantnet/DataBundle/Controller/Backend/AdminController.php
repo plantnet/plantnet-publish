@@ -650,7 +650,7 @@ $count='';
                 return $this->render('PlantnetDataBundle:Backend\Admin:gallery.html.twig', array('paginator' => $paginator, 'field' => $field, 'collection' => $collection, 'module' => $module, 'display' => $display));
                 break;
             case "locality":
-            $localised = $dm->getRepository('PlantnetDataBundle:Plantunit')->findBy(array('modules'=>$module->getId()));
+                $localised = $dm->getRepository('PlantnetDataBundle:Plantunit')->findBy(array('modules'=>$module->getId()));
 
                 $location = array();
                 foreach($localised as $plantunit){

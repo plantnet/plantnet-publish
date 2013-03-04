@@ -134,13 +134,20 @@ class ModulesController extends Controller
 
             if ($form->isValid()) {
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
-                $entity = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
-
-                if (!$entity) {
+                $module = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
+                if (!$module) {
                     throw $this->createNotFoundException('Unable to find Module entity.');
                 }
+                $collections=$dm->getRepository('PlantnetDataBundle:Collection')->findBy(array('modules.id'=>$id));
+                $collection=null;
+                foreach($collections as $c)
+                {
+                    $collection=$c;
+                }
+                $collection->getModules()->removeElement($module);
 
-                $dm->remove($entity);
+                $dm->persist($collection);
+                $dm->remove($module);
                 $dm->flush();
             }
         }

@@ -26,7 +26,7 @@ class Collection
     
     
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Module")
+     * @MongoDB\ReferenceMany(targetDocument="Module", cascade={"remove"})
      */
     private $modules = array();
 

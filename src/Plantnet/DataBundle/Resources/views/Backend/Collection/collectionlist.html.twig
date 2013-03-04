@@ -20,7 +20,10 @@
             {% for row in type %}
 
             <li class='row-module'>
+                {#
                 <a  class="{{ row.type }}" href="{{ path('_module', { 'owner': collection.owner, 'collection': collection.collection, 'module': row.Name }) }}">{{ row.Name }}</a>
+                #}
+                <a  class="{{ row.type }}" href="{{ path('admin_module_view', { 'collection': collection.collection, 'module': row.Name }) }}">{{ row.Name }}</a>
                 {% if is_granted('ROLE_USER') %}
                 <a  class="edit" href="{{ path('modules_edit', { 'id': row.id }) }}"></a>
                 {% endif %}

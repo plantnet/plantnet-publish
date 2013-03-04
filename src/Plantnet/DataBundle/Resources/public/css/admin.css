@@ -283,6 +283,10 @@ label {
     font-size: 1.5em;
 }
 
+#main-nav .collections > li{
+    clear:both;
+}
+
 #main-nav .collections li .toggleLink{
     font-size: 1.5em;
 }

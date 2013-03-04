@@ -15,7 +15,7 @@ class Module
     protected $id;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Collection", inversedBy="module")
+     * @MongoDB\ReferenceOne(targetDocument="Collection", inversedBy="modules")
      */
     private $collection;
 
@@ -45,7 +45,7 @@ class Module
     /**
      * @MongoDB\ReferenceMany(targetDocument="Plantunit", cascade={"remove"})
      */
-    private $plantunits = array();
+    // private $plantunits = array();
 
     /**
      * @MongoDB\ReferenceOne(targetDocument="Module", nullable="true")
@@ -233,18 +233,18 @@ class Module
      *
      * @param Plantnet\DataBundle\Document\Plantunit $plantunits
      */
-    public function addPlantunits(\Plantnet\DataBundle\Document\Plantunit $plantunits)
-    {
-        $this->plantunits[] = $plantunits;
-    }
+    // public function addPlantunits(\Plantnet\DataBundle\Document\Plantunit $plantunits)
+    // {
+    //     $this->plantunits[] = $plantunits;
+    // }
 
     /**
      * Get plantunits
      *
      * @return Doctrine\Common\Collections\Collection $plantunits
      */
-    public function getPlantunits()
-    {
-        return $this->plantunits;
-    }
+    // public function getPlantunits()
+    // {
+    //     return $this->plantunits;
+    // }
 }

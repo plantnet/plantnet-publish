@@ -1,36 +1,27 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
-
-
-
 {% block head %}
-
-    {% block stylesheets %}
-        {{ parent() }}
+	{% block stylesheets %}
+		{{ parent() }}
 	{% endblock %}
-<title>{% block title module.Name%}</title>
-{#<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/MarkerClusterer-1.0/src/markerclusterer.js') }}"></script>
+	<title>{% block title module.Name%}</title>
+	{#<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/MarkerClusterer-1.0/src/markerclusterer.js') }}"></script>
 
-    <script type="text/javascript">
-      function initialize() {
-        var markerCluster = new MarkerClusterer(map);
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
-    </script>#}
+	<script type="text/javascript">
+	function initialize() {
+	var markerCluster = new MarkerClusterer(map);
+	}
+	google.maps.event.addDomListener(window, 'load', initialize);
+	</script>#}
 {% endblock %}
 {% block body %}
-<section id="breadcrumbs">
-
-    <a href="{{ path('_collection', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name }) }}">{{ collection.Name }}</a>
-    >>
-    <a href="{{ path('_module', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a>
-</section>
-
-{# LEAFLET MAP #}
-<div id="map"></div>
-
- {% endblock %}
-
-  {% block javascripts %}
-  {{ parent() }}
-
-  {% endblock %}
+	<section id="breadcrumbs">
+		<a href="{{ path('_collection', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name }) }}">{{ collection.Name }}</a>
+		>>
+		<a href="{{ path('_module', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a>
+	</section>
+	{# LEAFLET MAP #}
+	<div id="map"></div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+{% endblock %}
