@@ -22,6 +22,11 @@ class Collection
     /**
      * @MongoDB\String
      */
+    protected $alias;
+
+    /**
+     * @MongoDB\String
+     */
     protected $description;
     
     
@@ -74,6 +79,29 @@ class Collection
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set alias
+     *
+     * @param string $alias
+     */
+    public function setAlias($alias)
+    {
+        $tmp=mb_strtolower($alias,'UTF-8');
+        $tmp=eregi_replace("[ ]+",'-',strtolower($tmp));
+        $tmp=preg_replace('/([^.a-z0-9]+)/i','_',$tmp);
+        $this->alias = $tmp;
+    }
+
+    /**
+     * Get alias
+     *
+     * @return string $alias
+     */
+    public function getAlias()
+    {
+        return $this->alias;
     }
 
     /**

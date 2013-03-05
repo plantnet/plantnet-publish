@@ -146,6 +146,12 @@ class ModulesController extends Controller
                 }
                 $collection->getModules()->removeElement($module);
 
+                $csvfile = __DIR__.'/../../Resources/uploads/'.$collection->getAlias().'/'.$module->getName_fname().'.csv';
+                if(file_exists($csvfile))
+                {
+                    unlink($csvfile);
+                }
+
                 $dm->persist($collection);
                 $dm->remove($module);
                 $dm->flush();

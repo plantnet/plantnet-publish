@@ -143,6 +143,20 @@ class CollectionController extends Controller
                     throw $this->createNotFoundException('Unable to find Collection entity.');
                 }
 
+                $dir=__DIR__.'/../../Resources/uploads/'.$entity->getAlias();
+                if(file_exists($dir)&&is_dir($dir))
+                {
+                    $files=scandir($dir);
+                    foreach($files as $file)
+                    {
+                        if($file!='.'&&$file!='..')
+                        {
+                            unlink($dir.'/'.$file);
+                        }
+                    }
+                    rmdir($dir);
+                }
+
                 $dm->remove($entity);
                 $dm->flush();
             }

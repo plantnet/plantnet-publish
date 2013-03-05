@@ -101,6 +101,7 @@ class AdminController extends Controller
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $document->setUser($user);
+                $document->setAlias($user->getUsername().'_'.$document->getName());
                 $dm->persist($document);
                 $dm->flush();
 
@@ -208,8 +209,8 @@ class AdminController extends Controller
                 $uploadedFile = $module->getFile();
                 try{
                     $uploadedFile->move(
-    	                    __DIR__."/../../Resources/uploads/".$module->getCollection()."/",
-    	                    $module->getName().'.csv'
+    	                    __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/',
+    	                    $module->getName_fname().'.csv'
     	                );
                 }
                 catch(FilePermissionException $e)
@@ -221,7 +222,7 @@ class AdminController extends Controller
                             throw new \Exception($e->getMessage());
                         }
 
-                $csv = __DIR__."/../../Resources/uploads/".$module->getCollection()."/".$module->getName().'.csv';
+                $csv = __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
                 
                 $handle = fopen($csv, "r");
                 $field=fgetcsv($handle,0,";");
@@ -379,7 +380,7 @@ $count='';
                 /*
                  * Open the uploaded csv
                  */
-                $csvfile = __DIR__."/../../Resources/uploads/".$module->getCollection()."/".$module->getName().'.csv';
+                $csvfile = __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
                 $handle = fopen($csvfile, "r");
 
                 /*
@@ -557,6 +558,11 @@ $count='';
 
         fclose($handle);
 
+        if(file_exists($csvfile))
+        {
+            unlink($csvfile);
+        }
+
         /*$usermail = $this->get('security.context')->getToken()->getUser()->getEmail();
 
         // Récupération du mailer service.
@@ -674,7 +680,7 @@ $count='';
      * @Method("post")
      * @Template("PlantnetDataBundle:Backend\Admin:import_moduledata.html.twig")
      */
-    public function importmodAction($id, $idmodule)
+    public function importmodAction_to_delete($id, $idmodule)//à supprimer ?
     {
         $request = $this->container->get('request');
 
@@ -686,7 +692,7 @@ $count='';
 
                 $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
 
-                $csvfile = __DIR__."/../../Resources/uploads/".$module->getCollection()."/".$module->getName().'.csv';
+                $csvfile = __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
                 $handle = fopen($csvfile, "r");
                 $columns=fgetcsv($handle,0,";");
                 $fields = array();

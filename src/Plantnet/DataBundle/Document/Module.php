@@ -127,6 +127,19 @@ class Module
     }
 
     /**
+     * Get name
+     *
+     * @return string $name
+     */
+    public function getName_fname()
+    {
+        $filename=mb_strtolower($this->name,'UTF-8');
+        $filename=eregi_replace("[ ]+",'-',strtolower($filename));
+        $filename=preg_replace('/([^.a-z0-9]+)/i','_',$filename);
+        return $filename;
+    }
+
+    /**
      * Set type
      *
      * @param string $type
