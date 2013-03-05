@@ -5,7 +5,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @MongoDB\EmbeddedDocument
+ * @MongoDB\Document
  */
 class Image
 {
@@ -32,7 +32,12 @@ class Image
     /**
      * @MongoDB\String
      */
-    protected $idparent;
+    // protected $idparent;
+
+    /**
+     * @MongoDB\ReferenceOne(targetDocument="Plantunit")
+     */
+    private $plantunit;
 
     /**
      * @MongoDB\String
@@ -48,8 +53,6 @@ class Image
     {
         return $this->id;
     }
-
-    
 
     /**
      * Set path
@@ -149,5 +152,25 @@ class Image
     public function getProperty()
     {
         return $this->property;
+    }
+
+    /**
+     * Set plantunit
+     *
+     * @param Plantnet\DataBundle\Document\Plantunit $plantunit
+     */
+    public function setPlantunit(\Plantnet\DataBundle\Document\Plantunit $plantunit)
+    {
+        $this->plantunit = $plantunit;
+    }
+
+    /**
+     * Get plantunit
+     *
+     * @return Plantnet\DataBundle\Document\Plantunit $plantunit
+     */
+    public function getPlantunit()
+    {
+        return $this->plantunit;
     }
 }

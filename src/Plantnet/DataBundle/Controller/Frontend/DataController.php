@@ -134,8 +134,9 @@ class DataController extends Controller
                 return $this->render('PlantnetDataBundle:Frontend:gallery.html.twig', array('paginator' => $paginator, 'field' => $field, 'collection' => $collection, 'module' => $module, 'type' => 'images', 'display' => $display));
                 break;
             case "locality":
+                $db=$this->container->getParameter('mdb_base');
                 $m=new \Mongo();
-                $c_plantunits=$m->bota->Plantunit->find(
+                $c_plantunits=$m->$db->Plantunit->find(
                     array('module.$id'=>new \MongoId($module->getId())),
                     array('_id'=>1)
                 );
@@ -146,7 +147,7 @@ class DataController extends Controller
                 }
                 unset($c_plantunits);
                 $locations=array();
-                $c_locations=$m->bota->Location->find(
+                $c_locations=$m->$db->Location->find(
                     array('plantunit.$id'=>array('$in'=>$id_plantunits)),
                     array('_id'=>1,'latitude'=>1,'longitude'=>1)
                 );

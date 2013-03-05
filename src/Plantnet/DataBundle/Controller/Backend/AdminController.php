@@ -440,114 +440,124 @@ $count='';
                                 }
 
                         }elseif ($module->getType() == 'image'){
-                                $image = new Image();
-
-                                $attributes = array();
-                                for ($c=0; $c < $num; $c++) {
-                                    $value = $this->data_encode($data[$c]);
-                                    $attributes[$fields[$c]->getName()] = $value;
-                                    switch($fields[$c]->getType()){
-                                        case 'file':
-                                            $image->setPath($value);
-                                            break;
-                                        case 'copyright':
-                                            $image->setCopyright($value);
-                                            break;
-                                        case 'idparent':
-                                            $image->setIdparent($value);
-                                            break;
-                                        case 'idmodule':
-                                            $image->setIdentifier($value);
-                                            break;
-                                    }
-                                }
-                                $image->setProperty($attributes);
-
-
-                                if($module->getParent()){
-
-                                    $dm->persist($image);
-                                    $moduleid = $module->getParent()->getId();
-                                    $parent = $dm->getRepository('PlantnetDataBundle:Plantunit')
-                                        ->findOneBy(array('module.id' => $moduleid, 'identifier' => $image->getIdparent()));
-                                   if($parent){
-                                       $parent->addImages($image);
-                                   }
-
-
-                                }else{
-                                    $plantunit = new Plantunit();
-                                    $plantunit->setModule($module);
-                                    $plantunit->setAttributes($attributes);
-                                    $plantunit->setIdentifier($image->getIdentifier());
-                                    $plantunit->addImages($image);
-                                    $dm->persist($plantunit);
-                                }
-                            }elseif ($module->getType() == 'locality'){
-                                $location = new Location();
-                                $attributes = array();
-                                for($c=0; $c < $num; $c++)
-                                {
-                                    $value = $this->data_encode($data[$c]);
-                                    $attributes[$fields[$c]->getName()] = $value;
-                                    switch($fields[$c]->getType()){
-                                        case 'lon':
-                                            $location->setLongitude(str_replace(',','.',$value));
-                                            break;
-                                        case 'lat':
-                                            $location->setLatitude(str_replace(',','.',$value));
-                                            break;
-                                        case 'idparent':
-                                            $location->setIdparent($value);
-                                            break;
-                                        case 'idmodule':
-                                            $location->setIdentifier($value);
-                                            break;
-                                    }
-                                }
-                                $location->setProperty($attributes);
-                                $parent=null;
-                                if($module->getParent())
-                                {
-                                    $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                                        ->field('module.id')->equals($module->getParent()->getId())
-                                        ->field('identifier')->equals($location->getIdparent())
-                                        ->getQuery()
-                                        ->execute();
-                                        foreach($parent_q as $p)
-                                        {
-                                            $parent=$p;
-                                        }
-                                }
-                                if($parent)
-                                {
-                                    $parent->addLocations($location);
-                                    $dm->persist($parent);
-                                    $location->setPlantunit($parent);
-                                    $dm->persist($location);
-                                }
-                                else
-                                {
-                                    $plantunit=new Plantunit();
-                                    $plantunit->setModule($module);
-                                    $plantunit->setAttributes($attributes);
-                                    $plantunit->setIdentifier($location->getIdentifier());
-                                    $plantunit->addLocations($location);
-                                    $dm->persist($plantunit);
-                                    $location->setPlantunit($plantunit);
-                                    $dm->persist($location);
+                            $image = new Image();
+                            $attributes = array();
+                            for($c=0; $c < $num; $c++)
+                            {
+                                $value = $this->data_encode($data[$c]);
+                                $attributes[$fields[$c]->getName()] = $value;
+                                switch($fields[$c]->getType()){
+                                    case 'file':
+                                        $image->setPath($value);
+                                        break;
+                                    case 'copyright':
+                                        $image->setCopyright($value);
+                                        break;
+                                    case 'idparent':
+                                        $image->setIdparent($value);
+                                        break;
+                                    case 'idmodule':
+                                        $image->setIdentifier($value);
+                                        break;
                                 }
                             }
-                            
-                            if (($rowCount % $batchSize) == 0) {
-                                $dm->flush();
-                                $dm->clear();
-                                $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-                                //$dm->detach($plantunit);
-                                //unset($plantunit);
-                                //gc_collect_cycles();
+                            $image->setProperty($attributes);
+                            $parent=null;
+                            if($module->getParent())
+                            {
+                                $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                                    ->field('module.id')->equals($module->getParent()->getId())
+                                    ->field('identifier')->equals($image->getIdparent())
+                                    ->getQuery()
+                                    ->execute();
+                                    foreach($parent_q as $p)
+                                    {
+                                        $parent=$p;
+                                    }
+                            }
+                            if($parent)
+                            {
+                                $parent->addImages($image);
+                                $dm->persist($parent);
+                                $image->setPlantunit($parent);
+                                $dm->persist($image);
+                            }
+                            else
+                            {
+                                $plantunit=new Plantunit();
+                                $plantunit->setModule($module);
+                                $plantunit->setAttributes($attributes);
+                                $plantunit->setIdentifier($image->getIdentifier());
+                                $plantunit->addImages($image);
+                                $dm->persist($plantunit);
+                                $image->setPlantunit($plantunit);
+                                $dm->persist($image);
+                            }
+                        }elseif ($module->getType() == 'locality'){
+                            $location = new Location();
+                            $attributes = array();
+                            for($c=0; $c < $num; $c++)
+                            {
+                                $value = $this->data_encode($data[$c]);
+                                $attributes[$fields[$c]->getName()] = $value;
+                                switch($fields[$c]->getType()){
+                                    case 'lon':
+                                        $location->setLongitude(str_replace(',','.',$value));
+                                        break;
+                                    case 'lat':
+                                        $location->setLatitude(str_replace(',','.',$value));
+                                        break;
+                                    case 'idparent':
+                                        $location->setIdparent($value);
+                                        break;
+                                    case 'idmodule':
+                                        $location->setIdentifier($value);
+                                        break;
+                                }
+                            }
+                            $location->setProperty($attributes);
+                            $parent=null;
+                            if($module->getParent())
+                            {
+                                $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                                    ->field('module.id')->equals($module->getParent()->getId())
+                                    ->field('identifier')->equals($location->getIdparent())
+                                    ->getQuery()
+                                    ->execute();
+                                    foreach($parent_q as $p)
+                                    {
+                                        $parent=$p;
+                                    }
+                            }
+                            if($parent)
+                            {
+                                $parent->addLocations($location);
+                                $dm->persist($parent);
+                                $location->setPlantunit($parent);
+                                $dm->persist($location);
+                            }
+                            else
+                            {
+                                $plantunit=new Plantunit();
+                                $plantunit->setModule($module);
+                                $plantunit->setAttributes($attributes);
+                                $plantunit->setIdentifier($location->getIdentifier());
+                                $plantunit->addLocations($location);
+                                $dm->persist($plantunit);
+                                $location->setPlantunit($plantunit);
+                                $dm->persist($location);
                             }
                         }
+                            
+                        if (($rowCount % $batchSize) == 0) {
+                            $dm->flush();
+                            $dm->clear();
+                            $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                            //$dm->detach($plantunit);
+                            //unset($plantunit);
+                            //gc_collect_cycles();
+                        }
+                    }
 
         $dm->flush();
         $dm->clear();

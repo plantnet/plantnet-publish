@@ -10,9 +10,9 @@
 {% block body %}
 <section id="breadcrumbs">
 
-    <a href="{{ path('_collection', { 'collection': collection.Name }) }}">{{ collection.Name }}</a>
+    <a href="{{ path('_collection', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name }) }}">{{ collection.Name }}</a>
     >
-    <a href="{{ path('_module', { 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a>
+    <a href="{{ path('_module', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a>
 </section>
 
  <div id="thumbsresults">

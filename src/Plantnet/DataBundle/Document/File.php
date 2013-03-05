@@ -18,7 +18,6 @@ class File
      * @MongoDB\Hash
      */
     protected $attribute;
-
     
     /**
      * @MongoDB\File
@@ -28,7 +27,6 @@ class File
      * })
      */
     protected $File;
-
 
     /**
      * Get id

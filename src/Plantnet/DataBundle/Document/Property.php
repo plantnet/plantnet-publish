@@ -34,7 +34,6 @@ class Property
      */
     private $details;
 
-
     /**
      * Get id
      *

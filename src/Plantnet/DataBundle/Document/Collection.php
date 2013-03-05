@@ -29,7 +29,6 @@ class Collection
      */
     protected $description;
     
-    
     /**
      * @MongoDB\ReferenceMany(targetDocument="Module", cascade={"remove"})
      */
@@ -39,7 +38,6 @@ class Collection
      * @MongoDB\ReferenceOne(targetDocument="Plantnet\UserBundle\Document\User")
      */
     protected $user;
-
 
     /**
      * To String

@@ -43,11 +43,6 @@ class Module
     protected $properties;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Plantunit", cascade={"remove"})
-     */
-    // private $plantunits = array();
-
-    /**
      * @MongoDB\ReferenceOne(targetDocument="Module", nullable="true")
      */
     private $parent;
@@ -57,9 +52,6 @@ class Module
      * @Assert\File(maxSize = "30M")
      */
     protected $file;
-
-
-
 
     public function __construct()
     {
@@ -159,8 +151,6 @@ class Module
         return $this->type;
     }
 
-
-
     /**
      * Add properties
      *
@@ -240,24 +230,4 @@ class Module
     {
         return $this->attachment;
     }
-
-    /**
-     * Add plantunits
-     *
-     * @param Plantnet\DataBundle\Document\Plantunit $plantunits
-     */
-    // public function addPlantunits(\Plantnet\DataBundle\Document\Plantunit $plantunits)
-    // {
-    //     $this->plantunits[] = $plantunits;
-    // }
-
-    /**
-     * Get plantunits
-     *
-     * @return Doctrine\Common\Collections\Collection $plantunits
-     */
-    // public function getPlantunits()
-    // {
-    //     return $this->plantunits;
-    // }
 }

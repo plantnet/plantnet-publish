@@ -9,8 +9,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Data
 {
-    
-
     /**
      * @MongoDB\String
      */
@@ -35,9 +33,6 @@ class Data
      * @MongoDB\Boolean
      */
     private $details;
-
-
-    
 
     /**
      * Set attribute

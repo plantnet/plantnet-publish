@@ -39,18 +39,21 @@ class Plantunit
      */
     protected $identifier;
 
-
     /** @MongoDB\EmbedMany(targetDocument="File") */
     private $files = array();
 
     /** @MongoDB\EmbedMany(targetDocument="Image") */
+    // private $images = array();
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Image", cascade={"remove"})
+     */
     private $images = array();
 
     /**
      * @MongoDB\ReferenceMany(targetDocument="Location", cascade={"remove"})
      */
     private $locations = array();
-
 
     /**
      * Get id
@@ -80,14 +83,10 @@ class Plantunit
         $this->attributes[$name] = array('value' =>$value, 'label' => $name, 'main' => $main, 'details'=>$details);
     }
 
-
-
     public function getAttribute($name)
     {
         return $this->attributes[$name];
     }*/
-
-
 
     /**
      * Set module
@@ -132,13 +131,6 @@ class Plantunit
     {
         return $this->files;
     }
-
-   
-
-    
-
-    
-
 
     /**
      * Set attributes

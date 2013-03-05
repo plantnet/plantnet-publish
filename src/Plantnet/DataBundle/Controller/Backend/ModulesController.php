@@ -146,11 +146,26 @@ class ModulesController extends Controller
                 }
                 $collection->getModules()->removeElement($module);
 
-                $csvfile = __DIR__.'/../../Resources/uploads/'.$collection->getAlias().'/'.$module->getName_fname().'.csv';
+                /*
+                * Remove csv file
+                */
+                $csvfile=__DIR__.'/../../Resources/uploads/'.$collection->getAlias().'/'.$module->getName_fname().'.csv';
                 if(file_exists($csvfile))
                 {
                     unlink($csvfile);
                 }
+
+                /*
+                * Delete children (Modules)
+                */
+
+                /*
+                * Delete Plantunits
+                */
+
+                /*
+                * Delete Locations
+                */
 
                 $dm->persist($collection);
                 $dm->remove($module);
