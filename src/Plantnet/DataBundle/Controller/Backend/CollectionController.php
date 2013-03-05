@@ -8,12 +8,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-use
-    Plantnet\DataBundle\Document\Collection,
-    Plantnet\DataBundle\Form\Type\CollectionType
-    ;
-
-
+use Plantnet\DataBundle\Document\Collection,
+    Plantnet\DataBundle\Form\Type\CollectionType;
 
 /**
  * Collection controller.
@@ -21,7 +17,6 @@ use
  */
 class CollectionController extends Controller
 {
-
     /**
      * Displays a form to edit an existing Collection entity.
      *
@@ -31,24 +26,20 @@ class CollectionController extends Controller
     public function collectionlistAction()
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-                                ->findAll();
-            $modules = array();
+            ->findAll();
+        $modules = array();
         foreach($collections as $collection){
             $coll = array(
                 'collection'=>$collection->getName(),
                 'id'=>$collection->getId(),
                 'owner'=>$collection->getUser()->getUsernameCanonical()
             );
-
             $module = $dm->getRepository('PlantnetDataBundle:Module')
-                                ->findBy(array('collection.id' => $collection->getId()));
+                ->findBy(array('collection.id' => $collection->getId()));
             array_push($coll, $module);
-
             array_push($modules, $coll);
         }
-
         return $this->render('PlantnetDataBundle:Backend\Collection:collectionlist.html.twig',array('collections' => $collections, 'list' => $modules, 'current' => 'administration'));
     }
 
@@ -61,16 +52,12 @@ class CollectionController extends Controller
     public function editAction($id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
         $entity = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-
         $editForm = $this->createForm(new CollectionType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
-
         return array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
@@ -88,32 +75,22 @@ class CollectionController extends Controller
     public function updateAction($id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
         $entity = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-
         $editForm   = $this->createForm(new CollectionType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
-
-
         $request = $this->getRequest();
-
         if ('POST' === $request->getMethod()) {
             $editForm->bindRequest($request);
-
-
             if ($editForm->isValid()) {
                 // $em = $this->getDoctrine()->getEntityManager();
                 $dm->persist($entity);
                 $dm->flush();
-
                 return $this->redirect($this->generateUrl('collection_edit', array('id' => $id)));
             }
         }
-
         return array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
@@ -121,7 +98,7 @@ class CollectionController extends Controller
         );
     }
 
-/**
+    /**
      * Deletes a Collection entity.
      *
      * @Route("/{id}/delete", name="collection_delete")
@@ -131,22 +108,18 @@ class CollectionController extends Controller
     {
         $form = $this->createDeleteForm($id);
         $request = $this->getRequest();
-
         if ('POST' === $request->getMethod()) {
             $form->bindRequest($request);
-
             if ($form->isValid()) {
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
-                $entity = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
-
-                if (!$entity) {
+                $collection = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
+                if(!$collection){
                     throw $this->createNotFoundException('Unable to find Collection entity.');
                 }
-
                 /*
                 * Remove csv directory (and files)
                 */
-                $dir=__DIR__.'/../../Resources/uploads/'.$entity->getAlias();
+                $dir=__DIR__.'/../../Resources/uploads/'.$collection->getAlias();
                 if(file_exists($dir)&&is_dir($dir))
                 {
                     $files=scandir($dir);
@@ -159,12 +132,10 @@ class CollectionController extends Controller
                     }
                     rmdir($dir);
                 }
-
-                $dm->remove($entity);
+                $dm->remove($collection);
                 $dm->flush();
             }
         }
-
         return $this->redirect($this->generateUrl('admin_index'));
     }
 
@@ -172,9 +143,6 @@ class CollectionController extends Controller
     {
         return $this->createFormBuilder(array('id' => $id))
             ->add('id', 'hidden')
-            ->getForm()
-        ;
+            ->getForm();
     }
-
-    
 }

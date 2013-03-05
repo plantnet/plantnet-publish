@@ -11,11 +11,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-use
-    Plantnet\DataBundle\Document\Module,
+use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Form\ImportFormType,
-    Plantnet\DataBundle\Form\Type\ModulesType
-    ;
+    Plantnet\DataBundle\Form\Type\ModulesType;
 
 /**
  * Module controller.
@@ -24,8 +22,6 @@ use
  */
 class ModulesController extends Controller
 {
-
-
     /**
      * @Route("/newmod", name="new_mod")
      * @Template()
@@ -34,20 +30,14 @@ class ModulesController extends Controller
     {
         $entity = new Modules();
         $form   = $this->createForm(new ModulesType(), $entity);
-        
         $properties = '';
-
-        
         //$form = $this->container->get('form.factory')->create(new ModulesType());
-
-	        return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:newmod.html.twig', array(
-		        'entity' => $entity,
-                'properties' => $properties,
-		        'form' => $form->createView()
+        return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:newmod.html.twig', array(
+	        'entity' => $entity,
+            'properties' => $properties,
+	        'form' => $form->createView()
 	    ));
     }
-
-
 
     /**
      * Displays a form to edit an existing Module entity.
@@ -58,17 +48,12 @@ class ModulesController extends Controller
     public function editAction($id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
         $entity = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        
-
         $editForm = $this->get('form.factory')->create(new ModulesType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
-
         return array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
@@ -86,31 +71,22 @@ class ModulesController extends Controller
     public function updateAction($id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
         $entity = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-
         $editForm   = $this->createForm(new ModulesType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
-
         $request = $this->getRequest();
-
         if ('POST' === $request->getMethod()) {
             $editForm->bindRequest($request);
-
             if ($editForm->isValid()) {
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
                 $dm->persist($entity);
-
                 $dm->flush();
-
                 return $this->redirect($this->generateUrl('modules_edit', array('id' => $id)));
             }
         }
-
         return array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
@@ -128,24 +104,18 @@ class ModulesController extends Controller
     {
         $form = $this->createDeleteForm($id);
         $request = $this->getRequest();
-
         if ('POST' === $request->getMethod()) {
             $form->bindRequest($request);
-
             if ($form->isValid()) {
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
                 $module = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
-                if (!$module) {
+                if(!$module){
                     throw $this->createNotFoundException('Unable to find Module entity.');
                 }
-                $collections=$dm->getRepository('PlantnetDataBundle:Collection')->findBy(array('modules.id'=>$id));
-                $collection=null;
-                foreach($collections as $c)
-                {
-                    $collection=$c;
+                $collection=$module->getCollection();
+                if(!$collection){
+                    throw $this->createNotFoundException('Unable to find Collection entity.');
                 }
-                $collection->getModules()->removeElement($module);
-
                 /*
                 * Remove csv file
                 */
@@ -154,20 +124,6 @@ class ModulesController extends Controller
                 {
                     unlink($csvfile);
                 }
-
-                /*
-                * Delete children (Modules)
-                */
-
-                /*
-                * Delete Plantunits
-                */
-
-                /*
-                * Delete Locations
-                */
-
-                $dm->persist($collection);
                 $dm->remove($module);
                 $dm->flush();
             }
@@ -180,7 +136,6 @@ class ModulesController extends Controller
     {
         return $this->createFormBuilder(array('id' => $id))
             ->add('id', 'hidden')
-            ->getForm()
-        ;
+            ->getForm();
     }
 }

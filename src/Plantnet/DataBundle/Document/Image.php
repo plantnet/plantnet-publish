@@ -15,6 +15,11 @@ class Image
     protected $id;
 
     /**
+     * @MongoDB\String
+     */
+    protected $identifier;
+
+    /**
      * @MongoDB\Hash
      */
     protected $property;
@@ -32,17 +37,17 @@ class Image
     /**
      * @MongoDB\String
      */
-    // protected $idparent;
+    protected $idparent;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Plantunit")
+     * @MongoDB\ReferenceOne(targetDocument="Plantunit", inversedBy="images")
      */
     private $plantunit;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\ReferenceOne(targetDocument="Module", inversedBy="images")
      */
-    protected $identifier;
+    private $module;
 
     /**
      * Get id
@@ -52,6 +57,46 @@ class Image
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set identifier
+     *
+     * @param string $identifier
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+    }
+
+    /**
+     * Get identifier
+     *
+     * @return string $identifier
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
+
+    /**
+     * Set property
+     *
+     * @param hash $property
+     */
+    public function setProperty($property)
+    {
+        $this->property = $property;
+    }
+
+    /**
+     * Get property
+     *
+     * @return hash $property
+     */
+    public function getProperty()
+    {
+        return $this->property;
     }
 
     /**
@@ -115,46 +160,6 @@ class Image
     }
 
     /**
-     * Set identifier
-     *
-     * @param string $identifier
-     */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
-    }
-
-    /**
-     * Get identifier
-     *
-     * @return string $identifier
-     */
-    public function getIdentifier()
-    {
-        return $this->identifier;
-    }
-    
-    /**
-     * Set property
-     *
-     * @param hash $property
-     */
-    public function setProperty($property)
-    {
-        $this->property = $property;
-    }
-
-    /**
-     * Get property
-     *
-     * @return hash $property
-     */
-    public function getProperty()
-    {
-        return $this->property;
-    }
-
-    /**
      * Set plantunit
      *
      * @param Plantnet\DataBundle\Document\Plantunit $plantunit
@@ -172,5 +177,25 @@ class Image
     public function getPlantunit()
     {
         return $this->plantunit;
+    }
+
+    /**
+     * Set module
+     *
+     * @param Plantnet\DataBundle\Document\Module $module
+     */
+    public function setModule(\Plantnet\DataBundle\Document\Module $module)
+    {
+        $this->module = $module;
+    }
+
+    /**
+     * Get module
+     *
+     * @return Plantnet\DataBundle\Document\Module $module
+     */
+    public function getModule()
+    {
+        return $this->module;
     }
 }

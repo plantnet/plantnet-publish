@@ -15,6 +15,11 @@ class Location
     protected $id;
 
     /**
+     * @MongoDB\String
+     */
+    protected $identifier;
+
+    /**
      * @MongoDB\Hash
      */
     protected $property;
@@ -28,16 +33,21 @@ class Location
      * @MongoDB\Float
      */
     protected $longitude;
-    
-    /**
-     * @MongoDB\ReferenceOne(targetDocument="Plantunit")
-     */
-    private $plantunit;
 
     /**
      * @MongoDB\String
      */
-    protected $identifier;
+    protected $idparent;
+    
+    /**
+     * @MongoDB\ReferenceOne(targetDocument="Plantunit", inversedBy="locations")
+     */
+    private $plantunit;
+
+    /**
+     * @MongoDB\ReferenceOne(targetDocument="Module", inversedBy="locations")
+     */
+    private $module;
 
     /**
      * Get id
@@ -47,27 +57,6 @@ class Location
     public function getId()
     {
         return $this->id;
-    }
-
-    
-    /**
-     * Set idparent
-     *
-     * @param string $idparent
-     */
-    public function setIdparent($idparent)
-    {
-        $this->idparent = $idparent;
-    }
-
-    /**
-     * Get idparent
-     *
-     * @return string $idparent
-     */
-    public function getIdparent()
-    {
-        return $this->idparent;
     }
 
     /**
@@ -151,6 +140,26 @@ class Location
     }
 
     /**
+     * Set idparent
+     *
+     * @param string $idparent
+     */
+    public function setIdparent($idparent)
+    {
+        $this->idparent = $idparent;
+    }
+
+    /**
+     * Get idparent
+     *
+     * @return string $idparent
+     */
+    public function getIdparent()
+    {
+        return $this->idparent;
+    }
+
+    /**
      * Set plantunit
      *
      * @param Plantnet\DataBundle\Document\Plantunit $plantunit
@@ -168,5 +177,25 @@ class Location
     public function getPlantunit()
     {
         return $this->plantunit;
+    }
+
+    /**
+     * Set module
+     *
+     * @param Plantnet\DataBundle\Document\Module $module
+     */
+    public function setModule(\Plantnet\DataBundle\Document\Module $module)
+    {
+        $this->module = $module;
+    }
+
+    /**
+     * Get module
+     *
+     * @return Plantnet\DataBundle\Document\Module $module
+     */
+    public function getModule()
+    {
+        return $this->module;
     }
 }

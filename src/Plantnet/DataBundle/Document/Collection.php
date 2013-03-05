@@ -30,7 +30,7 @@ class Collection
     protected $description;
     
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Module", cascade={"remove"})
+     * @MongoDB\ReferenceMany(targetDocument="Module", mappedBy="collection", cascade={"remove"})
      */
     private $modules = array();
 
@@ -47,6 +47,11 @@ class Collection
     public function __toString()
     {
         return $this->getName();
+    }
+
+    public function __construct()
+    {
+        $this->modules = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -120,10 +125,6 @@ class Collection
     public function getDescription()
     {
         return $this->description;
-    }
-    public function __construct()
-    {
-        $this->modules = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**

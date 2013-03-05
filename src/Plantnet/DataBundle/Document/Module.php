@@ -15,11 +15,6 @@ class Module
     protected $id;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Collection", inversedBy="modules")
-     */
-    private $collection;
-
-    /**
      * @MongoDB\String
      */
     protected $name;
@@ -28,7 +23,7 @@ class Module
      * @MongoDB\String
      */
     private $type;
-
+    
     /**
      * @MongoDB\ReferenceOne(targetDocument="File")
      * @Assert\File(maxSize = "30M", mimeTypes = {
@@ -43,20 +38,40 @@ class Module
     protected $properties;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Module", nullable="true")
-     */
-    private $parent;
-
-    /**
      * 
      * @Assert\File(maxSize = "30M")
      */
     protected $file;
 
-    public function __construct()
-    {
-        $this->properties = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+    /**
+     * @MongoDB\ReferenceOne(targetDocument="Collection", inversedBy="modules")
+     */
+    private $collection;
+
+    /**
+     * @MongoDB\ReferenceOne(targetDocument="Module", nullable="true", inversedBy="children")
+     */
+    private $parent;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Module", nullable="true", mappedBy="parent", cascade={"remove"})
+     */
+    private $children;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Plantunit", mappedBy="module", cascade={"remove"})
+     */
+    private $plantunits = array();
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Image", mappedBy="module", cascade={"remove"})
+     */
+    private $images = array();
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Location", mappedBy="module", cascade={"remove"})
+     */
+    private $locations = array();
 
     /**
      * To String
@@ -67,6 +82,13 @@ class Module
     {
         return $this->getName();
     }
+
+    public function __construct()
+    {
+        $this->properties = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->plantunits = new \Doctrine\Common\Collections\ArrayCollection();
+    }
     
     /**
      * Get id
@@ -76,26 +98,6 @@ class Module
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set collection
-     *
-     * @param Plantnet\DataBundle\Document\Collection $collection
-     */
-    public function setCollection(\Plantnet\DataBundle\Document\Collection $collection)
-    {
-        $this->collection = $collection;
-    }
-
-    /**
-     * Get collection
-     *
-     * @return Plantnet\DataBundle\Document\Collection $collection
-     */
-    public function getCollection()
-    {
-        return $this->collection;
     }
 
     /**
@@ -152,6 +154,26 @@ class Module
     }
 
     /**
+     * Set attachment
+     *
+     * @param Plantnet\DataBundle\Document\File $attachment
+     */
+    public function setAttachment(\Plantnet\DataBundle\Document\File $attachment)
+    {
+        $this->attachment = $attachment;
+    }
+
+    /**
+     * Get attachment
+     *
+     * @return Plantnet\DataBundle\Document\File $attachment
+     */
+    public function getAttachment()
+    {
+        return $this->attachment;
+    }
+
+    /**
      * Add properties
      *
      * @param Plantnet\DataBundle\Document\Property $properties
@@ -169,26 +191,6 @@ class Module
     public function getProperties()
     {
         return $this->properties;
-    }
-
-    /**
-     * Set parent
-     *
-     * @param Plantnet\DataBundle\Document\Module $parent
-     */
-    public function setParent(\Plantnet\DataBundle\Document\Module $parent)
-    {
-        $this->parent = $parent;
-    }
-
-    /**
-     * Get parent
-     *
-     * @return Plantnet\DataBundle\Document\Module $parent
-     */
-    public function getParent()
-    {
-        return $this->parent;
     }
 
     /**
@@ -212,22 +214,122 @@ class Module
     }
 
     /**
-     * Set attachment
+     * Set collection
      *
-     * @param Plantnet\DataBundle\Document\File $attachment
+     * @param Plantnet\DataBundle\Document\Collection $collection
      */
-    public function setAttachment(\Plantnet\DataBundle\Document\File $attachment)
+    public function setCollection(\Plantnet\DataBundle\Document\Collection $collection)
     {
-        $this->attachment = $attachment;
+        $this->collection = $collection;
     }
 
     /**
-     * Get attachment
+     * Get collection
      *
-     * @return Plantnet\DataBundle\Document\File $attachment
+     * @return Plantnet\DataBundle\Document\Collection $collection
      */
-    public function getAttachment()
+    public function getCollection()
     {
-        return $this->attachment;
+        return $this->collection;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param Plantnet\DataBundle\Document\Module $parent
+     */
+    public function setParent(\Plantnet\DataBundle\Document\Module $parent)
+    {
+        $this->parent = $parent;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return Plantnet\DataBundle\Document\Module $parent
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Add children
+     *
+     * @param Plantnet\DataBundle\Document\Module $children
+     */
+    public function addChildren(\Plantnet\DataBundle\Document\Module $children)
+    {
+        $this->children[] = $children;
+    }
+
+    /**
+     * Get children
+     *
+     * @return Doctrine\Common\Collections\Collection $children
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * Add plantunits
+     *
+     * @param Plantnet\DataBundle\Document\Plantunit $plantunits
+     */
+    public function addPlantunits(\Plantnet\DataBundle\Document\Plantunit $plantunits)
+    {
+        $this->plantunits[] = $plantunits;
+    }
+
+    /**
+     * Get plantunits
+     *
+     * @return Doctrine\Common\Collections\Collection $plantunits
+     */
+    public function getPlantunits()
+    {
+        return $this->plantunits;
+    }
+
+    /**
+     * Add images
+     *
+     * @param Plantnet\DataBundle\Document\Image $images
+     */
+    public function addImages(\Plantnet\DataBundle\Document\Image $images)
+    {
+        $this->images[] = $images;
+    }
+
+    /**
+     * Get images
+     *
+     * @return Doctrine\Common\Collections\Collection $images
+     */
+    public function getImages()
+    {
+        return $this->images;
+    }
+
+    /**
+     * Add locations
+     *
+     * @param Plantnet\DataBundle\Document\Location $locations
+     */
+    public function addLocations(\Plantnet\DataBundle\Document\Location $locations)
+    {
+        $this->locations[] = $locations;
+    }
+
+    /**
+     * Get locations
+     *
+     * @return Doctrine\Common\Collections\Collection $locations
+     */
+    public function getLocations()
+    {
+        return $this->locations;
     }
 }

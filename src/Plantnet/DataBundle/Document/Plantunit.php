@@ -14,9 +14,9 @@ class Plantunit
     protected $id;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Module")
+     * @MongoDB\String
      */
-    private $module;
+    protected $identifier;
 
     /**
      * @MongoDB\Hash
@@ -24,37 +24,47 @@ class Plantunit
     protected $attributes;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Plantunit")
+     * @MongoDB\String
+     */
+    protected $idparent;
+
+    /** @MongoDB\EmbedMany(targetDocument="File") */
+    private $files = array();
+
+    /**
+     * @MongoDB\ReferenceOne(targetDocument="Plantunit", nullable="true", inversedBy="children")
      * 
      */
     private $parent;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\ReferenceMany(targetDocument="Plantunit", mappedBy="parent", cascade={"remove"})
      */
-    protected $idparent;
-    
-    /**
-     * @MongoDB\String
-     */
-    protected $identifier;
-
-    /** @MongoDB\EmbedMany(targetDocument="File") */
-    private $files = array();
-
-    /** @MongoDB\EmbedMany(targetDocument="Image") */
-    // private $images = array();
+    private $children;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Image", cascade={"remove"})
+     * @MongoDB\ReferenceOne(targetDocument="Module", inversedBy="plantunits")
+     */
+    private $module;
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Image", mappedBy="plantunit", cascade={"remove"})
      */
     private $images = array();
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Location", cascade={"remove"})
+     * @MongoDB\ReferenceMany(targetDocument="Location", mappedBy="plantunit", cascade={"remove"})
      */
     private $locations = array();
 
+    public function __construct()
+    {
+        $this->files = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->images = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->locations = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
     /**
      * Get id
      *
@@ -73,103 +83,6 @@ class Plantunit
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /*public function addAttribute($name, $value, $main, $details)
-    {
-        //$key = preg_replace('/[^a-z0-9\ \_]/i', '', $name);
-        //$key = preg_replace('/\s+/i', '_', $key);
-        //$key = strtolower($key);
-        $this->attributes[$name] = array('value' =>$value, 'label' => $name, 'main' => $main, 'details'=>$details);
-    }
-
-    public function getAttribute($name)
-    {
-        return $this->attributes[$name];
-    }*/
-
-    /**
-     * Set module
-     *
-     * @param Plantnet\DataBundle\Document\Module $module
-     */
-    public function setModule(\Plantnet\DataBundle\Document\Module $module)
-    {
-        $this->module = $module;
-    }
-
-    /**
-     * Get module
-     *
-     * @return Plantnet\DataBundle\Document\Module $module
-     */
-    public function getModule()
-    {
-        return $this->module;
-    }
-    public function __construct()
-    {
-        $this->files = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
-    /**
-     * Add files
-     *
-     * @param Plantnet\DataBundle\Document\File $files
-     */
-    public function addFiles(\Plantnet\DataBundle\Document\File $files)
-    {
-        $this->files[] = $files;
-    }
-
-    /**
-     * Get files
-     *
-     * @return Doctrine\Common\Collections\Collection $files
-     */
-    public function getFiles()
-    {
-        return $this->files;
-    }
-
-    /**
-     * Set attributes
-     *
-     * @param hash $attributes
-     */
-    public function setAttributes($attributes)
-    {
-        $this->attributes = $attributes;
-    }
-
-    /**
-     * Get attributes
-     *
-     * @return hash $attributes
-     */
-    public function getAttributes()
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * Add images
-     *
-     * @param Plantnet\DataBundle\Document\Image $images
-     */
-    public function addImages(\Plantnet\DataBundle\Document\Image $images)
-    {
-        $this->images[] = $images;
-    }
-
-    /**
-     * Get images
-     *
-     * @return Doctrine\Common\Collections\Collection $images
-     */
-    public function getImages()
-    {
-        return $this->images;
     }
 
     /**
@@ -193,23 +106,23 @@ class Plantunit
     }
 
     /**
-     * Set parent
+     * Set attributes
      *
-     * @param Plantnet\DataBundle\Document\Plantunit $parent
+     * @param hash $attributes
      */
-    public function setParent(\Plantnet\DataBundle\Document\Plantunit $parent)
+    public function setAttributes($attributes)
     {
-        $this->parent = $parent;
+        $this->attributes = $attributes;
     }
 
     /**
-     * Get parent
+     * Get attributes
      *
-     * @return Plantnet\DataBundle\Document\Plantunit $parent
+     * @return hash $attributes
      */
-    public function getParent()
+    public function getAttributes()
     {
-        return $this->parent;
+        return $this->attributes;
     }
 
     /**
@@ -230,6 +143,106 @@ class Plantunit
     public function getIdparent()
     {
         return $this->idparent;
+    }
+
+    /**
+     * Add files
+     *
+     * @param Plantnet\DataBundle\Document\File $files
+     */
+    public function addFiles(\Plantnet\DataBundle\Document\File $files)
+    {
+        $this->files[] = $files;
+    }
+
+    /**
+     * Get files
+     *
+     * @return Doctrine\Common\Collections\Collection $files
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param Plantnet\DataBundle\Document\Plantunit $parent
+     */
+    public function setParent(\Plantnet\DataBundle\Document\Plantunit $parent)
+    {
+        $this->parent = $parent;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return Plantnet\DataBundle\Document\Plantunit $parent
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Add children
+     *
+     * @param Plantnet\DataBundle\Document\Plantunit $children
+     */
+    public function addChildren(\Plantnet\DataBundle\Document\Plantunit $children)
+    {
+        $this->children[] = $children;
+    }
+
+    /**
+     * Get children
+     *
+     * @return Doctrine\Common\Collections\Collection $children
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * Set module
+     *
+     * @param Plantnet\DataBundle\Document\Module $module
+     */
+    public function setModule(\Plantnet\DataBundle\Document\Module $module)
+    {
+        $this->module = $module;
+    }
+
+    /**
+     * Get module
+     *
+     * @return Plantnet\DataBundle\Document\Module $module
+     */
+    public function getModule()
+    {
+        return $this->module;
+    }
+
+    /**
+     * Add images
+     *
+     * @param Plantnet\DataBundle\Document\Image $images
+     */
+    public function addImages(\Plantnet\DataBundle\Document\Image $images)
+    {
+        $this->images[] = $images;
+    }
+
+    /**
+     * Get images
+     *
+     * @return Doctrine\Common\Collections\Collection $images
+     */
+    public function getImages()
+    {
+        return $this->images;
     }
 
     /**
