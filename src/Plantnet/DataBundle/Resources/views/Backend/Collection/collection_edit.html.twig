@@ -1,19 +1,7 @@
-{% extends "PlantnetDataBundle:Backend:layout.html.twig" %}
-{% block stylesheets %}
-	{{ parent() }}
-	<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.css') }}" type="text/css" />
-{% endblock %}
-{% block sidebar %}
-	{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
-{% endblock %}
-{% block body %}
-	<div id="admin-form">
-		{% block form %}
-		{% endblock %}
-	</div>
-{% endblock %}
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
 {% block javascripts %}
 	{{ parent() }}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.min.js') }}"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("textarea").cleditor({
@@ -51,4 +39,33 @@
 			});
 		});
 	</script>
+{% endblock %}
+{% block form %}
+	<div id="title-form">Collection Edit</div>
+		<form action="{{ path('collection_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+			{{ form_errors(edit_form) }}
+			<div class="field-form">
+				{{ form_label(edit_form.name) }}
+				<br>
+				{{ form_errors(edit_form.name) }}
+				{{ form_widget(edit_form.name) }}
+			</div>
+			<div class="field-form">
+				{{ form_label(edit_form.description) }}
+				<br>
+				{{ form_errors(edit_form.description) }}
+				{{ form_widget(edit_form.description) }}
+			</div>
+			{{ form_rest(edit_form) }}
+			<p>
+				<button type="submit">Update</button>
+			</p>
+		</form>
+		<ul class="record_actions">
+			<form action="{{ path('collection_delete', { 'id': entity.id }) }}" method="post">
+				{{ form_widget(delete_form) }}
+				<button type="submit">Delete</button>
+			</form>
+		</ul>
+	</div>
 {% endblock %}

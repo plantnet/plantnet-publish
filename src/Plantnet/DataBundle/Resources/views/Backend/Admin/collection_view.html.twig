@@ -1,0 +1,24 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block title collection.Name %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/tablesorter/style.css') }}" type="text/css" />
+{% endblock %}
+{% block body %}
+	<section id="breadcrumbs">
+		<a href="{{ path('admin_collection_view', { 'collection': collection.Name }) }}">{{ collection.Name }}</a>
+	</section>
+	<div>
+		<p>
+			Description :
+			<br>
+			{% autoescape false %}
+				{{ collection.Description }}
+			{% endautoescape %}
+		</p>
+		<p>{{ nb_modules }} module{% if nb_modules>=2 %}s{% endif %}</p>
+		<p>{{ nb_plantunits }} plantunit{% if nb_plantunits>=2 %}s{% endif %}</p>
+		<p>{{ nb_images }} image{% if nb_images>=2 %}s{% endif %}</p>
+		<p>{{ nb_locations }} localisation{% if nb_locations>=2 %}s{% endif %}</p>
+	</div>
+{% endblock %}

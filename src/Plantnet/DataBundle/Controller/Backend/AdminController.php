@@ -8,20 +8,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-use Plantnet\DataBundle\Document\Plantunit;
-use Plantnet\DataBundle\Document\Collection;
-use Plantnet\DataBundle\Document\Module;
-use Plantnet\DataBundle\Document\Property;
-use Plantnet\DataBundle\Document\Image;
-use Plantnet\DataBundle\Document\Location;
 use Symfony\Component\HttpFoundation\Response;
-
-use Plantnet\DataBundle\Form\ImportFormType,
-    Plantnet\DataBundle\Form\ModuleFormType,
-    Plantnet\DataBundle\Form\Type\CollectionType;
 
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
+
+//?
+use Plantnet\DataBundle\Document\Plantunit;
+use Plantnet\DataBundle\Document\Image;
+use Plantnet\DataBundle\Document\Location;
 
 /**
  * Admin controller.
@@ -51,7 +46,7 @@ class AdminController extends Controller
             );
 
             $module = $dm->getRepository('PlantnetDataBundle:Module')
-                                ->findBy(array('collection.id' => $collection->getId()));
+                ->findBy(array('collection.id' => $collection->getId()));
             array_push($coll, $module);
 
             array_push($modules, $coll);
@@ -61,560 +56,82 @@ class AdminController extends Controller
     }
 
     /**
-     * Displays a form to create a new Collection entity.
-     *
-     * @Route("/collection/new", name="collection_new")
+     * @Route("/collection/{collection}", name="admin_collection_view")
      * @Template()
      */
-    public function new_collectionAction()
-    {
-        $document = new Collection();
-        $form   = $this->createForm(new CollectionType(), $document);
-        return array(
-            'entity' => $document,
-            'form'   => $form->createView()
-        );
-    }
-
-    /**
-     * Creates a new Collection entity.
-     *
-     * @Route("/collection/create", name="collection_create")
-     * @Method("post")
-     * @Template()
-     */
-    public function createAction()
-    {
-        $document  = new Collection();
-        $request = $this->getRequest();
-        $form    = $this->createForm(new CollectionType(), $document);
-
-        if ('POST' === $request->getMethod()) {
-            $form->bindRequest($request);
-
-            if ($form->isValid()) {
-                $dm = $this->get('doctrine.odm.mongodb.document_manager');
-                $user=$this->container->get('security.context')->getToken()->getUser();
-                $document->setUser($user);
-                $document->setAlias($user->getUsername().'_'.$document->getName());
-                $dm->persist($document);
-                $dm->flush();
-
-                return $this->redirect($this->generateUrl('module_new', array('id' => $document->getId())));
-
-            }
-        }
-
-        return array(
-            'entity' => $document,
-            'form'   => $form->createView()
-        );
-    }
-
-    /**
-     * @Route("/collection/{id}/new_module", name="module_new")
-     * @Template()
-     */
-    public function new_moduleAction($id)
+    public function collectionAction($collection)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
 
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
-        if (!$collection) {
-            throw $this->createNotFoundException('Unable to find Collection entity.');
-        }
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
 
-        $module = new Module();
-
-        $module->setCollection($collection);
-        $collection->addModules($module);
-
-        $parents_module = $dm->getRepository('PlantnetDataBundle:Module')
+        $modules = $dm->getRepository('PlantnetDataBundle:Module')
             ->findBy(array('collection.id' => $collection->getId()));
-        
-        $idparent = array();
-        foreach($parents_module as $mod){
-            $idparent[$mod->getId()] = $mod->getName();
-        }
-        
-        $form = $this->createForm(new ModuleFormType(), $module, array('idparent' => $idparent));
-        
-        //$form    = $this->createForm(new ModuleFormType(), $module);
-
-        return array(
-            'idparent'=>$idparent,
-            'module' => $module,
-            'collection' => $collection,
-            'form' => $form->createView(),
-        );
-    }
-
-    /**
-     * @Route("/collection/{id}/create_module", name="module_create")
-     * @Method("post")
-     * @Template("PlantnetDataBundle:Backend\Admin:new_module.html.twig")
-     */
-    public function create_moduleAction($id)
-    {
-        $module  = new Module();
-
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
-        
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
-
-        if (!$collection) {
-            throw $this->createNotFoundException('Unable to find Collection entity.');
-        }
-
-        $request = $this->getRequest();
-
-        $collection->addModules($module);
-        $parents_module = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findBy(array('collection.id' => $collection->getId()));
-
-        $idparent = array();
-        foreach($parents_module as $mod){
-            $idparent[$mod->getId()] = $mod->getName();
-        }
-        
-        $form = $this->createForm(new ModuleFormType(), $module, array('idparent' => $idparent));
-
-        if ('POST' === $request->getMethod()) {
-
-            $form->bindRequest($request);
-
-            if ($form->isValid()) {
-
-                $dm = $this->get('doctrine.odm.mongodb.document_manager');
-                 $module->setCollection($collection);
-                $idparent = $request->request->get('modules');
-                
-                if(array_key_exists('parent', $idparent) && $idparent['parent'] != null){
-                    $module_parent = $dm->getRepository('PlantnetDataBundle:Module')->find($idparent['parent']);
-                    $module->setParent($module_parent);
-                }
-
-                $module->setType($module->getType());
-
-                $uploadedFile = $module->getFile();
-                try{
-                    $uploadedFile->move(
-	                    __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/',
-	                    $module->getName_fname().'.csv'
-                    );
-                }
-                catch(FilePermissionException $e)
-                {
-                    return false;
-                }
-                catch(\Exception $e)
-                {
-                    throw new \Exception($e->getMessage());
-                }
-
-                $csv = __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
-                
-                $handle = fopen($csv, "r");
-                $field=fgetcsv($handle,0,";");
-
-                foreach($field as $col){
-                    $property = new Property();
-                    $cur_encoding = mb_detect_encoding($col) ;
-                    if($cur_encoding == "UTF-8" && mb_check_encoding($col,"UTF-8")){
-                        $property->setName($col);
-                    }
-                    else {
-                        $property->setName(utf8_encode($col));
-
-                    }
-
-                    $property->setDetails(true);
-                    $dm->persist($property);
-                    $module->addProperties($property);
-                }
-
-                $dm->persist($module);
-                $dm->flush();
-
-                return $this->redirect($this->generateUrl('fields_type', array('id' => $collection->getId(), 'idmodule' => $module->getId())));
-            }
-        }
-        return array(
-            'collection' => $collection,
-            'module' => $module,
-            'form'   => $form->createView()
-        );
-    }
-
-    /**
-     * @Route("/collection/{id}/module/{idmodule}/fields_selection", name="fields_type")
-     * @Template()
-     */
-    public function fields_typeAction($id, $idmodule)
-    {
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-        $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
-
-        if (!$module) {
-            throw $this->createNotFoundException('Unable to find Module entity.');
-        }
-
-        $form = $this->get('form.factory')->create(new ImportFormType(), $module);
-        
-        $count='';
-        return array(
-            'collection' => $collection,
-            'module'      => $module,
-            'importCount' => $count,
-            'form'   => $form->createView(),
-        );
-
-    }
-
-    /**
-     * @Route("/collection/{id}/module/{idmodule}/save_fields", name="save_fields")
-     * @Method("post")
-     * @Template("PlantnetDataBundle:Backend\Admin:fields_type.html.twig")
-     */
-    public function save_fieldsAction($id, $idmodule)
-    {
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-        $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-
-        if (!$module) {
-            throw $this->createNotFoundException('Unable to find Module entity.');
-        }
-
-        $form = $this->createForm(new ImportFormType(), $module);
-
-        $request = $this->getRequest();
-
-        if ('POST' === $request->getMethod()) {
-            $form->bindRequest($request);
-
-            if ($form->isValid()) {
-                $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-                $dm->persist($module);
-                $dm->flush();
-
-                return $this->redirect($this->generateUrl('import_data', array('id' => $id, 'idmodule' => $idmodule)));
-            }
-        }
-
-        return array(
-            'module'      => $module,
-            'form'   => $form->createView(),
-        );
-    }
-
-    /**
-     * @Route("/collection/{id}/module/{idmodule}/import_data", name="import_data")
-     * @Template()
-     */
-    public function import_dataAction($id, $idmodule)
-    {
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-        $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
-        
-        if (!$module) {
-            throw $this->createNotFoundException('Unable to find Module entity.');
-        }
-
-        $form = $this->get('form.factory')->create(new ImportFormType(), $module);
-        $count='';
-        return array(
-            'collection'  => $collection,
-            'module'      => $module,
-            'importCount' => $count,
-            'form'   => $form->createView(),
-        );
-
-    }
-
-    /**
-     * @Route("/collection/{id}/module/{idmodule}/importation", name="importation")
-     * @Method("post")
-     * @Template("PlantnetDataBundle:Backend\Admin:import_moduledata.html.twig")
-     */
-    public function importationAction($id, $idmodule)
-    {
-        $request = $this->container->get('request');
-
-        set_time_limit(0);
-        if($request->isXmlHttpRequest())
+        $modules_id=array();
+        foreach($modules as $module)
         {
-            $dm = $this->get('doctrine.odm.mongodb.document_manager');
-            $configuration = $dm->getConnection()->getConfiguration();
-            $configuration->setLoggerCallable(null);
-
-            $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-
-            /*
-             * Open the uploaded csv
-             */
-            $csvfile = __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
-            $handle = fopen($csvfile, "r");
-
-            /*
-             * Get the module properties
-             */
-            $columns=fgetcsv($handle,0,";");
-            $fields = array();
-            $attributes = $module->getProperties();
-            foreach($attributes as $field){
-                $fields[] = $field;
-            }
-
-            /*
-             * Initialise the metrics
-             */
-            //echo "Memory usage before: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
-            $s = microtime(true);
-
-            $batchSize = 500;
-            $rowCount = '';
-
-            while (($data = fgetcsv($handle, 0, ';')) !== FALSE) {
-                $num = count($data);
-                $rowCount++;
-                if ($module->getType() == 'text'){
-
-                    $plantunit = new Plantunit();
-                    $plantunit->setModule($module);
-                    $attributes = array();
-                    for ($c=0; $c < $num; $c++) {
-                        $value = $this->data_encode($data[$c]);
-                        $attributes[$fields[$c]->getName()] = $value;
-                        switch($fields[$c]->getType()){
-                            case 'idmodule':
-                                $plantunit->setIdentifier($value);
-                                break;
-                            case 'idparent':
-                                $plantunit->setIdparent($value);
-                                break;
-                        }
-                    }
-                                    
-                    $plantunit->setAttributes($attributes);
-                    $dm->persist($plantunit);
-                    if($module->getParent()){
-
-                        
-                        $moduleid = $module->getParent()->getId();
-                        $parent = $dm->getRepository('PlantnetDataBundle:Plantunit')
-                            ->findOneBy(array('module.id' => $moduleid, 'identifier' => $plantunit->getIdparent()));
-
-                        $plantunit->setParent($parent);
-                        $dm->persist($plantunit);
-                    }
-
-                }elseif ($module->getType() == 'image'){
-                    $image = new Image();
-                    $attributes = array();
-                    for($c=0; $c < $num; $c++)
-                    {
-                        $value = $this->data_encode($data[$c]);
-                        $attributes[$fields[$c]->getName()] = $value;
-                        switch($fields[$c]->getType()){
-                            case 'file':
-                                $image->setPath($value);
-                                break;
-                            case 'copyright':
-                                $image->setCopyright($value);
-                                break;
-                            case 'idparent':
-                                $image->setIdparent($value);
-                                break;
-                            case 'idmodule':
-                                $image->setIdentifier($value);
-                                break;
-                        }
-                    }
-                    $image->setProperty($attributes);
-                    $image->setModule($module);
-                    $parent=null;
-                    if($module->getParent())
-                    {
-                        $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                            ->field('module.id')->equals($module->getParent()->getId())
-                            ->field('identifier')->equals($image->getIdparent())
-                            ->getQuery()
-                            ->execute();
-                            foreach($parent_q as $p)
-                            {
-                                $parent=$p;
-                            }
-                    }
-                    if($parent)
-                    {
-                        $parent->addImages($image);
-                        $dm->persist($parent);
-                        $image->setPlantunit($parent);
-                        $dm->persist($image);
-                    }
-                    else
-                    {
-                        $plantunit=new Plantunit();
-                        $plantunit->setModule($module);
-                        $plantunit->setAttributes($attributes);
-                        $plantunit->setIdentifier($image->getIdentifier());
-                        $plantunit->addImages($image);
-                        $dm->persist($plantunit);
-                        $image->setPlantunit($plantunit);
-                        $dm->persist($image);
-                    }
-                }elseif ($module->getType() == 'locality'){
-                    $location = new Location();
-                    $attributes = array();
-                    for($c=0; $c < $num; $c++)
-                    {
-                        $value = $this->data_encode($data[$c]);
-                        $attributes[$fields[$c]->getName()] = $value;
-                        switch($fields[$c]->getType()){
-                            case 'lon':
-                                $location->setLongitude(str_replace(',','.',$value));
-                                break;
-                            case 'lat':
-                                $location->setLatitude(str_replace(',','.',$value));
-                                break;
-                            case 'idparent':
-                                $location->setIdparent($value);
-                                break;
-                            case 'idmodule':
-                                $location->setIdentifier($value);
-                                break;
-                        }
-                    }
-                    $location->setProperty($attributes);
-                    $location->setModule($module);
-                    $parent=null;
-                    if($module->getParent())
-                    {
-                        $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                            ->field('module.id')->equals($module->getParent()->getId())
-                            ->field('identifier')->equals($location->getIdparent())
-                            ->getQuery()
-                            ->execute();
-                            foreach($parent_q as $p)
-                            {
-                                $parent=$p;
-                            }
-                    }
-                    if($parent)
-                    {
-                        $parent->addLocations($location);
-                        $dm->persist($parent);
-                        $location->setPlantunit($parent);
-                        $dm->persist($location);
-                    }
-                    else
-                    {
-                        $plantunit=new Plantunit();
-                        $plantunit->setModule($module);
-                        $plantunit->setAttributes($attributes);
-                        $plantunit->setIdentifier($location->getIdentifier());
-                        $plantunit->addLocations($location);
-                        $dm->persist($plantunit);
-                        $location->setPlantunit($plantunit);
-                        $dm->persist($location);
-                    }
-                }
-                
-                if (($rowCount % $batchSize) == 0) {
-                    $dm->flush();
-                    $dm->clear();
-                    $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-                    //$dm->detach($plantunit);
-                    //unset($plantunit);
-                    //gc_collect_cycles();
-                }
-            }
-
-            $dm->flush();
-            $dm->clear();
-
-            //echo "Memory usage after: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
-            $e = microtime(true);
-            echo ' Inserted '.$rowCount.' objects in ' . ($e - $s) . ' seconds' . PHP_EOL;
-
-            fclose($handle);
-
-            if(file_exists($csvfile))
-            {
-                unlink($csvfile);
-            }
-
-            /*$usermail = $this->get('security.context')->getToken()->getUser()->getEmail();
-
-            // Récupération du mailer service.
-            $mailer = $this->get('mailer');
-
-            // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-            $message = \Swift_Message::newInstance()
-                ->setSubject('Importation success')
-                ->setFrom('support@plantnet-project.org')
-                ->setTo($usermail)
-                ->setBody('Your data for the ' .$module->getName() .'module was imported');
-
-            // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
-            $mailer->send($message);*/
-
-            return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Admin:import_moduledata.html.twig', array(
-                   'importCount' => 'Importation Success: '.$rowCount.' objects imported'
-
-            ));
-
-        }else{
-            return $this->import_dataAction($id, $idmodule);
+            $modules_id[]=$module->getId();
         }
-    }
 
-    protected function data_encode($data){
-        $data_encoding = mb_detect_encoding($data) ;
-            if($data_encoding == "UTF-8" && mb_check_encoding($data,"UTF-8")){
-                   $format = $data;
-            }else {
-                  $format = utf8_encode($data);
-            }
+        $nb_modules=count($modules);
 
-        return $format;
+        $nb_plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            ->field('module.id')->in($modules_id)
+            ->getQuery()
+            ->execute()
+            ->count();
+
+        $nb_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+            ->field('module.id')->in($modules_id)
+            ->getQuery()
+            ->execute()
+            ->count();
+
+        $nb_locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+            ->field('module.id')->in($modules_id)
+            ->getQuery()
+            ->execute()
+            ->count();
+
+        return $this->render('PlantnetDataBundle:Backend\Admin:collection_view.html.twig', array(
+            'collection'=>$collection,
+            'nb_modules'=>$nb_modules,
+            'nb_plantunits'=>$nb_plantunits,
+            'nb_images'=>$nb_images,
+            'nb_locations'=>$nb_locations
+        ));
     }
 
     /**
-     * @Route("/{collection}/{module}", name="admin_module_view")
+     * @Route("/collection/{collection}/module/{module}", name="admin_module_view")
      * @Template()
      */
     public function moduleAction($collection, $module)
     {
-            $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
 
-            $collection = $dm->getRepository('PlantnetDataBundle:Collection')
-                ->findOneByName($collection);
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
 
-            $mod = $dm->getRepository('PlantnetDataBundle:Module')
-                ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
+        $mod = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
 
-            if($mod->getParent()){
-                $module = $dm->getRepository('PlantnetDataBundle:Module')
-                    ->find($mod->getParent()->getId());
-            }else{
-                $module = $dm->getRepository('PlantnetDataBundle:Module')
-                    ->find($mod->getId());
+        if($mod->getParent()){
+            $module = $dm->getRepository('PlantnetDataBundle:Module')
+                ->find($mod->getParent()->getId());
+        }else{
+            $module = $dm->getRepository('PlantnetDataBundle:Module')
+                ->find($mod->getId());
+        }
+
+        $display = array();
+        $field = $module->getProperties();
+        foreach($field as $row){
+            if($row->getMain() == true){
+                $display[] = $row->getName();
             }
-
-            $display = array();
-            $field = $module->getProperties();
-            foreach($field as $row){
-                if($row->getMain() == true){
-                    $display[] = $row->getName();
-                }
-            }
+        }
 
         switch ($mod->getType())
         {
@@ -625,7 +142,13 @@ class AdminController extends Controller
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(50);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-                return $this->render('PlantnetDataBundle:Backend\Admin:datagrid.html.twig', array('paginator' => $paginator, 'field' => $field, 'collection' => $collection, 'module' => $module, 'display' => $display));
+                return $this->render('PlantnetDataBundle:Backend\Admin:datagrid.html.twig', array(
+                    'paginator' => $paginator,
+                    'field' => $field,
+                    'collection' => $collection,
+                    'module' => $module,
+                    'display' => $display
+                ));
                 break;
             case 'image':
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
@@ -635,9 +158,55 @@ class AdminController extends Controller
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(50);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-                return $this->render('PlantnetDataBundle:Backend\Admin:gallery.html.twig', array('paginator' => $paginator, 'field' => $field, 'collection' => $collection, 'module' => $module, 'display' => $display));
+                return $this->render('PlantnetDataBundle:Backend\Admin:gallery.html.twig', array(
+                    'paginator' => $paginator,
+                    'field' => $field,
+                    'collection' => $collection,
+                    'module' => $module,
+                    'display' => $display
+                ));
                 break;
             case 'locality':
+                $db=$this->container->getParameter('mdb_base');
+                $m=new \Mongo();
+                $c_plantunits=$m->$db->Plantunit->find(
+                    array('module.$id'=>new \MongoId($module->getId())),
+                    array('_id'=>1)
+                );
+                $id_plantunits=array();
+                foreach($c_plantunits as $id=>$p)
+                {
+                    $id_plantunits[]=new \MongoId($id);
+                }
+                unset($c_plantunits);
+                $locations=array();
+                $c_locations=$m->$db->Location->find(
+                    array(
+                        'plantunit.$id'=>array('$in'=>$id_plantunits),
+                        'module.$id'=>$mod->getId()
+                    ),
+                    array('_id'=>1,'latitude'=>1,'longitude'=>1)
+                );
+                unset($id_plantunits);
+                foreach($c_locations as $id=>$l)
+                {
+                    $loc=array();
+                    $loc['id']=$id;
+                    $loc['latitude']=$l['latitude'];
+                    $loc['longitude']=$l['longitude'];
+                    $locations[]=$loc;
+                }
+                unset($c_locations);
+                unset($m);
+                $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
+                $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
+                return $this->render('PlantnetDataBundle:Backend\Admin:map.html.twig',array(
+                    'collection' => $collection,
+                    'module' => $module,
+                    'locations' => $locations,
+                    'layers' => $layers
+                ));
+                /*
                 $localised = $dm->getRepository('PlantnetDataBundle:Plantunit')->findBy(array('modules'=>$module->getId()));
                 $location = array();
                 foreach($localised as $plantunit){
@@ -645,14 +214,18 @@ class AdminController extends Controller
                         ->findLocalisation($plantunit);
                     array_push($location, $point[0]);
                 }
-
-                return $this->render('PlantnetDataBundle:Backend\Admin:map.html.twig', array('collection' => $collection, 'module' => $module, 'location' => $location));
+                return $this->render('PlantnetDataBundle:Backend\Admin:map.html.twig', array(
+                    'collection' => $collection,
+                    'module' => $module,
+                    'location' => $location
+                ));
+                */
                 break;
         }
     }
     
     /**
-     * @Route("/collection/{id}/module/{idmodule}/import_moduledata", name="import_moduledata")
+     * @Route("/collection/{id}/module/{idmodule}/import_moduledata", name="import_moduledata_to_delete")
      * @Method("post")
      * @Template("PlantnetDataBundle:Backend\Admin:import_moduledata.html.twig")
      */

@@ -1,0 +1,42 @@
+<li class="menu-list current">
+    <a id="menu-collection" href="#">Collections</a>
+    <div class="arrow"></div>
+    <ul class="collections toggle">
+        {% for collection in list %}
+            <li>
+                <a  class="collection" href="{{ path('admin_collection_view', { 'collection': collection.collection }) }}">{{ collection.collection }}</a>
+                {% if is_granted('ROLE_USER') %}
+                    <a  class="edit" href="{{ path('collection_edit', { 'id': collection.id }) }}"></a>
+                {% endif %}
+                <a  class="view" href="{{ path('admin_collection_view', { 'collection': collection.collection }) }}"></a>
+                <div class="arrow"></div>
+                <ul class="module toggle">
+                    {% for type in collection %}
+                        {% for row in type %}
+                            <li class='row-module'>
+                                {#
+                                <a  class="{{ row.type }}" href="{{ path('_module', { 'owner': collection.owner, 'collection': collection.collection, 'module': row.Name }) }}">{{ row.Name }}</a>
+                                #}
+                                <a  class="{{ row.type }}" href="{{ path('admin_module_view', { 'collection': collection.collection, 'module': row.Name }) }}">{{ row.Name }}</a>
+                                {% if is_granted('ROLE_USER') %}
+                                    <a  class="edit" href="{{ path('module_edit', { 'id': row.id }) }}"></a>
+                                {% endif %}
+                                <a  class="view" href="{{ path('admin_module_view', { 'collection': collection.collection, 'module': row.Name }) }}"></a>
+                            </li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% if is_granted('ROLE_USER') %}
+                        <li class='add-module'>
+                            <a   href="{{ path('module_new', { 'id': collection.id }) }}">Add Module</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </li>
+        {% endfor %}
+        {% if is_granted('ROLE_USER') %}
+            <li>
+                <a  class='add-collection' href="{{ path('collection_new') }}">New Collection</a>
+            </li>
+        {% endif %}
+    </ul>
+</li>

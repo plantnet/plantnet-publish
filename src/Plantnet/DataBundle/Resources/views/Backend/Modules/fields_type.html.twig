@@ -1,19 +1,19 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
 {% block form %}
-    <div id="title-form"><em>Module: {{ entity.name }}</em> > Properties configuration</div>
-    <form action="{{ path('module_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-        {{ form_errors(edit_form) }}
+    <div id="title-form"><em>Module: {{ module.name }}</em> > Properties configuration</div>
+    <form action="{{ path('save_fields', { 'id': collection.id, 'idmodule': module.id }) }}" method="post" {{ form_enctype(form) }}>
+        {{ form_errors(form) }}
         <div class="field-form">
-            {{ form_label(edit_form.name) }}
+            {{ form_label(form.name) }}
             <br>
-            {{ form_errors(edit_form.name) }}
-            {{ form_widget(edit_form.name) }}
+            {{ form_errors(form.name) }}
+            {{ form_widget(form.name) }}
         </div >
         <div class="field-form">
-            {{ form_label(edit_form.type) }}
+            {{ form_label(form.type) }}
             <br>
-            {{ form_errors(edit_form.type) }}
-            {{ form_widget(edit_form.type) }}
+            {{ form_errors(form.type) }}
+            {{ form_widget(form.type) }}
         </div>
         <table id="table-form">
             <thead>
@@ -30,7 +30,7 @@
                 <tr>
             </thead>
             <tbody>
-                {% for property in edit_form.properties %}
+                {% for property in form.properties %}
                     <tr>
                         <td>
                             {{ form_errors(property.name) }}
@@ -47,22 +47,14 @@
                         <td>
                             {{ form_errors(property.details) }}
                             {{ form_widget(property.details) }}
-                        </td>   
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-        {{ form_rest(edit_form) }}
+        {{ form_rest(form) }}
         <p>
-            <button type="submit">Update</button>
+            <button type="submit">Save</button>
         </p>
     </form>
-    <ul class="record_actions">
-        <li>
-            <form action="{{ path('module_delete', { 'id': entity.id }) }}" method="post">
-                {{ form_widget(delete_form) }}
-                <button type="submit">Delete</button>
-            </form>
-        </li>
-    </ul>
 {% endblock %}

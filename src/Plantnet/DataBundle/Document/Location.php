@@ -40,9 +40,9 @@ class Location
     protected $idparent;
     
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Plantunit", inversedBy="locations")
+     * @MongoDB\ReferenceOne(targetDocument="Plantunit")
      */
-    private $plantunit;
+    private $plantunit;//@MongoDB\ReferenceOne(targetDocument="Plantunit", inversedBy="locations")
 
     /**
      * @MongoDB\ReferenceOne(targetDocument="Module", inversedBy="locations")

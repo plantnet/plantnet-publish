@@ -148,7 +148,10 @@ class DataController extends Controller
                 unset($c_plantunits);
                 $locations=array();
                 $c_locations=$m->$db->Location->find(
-                    array('plantunit.$id'=>array('$in'=>$id_plantunits)),
+                    array(
+                        'plantunit.$id'=>array('$in'=>$id_plantunits),
+                        'module.$id'=>new \MongoId($mod->getId())
+                    ),
                     array('_id'=>1,'latitude'=>1,'longitude'=>1)
                 );
                 unset($id_plantunits);

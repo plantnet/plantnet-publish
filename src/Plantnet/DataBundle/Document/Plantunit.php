@@ -48,14 +48,14 @@ class Plantunit
     private $module;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Image", mappedBy="plantunit", cascade={"remove"})
+     * @MongoDB\ReferenceMany(targetDocument="Image", cascade={"remove"})
      */
-    private $images = array();
+    private $images = array();//@MongoDB\ReferenceMany(targetDocument="Image", mappedBy="plantunit", cascade={"remove"})
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Location", mappedBy="plantunit", cascade={"remove"})
+     * @MongoDB\ReferenceMany(targetDocument="Location", cascade={"remove"})
      */
-    private $locations = array();
+    private $locations = array();//@MongoDB\ReferenceMany(targetDocument="Location", mappedBy="plantunit", cascade={"remove"})
 
     public function __construct()
     {

@@ -1,117 +1,87 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
-
-
 {% block title module.Name %}
 {% block stylesheets %}
-        {{ parent() }}
-        <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/tablesorter/style.css') }}" type="text/css" />
-        
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/tablesorter/style.css') }}" type="text/css" />
 {% endblock %}
-
 {% block body %}
-<section id="breadcrumbs">
-
-    <a href="{{ path('_collection', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name }) }}">{{ collection.Name }}</a>
-    >
-    <a href="{{ path('_module', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a>
-</section>
-
- <div id="results">
-
-    {% if paginator|length > 0 %}
-
-    <div class="pagerfanta">
-            {{ pagerfanta(paginator, 'default') }}
-        </div>
-
-    <table align='center' cellpadding="3" class="tablesorter searchresults" id="simplesearch">
-    <colgroup>
-          <col width=1%>
-          <col width=12%>
-          <col width=14%>
-
-    </colgroup>
-			<thead>
-
-			<tr class="rowtop">
+    <section id="breadcrumbs">
+        <a href="{{ path('admin_collection_view', { 'collection': collection.Name }) }}">{{ collection.Name }}</a>
+        >
+        <a href="{{ path('admin_module_view', { 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a>
+    </section>
+    <div id="results">
+        {% if paginator|length > 0 %}
+            <div class="pagerfanta">
+                {{ pagerfanta(paginator, 'default') }}
+            </div>
+            <table align='center' cellpadding="3" class="tablesorter searchresults" id="simplesearch">
+                {#
+                <colgroup>
+                    <col width=33%>
+                    <col width=33%>
+                    <col width=33%>
+                </colgroup>
+                #}
+                <thead>
+                    <tr class="rowtop">
                         {% for row in display %}
-
-                                <th class="vtop">{{ row }}</th>
-
+                            <th class="vtop">{{ row }}</th>
                         {% endfor %}
-			</tr>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in paginator %}
+                        {#<tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': module.Name, 'id': row._id }) }}'">#}
+                        <tr class="">
+                            {#{{ row.attributes['Individu']|var_dump }}
+                            {% for Data in row.attributes %}
 
-			</thead>
-			<tbody>
-    {% for row in paginator %}
-        <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': module.Name, 'id': row._id }) }}'">
-        
+                            <td>{{ Data }}</td>
 
-{#{{ row.attributes['Individu']|var_dump }}
-        {% for Data in row.attributes %}
-
-                <td>{{ Data }}</td>
-
-        {% endfor %}#}
-                        {% for field in display %}
-
+                            {% endfor %}#}
+                            {% for field in display %}
                                 <td>{{ row.attributes[field] }}</td>
-
-                        {% endfor %}
-        {#{% for Data in row.attributes %}
-                {% if Data.main == true %}
-                <td>{{ Data.value }}</td>
-                {% endif %}
-                
-        {% endfor %}#}
-
-        </tr>
-    {% endfor %}
-    </tbody>
-    </table>
-
-    {% endif %}
-</div>
-    
+                            {% endfor %}
+                            {#{% for Data in row.attributes %}
+                            {% if Data.main == true %}
+                            <td>{{ Data.value }}</td>
+                            {% endif %}
+                            {% endfor %}#}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
 {% endblock %}
-
-
 {% block javascripts %}
-             {{ parent() }}
+    {{ parent() }}
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery-latest.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.pager.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function(){
-                $("table")
-                        .tablesorter({widthFixed: false, widgets: ['zebra'] })
-
-
-                        //  Adds "over" class to rows on mouseover
-                        $("table tr").mouseover(function(){
-                          $(this).addClass("over");
-                        });
-
-                        //  Removes "over" class from rows on mouseout
-                        $("table tr").mouseout(function(){
-                          $(this).removeClass("over");
-                });
+            $("table").tablesorter({widthFixed: false, widgets: ['zebra'] });
+            //  Adds "over" class to rows on mouseover
+            $("table tr").mouseover(function(){
+                $(this).addClass("over");
+            });
+            //  Removes "over" class from rows on mouseout
+            $("table tr").mouseout(function(){
+                $(this).removeClass("over");
+            });
         });
     </script>
-
     <script type="text/javascript">
-
-                            $('.pagerfanta a').click(function(e) {
-
-                                e.preventDefault();
-                                var $url = $(this).attr('href');
-
-                                $(this).prev().append('<div class="page-loading"></div>');
-                                    $.get($url, function(data) {
-                                        $('#content').html(data);
-                                        //$(".page-loading").remove();
-                                    });
-
-                                });
-                        </script>
+        $('.pagerfanta a').click(function(e) {
+            e.preventDefault();
+            var $url = $(this).attr('href');
+            $(this).prev().append('<div class="page-loading"></div>');
+            $.get($url, function(data) {
+                $('#content').html(data);
+                //$(".page-loading").remove();
+            });
+        });
+    </script>
 {% endblock %}

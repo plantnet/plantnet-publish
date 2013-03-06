@@ -14,16 +14,11 @@ use Plantnet\DataBundle\Document\Collection,
 /**
  * Collection controller.
  *
+ * @Route("/admin/collection")
  */
 class CollectionController extends Controller
 {
-    /**
-     * Displays a form to edit an existing Collection entity.
-     *
-     * @Route("/coll/new", name="collectionlist")
-     * @Template()
-     */
-    public function collectionlistAction()
+    public function collection_listAction()
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
@@ -40,7 +35,58 @@ class CollectionController extends Controller
             array_push($coll, $module);
             array_push($modules, $coll);
         }
-        return $this->render('PlantnetDataBundle:Backend\Collection:collectionlist.html.twig',array('collections' => $collections, 'list' => $modules, 'current' => 'administration'));
+        return $this->render('PlantnetDataBundle:Backend\Collection:collection_list.html.twig',array('collections' => $collections, 'list' => $modules, 'current' => 'administration'));
+    }
+
+    /**
+     * Displays a form to create a new Collection entity.
+     *
+     * @Route("/collection/new", name="collection_new")
+     * @Template()
+     */
+    public function collection_newAction()
+    {
+        $document = new Collection();
+        $form   = $this->createForm(new CollectionType(), $document);
+        return array(
+            'entity' => $document,
+            'form'   => $form->createView()
+        );
+    }
+
+    /**
+     * Creates a new Collection entity.
+     *
+     * @Route("/collection/create", name="collection_create")
+     * @Method("post")
+     * @Template()
+     */
+    public function collection_createAction()
+    {
+        $document  = new Collection();
+        $request = $this->getRequest();
+        $form    = $this->createForm(new CollectionType(), $document);
+
+        if ('POST' === $request->getMethod()) {
+            $form->bindRequest($request);
+
+            if ($form->isValid()) {
+                $dm = $this->get('doctrine.odm.mongodb.document_manager');
+                $user=$this->container->get('security.context')->getToken()->getUser();
+                $document->setUser($user);
+                $document->setAlias($user->getUsername().'_'.$document->getName());
+                $dm->persist($document);
+                $dm->flush();
+
+                return $this->redirect($this->generateUrl('module_new', array('id' => $document->getId())));
+
+            }
+        }
+
+        return array(
+            'entity' => $document,
+            'form'   => $form->createView()
+        );
     }
 
      /**
@@ -49,7 +95,7 @@ class CollectionController extends Controller
      * @Route("/{id}/edit", name="collection_edit")
      * @Template()
      */
-    public function editAction($id)
+    public function collection_editAction($id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $entity = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
@@ -70,9 +116,9 @@ class CollectionController extends Controller
      *
      * @Route("/{id}/update", name="collection_update")
      * @Method("post")
-     * @Template("PlantnetBotaBundle:Backend\Collection:edit.html.twig")
+     * @Template("PlantnetBotaBundle:Backend\Collection:collection_edit.html.twig")
      */
-    public function updateAction($id)
+    public function collection_updateAction($id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $entity = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
@@ -104,7 +150,7 @@ class CollectionController extends Controller
      * @Route("/{id}/delete", name="collection_delete")
      * @Method("post")
      */
-    public function deleteAction($id)
+    public function collection_deleteAction($id)
     {
         $form = $this->createDeleteForm($id);
         $request = $this->getRequest();

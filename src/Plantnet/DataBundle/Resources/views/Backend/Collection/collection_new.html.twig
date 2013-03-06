@@ -1,19 +1,7 @@
-{% extends "PlantnetDataBundle:Backend:layout.html.twig" %}
-{% block stylesheets %}
-	{{ parent() }}
-	<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.css') }}" type="text/css" />
-{% endblock %}
-{% block sidebar %}
-	{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
-{% endblock %}
-{% block body %}
-	<div id="admin-form">
-		{% block form %}
-		{% endblock %}
-	</div>
-{% endblock %}
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
 {% block javascripts %}
 	{{ parent() }}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.min.js') }}"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("textarea").cleditor({
@@ -51,4 +39,27 @@
 			});
 		});
 	</script>
+{% endblock %}
+{% block form %}
+	<div id="title-form">Collection Creation</div>
+		<form action="{{ path('collection_create') }}" method="post" {{ form_enctype(form) }}>
+			{{ form_errors(form) }}
+			<div class="field-form">
+				{{ form_label(form.name) }}
+				<br>
+				{{ form_errors(form.name) }}
+				{{ form_widget(form.name) }}
+			</div>
+			<div class="field-form">
+				{{ form_label(form.description) }}
+				<br>
+				{{ form_errors(form.description) }}
+				{{ form_widget(form.description) }}
+			</div>
+			{{ form_rest(form) }}
+			<p>
+				<button type="submit">Create</button>
+			</p>
+		</form>
+	</div>
 {% endblock %}
