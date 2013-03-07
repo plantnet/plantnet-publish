@@ -1,4 +1,7 @@
 {% extends "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
 {% block form %}
 	<div id="title-form"><em>Module: {{ module.name }}</em> > Import Data</div>
 		<form id="import_data" action="{{ path('import_data', { 'id': collection.id, 'idmodule': module.id }) }}" method="post" {{ form_enctype(form) }}>
@@ -29,25 +32,27 @@
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
-	<script>
-		$(".loading").hide();
-		$("#import_data").submit(function(){
-			$(".loading").show();
-			$('#import-button').attr("disabled",true);
-			var module = $('#modules_name').val();
-			$(".loading").show();
-			var DATA = 'module=' + module;
-			$.ajax({
-				type: "POST",
-				url: "{{ path('importation', { 'id': collection.id, 'idmodule': module.id }) }}",
-				data: DATA,
-				cache: false,
-				success: function(data){
-					$('#data').html(data);
-					$(".loading").hide();
-				}
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$(".loading").hide();
+			$("#import_data").submit(function(){
+				$(".loading").show();
+				$('#import-button').attr("disabled",true);
+				var module = $('#modules_name').val();
+				$(".loading").show();
+				var DATA = 'module=' + module;
+				$.ajax({
+					type: "POST",
+					url: "{{ path('importation', { 'id': collection.id, 'idmodule': module.id }) }}",
+					data: DATA,
+					cache: false,
+					success: function(data){
+						$('#data').html(data);
+						$(".loading").hide();
+					}
+				});
+				return false;
 			});
-			return false;
 		});
 	</script>
 {% endblock %}

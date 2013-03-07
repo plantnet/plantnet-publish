@@ -508,7 +508,7 @@ class ModulesController extends Controller
      * @Route("/{id}/edit", name="module_edit")
      * @Template()
      */
-    public function editAction($id)
+    public function module_editAction($id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $entity = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
@@ -529,9 +529,9 @@ class ModulesController extends Controller
      *
      * @Route("/{id}/update", name="module_update")
      * @Method("post")
-     * @Template("PlantnetBotaBundle:Backend\Modules:edit.html.twig")
+     * @Template("PlantnetBotaBundle:Backend\Modules:module_edit.html.twig")
      */
-    public function updateAction($id)
+    public function module_updateAction($id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $entity = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
@@ -563,7 +563,7 @@ class ModulesController extends Controller
      * @Route("/{id}/delete", name="module_delete")
      * @Method("post")
      */
-    public function deleteAction($id)
+    public function module_deleteAction($id)
     {
         $form = $this->createDeleteForm($id);
         $request = $this->getRequest();

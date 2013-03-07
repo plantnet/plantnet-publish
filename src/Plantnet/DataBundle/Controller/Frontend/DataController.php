@@ -131,7 +131,7 @@ class DataController extends Controller
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(20);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-                return $this->render('PlantnetDataBundle:Frontend:gallery.html.twig', array('paginator' => $paginator, 'field' => $field, 'collection' => $collection, 'module' => $module, 'type' => 'images', 'display' => $display));
+                return $this->render('PlantnetDataBundle:Frontend:gallery.html.twig', array('paginator' => $paginator, 'field' => $field, 'collection' => $collection, 'module' => $mod, 'type' => 'images', 'display' => $display));
                 break;
             case "locality":
                 $db=$this->container->getParameter('mdb_base');
@@ -169,7 +169,7 @@ class DataController extends Controller
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
                 return $this->render('PlantnetDataBundle:Frontend:map.html.twig',array(
                     'collection' => $collection,
-                    'module' => $module,
+                    'module' => $mod,
                     'type' => 'localisation',
                     'locations' => $locations,
                     'layers' => $layers

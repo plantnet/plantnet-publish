@@ -2,7 +2,6 @@
 {% block title module.Name %}
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/tablesorter/style.css') }}" type="text/css" />
 {% endblock %}
 {% block body %}
     <section id="breadcrumbs">
@@ -57,11 +56,8 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery-latest.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.pager.js') }}"></script>
     <script type="text/javascript">
-        $(document).ready(function(){
+        $(document).ready(function() {
             $("table").tablesorter({widthFixed: false, widgets: ['zebra'] });
             //  Adds "over" class to rows on mouseover
             $("table tr").mouseover(function(){
@@ -74,13 +70,15 @@
         });
     </script>
     <script type="text/javascript">
-        $('.pagerfanta a').click(function(e) {
-            e.preventDefault();
-            var $url = $(this).attr('href');
-            $(this).prev().append('<div class="page-loading"></div>');
-            $.get($url, function(data) {
-                $('#content').html(data);
-                //$(".page-loading").remove();
+        $(document).ready(function() {
+            $('.pagerfanta a').click(function(e) {
+                e.preventDefault();
+                var $url = $(this).attr('href');
+                $(this).prev().append('<div class="page-loading"></div>');
+                $.get($url, function(data) {
+                    $('#content').html(data);
+                    //$(".page-loading").remove();
+                });
             });
         });
     </script>

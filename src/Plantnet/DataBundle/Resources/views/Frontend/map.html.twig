@@ -1,17 +1,24 @@
 {% extends "PlantnetDataBundle::layout.html.twig" %}
-{% block head %}
-	{% block stylesheets %}
-		{{ parent() }}
-		{% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
-	{% endblock %}
-	<title>{% block title module.Name%}</title>
+{% block title module.Name %}
+{% block stylesheets %}
+	{{ parent() }}
+	{% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
+{% endblock %}
+{% block header %}<h1>{{ collection.Name }}</h1>{% endblock %}
+{% block breadcrumb %}
+ <ul class="breadcrumb">
+    <li>
+        <a href="{{ path('_collection', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name }) }}">{{ collection.Name }}</a>
+        <span class="divider">/</span>
+    </li>
+    <li class="active">
+        <a href="{{ path('_module', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a>
+        <span class="divider">></span>
+    </li>
+    <li>localisations</li>
+ </ul>
 {% endblock %}
 {% block main %}
-	<section id="breadcrumbs">
-		<a href="{{ path('_collection', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name }) }}">{{ collection.Name }}</a>
-		>>
-		<a href="{{ path('_module', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a>
-	</section>
 	{# LEAFLET MAP #}
 	<div id="map"></div>
 {% endblock %}

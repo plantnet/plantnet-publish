@@ -1,4 +1,7 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
 {% block form %}
     <div id="title-form"><em>Module: {{ module.name }}</em> > Properties configuration</div>
     <form action="{{ path('save_fields', { 'id': collection.id, 'idmodule': module.id }) }}" method="post" {{ form_enctype(form) }}>
@@ -57,4 +60,7 @@
             <button type="submit">Save</button>
         </p>
     </form>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
 {% endblock %}

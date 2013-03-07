@@ -1,4 +1,7 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
 {% block form %}
     <div id="title-form"><em>Collection: {{ collection.name }}</em> > New Module</div>
     <form id="add_module" action="{{ path('module_create', { 'id': collection.id }) }}" method="post" {{ form_enctype(form) }}>

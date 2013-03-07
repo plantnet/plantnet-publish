@@ -162,7 +162,7 @@ class AdminController extends Controller
                     'paginator' => $paginator,
                     'field' => $field,
                     'collection' => $collection,
-                    'module' => $module,
+                    'module' => $mod,
                     'display' => $display
                 ));
                 break;
@@ -183,7 +183,7 @@ class AdminController extends Controller
                 $c_locations=$m->$db->Location->find(
                     array(
                         'plantunit.$id'=>array('$in'=>$id_plantunits),
-                        'module.$id'=>$mod->getId()
+                        'module.$id'=>new \MongoId($mod->getId())
                     ),
                     array('_id'=>1,'latitude'=>1,'longitude'=>1)
                 );
@@ -202,24 +202,10 @@ class AdminController extends Controller
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
                 return $this->render('PlantnetDataBundle:Backend\Admin:map.html.twig',array(
                     'collection' => $collection,
-                    'module' => $module,
+                    'module' => $mod,
                     'locations' => $locations,
                     'layers' => $layers
                 ));
-                /*
-                $localised = $dm->getRepository('PlantnetDataBundle:Plantunit')->findBy(array('modules'=>$module->getId()));
-                $location = array();
-                foreach($localised as $plantunit){
-                    $point = $dm->getRepository('PlantnetBotaBundle:DataMap')
-                        ->findLocalisation($plantunit);
-                    array_push($location, $point[0]);
-                }
-                return $this->render('PlantnetDataBundle:Backend\Admin:map.html.twig', array(
-                    'collection' => $collection,
-                    'module' => $module,
-                    'location' => $location
-                ));
-                */
                 break;
         }
     }

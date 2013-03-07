@@ -17,6 +17,43 @@
 	<link type="image/x-icon" rel="shortcut icon" href="{{ asset('bundles/plantnetdata/images/favicon.ico') }}" />
 	{% block stylesheets %}
 		<link rel="stylesheet" type="text/css" href="{{ asset('bundles/plantnetdata/css/admin.css') }}" media="screen" />
+		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.css') }}" type="text/css" />
+		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/tablesorter/style.css') }}" type="text/css" />
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
+		<!--[if lte IE 8]>
+		  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
+		<![endif]-->
+		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.css') }}" />
+		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.Default.css') }}" />
+		<!--[if lte IE 8]>
+		  <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.Default.ie.css') }}" />
+		<![endif]-->
+		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/mini_map/Control.MiniMap.css') }}" />
+		<style type="text/css">
+			#map_leaflet{
+				width:650px;
+				height:450px;
+				background:#333333;
+			}
+			.leaflet-control-zoom-fullscreen{
+				background-image:url({{ asset('bundles/plantnetdata/images/leaflet/icon-fullscreen.png') }});
+			}
+			.leaflet-control-layers-base label,.leaflet-control-layers-overlays label{
+				clear:both;
+				text-align:left;
+			}
+			.leaflet-control-layers-separator{
+				clear:both;
+			}
+			.legend{
+				background:#FFFFFF;
+				border-radius:8px;
+				overflow:hidden;
+			}
+			.legend img{
+				margin-left:-10px;
+			}
+		</style>
 	{% endblock %}
 {% endblock %}
 </head>
@@ -61,50 +98,59 @@
 </body>
 {% block javascripts %}
 	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-1.7.min.js') }}"></script>
-	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.min.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/hideshow.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.pager.js') }}"></script>
+	<script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/marker_cluster/leaflet.markercluster.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/full_screen/Control.FullScreen.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/mini_map/Control.MiniMap.js') }}"></script>
+	<script src="http://openweathermap.org/js/leaflet-layer.js"></script>-->
 	<script type="text/javascript">
-		$('#nav a').click(function(e) {
-			e.preventDefault();
-			var $url = $(this).attr('href');
-			if($url!='#')
-			{
-				$(this).parent().prepend('<div class="page-loading"></div>');
-				$.get($url, function(data) {
-					$('#content').html(data);
-					$(".page-loading").remove();
-				});
-			}
-		});
-		(function () {
-			if (/Microsoft/.test(navigator.appName)) { return }
-			window.onload = function () {
-				var menu = document.getElementById('nav');
-				var init = menu.offsetTop;
-				var docked;
-				window.onscroll = function () {
-					if (!docked && (menu.offsetTop - scrollTop() < 0)) {
-						menu.style.top = 0;
-						menu.style.position = 'fixed';
-						menu.className = 'docked';
-						docked = true;
-					} else if (docked && scrollTop() <= init) {
-						menu.style.position = 'absolute';
-						menu.style.top = init + 'px';
-						menu.className = menu.className.replace('docked', 'topbar');
-						docked = false;
-					}
+		$(document).ready(function(){
+			$('#nav a').click(function(e) {
+				e.preventDefault();
+				var $url = $(this).attr('href');
+				if($url!='#')
+				{
+					$(this).parent().prepend('<div class="page-loading"></div>');
+					$.get($url, function(data) {
+						$('#content').html(data);
+						$(".page-loading").remove();
+					});
+				}
+			});
+			(function () {
+				if (/Microsoft/.test(navigator.appName)) { return }
+				window.onload = function () {
+					var menu = document.getElementById('nav');
+					var init = menu.offsetTop;
+					var docked;
+					window.onscroll = function () {
+						if (!docked && (menu.offsetTop - scrollTop() < 0)) {
+							menu.style.top = 0;
+							menu.style.position = 'fixed';
+							menu.className = 'docked';
+							docked = true;
+						} else if (docked && scrollTop() <= init) {
+							menu.style.position = 'absolute';
+							menu.style.top = init + 'px';
+							menu.className = menu.className.replace('docked', 'topbar');
+							docked = false;
+						}
+					};
+					(function () {
+						var link = document.getElementById('guide-link'),
+						menu = document.getElementById('menu'),
+						dropdown = document.getElementById('dropdown');
+					})();
 				};
-				(function () {
-					var link = document.getElementById('guide-link'),
-					menu = document.getElementById('menu'),
-					dropdown = document.getElementById('dropdown');
-				})();
-			};
-			function scrollTop() {
-			return document.body.scrollTop || document.documentElement.scrollTop;
-			}
-		})();
+				function scrollTop() {
+					return document.body.scrollTop || document.documentElement.scrollTop;
+				}
+			})();
+		});
 	</script>
 {% endblock %}  
 </html>
