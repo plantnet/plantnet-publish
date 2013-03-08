@@ -2,21 +2,19 @@
     <a id="menu-collection" href="#">Collections</a>
     <div class="arrow"></div>
     <ul class="collections toggle">
-        {% for collection in list %}
+        {% for collection in collections %}
             <li>
-                <a  class="collection" href="{{ path('admin_collection_view', { 'collection': collection.collection }) }}">{{ collection.collection }}</a>
+                <a  class="collection" href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">{{ collection.name }}</a>
                 {% if is_granted('ROLE_USER') %}
                     <a  class="edit" href="{{ path('collection_edit', { 'id': collection.id }) }}"></a>
                 {% endif %}
-                <a  class="view" href="{{ path('admin_collection_view', { 'collection': collection.collection }) }}"></a>
+                <a  class="view" href="{{ path('admin_collection_view', { 'collection': collection.name }) }}"></a>
                 <div class="arrow"></div>
                 <ul class="module toggle">
+                    {#
                     {% for type in collection %}
                         {% for row in type %}
                             <li class='row-module'>
-                                {#
-                                <a  class="{{ row.type }}" href="{{ path('_module', { 'owner': collection.owner, 'collection': collection.collection, 'module': row.Name }) }}">{{ row.Name }}</a>
-                                #}
                                 <a  class="{{ row.type }}" href="{{ path('admin_module_view', { 'collection': collection.collection, 'module': row.Name }) }}">{{ row.Name }}</a>
                                 {% if is_granted('ROLE_USER') %}
                                     <a  class="edit" href="{{ path('module_edit', { 'id': row.id }) }}"></a>
@@ -24,6 +22,16 @@
                                 <a  class="view" href="{{ path('admin_module_view', { 'collection': collection.collection, 'module': row.Name }) }}"></a>
                             </li>
                         {% endfor %}
+                    {% endfor %}
+                    #}
+                    {% for module in collection.modules %}
+                        <li class='row-module'>
+                            <a  class="{{ module.type }}" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
+                            {% if is_granted('ROLE_USER') %}
+                                <a  class="edit" href="{{ path('module_edit', { 'id': module.id }) }}"></a>
+                            {% endif %}
+                            <a  class="view" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}"></a>
+                        </li>
                     {% endfor %}
                     {% if is_granted('ROLE_USER') %}
                         <li class='add-module'>

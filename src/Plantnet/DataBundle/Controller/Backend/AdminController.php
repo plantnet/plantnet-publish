@@ -32,27 +32,26 @@ class AdminController extends Controller
     public function indexAction()
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
         $user=$this->container->get('security.context')->getToken()->getUser();
-
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findBy(array('user.id'=>$user->getId()));
-        $modules = array();
-        foreach($collections as $collection){
-            $coll = array(
-                'collection'=>$collection->getName(),
-                'id'=>$collection->getId(),
-                'owner'=>$collection->getUser()->getUsernameCanonical()
-            );
-
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
-                ->findBy(array('collection.id' => $collection->getId()));
-            array_push($coll, $module);
-
-            array_push($modules, $coll);
-        }
-
-        return $this->render('PlantnetDataBundle:Backend:index.html.twig',array('collections' => $collections, 'list' => $modules, 'current' => 'administration'));
+        // $modules = array();
+        // foreach($collections as $collection){
+        //     $coll = array(
+        //         'collection'=>$collection->getName(),
+        //         'id'=>$collection->getId(),
+        //         'owner'=>$collection->getUser()->getUsernameCanonical()
+        //     );
+        //     $module = $dm->getRepository('PlantnetDataBundle:Module')
+        //         ->findBy(array('collection.id' => $collection->getId()));
+        //     array_push($coll, $module);
+        //     array_push($modules, $coll);
+        // }
+        // return $this->render('PlantnetDataBundle:Backend:index.html.twig',array('collections' => $collections, 'list' => $modules, 'current' => 'administration'));
+        return $this->render('PlantnetDataBundle:Backend:index.html.twig',array(
+            'collections' => $collections,
+            'current' => 'administration'
+        ));
     }
 
     /**
@@ -62,44 +61,10 @@ class AdminController extends Controller
     public function collectionAction($collection)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
-
-        $modules = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findBy(array('collection.id' => $collection->getId()));
-        $modules_id=array();
-        foreach($modules as $module)
-        {
-            $modules_id[]=$module->getId();
-        }
-
-        $nb_modules=count($modules);
-
-        $nb_plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-            ->field('module.id')->in($modules_id)
-            ->getQuery()
-            ->execute()
-            ->count();
-
-        $nb_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-            ->field('module.id')->in($modules_id)
-            ->getQuery()
-            ->execute()
-            ->count();
-
-        $nb_locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
-            ->field('module.id')->in($modules_id)
-            ->getQuery()
-            ->execute()
-            ->count();
-
         return $this->render('PlantnetDataBundle:Backend\Admin:collection_view.html.twig', array(
-            'collection'=>$collection,
-            'nb_modules'=>$nb_modules,
-            'nb_plantunits'=>$nb_plantunits,
-            'nb_images'=>$nb_images,
-            'nb_locations'=>$nb_locations
+            'collection'=>$collection
         ));
     }
 
@@ -110,13 +75,10 @@ class AdminController extends Controller
     public function moduleAction($collection, $module)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
-
         $mod = $dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
-
         if($mod->getParent()){
             $module = $dm->getRepository('PlantnetDataBundle:Module')
                 ->find($mod->getParent()->getId());
@@ -124,7 +86,6 @@ class AdminController extends Controller
             $module = $dm->getRepository('PlantnetDataBundle:Module')
                 ->find($mod->getId());
         }
-
         $display = array();
         $field = $module->getProperties();
         foreach($field as $row){
@@ -132,7 +93,6 @@ class AdminController extends Controller
                 $display[] = $row->getName();
             }
         }
-
         switch ($mod->getType())
         {
             case 'text':

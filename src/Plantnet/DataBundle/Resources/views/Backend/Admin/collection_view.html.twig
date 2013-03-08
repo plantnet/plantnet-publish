@@ -1,26 +1,52 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
-{% block title collection.Name %}
+{% block title collection.name %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/tablesorter/style.css') }}" type="text/css" />
 {% endblock %}
 {% block body %}
 	<section id="breadcrumbs">
-		<a href="{{ path('admin_collection_view', { 'collection': collection.Name }) }}">{{ collection.Name }}</a>
+		<a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">{{ collection.name }}</a>
 	</section>
 	<div>
-		<p>
-			Description :
-			<br>
-			{% autoescape false %}
-				{{ collection.Description }}
-			{% endautoescape %}
-		</p>
+		{% if (collection.description is defined) and (collection.description is not empty) %}
+			<p>
+				Description :
+				<br>
+				{% autoescape false %}
+					{{ collection.description }}
+				{% endautoescape %}
+			</p>
+		{% endif %}
+		<p>{{ collection.modules|length }} module{% if collection.modules|length >= 2 %}s{% endif %}</p>
 		<ul>
+			{% for module in collection.modules %}
+				<li>
+					{{ module.name }} - [ type : {{ module.type }} ]
+					<ul>
+						{% if module.parent is not null %}
+							<li>Under {{ module.parent.name }}</li>
+						{% endif %}
+						{#
+						{% if module.plantunits|length > 0 %}
+							<li>{{ module.plantunits|length }} Plantunit{% if module.plantunits|length >= 2 %}s{% endif %}</li>
+						{% endif %}
+						{% if module.images|length > 0 %}
+							<li>{{ module.images|length }} Image{% if module.images|length >= 2 %}s{% endif %}</li>
+						{% endif %}
+						{% if module.locations|length > 0 %}
+							<li>{{ module.locations|length }} Localisation{% if module.locations|length >= 2 %}s{% endif %}</li>
+						{% endif %}
+						#}
+					</ul>
+				</li>
+			{% endfor %}
+		</ul>
+		{#<ul>
 			<li>{{ nb_modules }} module{% if nb_modules>=2 %}s{% endif %}</li>
 			<li>{{ nb_plantunits }} plantunit{% if nb_plantunits>=2 %}s{% endif %}</li>
 			<li>{{ nb_images }} image{% if nb_images>=2 %}s{% endif %}</li>
 			<li>{{ nb_locations }} localisation{% if nb_locations>=2 %}s{% endif %}</li>
-		</ul>
+		</ul>#}
 	</div>
 {% endblock %}

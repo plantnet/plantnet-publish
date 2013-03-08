@@ -6,7 +6,6 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\CollectionRepository")
  */
-
 class Collection
 {
     /**

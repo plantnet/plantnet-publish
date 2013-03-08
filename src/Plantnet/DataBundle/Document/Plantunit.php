@@ -35,12 +35,12 @@ class Plantunit
      * @MongoDB\ReferenceOne(targetDocument="Plantunit", nullable="true", inversedBy="children")
      * 
      */
-    private $parent;
+    //private $parent;
 
     /**
      * @MongoDB\ReferenceMany(targetDocument="Plantunit", mappedBy="parent", cascade={"remove"})
      */
-    private $children;
+    //private $children;
 
     /**
      * @MongoDB\ReferenceOne(targetDocument="Module", inversedBy="plantunits")
@@ -48,19 +48,19 @@ class Plantunit
     private $module;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Image", cascade={"remove"})
+     * @MongoDB\ReferenceMany(targetDocument="Image", mappedBy="plantunit", cascade={"remove"})
      */
-    private $images = array();//@MongoDB\ReferenceMany(targetDocument="Image", mappedBy="plantunit", cascade={"remove"})
+    private $images = array();
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Location", cascade={"remove"})
+     * @MongoDB\ReferenceMany(targetDocument="Location", mappedBy="plantunit", cascade={"remove"})
      */
-    private $locations = array();//@MongoDB\ReferenceMany(targetDocument="Location", mappedBy="plantunit", cascade={"remove"})
+    private $locations = array();
 
     public function __construct()
     {
         $this->files = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        //$this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->images = new \Doctrine\Common\Collections\ArrayCollection();
         $this->locations = new \Doctrine\Common\Collections\ArrayCollection();
     }
@@ -170,40 +170,40 @@ class Plantunit
      *
      * @param Plantnet\DataBundle\Document\Plantunit $parent
      */
-    public function setParent(\Plantnet\DataBundle\Document\Plantunit $parent)
-    {
-        $this->parent = $parent;
-    }
+    // public function setParent(\Plantnet\DataBundle\Document\Plantunit $parent)
+    // {
+    //     $this->parent = $parent;
+    // }
 
     /**
      * Get parent
      *
      * @return Plantnet\DataBundle\Document\Plantunit $parent
      */
-    public function getParent()
-    {
-        return $this->parent;
-    }
+    // public function getParent()
+    // {
+    //     return $this->parent;
+    // }
 
     /**
      * Add children
      *
      * @param Plantnet\DataBundle\Document\Plantunit $children
      */
-    public function addChildren(\Plantnet\DataBundle\Document\Plantunit $children)
-    {
-        $this->children[] = $children;
-    }
+    // public function addChildren(\Plantnet\DataBundle\Document\Plantunit $children)
+    // {
+    //     $this->children[] = $children;
+    // }
 
     /**
      * Get children
      *
      * @return Doctrine\Common\Collections\Collection $children
      */
-    public function getChildren()
-    {
-        return $this->children;
-    }
+    // public function getChildren()
+    // {
+    //     return $this->children;
+    // }
 
     /**
      * Set module

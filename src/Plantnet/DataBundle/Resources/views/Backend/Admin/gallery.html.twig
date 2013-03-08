@@ -1,14 +1,14 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
-{% block title module.Name %}
+{% block title module.name %}
 {% block stylesheets %}
 	{{ parent() }}
 	<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
 {% endblock %}
 {% block body %}
 	<section id="breadcrumbs">
-		<a href="{{ path('admin_collection_view', { 'collection': collection.Name }) }}">{{ collection.Name }}</a>
+		<a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">{{ collection.name }}</a>
 		>
-		<a href="{{ path('admin_module_view', { 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a>
+		<a href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
 	</section>
 	<div id="thumbsresults">
 		{% if paginator|length > 0 %}

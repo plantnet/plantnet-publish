@@ -40,9 +40,9 @@ class Image
     protected $idparent;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Plantunit")
+     * @MongoDB\ReferenceOne(targetDocument="Plantunit", inversedBy="images")
      */
-    private $plantunit;//@MongoDB\ReferenceOne(targetDocument="Plantunit", inversedBy="images")
+    private $plantunit;
 
     /**
      * @MongoDB\ReferenceOne(targetDocument="Module", inversedBy="images")

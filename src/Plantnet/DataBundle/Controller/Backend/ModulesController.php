@@ -37,29 +37,19 @@ class ModulesController extends Controller
     public function module_newAction($id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->find($id);
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-
         $module = new Module();
-
-        $module->setCollection($collection);
-        $collection->addModules($module);
-
         $parents_module = $dm->getRepository('PlantnetDataBundle:Module')
             ->findBy(array('collection.id' => $collection->getId()));
-        
         $idparent = array();
         foreach($parents_module as $mod){
             $idparent[$mod->getId()] = $mod->getName();
         }
-        
         $form = $this->createForm(new ModuleFormType(), $module, array('idparent' => $idparent));
-        
-        //$form    = $this->createForm(new ModuleFormType(), $module);
-
         return array(
             'idparent' => $idparent,
             'module' => $module,
@@ -77,46 +67,33 @@ class ModulesController extends Controller
      */
     public function module_createAction($id)
     {
-        $module  = new Module();
-
+        $module = new Module();
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-        
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
-
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->find($id);
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-
         $request = $this->getRequest();
-
-        $collection->addModules($module);
+        // $collection->addModules($module);
         $parents_module = $dm->getRepository('PlantnetDataBundle:Module')
             ->findBy(array('collection.id' => $collection->getId()));
-
         $idparent = array();
         foreach($parents_module as $mod){
             $idparent[$mod->getId()] = $mod->getName();
         }
-        
         $form = $this->createForm(new ModuleFormType(), $module, array('idparent' => $idparent));
-
         if ('POST' === $request->getMethod()) {
-
             $form->bindRequest($request);
-
             if ($form->isValid()) {
-
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
-                 $module->setCollection($collection);
+                $module->setCollection($collection);
                 $idparent = $request->request->get('modules');
-                
                 if(array_key_exists('parent', $idparent) && $idparent['parent'] != null){
                     $module_parent = $dm->getRepository('PlantnetDataBundle:Module')->find($idparent['parent']);
                     $module->setParent($module_parent);
                 }
-
                 $module->setType($module->getType());
-
                 $uploadedFile = $module->getFile();
                 try{
                     $uploadedFile->move(
@@ -132,12 +109,9 @@ class ModulesController extends Controller
                 {
                     throw new \Exception($e->getMessage());
                 }
-
                 $csv = __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
-                
                 $handle = fopen($csv, "r");
                 $field=fgetcsv($handle,0,";");
-
                 foreach($field as $col){
                     $property = new Property();
                     $cur_encoding = mb_detect_encoding($col) ;
@@ -147,15 +121,12 @@ class ModulesController extends Controller
                     else {
                         $property->setName(utf8_encode($col));
                     }
-
                     $property->setDetails(true);
                     $dm->persist($property);
                     $module->addProperties($property);
                 }
-
                 $dm->persist($module);
                 $dm->flush();
-
                 return $this->redirect($this->generateUrl('fields_type', array('id' => $collection->getId(), 'idmodule' => $module->getId())));
             }
         }
@@ -173,16 +144,14 @@ class ModulesController extends Controller
     public function fields_typeAction($id, $idmodule)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-        $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
-
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
+            ->find($idmodule);
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->find($id);
         if (!$module) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-
         $form = $this->get('form.factory')->create(new ImportFormType(), $module);
-        
         $count='';
         return array(
             'collection' => $collection,
@@ -200,30 +169,22 @@ class ModulesController extends Controller
     public function save_fieldsAction($id, $idmodule)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-        $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
+            ->find($idmodule);
         if (!$module) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-
         $form = $this->createForm(new ImportFormType(), $module);
-
         $request = $this->getRequest();
-
         if ('POST' === $request->getMethod()) {
             $form->bindRequest($request);
-
             if ($form->isValid()) {
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
                 $dm->persist($module);
                 $dm->flush();
-
                 return $this->redirect($this->generateUrl('import_data', array('id' => $id, 'idmodule' => $idmodule)));
             }
         }
-
         return array(
             'module' => $module,
             'form' => $form->createView(),
@@ -237,14 +198,13 @@ class ModulesController extends Controller
     public function import_dataAction($id, $idmodule)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-        $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
-        
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
+            ->find($idmodule);
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->find($id);
         if (!$module) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-
         $form = $this->get('form.factory')->create(new ImportFormType(), $module);
         $count='';
         return array(
@@ -263,22 +223,22 @@ class ModulesController extends Controller
     public function importationAction($id, $idmodule)
     {
         $request = $this->container->get('request');
-
         set_time_limit(0);
         if($request->isXmlHttpRequest())
         {
             $dm = $this->get('doctrine.odm.mongodb.document_manager');
             $configuration = $dm->getConnection()->getConfiguration();
             $configuration->setLoggerCallable(null);
-
-            $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-
+            $module = $dm->getRepository('PlantnetDataBundle:Module')
+                ->find($idmodule);
+            if (!$module) {
+                throw $this->createNotFoundException('Unable to find Module entity.');
+            }
             /*
              * Open the uploaded csv
              */
             $csvfile = __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
             $handle = fopen($csvfile, "r");
-
             /*
              * Get the module properties
              */
@@ -288,21 +248,17 @@ class ModulesController extends Controller
             foreach($attributes as $field){
                 $fields[] = $field;
             }
-
             /*
              * Initialise the metrics
              */
             //echo "Memory usage before: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
             $s = microtime(true);
-
             $batchSize = 500;
             $rowCount = '';
-
             while (($data = fgetcsv($handle, 0, ';')) !== FALSE) {
                 $num = count($data);
                 $rowCount++;
                 if ($module->getType() == 'text'){
-
                     $plantunit = new Plantunit();
                     $plantunit->setModule($module);
                     $attributes = array();
@@ -318,19 +274,15 @@ class ModulesController extends Controller
                                 break;
                         }
                     }
-                                    
                     $plantunit->setAttributes($attributes);
                     $dm->persist($plantunit);
-                    if($module->getParent()){
-
-                        $moduleid = $module->getParent()->getId();
-                        $parent = $dm->getRepository('PlantnetDataBundle:Plantunit')
-                            ->findOneBy(array('module.id' => $moduleid, 'identifier' => $plantunit->getIdparent()));
-
-                        $plantunit->setParent($parent);
-                        $dm->persist($plantunit);
-                    }
-
+                    // if($module->getParent()){
+                    //     $moduleid = $module->getParent()->getId();
+                    //     $parent = $dm->getRepository('PlantnetDataBundle:Plantunit')
+                    //         ->findOneBy(array('module.id' => $moduleid, 'identifier' => $plantunit->getIdparent()));
+                    //     $plantunit->setParent($parent);
+                    //     $dm->persist($plantunit);
+                    // }
                 }elseif ($module->getType() == 'image'){
                     $image = new Image();
                     $attributes = array();
@@ -370,8 +322,8 @@ class ModulesController extends Controller
                     }
                     if($parent)
                     {
-                        $parent->addImages($image);
-                        $dm->persist($parent);
+                        // $parent->addImages($image);
+                        // $dm->persist($parent);
                         $image->setPlantunit($parent);
                         $dm->persist($image);
                     }
@@ -381,7 +333,7 @@ class ModulesController extends Controller
                         $plantunit->setModule($module);
                         $plantunit->setAttributes($attributes);
                         $plantunit->setIdentifier($image->getIdentifier());
-                        $plantunit->addImages($image);
+                        // $plantunit->addImages($image);
                         $dm->persist($plantunit);
                         $image->setPlantunit($plantunit);
                         $dm->persist($image);
@@ -425,8 +377,8 @@ class ModulesController extends Controller
                     }
                     if($parent)
                     {
-                        $parent->addLocations($location);
-                        $dm->persist($parent);
+                        // $parent->addLocations($location);
+                        // $dm->persist($parent);
                         $location->setPlantunit($parent);
                         $dm->persist($location);
                     }
@@ -436,13 +388,12 @@ class ModulesController extends Controller
                         $plantunit->setModule($module);
                         $plantunit->setAttributes($attributes);
                         $plantunit->setIdentifier($location->getIdentifier());
-                        $plantunit->addLocations($location);
+                        // $plantunit->addLocations($location);
                         $dm->persist($plantunit);
                         $location->setPlantunit($plantunit);
                         $dm->persist($location);
                     }
                 }
-                
                 if (($rowCount % $batchSize) == 0) {
                     $dm->flush();
                     $dm->clear();
@@ -452,21 +403,16 @@ class ModulesController extends Controller
                     //gc_collect_cycles();
                 }
             }
-
             $dm->flush();
             $dm->clear();
-
             //echo "Memory usage after: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
             $e = microtime(true);
             echo ' Inserted '.$rowCount.' objects in ' . ($e - $s) . ' seconds' . PHP_EOL;
-
             fclose($handle);
-
             if(file_exists($csvfile))
             {
                 unlink($csvfile);
             }
-
             /*$usermail = $this->get('security.context')->getToken()->getUser()->getEmail();
 
             // Récupération du mailer service.
@@ -481,7 +427,6 @@ class ModulesController extends Controller
 
             // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
             $mailer->send($message);*/
-
             return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:import_moduledata.html.twig', array(
                 'importCount' => 'Importation Success: '.$rowCount.' objects imported'
             ));
@@ -511,7 +456,8 @@ class ModulesController extends Controller
     public function module_editAction($id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-        $entity = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
+        $entity = $dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
@@ -534,11 +480,12 @@ class ModulesController extends Controller
     public function module_updateAction($id)
     {
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-        $entity = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
+        $entity = $dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $editForm   = $this->createForm(new ModulesType(), $entity);
+        $editForm = $this->createForm(new ModulesType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
         $request = $this->getRequest();
         if ('POST' === $request->getMethod()) {
@@ -551,8 +498,8 @@ class ModulesController extends Controller
             }
         }
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
