@@ -111,19 +111,16 @@ class AdminController extends Controller
                 ));
                 break;
             case 'image':
-                $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                    ->field('module')->references($module)
-                    ->field('images')->exists(true)
+                $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Image')
+                    ->field('module')->references($mod)
                     ->hydrate(false);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(50);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
                 return $this->render('PlantnetDataBundle:Backend\Admin:gallery.html.twig', array(
                     'paginator' => $paginator,
-                    'field' => $field,
                     'collection' => $collection,
-                    'module' => $mod,
-                    'display' => $display
+                    'module' => $mod
                 ));
                 break;
             case 'locality':

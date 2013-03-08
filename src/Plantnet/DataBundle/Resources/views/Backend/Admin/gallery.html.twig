@@ -16,6 +16,7 @@
 				{{ pagerfanta(paginator, 'default') }}
 			</div>
 			{% for row in paginator %}
+				{#
 				{% if row.images is defined %}
 					{% for Data in row.images %}
 						{% if Data.path is defined %}
@@ -26,6 +27,11 @@
 						{% endif %}
 					{% endfor %}
 				{% endif %}
+				#}
+				{% set imgspe = row.path|basename %}
+				{% set img = ['bundles/plantnetdata/data_images/img/', imgspe]|join('') %}
+				<a href="{{ asset(img) }}~1000x1000&copyright=Plantnet" class="grouped_elements" rel="group">
+					<img src="{{ asset(img)}}~200x200" alt="{{ imgspe }}" border="0" /></a>
 			{% endfor %}
 		{% endif %}
 	</div>
@@ -49,5 +55,16 @@
 				'overlayShow'	:	false
 			});
 		});
+		$(document).ready(function() {
+            $('.pagerfanta a').click(function(e) {
+                e.preventDefault();
+                var $url = $(this).attr('href');
+                $(this).prev().append('<div class="page-loading"></div>');
+                $.get($url, function(data) {
+                    $('#content').html(data);
+                    //$(".page-loading").remove();
+                });
+            });
+        });
 	</script>
 {% endblock %}
