@@ -41,6 +41,8 @@ class AppKernel extends Kernel
             new Plantnet\UserBundle\PlantnetUserBundle(),
             new Plantnet\DataBundle\PlantnetDataBundle(),
             new Plantnet\FileManagerBundle\PlantnetFileManagerBundle(),
+
+            new Liip\ImagineBundle\LiipImagineBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

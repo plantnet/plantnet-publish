@@ -15,11 +15,17 @@ use Plantnet\FileManagerBundle\Form\ZipForm;
 class DefaultController extends Controller
 {
     /**
-	* @Route("/{name}/file_manager", requirements={"name" = "\w+"}, name="file_manager")
+	* @Route("/file_manager", name="file_manager")
 	* @Template()
 	*/
-    public function indexAction($name)
+    public function indexAction()
     {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        if(!$user)
+        {
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+        $name=$user->getUsernameCanonical();
         $zipData=new ZipData();
         $form=$this->createForm(new ZipForm(),$zipData);
         return array(
@@ -28,11 +34,17 @@ class DefaultController extends Controller
         );
     }
     /**
-    * @Route("/{name}/file_upload/", requirements={"name" = "\w+"}, name="file_upload")
+    * @Route("/file_upload", name="file_upload")
     * @Template()
     */
-    public function uploadAction($name,Request $request)
+    public function uploadAction(Request $request)
     {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        if(!$user)
+        {
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+        $name=$user->getUsernameCanonical();
         $zipData=new ZipData();
         $form=$this->createForm(new ZipForm(),$zipData);
         if($request->getMethod()=='POST')

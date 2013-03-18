@@ -9,7 +9,7 @@
 	<script type="text/javascript" src="{{ asset('bundles/plantnetfilemanager/js/script.js') }}"></script>
 {% endblock %}
 {% block content %}
-	<form id="formProgress" action="{{ path('plantnet_file_manager_upload',{'name':name}) }}" method="post" {{ form_enctype(form) }}>
+	<form id="formProgress" action="{{ path('plantnet_file_manager_upload') }}" method="post" {{ form_enctype(form) }}>
 	    {{ form_widget(form) }}
 		<input type="submit" value="Envoyer" />
 	</form>

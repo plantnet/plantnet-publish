@@ -315,6 +315,13 @@ label {
     font-family: Tahoma;
 }
 
+#main-nav .images{
+    background: url("../images/lens.png") no-repeat scroll 2px center transparent;
+    padding-left: 20px;
+    color: #77B63E;
+    font-family: Tahoma;
+}
+
 
 #main-nav .collections{
     margin-left: 30px;

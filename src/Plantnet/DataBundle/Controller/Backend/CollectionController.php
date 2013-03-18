@@ -162,6 +162,19 @@ class CollectionController extends Controller
                     throw $this->createNotFoundException('Unable to find Collection entity.');
                 }
                 /*
+                * Remove Modules
+                */
+                $modules=$collection->getModules();
+                if(count($modules))
+                {
+                    foreach($modules as $module)
+                    {
+                        $this->forward('PlantnetDataBundle:Backend\Modules:module_delete',array(
+                            'id'=>$module->getId()
+                        ));
+                    }
+                }
+                /*
                 * Remove csv directory (and files)
                 */
                 $dir=__DIR__.'/../../Resources/uploads/'.$collection->getAlias();

@@ -29,9 +29,9 @@
 				{% endif %}
 				#}
 				{% set imgspe = row.path|basename %}
-				{% set img = ['bundles/plantnetdata/data_images/img/', imgspe]|join('') %}
-				<a href="{{ asset(img) }}~1000x1000&copyright=Plantnet" class="grouped_elements" rel="group">
-					<img src="{{ asset(img)}}~200x200" alt="{{ imgspe }}" border="0" /></a>
+				{% set img = ['uploads/'~app.user.username~'/', imgspe]|join('') %}
+				<a href="{{ asset(img) }}" class="grouped_elements" rel="group">
+					<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" border="0" /></a>
 			{% endfor %}
 		{% endif %}
 	</div>

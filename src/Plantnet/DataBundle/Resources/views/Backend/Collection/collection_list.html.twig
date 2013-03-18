@@ -31,6 +31,9 @@
                                 <a  class="edit" href="{{ path('module_edit', { 'id': module.id }) }}"></a>
                             {% endif %}
                             <a  class="view" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}"></a>
+                            {% if module.type=='image' %}
+                                <a class="images" href="{{ path('plantnet_file_manager_homepage') }}"></a>
+                            {% endif %}
                         </li>
                     {% endfor %}
                     {% if is_granted('ROLE_USER') %}

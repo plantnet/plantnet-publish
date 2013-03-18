@@ -36,8 +36,9 @@
         "nelmio/api-doc-bundle": "2.0.1",
         "jms/i18n-routing-bundle": "dev-master",
 
-        "raulfraile/ladybug-bundle": "dev-master"
-        
+        "raulfraile/ladybug-bundle": "dev-master",
+
+        "liip/imagine-bundle": "dev-master"
 
     },
     "scripts": {

@@ -315,10 +315,10 @@ class ModulesController extends Controller
                             ->field('identifier')->equals($image->getIdparent())
                             ->getQuery()
                             ->execute();
-                            foreach($parent_q as $p)
-                            {
-                                $parent=$p;
-                            }
+                        foreach($parent_q as $p)
+                        {
+                            $parent=$p;
+                        }
                     }
                     if($parent)
                     {
@@ -370,10 +370,10 @@ class ModulesController extends Controller
                             ->field('identifier')->equals($location->getIdparent())
                             ->getQuery()
                             ->execute();
-                            foreach($parent_q as $p)
-                            {
-                                $parent=$p;
-                            }
+                        foreach($parent_q as $p)
+                        {
+                            $parent=$p;
+                        }
                     }
                     if($parent)
                     {
@@ -527,6 +527,39 @@ class ModulesController extends Controller
                     throw $this->createNotFoundException('Unable to find Collection entity.');
                 }
                 /*
+                * Remove children
+                */
+                $children=$module->getChildren();
+                if(count($children))
+                {
+                    foreach($children as $child)
+                    {
+                        $this->forward('PlantnetDataBundle:Backend\Modules:module_delete',array(
+                            'id'=>$child->getId()
+                        ));
+                    }
+                }
+                $db=$this->container->getParameter('mdb_base');
+                $m=new \Mongo();
+                /*
+                * Remove images
+                */
+                $m->$db->Image->remove(
+                    array('module.$id'=>new \MongoId($module->getId()))
+                );
+                /*
+                * Remove locations
+                */
+                $m->$db->Location->remove(
+                    array('module.$id'=>new \MongoId($module->getId()))
+                );
+                /*
+                * Remove plantunits
+                */
+                $m->$db->Plantunit->remove(
+                    array('module.$id'=>new \MongoId($module->getId()))
+                );
+                /*
                 * Remove csv file
                 */
                 $csvfile=__DIR__.'/../../Resources/uploads/'.$collection->getAlias().'/'.$module->getName_fname().'.csv';
@@ -538,7 +571,6 @@ class ModulesController extends Controller
                 $dm->flush();
             }
         }
-
         return $this->redirect($this->generateUrl('admin_index'));
     }
 

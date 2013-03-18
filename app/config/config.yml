@@ -230,3 +230,14 @@ vich_geographical:
 #     icon_generator: vich_geographical.icon_generator.default
 #     leaflet:
 #         api_key: BC9A493B41014CAABB98F0471D759707
+
+liip_imagine:
+    cache_clearer: false
+    cache_mkdir_mode: 0777
+    filter_sets:
+        max_width_900:
+            filters:
+                relative_resize: { widen: 900 }
+        thumb_100_100:
+            filters:
+                thumbnail: { size: [100, 100], mode: outbound }

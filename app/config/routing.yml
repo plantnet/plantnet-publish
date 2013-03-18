@@ -45,3 +45,7 @@ plantnet_userrest:
     resource: "@PlantnetUserBundle/Resources/config/routing.yml"
     type: rest
     prefix: /api
+
+_imagine:
+    resource: .
+    type:     imagine
