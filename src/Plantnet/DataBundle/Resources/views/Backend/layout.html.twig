@@ -19,6 +19,7 @@
 		<link rel="stylesheet" type="text/css" href="{{ asset('bundles/plantnetdata/css/admin.css') }}" media="screen" />
 		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.css') }}" type="text/css" />
 		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/tablesorter/style.css') }}" type="text/css" />
+		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
 		<!--[if lte IE 8]>
 		  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
@@ -29,6 +30,7 @@
 		  <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.Default.ie.css') }}" />
 		<![endif]-->
 		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/mini_map/Control.MiniMap.css') }}" />
+		<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('bundles/plantnetfilemanager/css/style.css') }}" />
 		<style type="text/css">
 			#map_leaflet{
 				width:650px;
@@ -103,11 +105,15 @@
 	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.pager.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
 	<script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
 	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/marker_cluster/leaflet.markercluster.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/full_screen/Control.FullScreen.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/mini_map/Control.MiniMap.js') }}"></script>
-	<script src="http://openweathermap.org/js/leaflet-layer.js"></script>-->
+	<script src="http://openweathermap.org/js/leaflet-layer.js"></script>
+	<script type="text/javascript" src="//malsup.github.com/jquery.form.js"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetfilemanager/js/script.js') }}"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$('#nav a').click(function(e) {

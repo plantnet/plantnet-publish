@@ -23,6 +23,11 @@ class Module
      * @MongoDB\String
      */
     private $type;
+
+    /**
+     * @MongoDB\String
+     */
+    private $uploaddir;
     
     /**
      * @MongoDB\ReferenceOne(targetDocument="File")
@@ -151,6 +156,26 @@ class Module
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Set uploaddir
+     *
+     * @param string $uploaddir
+     */
+    public function setUploaddir($uploaddir)
+    {
+        $this->uploaddir = $uploaddir;
+    }
+
+    /**
+     * Get uploaddir
+     *
+     * @return string $uploaddir
+     */
+    public function getUploaddir()
+    {
+        return $this->uploaddir;
     }
 
     /**

@@ -1,13 +1,13 @@
 {% extends "PlantnetDataBundle::layout.html.twig" %}
-{% block header %}<h1>{{ collection.Name }}</h1>{% endblock %}
+{% block header %}<h1>{{ collection.name }} / {{ module.name }}</h1>{% endblock %}
 {% block breadcrumb %}
 	<ul class="breadcrumb">
 		<li>
-			<a href="{{ path('_collection', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name }) }}">{{ collection.Name }}</a>
+			<a href="{{ path('_collection', { 'owner': collection.user.usernameCanonical, 'collection': collection.name }) }}">{{ collection.name }}</a>
 			<span class="divider">/</span>
 		</li>
 		<li class="active">
-			<a href="{{ path('_module', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': module.Name }) }}">{{ module.Name }}</a>
+			<a href="{{ path('_module', { 'owner': collection.user.usernameCanonical, 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
 			<span class="divider">></span>
 		</li>
 		<li>{{ type }}</li>

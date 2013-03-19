@@ -32,7 +32,7 @@
                             {% endif %}
                             <a  class="view" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}"></a>
                             {% if module.type=='image' %}
-                                <a class="images" href="{{ path('plantnet_file_manager_homepage') }}"></a>
+                                <a class="images" href="{{ path('plantnet_file_manager_homepage', {'name': module.uploaddir}) }}"></a>
                             {% endif %}
                         </li>
                     {% endfor %}

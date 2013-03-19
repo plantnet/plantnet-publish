@@ -664,12 +664,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/mongodb-odm.git",
-                "reference": "78a06c3a9ac409057c2a7a509dc3e1f50627637e"
+                "reference": "ecb57e843227269b3fed192dc6619f719a75dd0d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/78a06c3a9ac409057c2a7a509dc3e1f50627637e",
-                "reference": "78a06c3a9ac409057c2a7a509dc3e1f50627637e",
+                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/ecb57e843227269b3fed192dc6619f719a75dd0d",
+                "reference": "ecb57e843227269b3fed192dc6619f719a75dd0d",
                 "shasum": ""
             },
             "require": {
@@ -729,7 +729,7 @@
                 "odm",
                 "persistence"
             ],
-            "time": "2013-03-15 17:37:15"
+            "time": "2013-03-18 14:22:59"
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
@@ -738,16 +738,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineMongoDBBundle.git",
-                "reference": "dd38bdf7d0e52418ea527d454086ca7846838fe2"
+                "reference": "b7b9ff90d826b69fa1592aaf461c75c38387c99f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/dd38bdf7d0e52418ea527d454086ca7846838fe2",
-                "reference": "dd38bdf7d0e52418ea527d454086ca7846838fe2",
+                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/b7b9ff90d826b69fa1592aaf461c75c38387c99f",
+                "reference": "b7b9ff90d826b69fa1592aaf461c75c38387c99f",
                 "shasum": ""
             },
             "require": {
-                "doctrine/mongodb-odm": ">=1.0.0-beta5,<1.1-dev",
+                "doctrine/mongodb-odm": ">=1.0-beta5,<1.1",
                 "php": ">=5.3.2",
                 "symfony/doctrine-bridge": ">=2.1,<2.3-dev",
                 "symfony/framework-bundle": ">=2.1,<2.3-dev",
@@ -799,7 +799,7 @@
                 "persistence",
                 "symfony"
             ],
-            "time": "2013-03-15 17:50:58"
+            "time": "2013-03-18 20:29:08"
         },
         {
             "name": "doctrine/orm",
@@ -2099,12 +2099,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "041aa3930f8d2b466ae897440ec9471d5159c5bf"
+                "reference": "dd0b216e0229a24178c2f0782f8a7172c7ed1c96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/041aa3930f8d2b466ae897440ec9471d5159c5bf",
-                "reference": "041aa3930f8d2b466ae897440ec9471d5159c5bf",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/dd0b216e0229a24178c2f0782f8a7172c7ed1c96",
+                "reference": "dd0b216e0229a24178c2f0782f8a7172c7ed1c96",
                 "shasum": ""
             },
             "require": {
@@ -2153,7 +2153,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2013-02-26 10:18:11"
+            "time": "2013-03-18 18:06:02"
         },
         {
             "name": "nelmio/api-doc-bundle",
@@ -2983,12 +2983,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "d9181ba5b0ade8fef22301a937197138f955f463"
+                "reference": "d7fa84162b36d400e052ecea2126582e4278ff7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/d9181ba5b0ade8fef22301a937197138f955f463",
-                "reference": "d9181ba5b0ade8fef22301a937197138f955f463",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/d7fa84162b36d400e052ecea2126582e4278ff7b",
+                "reference": "d7fa84162b36d400e052ecea2126582e4278ff7b",
                 "shasum": ""
             },
             "require": {
@@ -3074,7 +3074,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2013-03-18 13:37:15"
+            "time": "2013-03-19 08:33:24"
         },
         {
             "name": "twig/extensions",

@@ -25,21 +25,9 @@ class DataController extends Controller
      */
     public function indexAction()
     {
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
-        $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-            ->findAll();
-        $modules = array();
-        foreach($collections as $collection){
-            $coll = array(
-                'collection'=>$collection->getName(),
-                'id'=>$collection->getId()
-            );
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
-                ->findBy(array('collection.id' => $collection->getId()));
-            array_push($coll, $module);
-            array_push($modules, $coll);
-        }
-        return $this->render('PlantnetDataBundle:Frontend:index.html.twig', array('collections' => $collections, 'list' => $modules, 'current' => 'index'));
+        return $this->render('PlantnetDataBundle:Frontend:index.html.twig', array(
+            'current' => 'index'
+        ));
     }
 
     public function menuCollectionListAction()
@@ -47,18 +35,9 @@ class DataController extends Controller
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
-        $list = array();
-        foreach($collections as $collection){
-            $coll = array(
-                'collection'=>$collection->getName(),
-                'owner'=>$collection->getUser()->getUsernameCanonical()
-            );
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
-                ->findBy(array('collection' => $collection->getId()));
-            array_push($coll, $module);
-            array_push($list, $coll);
-        }
-        return $this->render('PlantnetDataBundle:Frontend:menuCollectionList.html.twig', array('collections' => $collections, 'list' => $list, 'current' => 'collections'));
+        return $this->render('PlantnetDataBundle:Frontend:menuCollectionList.html.twig', array(
+            'collections' => $collections
+        ));
     }
 
     /**
@@ -70,21 +49,10 @@ class DataController extends Controller
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $coll = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findBy(array('collection.id' => $coll->getId()));
-        $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-            ->findAll();
-        $list = array();
-        foreach($collections as $collection){
-            $collArray = array(
-                'collection'=>$collection->getName()
-            );
-            $mod = $dm->getRepository('PlantnetDataBundle:Module')
-                ->findBy(array('collection' => $collection->getId()));
-            array_push($collArray, $module);
-            array_push($list, $collArray);
-        }
-        return $this->render('PlantnetDataBundle:Frontend:collection.html.twig', array('list'=>$list, 'collections' => $collections, 'collection' => $coll, 'module' => $module, 'current' => 'collection'));
+        return $this->render('PlantnetDataBundle:Frontend:collection.html.twig', array(
+            'collection' => $coll,
+            'current' => 'collection'
+        ));
     }
 
     /**
@@ -106,7 +74,7 @@ class DataController extends Controller
                 ->find($mod->getId());
         }
         $display = array();
-        $field = $module->getProperties();
+        $field = $mod->getProperties();
         foreach($field as $row){
             if($row->getMain() == true){
                 $display[] = $row->getName();
@@ -114,26 +82,37 @@ class DataController extends Controller
         }
         switch ($mod->getType())
         {
-            case "text":
+            case 'text':
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                    ->field('module')->references($module)
+                    ->field('module')->references($mod)
                     ->hydrate(false);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(50);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-                return $this->render('PlantnetDataBundle:Frontend:datagrid.html.twig', array('paginator' => $paginator, 'field' => $field, 'collection' => $collection, 'module' => $module, 'type' => 'table', 'display' => $display));
+                return $this->render('PlantnetDataBundle:Frontend:datagrid.html.twig', array(
+                    'paginator' => $paginator,
+                    'field' => $field,
+                    'collection' => $collection,
+                    'module' => $module,
+                    'type' => 'table',
+                    'display' => $display
+                ));
                 break;
-            case "image":
-                $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                    ->field('module')->references($module)
-                    ->field('images')->exists(true)
+            case 'image':
+                $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Image')
+                    ->field('module')->references($mod)
                     ->hydrate(false);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(20);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-                return $this->render('PlantnetDataBundle:Frontend:gallery.html.twig', array('paginator' => $paginator, 'field' => $field, 'collection' => $collection, 'module' => $mod, 'type' => 'images', 'display' => $display));
+                return $this->render('PlantnetDataBundle:Frontend:gallery.html.twig', array(
+                    'paginator' => $paginator,
+                    'collection' => $collection,
+                    'module' => $mod,
+                    'type' => 'images'
+                ));
                 break;
-            case "locality":
+            case 'locality':
                 $db=$this->container->getParameter('mdb_base');
                 $m=new \Mongo();
                 $c_plantunits=$m->$db->Plantunit->find(
@@ -187,8 +166,6 @@ class DataController extends Controller
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $coll = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
-        $modules = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findBy(array('collection' => $coll->getId()));
         $module = $dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array('name' => $module, 'collection.id' => $coll->getId()));
         $display = array();
@@ -200,28 +177,22 @@ class DataController extends Controller
         }
         $plantunit = $dm->getRepository('PlantnetDataBundle:Plantunit')
             ->findOneBy(array('module.id' => $module->getId(), 'id' => $id));
-        $locations=array();
-        $locs=$plantunit->getLocations();
-        foreach($locs as $point)
-        {
-            $locations[]=$point;
-        }
+        // $locations=array();
+        // $locs=$plantunit->getLocations();
+        // foreach($locs as $point)
+        // {
+        //     $locations[]=$point;
+        // }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
-        //$data = $plantunit->getAttributes();
-        $data = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-            ->field('module')->references($module)
-            ->field('id')->equals($id)
-            ->hydrate(false)->getQuery()->execute();
         return $this->render('PlantnetDataBundle:Frontend:details.html.twig', array(
             'idplantunit' => $plantunit->getId(),
             'display' => $display,
-            'data' => $data,
-            'locations' => $locations,
+            // 'locations' => $locations,
             'layers' => $layers,
             'collection' => $coll,
             'module' => $module,
-            'modules' => $modules
+            'plantunit' => $plantunit
         ));
     }
 

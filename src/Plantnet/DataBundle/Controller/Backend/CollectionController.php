@@ -190,8 +190,13 @@ class CollectionController extends Controller
                     }
                     rmdir($dir);
                 }
-                $dm->remove($collection);
-                $dm->flush();
+                // $dm->remove($collection);
+                // $dm->flush();
+                $db=$this->container->getParameter('mdb_base');
+                $m=new \Mongo();
+                $m->$db->Collection->remove(
+                    array('_id'=>new \MongoId($collection->getId()))
+                );
             }
         }
         return $this->redirect($this->generateUrl('admin_index'));

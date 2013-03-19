@@ -125,6 +125,10 @@ class ModulesController extends Controller
                     $dm->persist($property);
                     $module->addProperties($property);
                 }
+                if($module->getType()=='image')
+                {
+                    $module->setUploaddir($collection->getAlias().'_'.$module->getName_fname());
+                }
                 $dm->persist($module);
                 $dm->flush();
                 return $this->redirect($this->generateUrl('fields_type', array('id' => $collection->getId(), 'idmodule' => $module->getId())));
@@ -567,8 +571,31 @@ class ModulesController extends Controller
                 {
                     unlink($csvfile);
                 }
-                $dm->remove($module);
-                $dm->flush();
+                /*
+                * Remove upload directory
+                */
+                $dir=$module->getUploaddir();
+                if($dir)
+                {
+                    $dir=$this->get('kernel')->getRootDir().'/../web/uploads/'.$dir;
+                    if(file_exists($dir)&&is_dir($dir))
+                    {
+                        $files=scandir($dir);
+                        foreach($files as $file)
+                        {
+                            if($file!='.'&&$file!='..')
+                            {
+                                unlink($dir.'/'.$file);
+                            }
+                        }
+                        rmdir($dir);
+                    }
+                }
+                // $dm->remove($module);
+                // $dm->flush();
+                $m->$db->Module->remove(
+                    array('_id'=>new \MongoId($module->getId()))
+                );
             }
         }
         return $this->redirect($this->generateUrl('admin_index'));

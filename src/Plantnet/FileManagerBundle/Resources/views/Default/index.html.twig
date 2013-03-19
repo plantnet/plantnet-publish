@@ -1,15 +1,8 @@
 {# src/Plantnet/FileManagerBundle/Resources/views/Default/index.html.twig #}
 {% extends "PlantnetFileManagerBundle::layout.html.twig" %}
-{% block stylesheets %}
-	<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('bundles/plantnetfilemanager/css/style.css') }}" />
-{% endblock %}
-{% block javascripts %}
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-	<script type="text/javascript" src="//malsup.github.com/jquery.form.js"></script>
-	<script type="text/javascript" src="{{ asset('bundles/plantnetfilemanager/js/script.js') }}"></script>
-{% endblock %}
+{% block stylesheets %}{% endblock %}
 {% block content %}
-	<form id="formProgress" action="{{ path('plantnet_file_manager_upload') }}" method="post" {{ form_enctype(form) }}>
+	<form id="formProgress" action="{{ path('plantnet_file_manager_upload',{'name':name}) }}" method="post" {{ form_enctype(form) }}>
 	    {{ form_widget(form) }}
 		<input type="submit" value="Envoyer" />
 	</form>
@@ -18,4 +11,37 @@
 		<div class="percent">0%</div>
 	</div>
 	<div id="status"></div>
+{% endblock %}
+{% block javascripts %}
+	<script type="text/javascript">
+		$(document).ready(function(){
+			(function(){
+				var bar=$('#progress .bar');
+				var percent=$('#progress .percent');
+				var status=$('#status');
+				$('#formProgress').ajaxForm({
+					beforeSend:function(){
+						status.empty();
+						var percentVal='0%';
+						bar.width(percentVal)
+						percent.html(percentVal);
+					},
+					uploadProgress:function(event,position,total,percentComplete){
+						var percentVal=percentComplete+'%';
+						bar.width(percentVal)
+						percent.html(percentVal);
+						if(percentComplete==100)
+						{
+							status.html('<div class="loader"></div><p>Décompression du fichier zip</p>');
+						}
+					},
+					complete:function(xhr){
+						bar.width('100%');
+						percent.html('100%');
+						status.html(xhr.responseText);
+					}
+				});
+			})();
+		});
+	</script>
 {% endblock %}

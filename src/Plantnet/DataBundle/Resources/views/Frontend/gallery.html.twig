@@ -1,79 +1,65 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
-{% block title module.Name %}
-
-
-
-
-{% block main %}
-
-
-    {% if paginator|length > 0 %}
-
-    <div class="pagerfanta">
-       {{ pagerfanta(paginator, 'twitter_bootstrap') }}
-    </div>
-
-
-   {% for row in paginator %}
-   {% if row.images is defined %}
-
-
-      {% for Data in row.images %}
-        {% if Data.path is defined %}
-            {% set imgspe =  Data.path|basename %}
-            {% set img = ['bundles/plantnetdata/data_images/img/', imgspe]|join('') %}
-                <a href="{{ asset(img) }}" class="row-image" rel="group-image"
-
-                    data-content=" {% for key,value in Data.property %}<b>{{ key }}:</b> {{ value }}<br>{% endfor %}<br>">
-                 <img src="{{ asset(img)}}" style="height: 200px" alt="{{ imgspe }}" border="0"/></a>
-        {% endif %}
-      {% endfor %}
-      {% endif %}
-    {% endfor %}
-
-    {% endif %}
-    <div class="pagerfanta">
-            {{ pagerfanta(paginator, 'twitter_bootstrap') }}
-        </div>
-
-    
+{% block title module.name %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
 {% endblock %}
-
-
+{% block main %}
+	<div class="results">
+		{% if paginator|length > 0 %}
+			<div class="pagerfanta">
+				{{ pagerfanta(paginator, 'twitter_bootstrap') }}
+			</div>
+			{% for row in paginator %}
+				{% set imgspe = row.path|basename %}
+				{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
+				<a href="{{ asset(img) }}" class="grouped_elements" rel="group">
+					<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" border="0" /></a>
+				{#% if row.images is defined %}
+					{% for Data in row.images %}
+						{% if Data.path is defined %}
+							{% set imgspe =  Data.path|basename %}
+							{% set img = ['bundles/plantnetdata/data_images/img/', imgspe]|join('') %}
+							<a href="{{ asset(img) }}" class="row-image" rel="group-image"
+							data-content=" {% for key,value in Data.property %}<b>{{ key }}:</b> {{ value }}<br>{% endfor %}<br>">
+							<img src="{{ asset(img)}}" style="height: 200px" alt="{{ imgspe }}" border="0"/></a>
+						{% endif %}
+					{% endfor %}
+				{% endif %#}
+			{% endfor %}
+			<div class="pagerfanta">
+				{{ pagerfanta(paginator, 'twitter_bootstrap') }}
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}
 {% block javascripts %}
-             {{ parent() }}
-    <script  type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
-
-    <script type="text/javascript">
-
-        $(document).ready(function() {
-            $("a#single_image").fancybox();
-        /* Apply fancybox to multiple items */
-
-        $("a.grouped_elements").fancybox({
-            'transitionIn'	:	'elastic',
-            'transitionOut'	:	'elastic',
-            'speedIn'		:	200,
-            'speedOut'		:	200,
-                    'enableEscapeButton'    :true,
-                    'hideOnContentClick'    : true,
-                    'titlePosition'         : 'inside',
-            'overlayShow'	:	false
-        });
-
-
-             $("a[rel=group-image]").popover('show')
-                    .popover({
-                    offset: 0,
-                    html: true
-                })
-                .click(function(e) {
-                    e.preventDefault()
-                })
-
-               $(".row-image").preloader();
-
-    });
-    </script>
+	{{ parent() }}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$("a#single_image").fancybox();
+			/* Apply fancybox to multiple items */
+			$("a.grouped_elements").fancybox({
+				'transitionIn'	:	'elastic',
+				'transitionOut'	:	'elastic',
+				'speedIn'		:	200,
+				'speedOut'		:	200,
+				'enableEscapeButton'    :true,
+				'hideOnContentClick'    : true,
+				'titlePosition'         : 'inside',
+				'overlayShow'	:	false
+			});
+			// $("a[rel=group-image]").popover('show')
+			// .popover({
+			// 	offset: 0,
+			// 	html: true
+			// })
+			// .click(function(e) {
+			// 	e.preventDefault()
+			// })
+			// $(".row-image").preloader();
+		});
+	</script>
 {% endblock %}

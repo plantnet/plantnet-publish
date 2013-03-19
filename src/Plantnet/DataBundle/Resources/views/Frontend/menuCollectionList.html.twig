@@ -1,12 +1,7 @@
-{% for collection in list %}
+{% for collection in collections %}
 	<li>
-		<a href="{{ path('_collection', { 'owner': collection.owner, 'collection': collection.collection }) }}">
-			{{ collection.collection }}
+		<a href="{{ path('_collection', { 'owner': collection.user.usernameCanonical, 'collection': collection.name }) }}">
+			{{ collection.name }}
 		</a>
-		{#{% for type in collection %}
-		{% for row in type %}
-		<li class="vtop"><a href="{{ path('_module', { 'collection': collection.collection, 'module': row.Name }) }}">{{ row.Name }}</a></li>
-		{% endfor %}
-		{% endfor %}#}
 	</li>
 {% endfor %}
