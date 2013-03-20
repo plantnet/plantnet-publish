@@ -20,23 +20,12 @@ class CollectionController extends Controller
 {
     public function collection_listAction()
     {
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-            ->findBy(array('user.id'=>$user->getId()));
-        // $modules = array();
-        // foreach($collections as $collection){
-        //     $coll = array(
-        //         'collection'=>$collection->getName(),
-        //         'id'=>$collection->getId(),
-        //         'owner'=>$collection->getUser()->getUsernameCanonical()
-        //     );
-        //     $module = $dm->getRepository('PlantnetDataBundle:Module')
-        //         ->findBy(array('collection.id' => $collection->getId()));
-        //     array_push($coll, $module);
-        //     array_push($modules, $coll);
-        // }
-        // return $this->render('PlantnetDataBundle:Backend\Collection:collection_list.html.twig',array('collections' => $collections, 'list' => $modules, 'current' => 'administration'));
+            ->findBy(array(
+                'user.id'=>$user->getId()
+            ));
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_list.html.twig',array(
             'collections' => $collections,
             'current' => 'administration'
@@ -97,8 +86,13 @@ class CollectionController extends Controller
      */
     public function collection_editAction($id)
     {
+        $user=$this->container->get('security.context')->getToken()->getUser();
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-        $entity = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
+        $entity = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneBy(array(
+                'id'=>$id,
+                'user.id'=>$user->getId()
+            ));
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
@@ -120,8 +114,13 @@ class CollectionController extends Controller
      */
     public function collection_updateAction($id)
     {
+        $user=$this->container->get('security.context')->getToken()->getUser();
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
-        $entity = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
+        $entity = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneBy(array(
+                'id'=>$id,
+                'user.id'=>$user->getId()
+            ));
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
@@ -156,8 +155,13 @@ class CollectionController extends Controller
         if ('POST' === $request->getMethod()) {
             $form->bindRequest($request);
             if ($form->isValid()) {
+                $user=$this->container->get('security.context')->getToken()->getUser();
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
-                $collection = $dm->getRepository('PlantnetDataBundle:Collection')->find($id);
+                $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+                    ->findOneBy(array(
+                        'id'=>$id,
+                        'user.id'=>$user->getId()
+                    ));
                 if(!$collection){
                     throw $this->createNotFoundException('Unable to find Collection entity.');
                 }
