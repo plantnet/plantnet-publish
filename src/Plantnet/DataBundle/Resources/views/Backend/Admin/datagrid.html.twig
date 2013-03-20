@@ -27,6 +27,8 @@
                         {% for row in display %}
                             <th class="vtop">{{ row }}</th>
                         {% endfor %}
+                        <th>Images</th>
+                        <th>Locations</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,6 +49,12 @@
                             <td>{{ Data.value }}</td>
                             {% endif %}
                             {% endfor %}#}
+                            <td>
+                                {{ row.images|length }}
+                            </td>
+                             <td>
+                                {{ row.locations|length }}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

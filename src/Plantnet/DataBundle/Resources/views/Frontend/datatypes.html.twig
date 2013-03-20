@@ -1,5 +1,9 @@
 {% extends "PlantnetDataBundle::layout.html.twig" %}
 {% block header %}<h1>{{ collection.name }} / {{ module.name }}</h1>{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
+{% endblock %}
 {% block breadcrumb %}
 	<ul class="breadcrumb">
 		<li>
@@ -18,6 +22,8 @@
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
 	<script type="text/javascript">
 		$(".pagerfanta").on("click","a", function(event){
 			event.preventDefault();

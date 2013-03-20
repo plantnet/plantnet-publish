@@ -98,7 +98,7 @@ class AdminController extends Controller
             case 'text':
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                     ->field('module')->references($module)
-                    ->hydrate(false);
+                    ->hydrate(true);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(50);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
@@ -115,7 +115,7 @@ class AdminController extends Controller
                     ->field('module')->references($mod)
                     ->hydrate(false);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
-                $paginator->setMaxPerPage(50);
+                $paginator->setMaxPerPage(20);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
                 return $this->render('PlantnetDataBundle:Backend\Admin:gallery.html.twig', array(
                     'paginator' => $paginator,

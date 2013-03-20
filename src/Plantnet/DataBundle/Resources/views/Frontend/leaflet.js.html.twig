@@ -95,7 +95,7 @@
 	var markers=new L.MarkerClusterGroup({
 		showCoverageOnHover:false
 	});
-	{% for location in plantunit.locations %}
+	{% for location in locations %}
 		var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
 		{# marker_{{ location.getId() }}.bindPopup('<b>{{ location.getProperty().Taxon }}</b><br />{{ location.getProperty().Family }}'); #}
 		marker_{{ location.id }}.bindPopup('<b>Taxon</b><br />Family');

@@ -76,6 +76,7 @@
         <script type="text/javascript" src="{{ asset_url }}"></script>
     {% endjavascripts %}#}
     {% if plantunit.locations|length > 0 %}
+        {% set locations = plantunit.locations %}
         {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
     {% endif %}
 {% endblock %}
