@@ -6,6 +6,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @MongoDB\Document
+ * @MongoDB\Index(keys={"coordinates"="2d"})
  */
 class Location
 {
@@ -33,6 +34,11 @@ class Location
      * @MongoDB\Float
      */
     protected $longitude;
+
+    /*
+     * @MongoDB\EmbedOne(targetDocument="\Plantnet\DataBundle\Document\Coordinates")
+     */
+    protected $coordinates;
 
     /**
      * @MongoDB\String
@@ -137,6 +143,26 @@ class Location
     public function getLongitude()
     {
         return $this->longitude;
+    }
+
+    /**
+     * Set coordinates
+     *
+     * @param \Plantnet\DataBundle\Document\Coordinates $coordinates
+     */
+    public function setCoordinates(\Plantnet\DataBundle\Document\Coordinates $coordinates)
+    {
+        $this->coordinates = $coordinates;
+    }
+
+    /**
+     * Get coordinates
+     *
+     * @return \Plantnet\DataBundle\Document\Coordinates $coordinates
+     */
+    public function getCoordinates()
+    {
+        return $this->coordinates;
     }
 
     /**

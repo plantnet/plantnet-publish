@@ -15,7 +15,8 @@ use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Plantunit,
     Plantnet\DataBundle\Document\Property,
     Plantnet\DataBundle\Document\Image,
-    Plantnet\DataBundle\Document\Location;
+    Plantnet\DataBundle\Document\Location,
+    Plantnet\DataBundle\Document\Coordinates;
 
 use Plantnet\DataBundle\Form\ImportFormType,
     Plantnet\DataBundle\Form\Type\ModulesType,
@@ -396,6 +397,7 @@ class ModulesController extends Controller
                     }
                 }elseif ($module->getType() == 'locality'){
                     $location = new Location();
+                    $coordinates=new Coordinates();
                     $attributes = array();
                     for($c=0; $c < $num; $c++)
                     {
@@ -404,9 +406,11 @@ class ModulesController extends Controller
                         switch($fields[$c]->getType()){
                             case 'lon':
                                 $location->setLongitude(str_replace(',','.',$value));
+                                $coordinates->setX(str_replace(',','.',$value));
                                 break;
                             case 'lat':
                                 $location->setLatitude(str_replace(',','.',$value));
+                                $coordinates->setY(str_replace(',','.',$value));
                                 break;
                             case 'idparent':
                                 $location->setIdparent($value);
@@ -416,6 +420,8 @@ class ModulesController extends Controller
                                 break;
                         }
                     }
+                    $dm->persist($coordinates);
+                    $location->setCoordinates($coordinates);
                     $location->setProperty($attributes);
                     $location->setModule($module);
                     $parent=null;
