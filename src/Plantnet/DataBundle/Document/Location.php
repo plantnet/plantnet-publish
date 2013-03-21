@@ -35,8 +35,8 @@ class Location
      */
     protected $longitude;
 
-    /*
-     * @MongoDB\EmbedOne(targetDocument="\Plantnet\DataBundle\Document\Coordinates")
+    /**
+     * @MongoDB\EmbedOne(targetDocument="Coordinates")
      */
     protected $coordinates;
 
@@ -148,7 +148,7 @@ class Location
     /**
      * Set coordinates
      *
-     * @param \Plantnet\DataBundle\Document\Coordinates $coordinates
+     * @param Plantnet\DataBundle\Document\Coordinates $coordinates
      */
     public function setCoordinates(\Plantnet\DataBundle\Document\Coordinates $coordinates)
     {
@@ -158,7 +158,7 @@ class Location
     /**
      * Get coordinates
      *
-     * @return \Plantnet\DataBundle\Document\Coordinates $coordinates
+     * @return Plantnet\DataBundle\Document\Coordinates $coordinates
      */
     public function getCoordinates()
     {

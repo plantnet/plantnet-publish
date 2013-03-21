@@ -357,4 +357,94 @@ class Module
     {
         return $this->locations;
     }
+
+    /**
+     * Add properties
+     *
+     * @param Plantnet\DataBundle\Document\Property $properties
+     */
+    public function addPropertie(\Plantnet\DataBundle\Document\Property $properties)
+    {
+        $this->properties[] = $properties;
+    }
+
+    /**
+    * Remove properties
+    *
+    * @param <variableType$properties
+    */
+    public function removePropertie(\Plantnet\DataBundle\Document\Property $properties)
+    {
+        $this->properties->removeElement($properties);
+    }
+
+    /**
+    * Remove children
+    *
+    * @param <variableType$children
+    */
+    public function removeChildren(\Plantnet\DataBundle\Document\Module $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
+     * Add plantunits
+     *
+     * @param Plantnet\DataBundle\Document\Plantunit $plantunits
+     */
+    public function addPlantunit(\Plantnet\DataBundle\Document\Plantunit $plantunits)
+    {
+        $this->plantunits[] = $plantunits;
+    }
+
+    /**
+    * Remove plantunits
+    *
+    * @param <variableType$plantunits
+    */
+    public function removePlantunit(\Plantnet\DataBundle\Document\Plantunit $plantunits)
+    {
+        $this->plantunits->removeElement($plantunits);
+    }
+
+    /**
+     * Add images
+     *
+     * @param Plantnet\DataBundle\Document\Image $images
+     */
+    public function addImage(\Plantnet\DataBundle\Document\Image $images)
+    {
+        $this->images[] = $images;
+    }
+
+    /**
+    * Remove images
+    *
+    * @param <variableType$images
+    */
+    public function removeImage(\Plantnet\DataBundle\Document\Image $images)
+    {
+        $this->images->removeElement($images);
+    }
+
+    /**
+     * Add locations
+     *
+     * @param Plantnet\DataBundle\Document\Location $locations
+     */
+    public function addLocation(\Plantnet\DataBundle\Document\Location $locations)
+    {
+        $this->locations[] = $locations;
+    }
+
+    /**
+    * Remove locations
+    *
+    * @param <variableType$locations
+    */
+    public function removeLocation(\Plantnet\DataBundle\Document\Location $locations)
+    {
+        $this->locations->removeElement($locations);
+    }
 }

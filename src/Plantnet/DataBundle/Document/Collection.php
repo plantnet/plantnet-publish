@@ -165,4 +165,24 @@ class Collection
     {
         return $this->user;
     }
+
+    /**
+     * Add modules
+     *
+     * @param Plantnet\DataBundle\Document\Module $modules
+     */
+    public function addModule(\Plantnet\DataBundle\Document\Module $modules)
+    {
+        $this->modules[] = $modules;
+    }
+
+    /**
+    * Remove modules
+    *
+    * @param <variableType$modules
+    */
+    public function removeModule(\Plantnet\DataBundle\Document\Module $modules)
+    {
+        $this->modules->removeElement($modules);
+    }
 }

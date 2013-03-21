@@ -264,4 +264,64 @@ class Plantunit
     {
         return $this->locations;
     }
+
+    /**
+     * Add files
+     *
+     * @param Plantnet\DataBundle\Document\File $files
+     */
+    public function addFile(\Plantnet\DataBundle\Document\File $files)
+    {
+        $this->files[] = $files;
+    }
+
+    /**
+    * Remove files
+    *
+    * @param <variableType$files
+    */
+    public function removeFile(\Plantnet\DataBundle\Document\File $files)
+    {
+        $this->files->removeElement($files);
+    }
+
+    /**
+     * Add images
+     *
+     * @param Plantnet\DataBundle\Document\Image $images
+     */
+    public function addImage(\Plantnet\DataBundle\Document\Image $images)
+    {
+        $this->images[] = $images;
+    }
+
+    /**
+    * Remove images
+    *
+    * @param <variableType$images
+    */
+    public function removeImage(\Plantnet\DataBundle\Document\Image $images)
+    {
+        $this->images->removeElement($images);
+    }
+
+    /**
+     * Add locations
+     *
+     * @param Plantnet\DataBundle\Document\Location $locations
+     */
+    public function addLocation(\Plantnet\DataBundle\Document\Location $locations)
+    {
+        $this->locations[] = $locations;
+    }
+
+    /**
+    * Remove locations
+    *
+    * @param <variableType$locations
+    */
+    public function removeLocation(\Plantnet\DataBundle\Document\Location $locations)
+    {
+        $this->locations->removeElement($locations);
+    }
 }
