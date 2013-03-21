@@ -420,7 +420,6 @@ class ModulesController extends Controller
                                 break;
                         }
                     }
-                    $dm->persist($coordinates);
                     $location->setCoordinates($coordinates);
                     $location->setProperty($attributes);
                     $location->setModule($module);
