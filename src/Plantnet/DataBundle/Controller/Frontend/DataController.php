@@ -2,6 +2,7 @@
 
 namespace Plantnet\DataBundle\Controller\Frontend;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -177,18 +178,11 @@ class DataController extends Controller
         }
         $plantunit = $dm->getRepository('PlantnetDataBundle:Plantunit')
             ->findOneBy(array('module.id' => $module->getId(), 'id' => $id));
-        // $locations=array();
-        // $locs=$plantunit->getLocations();
-        // foreach($locs as $point)
-        // {
-        //     $locations[]=$point;
-        // }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
         return $this->render('PlantnetDataBundle:Frontend:details.html.twig', array(
             'idplantunit' => $plantunit->getId(),
             'display' => $display,
-            // 'locations' => $locations,
             'layers' => $layers,
             'collection' => $coll,
             'module' => $module,
@@ -202,7 +196,60 @@ class DataController extends Controller
      */
     public function searchAction()
     {
-        return $this->render('PlantnetDataBundle:Default:search.html.twig', array('current' => 'taxonomy'));
+        $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
+        $layers=new \SimpleXMLElement($dir.'layers_search.xml',0,true);
+        return $this->render('PlantnetDataBundle:Frontend:search.html.twig', array(
+            'layers' => $layers,
+            'current' => 'taxonomy'
+        ));
+    }
+
+    /**
+     * @Route("/result", name="_result")
+     * @Method("post")
+     * @Template()
+     */
+    public function resultAction()
+    {
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod())
+        {
+            $data=$request->request->all();
+            $dm = $this->get('doctrine.odm.mongodb.document_manager');
+            $plantunits=array();
+            $ids=array();
+            if(isset($data['x_lng_1_bottom_left'])&&!empty($data['x_lng_1_bottom_left']))
+            {
+                $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+                ->field('coordinates')->withinBox(
+                    floatval($data['x_lng_1_bottom_left']),
+                    floatval($data['y_lat_1_bottom_left']),
+                    floatval($data['x_lng_2_top_right']),
+                    floatval($data['y_lat_2_top_right']))
+                ->hydrate(false)
+                ->getQuery()
+                ->execute();
+                foreach($locations as $location)
+                {
+                    $ids[]=$location['plantunit']['$id']->{'$id'};
+                }
+            }
+            $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                ->field('_id')->in($ids)
+                ->getQuery()
+                ->execute();
+            return $this->render('PlantnetDataBundle:Frontend:result.html.twig', array(
+                'current' => 'taxonomy',
+                'plantunits' => $plantunits
+            ));
+        }
+        else
+        {
+            return $this->redirect($this->generateUrl('_search'));
+        }
+        return $this->render('PlantnetDataBundle:Frontend:result.html.twig', array(
+            'current' => 'taxonomy'
+        ));
     }
 
 

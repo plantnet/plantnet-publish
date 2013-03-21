@@ -1,6 +1,6 @@
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
+<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/leaflet/leaflet.css') }}" />
 <!--[if lte IE 8]>
-  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
+  <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/leaflet/leaflet.ie.css') }}" />
 <![endif]-->
 <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.css') }}" />
 <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.Default.css') }}" />
@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.Default.ie.css') }}" />
 <![endif]-->
 <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/mini_map/Control.MiniMap.css') }}" />
+<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/draw/leaflet.draw.css') }}" />
+<!--[if lte IE 8]>
+  <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/draw/leaflet.draw.ie.css') }}" />
+<![endif]-->
 <style type="text/css">
   #map{
     width:650px;

@@ -1,0 +1,25 @@
+{% extends "PlantnetDataBundle::layout.html.twig" %}
+{% block title "Pl@ntnet - Result" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block header %}<h1>Result</h1>{% endblock %}
+{% block main %}
+    <table cellpadding="3" class="zebra-striped">
+        <thead>
+            <tr class="rowtop">
+                    <th class="vtop">ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plantunit in plantunits %}
+                <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'owner': plantunit.module.collection.user.usernameCanonical, 'collection': plantunit.module.collection.name, 'module': plantunit.module.name, 'id': plantunit.id }) }}'">
+                    <td>{{ plantunit.id }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

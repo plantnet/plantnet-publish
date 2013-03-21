@@ -101,20 +101,24 @@
 				{% endif %}
 			{% endfor %}
 			{####### WEATHER #################################################}
-			var validatorsLayer=new OsmJs.Weather.LeafletLayer({lang:'en'});
-			overlay_maps['Météo']=validatorsLayer;
+			{% if layers.attributes().weather=='true' %}
+				var validatorsLayer=new OsmJs.Weather.LeafletLayer({lang:'en'});
+				overlay_maps['Météo']=validatorsLayer;
+			{% endif %}
 			{####### MAP #################################################}
 			L.control.layers(base_maps,overlay_maps).addTo(map);
 			{####### MARKERS #################################################}
 			var markers=new L.MarkerClusterGroup({
 				showCoverageOnHover:false
 			});
-			{% for location in locations %}
-				var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
-				{# marker_{{ location.getId() }}.bindPopup('<b>{{ location.getProperty().Taxon }}</b><br />{{ location.getProperty().Family }}'); #}
-				marker_{{ location.id }}.bindPopup('<b>Taxon</b><br />Family');
-				markers.addLayer(marker_{{ location.id }});
-			{% endfor %}
+			{% if locations is defined %}
+				{% for location in locations %}
+					var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
+					{# marker_{{ location.getId() }}.bindPopup('<b>{{ location.getProperty().Taxon }}</b><br />{{ location.getProperty().Family }}'); #}
+					marker_{{ location.id }}.bindPopup('<b>Taxon</b><br />Family');
+					markers.addLayer(marker_{{ location.id }});
+				{% endfor %}
+			{% endif %}
 			map.addLayer(markers);
 			{####### LEGENDS #################################################}
 			map.on('layeradd',function(e){

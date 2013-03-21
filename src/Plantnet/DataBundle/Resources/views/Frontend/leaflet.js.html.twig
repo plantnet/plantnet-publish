@@ -1,8 +1,37 @@
-{#<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-1.7.min.js') }}"></script>#}
-<script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/leaflet-src.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/marker_cluster/leaflet.markercluster.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/full_screen/Control.FullScreen.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/mini_map/Control.MiniMap.js') }}"></script>
+{# DRAW #}
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/Leaflet.draw.js') }}"></script>
+{##}
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/edit/handler/Edit.Poly.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/edit/handler/Edit.SimpleShape.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/edit/handler/Edit.Circle.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/edit/handler/Edit.Rectangle.js') }}"></script>
+{##}
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/draw/handler/Draw.Feature.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/draw/handler/Draw.Polyline.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/draw/handler/Draw.Polygon.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/draw/handler/Draw.SimpleShape.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/draw/handler/Draw.Rectangle.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/draw/handler/Draw.Circle.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/draw/handler/Draw.Marker.js') }}"></script>
+{##}
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/ext/LatLngUtil.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/ext/LineUtil.Intersect.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/ext/Polygon.Intersect.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/ext/Polyline.Intersect.js') }}"></script>
+{##}
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/Control.Draw.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/Tooltip.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/Toolbar.js') }}"></script>
+{##}
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/draw/DrawToolbar.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/edit/EditToolbar.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/edit/handler/EditToolbar.Edit.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/leaflet/draw/edit/handler/EditToolbar.Delete.js') }}"></script>
+{# /DRAW #}
 <script src="http://openweathermap.org/js/leaflet-layer.js"></script>
 <script type="text/javascript">
 	{####### MAP #################################################}
@@ -87,21 +116,74 @@
 		{% endif %}
 	{% endfor %}
 	{####### WEATHER #################################################}
-	var validatorsLayer=new OsmJs.Weather.LeafletLayer({lang:'en'});
-	overlay_maps['Météo']=validatorsLayer;
+	{% if layers.attributes().weather=='true' %}
+		var validatorsLayer=new OsmJs.Weather.LeafletLayer({lang:'en'});
+		overlay_maps['Météo']=validatorsLayer;
+	{% endif %}
 	{####### MAP #################################################}
 	L.control.layers(base_maps,overlay_maps).addTo(map);
 	{####### MARKERS #################################################}
 	var markers=new L.MarkerClusterGroup({
 		showCoverageOnHover:false
 	});
-	{% for location in locations %}
-		var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
-		{# marker_{{ location.getId() }}.bindPopup('<b>{{ location.getProperty().Taxon }}</b><br />{{ location.getProperty().Family }}'); #}
-		marker_{{ location.id }}.bindPopup('<b>Taxon</b><br />Family');
-		markers.addLayer(marker_{{ location.id }});
-	{% endfor %}
+	{% if locations is defined %}
+		{% for location in locations %}
+			var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
+			{# marker_{{ location.getId() }}.bindPopup('<b>{{ location.getProperty().Taxon }}</b><br />{{ location.getProperty().Family }}'); #}
+			marker_{{ location.id }}.bindPopup('<b>Taxon</b><br />Family');
+			markers.addLayer(marker_{{ location.id }});
+		{% endfor %}
+	{% endif %}
 	map.addLayer(markers);
+	{####### DRAW #################################################}
+	{% if layers.attributes().draw=='true' %}
+		var currentLayer=null;
+		var drawnItems=new L.FeatureGroup();
+		map.addLayer(drawnItems);
+		var drawControl=new L.Control.Draw({
+			draw:{
+				polyline:false,
+				polygon:false,
+				circle:false,
+				marker:false
+			},
+			edit:{
+				featureGroup:drawnItems,
+				edit:false
+			}
+		});
+		map.addControl(drawControl);
+		map.on('draw:created',function(e){
+			var type=e.layerType;
+			var layer=e.layer;
+			if(type==='rectangle')
+			{
+				if(currentLayer!=null)
+				{
+					drawnItems.removeLayer(currentLayer);
+				}
+				currentLayer=layer;
+				var points=currentLayer.getLatLngs();
+				for(var i=0;i<points.length;i++)
+				{
+					if(i==0)
+					{
+						$('#y_lat_1_bottom_left').val(points[i].lat);
+						$('#x_lng_1_bottom_left').val(points[i].lng);
+					}
+					else if(i==2)
+					{
+						$('#y_lat_2_top_right').val(points[i].lat);
+						$('#x_lng_2_top_right').val(points[i].lng);
+					}
+				}
+				drawnItems.addLayer(currentLayer);
+			}
+		});
+		map.on('draw:deleted',function(e){
+			$('.coords').val('');
+		});
+	{% endif %}
 	{####### LEGENDS #################################################}
 	map.on('layeradd',function(e){
 		var layer=legends[e.layer._url];

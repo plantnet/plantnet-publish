@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<layers scale="true" fullscreen="false" centerlat="0" centerlng="0" defaultzoom="1" minzoom="1" weather="false" draw="true">
+	<!-- Base Maps -->
+	<layer name="OpenStreetMap" alias="OSM" minimap="false">
+		<url><![CDATA[http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
+	</layer><!-- http://www.openstreetmap.org/copyright : Open Data Commons Open Database License || Creative Commons paternité – partage à l’identique 2.0 -->
+</layers>

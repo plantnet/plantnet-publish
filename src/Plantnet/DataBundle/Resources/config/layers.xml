@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<layers scale="true" fullscreen="true" centerlat="0" centerlng="0" defaultzoom="1" minzoom="1">
+<layers scale="true" fullscreen="true" centerlat="0" centerlng="0" defaultzoom="1" minzoom="1" weather="true" draw="false">
 	<!-- Base Maps -->
 	<layer name="OpenStreetMap" alias="OSM" minimap="false">
 		<url><![CDATA[http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png]]></url>
