@@ -12,19 +12,8 @@
 			{% for row in paginator %}
 				{% set imgspe = row.path|basename %}
 				{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
-				<a href="{{ asset(img) }}" class="grouped_elements" rel="group">
+				<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ row.copyright }}">
 					<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" border="0" /></a>
-				{#% if row.images is defined %}
-					{% for Data in row.images %}
-						{% if Data.path is defined %}
-							{% set imgspe =  Data.path|basename %}
-							{% set img = ['bundles/plantnetdata/data_images/img/', imgspe]|join('') %}
-							<a href="{{ asset(img) }}" class="row-image" rel="group-image"
-							data-content=" {% for key,value in Data.property %}<b>{{ key }}:</b> {{ value }}<br>{% endfor %}<br>">
-							<img src="{{ asset(img)}}" style="height: 200px" alt="{{ imgspe }}" border="0"/></a>
-						{% endif %}
-					{% endfor %}
-				{% endif %#}
 			{% endfor %}
 			<div class="pagerfanta">
 				{{ pagerfanta(paginator, 'twitter_bootstrap') }}
@@ -39,14 +28,14 @@
 			$("a#single_image").fancybox();
 			/* Apply fancybox to multiple items */
 			$("a.grouped_elements").fancybox({
-				'transitionIn'	:	'elastic',
-				'transitionOut'	:	'elastic',
-				'speedIn'		:	200,
-				'speedOut'		:	200,
-				'enableEscapeButton'    :true,
-				'hideOnContentClick'    : true,
-				'titlePosition'         : 'inside',
-				'overlayShow'	:	false
+				'transitionIn':'elastic',
+				'transitionOut':'elastic',
+				'speedIn':200,
+				'speedOut':200,
+				'enableEscapeButton':true,
+				'hideOnContentClick':true,
+				'titlePosition':'inside',
+				'overlayShow':false
 			});
 			// $("a[rel=group-image]").popover('show')
 			// .popover({

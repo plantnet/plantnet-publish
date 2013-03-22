@@ -40,7 +40,7 @@
                 {% for image in plantunit.images %}
                     {% set imgspe = image.path|basename %}
                     {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
-                    <a href="{{ asset(img) }}" class="grouped_elements" rel="group">
+                    <a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ image.copyright }}">
                         <img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" border="0" /></a>
                 {% endfor %}
             </div>
