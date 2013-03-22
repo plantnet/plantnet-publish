@@ -9,12 +9,10 @@
 	{# LEAFLET MAP #}
     <div id="map"></div>
     <form method="post" action="{{ path('_result') }}">
-    	<input type="text" name="y_lat_1_bottom_left" id="y_lat_1_bottom_left" class="coords" />
-    	<input type="text" name="x_lng_1_bottom_left" id="x_lng_1_bottom_left" class="coords" />
-    	<br />
-    	<input type="text" name="y_lat_2_top_right" id="y_lat_2_top_right" class="coords" />
-    	<input type="text" name="x_lng_2_top_right" id="x_lng_2_top_right" class="coords" />
-    	<br />
+    	<input type="hidden" name="y_lat_1_bottom_left" id="y_lat_1_bottom_left" class="coords" />
+    	<input type="hidden" name="x_lng_1_bottom_left" id="x_lng_1_bottom_left" class="coords" />
+    	<input type="hidden" name="y_lat_2_top_right" id="y_lat_2_top_right" class="coords" />
+    	<input type="hidden" name="x_lng_2_top_right" id="x_lng_2_top_right" class="coords" />
     	<input type="submit" value="Chercher" />
     </form>
 {% endblock %}

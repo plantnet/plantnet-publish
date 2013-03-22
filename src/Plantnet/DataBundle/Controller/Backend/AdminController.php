@@ -151,7 +151,7 @@ class AdminController extends Controller
                         'plantunit.$id'=>array('$in'=>$id_plantunits),
                         'module.$id'=>new \MongoId($mod->getId())
                     ),
-                    array('_id'=>1,'latitude'=>1,'longitude'=>1)
+                    array('_id'=>1,'latitude'=>1,'longitude'=>1,'title1'=>1,'title2'=>1)
                 );
                 unset($id_plantunits);
                 foreach($c_locations as $id=>$l)
@@ -160,6 +160,8 @@ class AdminController extends Controller
                     $loc['id']=$id;
                     $loc['latitude']=$l['latitude'];
                     $loc['longitude']=$l['longitude'];
+                    $loc['title1']=$l['title1'];
+                    $loc['title2']=$l['title2'];
                     $locations[]=$loc;
                 }
                 unset($c_locations);

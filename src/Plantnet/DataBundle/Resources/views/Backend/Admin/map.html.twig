@@ -114,8 +114,7 @@
 			{% if locations is defined %}
 				{% for location in locations %}
 					var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
-					{# marker_{{ location.getId() }}.bindPopup('<b>{{ location.getProperty().Taxon }}</b><br />{{ location.getProperty().Family }}'); #}
-					marker_{{ location.id }}.bindPopup('<b>Taxon</b><br />Family');
+					marker_{{ location.id }}.bindPopup('<b>{{ location.title1 }}</b><br />{{ location.title2 }}');
 					markers.addLayer(marker_{{ location.id }});
 				{% endfor %}
 			{% endif %}

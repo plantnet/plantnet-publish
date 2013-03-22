@@ -5,20 +5,34 @@
 {% endblock %}
 {% block header %}<h1>Result</h1>{% endblock %}
 {% block main %}
-    <table cellpadding="3" class="zebra-striped">
-        <thead>
-            <tr class="rowtop">
-                    <th class="vtop">ID</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for plantunit in plantunits %}
-                <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'owner': plantunit.module.collection.user.usernameCanonical, 'collection': plantunit.module.collection.name, 'module': plantunit.module.name, 'id': plantunit.id }) }}'">
-                    <td>{{ plantunit.id }}</td>
+    {% if plantunits|length > 0 %}
+        <table cellpadding="3" class="zebra-striped">
+            <thead>
+                <tr class="rowtop">
+                        <th class="vtop">Title 1</th>
+                        <th class="vtop">Title 2</th>
+                        <th class="vtop">Collection / Module</th>
+                        <th class="vtop">Owner</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for plantunit in plantunits %}
+                    <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'owner': plantunit.module.collection.user.usernameCanonical, 'collection': plantunit.module.collection.name, 'module': plantunit.module.name, 'id': plantunit.id }) }}'">
+                        <td>{{ plantunit.title1 }}</td>
+                        <td>{{ plantunit.title2 }}</td>
+                        <td>
+                            {{ plantunit.module.name }}
+                            /
+                            {{ plantunit.module.collection.name }}
+                        </td>
+                        <td>{{ plantunit.module.collection.user.username }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No result</p>
+    {% endif %}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

@@ -5,7 +5,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @MongoDB\Document
+ * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\ImageRepository")
  */
 class Image
 {

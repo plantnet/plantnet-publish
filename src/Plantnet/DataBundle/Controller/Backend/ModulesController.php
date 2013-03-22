@@ -329,6 +329,12 @@ class ModulesController extends Controller
                             case 'idparent':
                                 $plantunit->setIdparent($value);
                                 break;
+                            case 'title1':
+                                $plantunit->setTitle1($value);
+                                break;
+                            case 'title2':
+                                $plantunit->setTitle2($value);
+                                break;
                         }
                     }
                     $plantunit->setAttributes($attributes);
@@ -418,6 +424,12 @@ class ModulesController extends Controller
                             case 'idmodule':
                                 $location->setIdentifier($value);
                                 break;
+                            case 'title1':
+                                $location->setTitle1($value);
+                                break;
+                            case 'title2':
+                                $location->setTitle2($value);
+                                break;
                         }
                     }
                     $location->setCoordinates($coordinates);
@@ -449,6 +461,8 @@ class ModulesController extends Controller
                         $plantunit->setModule($module);
                         $plantunit->setAttributes($attributes);
                         $plantunit->setIdentifier($location->getIdentifier());
+                        $plantunit->setTitle1($location->getTitle1());
+                        $plantunit->setTitle2($location->getTitle2());
                         // $plantunit->addLocations($location);
                         $dm->persist($plantunit);
                         $location->setPlantunit($plantunit);
