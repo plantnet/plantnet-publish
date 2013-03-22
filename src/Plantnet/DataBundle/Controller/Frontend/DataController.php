@@ -236,12 +236,18 @@ class DataController extends Controller
                     $ids[]=$location['plantunit']['$id']->{'$id'};
                 }
             }
+            // $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            //     ->field('_id')->in($ids);
+            // $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
+            // $paginator->setMaxPerPage(50);
+            // $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
             $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                 ->field('_id')->in($ids)
                 ->getQuery()
                 ->execute();
             return $this->render('PlantnetDataBundle:Frontend:result.html.twig', array(
                 'current' => 'taxonomy',
+                // 'paginator' => $paginator,
                 'plantunits' => $plantunits
             ));
         }

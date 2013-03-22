@@ -114,7 +114,7 @@
 			{% if locations is defined %}
 				{% for location in locations %}
 					var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
-					marker_{{ location.id }}.bindPopup('<b>{{ location.title1 }}</b><br />{{ location.title2 }}');
+					marker_{{ location.id }}.bindPopup('<b>{{ location.title1|escape('js') }}</b><br />{{ location.title2|escape('js') }}');
 					markers.addLayer(marker_{{ location.id }});
 				{% endfor %}
 			{% endif %}
