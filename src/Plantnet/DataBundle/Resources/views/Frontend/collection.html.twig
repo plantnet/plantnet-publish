@@ -7,11 +7,24 @@
 {% block main %}
 	<ul>
 		{% for module in collection.modules %}
-			<li class="module">
-				<a href="{{ path('_module', { 'owner': collection.user.usernameCanonical, 'collection': collection.name, 'module': module.name }) }}">
-					{{ module.name }}
-				</a>
-			</li>
+			{% if module.type == 'text' %}
+				<li class="module">
+					<a href="{{ path('_module', { 'owner': collection.user.usernameCanonical, 'collection': collection.name, 'module': module.name }) }}">
+						{{ module.name }}
+					</a>
+					{% if module.children|length > 0 %}
+						<ul>
+							{% for child in module.children %}
+								<li>
+									<a href="{{ path('_module', { 'owner': collection.user.usernameCanonical, 'collection': collection.name, 'module': child.name }) }}">
+										{{ child.name }}
+									</a>
+								</li>
+							{% endfor %}
+						</ul>
+					{% endif %}
+				</li>
+			{% endif %}
 		{% endfor %}
 	</ul>
 {% endblock %}

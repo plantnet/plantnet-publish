@@ -304,214 +304,99 @@ class ModulesController extends Controller
             if (!$module) {
                 throw $this->createNotFoundException('Unable to find Module entity.');
             }
-            /*
-             * Open the uploaded csv
-             */
-            $csvfile = __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
-            $handle = fopen($csvfile, "r");
-            /*
-             * Get the module properties
-             */
-            $columns=fgetcsv($handle,0,";");
-            $fields = array();
-            $attributes = $module->getProperties();
-            foreach($attributes as $field){
-                $fields[] = $field;
-            }
-            /*
-             * Initialise the metrics
-             */
-            //echo "Memory usage before: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
-            $s = microtime(true);
-            $batchSize = 500;
-            $rowCount = '';
-            while (($data = fgetcsv($handle, 0, ';')) !== FALSE) {
-                $num = count($data);
-                $rowCount++;
-                if ($module->getType() == 'text'){
-                    $plantunit = new Plantunit();
-                    $plantunit->setModule($module);
-                    $attributes = array();
-                    for ($c=0; $c < $num; $c++) {
-                        $value = $this->data_encode($data[$c]);
-                        $attributes[$fields[$c]->getName()] = $value;
-                        switch($fields[$c]->getType()){
-                            case 'idmodule':
-                                $plantunit->setIdentifier($value);
-                                break;
-                            case 'idparent':
-                                $plantunit->setIdparent($value);
-                                break;
-                            case 'title1':
-                                $plantunit->setTitle1($value);
-                                break;
-                            case 'title2':
-                                $plantunit->setTitle2($value);
-                                break;
-                        }
-                    }
-                    $plantunit->setAttributes($attributes);
-                    $dm->persist($plantunit);
-                    // if($module->getParent()){
-                    //     $moduleid = $module->getParent()->getId();
-                    //     $parent = $dm->getRepository('PlantnetDataBundle:Plantunit')
-                    //         ->findOneBy(array('module.id' => $moduleid, 'identifier' => $plantunit->getIdparent()));
-                    //     $plantunit->setParent($parent);
-                    //     $dm->persist($plantunit);
-                    // }
-                }elseif ($module->getType() == 'image'){
-                    $image = new Image();
-                    $attributes = array();
-                    for($c=0; $c < $num; $c++)
-                    {
-                        $value = $this->data_encode($data[$c]);
-                        $attributes[$fields[$c]->getName()] = $value;
-                        switch($fields[$c]->getType()){
-                            case 'file':
-                                $image->setPath($value);
-                                break;
-                            case 'copyright':
-                                $image->setCopyright($value);
-                                break;
-                            case 'idparent':
-                                $image->setIdparent($value);
-                                break;
-                            case 'idmodule':
-                                $image->setIdentifier($value);
-                                break;
-                        }
-                    }
-                    $image->setProperty($attributes);
-                    $image->setModule($module);
-                    $parent=null;
-                    if($module->getParent())
-                    {
-                        $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                            ->field('module.id')->equals($module->getParent()->getId())
-                            ->field('identifier')->equals($image->getIdparent())
-                            ->getQuery()
-                            ->execute();
-                        foreach($parent_q as $p)
-                        {
-                            $parent=$p;
-                        }
-                    }
-                    if($parent)
-                    {
-                        $image->setPlantunit($parent);
-                        $dm->persist($image);
-                    }
-                    else
-                    {
-                        $plantunit=new Plantunit();
-                        $plantunit->setModule($module);
-                        $plantunit->setAttributes($attributes);
-                        $plantunit->setIdentifier($image->getIdentifier());
-                        $dm->persist($plantunit);
-                        $image->setPlantunit($plantunit);
-                        $dm->persist($image);
-                    }
-                }elseif ($module->getType() == 'locality'){
-                    $location = new Location();
-                    $coordinates=new Coordinates();
-                    $attributes = array();
-                    for($c=0; $c < $num; $c++)
-                    {
-                        $value = $this->data_encode($data[$c]);
-                        $attributes[$fields[$c]->getName()] = $value;
-                        switch($fields[$c]->getType()){
-                            case 'lon':
-                                $location->setLongitude(str_replace(',','.',$value));
-                                $coordinates->setX(str_replace(',','.',$value));
-                                break;
-                            case 'lat':
-                                $location->setLatitude(str_replace(',','.',$value));
-                                $coordinates->setY(str_replace(',','.',$value));
-                                break;
-                            case 'idparent':
-                                $location->setIdparent($value);
-                                break;
-                            case 'idmodule':
-                                $location->setIdentifier($value);
-                                break;
-                            case 'title1':
-                                $location->setTitle1($value);
-                                break;
-                            case 'title2':
-                                $location->setTitle2($value);
-                                break;
-                        }
-                    }
-                    $location->setCoordinates($coordinates);
-                    $location->setProperty($attributes);
-                    $location->setModule($module);
-                    $parent=null;
-                    if($module->getParent())
-                    {
-                        $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                            ->field('module.id')->equals($module->getParent()->getId())
-                            ->field('identifier')->equals($location->getIdparent())
-                            ->getQuery()
-                            ->execute();
-                        foreach($parent_q as $p)
-                        {
-                            $parent=$p;
-                        }
-                    }
-                    if($parent)
-                    {
-                        $location->setPlantunit($parent);
-                        $dm->persist($location);
-                    }
-                    else
-                    {
-                        $plantunit=new Plantunit();
-                        $plantunit->setModule($module);
-                        $plantunit->setAttributes($attributes);
-                        $plantunit->setIdentifier($location->getIdentifier());
-                        $plantunit->setTitle1($location->getTitle1());
-                        $plantunit->setTitle2($location->getTitle2());
-                        $dm->persist($plantunit);
-                        $location->setPlantunit($plantunit);
-                        $dm->persist($location);
-                    }
-                }
-                if (($rowCount % $batchSize) == 0) {
-                    $dm->flush();
-                    $dm->clear();
-                    $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-                    //$dm->detach($plantunit);
-                    //unset($plantunit);
-                    //gc_collect_cycles();
-                }
-            }
-            $dm->flush();
-            $dm->clear();
-            //echo "Memory usage after: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
-            $e = microtime(true);
-            echo ' Inserted '.$rowCount.' objects in ' . ($e - $s) . ' seconds' . PHP_EOL;
-            fclose($handle);
-            if(file_exists($csvfile))
+            if ($module->getType()=='text')
             {
-                unlink($csvfile);
+                /*
+                 * Open the uploaded csv
+                 */
+                $csvfile = __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
+                $handle = fopen($csvfile, "r");
+                /*
+                 * Get the module properties
+                 */
+                $columns=fgetcsv($handle,0,";");
+                $fields = array();
+                $attributes = $module->getProperties();
+                foreach($attributes as $field){
+                    $fields[] = $field;
+                }
+                /*
+                 * Initialise the metrics
+                 */
+                //echo "Memory usage before: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
+                $s = microtime(true);
+                $batchSize = 500;
+                $rowCount = '';
+                while (($data = fgetcsv($handle, 0, ';')) !== FALSE) {
+                    $num = count($data);
+                    $rowCount++;
+                    if ($module->getType() == 'text'){
+                        $plantunit = new Plantunit();
+                        $plantunit->setModule($module);
+                        $attributes = array();
+                        for ($c=0; $c < $num; $c++) {
+                            $value = $this->data_encode($data[$c]);
+                            $attributes[$fields[$c]->getName()] = $value;
+                            switch($fields[$c]->getType()){
+                                case 'idmodule':
+                                    $plantunit->setIdentifier($value);
+                                    break;
+                                case 'idparent':
+                                    $plantunit->setIdparent($value);
+                                    break;
+                                case 'title1':
+                                    $plantunit->setTitle1($value);
+                                    break;
+                                case 'title2':
+                                    $plantunit->setTitle2($value);
+                                    break;
+                            }
+                        }
+                        $plantunit->setAttributes($attributes);
+                        $dm->persist($plantunit);
+                        // if($module->getParent()){
+                        //     $moduleid = $module->getParent()->getId();
+                        //     $parent = $dm->getRepository('PlantnetDataBundle:Plantunit')
+                        //         ->findOneBy(array('module.id' => $moduleid, 'identifier' => $plantunit->getIdparent()));
+                        //     $plantunit->setParent($parent);
+                        //     $dm->persist($plantunit);
+                        // }
+                    }
+                    if (($rowCount % $batchSize) == 0) {
+                        $dm->flush();
+                        $dm->clear();
+                        $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                        //$dm->detach($plantunit);
+                        //unset($plantunit);
+                        //gc_collect_cycles();
+                    }
+                }
+                $dm->flush();
+                $dm->clear();
+                //echo "Memory usage after: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
+                $e = microtime(true);
+                echo ' Inserted '.$rowCount.' objects in ' . ($e - $s) . ' seconds' . PHP_EOL;
+                fclose($handle);
+                if(file_exists($csvfile))
+                {
+                    unlink($csvfile);
+                }
+                
+                return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:import_moduledata.html.twig', array(
+                    'importCount' => 'Importation Success: '.$rowCount.' objects imported'
+                ));
             }
-            /*$usermail = $this->get('security.context')->getToken()->getUser()->getEmail();
+            else
+            {
+                $kernel=$this->get('kernel');
+                $command='php '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getEmail().' > /dev/null';
+                $process=new \Symfony\Component\Process\Process($command);
+                $process->start();
 
-            // Récupération du mailer service.
-            $mailer = $this->get('mailer');
-
-            // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-            $message = \Swift_Message::newInstance()
-                ->setSubject('Importation success')
-                ->setFrom('support@plantnet-project.org')
-                ->setTo($usermail)
-                ->setBody('Your data for the ' .$module->getName() .'module was imported');
-
-            // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
-            $mailer->send($message);*/
-            return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:import_moduledata.html.twig', array(
-                'importCount' => 'Importation Success: '.$rowCount.' objects imported'
-            ));
+                return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:import_moduledata.html.twig', array(
+                    'importCount' => 'En cours d\'importation, un email vous sera envoyé à la fin du traitement.'
+                ));
+            }
 
         }else{
             return $this->import_dataAction($id, $idmodule);
