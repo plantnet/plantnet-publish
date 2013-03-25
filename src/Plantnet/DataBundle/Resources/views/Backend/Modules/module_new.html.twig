@@ -4,7 +4,7 @@
 {% endblock %}
 {% block form %}
     <div id="title-form"><em>Collection: {{ collection.name }}</em> > New Module</div>
-    <form id="add_module" action="{{ path('module_create', { 'id': collection.id }) }}" method="post" {{ form_enctype(form) }}>
+    <form id="add_module" action="{{ path('module_create', { 'id': collection.id, 'type': type }) }}" method="post" {{ form_enctype(form) }}>
         {{ form_errors(form) }}
         <div class="field-form">
             {{ form_label(form.name) }}
@@ -13,16 +13,20 @@
             {{ form_widget(form.name) }}
         </div >
         <div class="field-form">
-            {{ form_label(form.type) }}
-            <br>
+            {% if form.type.vars.value is defined and form.type.vars.value!='text' %}
+                {{ form_label(form.type) }}
+                <br>
+            {% endif %}
             {{ form_errors(form.type) }}
             {{ form_widget(form.type, { 'separator': '=====' }) }}
         </div>
-        {#<div class="field-form">
+        {#
+        <div class="field-form">
         {{ form_label(form.parent) }}<br>
         {{ form_errors(form.parent) }}
         {{ form_widget(form.parent) }}
-        </div>#}
+        </div>
+        #}
         <div class="field-form">
             {{ form_label(form.file, 'CSV data') }}
             <br>

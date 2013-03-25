@@ -14,30 +14,39 @@ class ModuleFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
-        $builder
-            ->add('name')
-            ->add('type', 'choice',array(
-                     'choices'   => array(
-                          'text'   => 'Text',
-                          'image' => 'Image',
-                          'locality'   => 'Localisation'), 'multiple'  => false))
-
-            //->add('parent', 'choice', array('choices' => $options['parent'],'required'=>false))
-            //->add('parent')
-            ->add("parent",
-                "choice",
-                array(
-                    "property_path" => false,
-                    'choices' => $options['idparent'],
-                    'required'=>false
+        $module=$options['data'];
+        if($module->getType()=='submodule')
+        {
+            $builder
+                ->add('name')
+                ->add('type', 'choice',array(
+                    'choices' => array(
+                        'image' => 'Image',
+                        'locality' => 'Localisation'
+                    ),
+                    'multiple' => false
                 ))
-
-            ->add('file', 'file')
-        ;
-
-        
-
+                ->add('parent', 'choice',array(
+                    'property_path' => false,
+                    'choices' => $options['idparent'],
+                    'required'=>true
+                ))
+                ->add('file', 'file')
+            ;
+        }
+        else
+        {
+            $builder
+                ->add('name')
+                ->add('type', 'hidden',array(
+                    'data' => 'text'
+                ))
+                ->add('parent', 'hidden',array(
+                    'data' => ''
+                ))
+                ->add('file', 'file')
+            ;
+        }
     }
 
     public function getName()
@@ -45,30 +54,14 @@ class ModuleFormType extends AbstractType
         return 'modules';
     }
 
-    /*public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $compound = function (Options $options) {
-            return $options['expanded'];
-        };
-
-        $resolver->setDefaults(array(
-            'compound' => $compound,
-        ));
-    }*/
-
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-{
-
-    $compound = function (Options $options) {
             return $options['idparent'];
         };
-
-    $resolver->setDefaults(array(
-        'idparent' => $compound,
-        'data_class' => 'Plantnet\DataBundle\Document\Module',
-    ));
-}
-
-    
-
+        $resolver->setDefaults(array(
+            'idparent' => $compound,
+            'data_class' => 'Plantnet\DataBundle\Document\Module',
+        ));
+    }
 }

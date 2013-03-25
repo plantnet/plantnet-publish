@@ -5,7 +5,7 @@ namespace Plantnet\DataBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class PropertiesType extends AbstractType
+class PropertiesLocalityType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
@@ -13,9 +13,11 @@ class PropertiesType extends AbstractType
 			->add('name')
 			->add('type', 'choice',array(
 				'choices' => array(
-					'idmodule' => 'Id',
+					'idparent' => 'Parent',
 					'title1' => 'Title 1',
-					'title2' => 'Title 2'
+					'title2' => 'Title 2',
+					'lon' => 'Longitude',
+					'lat' => 'Latitude'
 				),
 				'multiple' => false,
 				'required' => false

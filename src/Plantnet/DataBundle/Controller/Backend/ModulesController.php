@@ -32,10 +32,10 @@ class ModulesController extends Controller
     /**
      * Displays a form to create a new Module entity.
      *
-     * @Route("/collection/{id}/module/new", name="module_new")
+     * @Route("/collection/{id}/module/new/type/{type}", name="module_new")
      * @Template()
      */
-    public function module_newAction($id)
+    public function module_newAction($id,$type)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
@@ -48,29 +48,37 @@ class ModulesController extends Controller
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module = new Module();
-        $parents_module = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findBy(array('collection.id' => $collection->getId()));
+        $module->setType($type);
         $idparent = array();
-        foreach($parents_module as $mod){
-            $idparent[$mod->getId()] = $mod->getName();
+        if($type=='submodule')
+        {
+            $parents_module = $dm->getRepository('PlantnetDataBundle:Module')
+                ->findBy(array(
+                    'collection.id' => $collection->getId(),
+                    'type' => 'text'
+                ));
+            foreach($parents_module as $mod){
+                $idparent[$mod->getId()] = $mod->getName();
+            }
         }
         $form = $this->createForm(new ModuleFormType(), $module, array('idparent' => $idparent));
         return array(
             'idparent' => $idparent,
-            'module' => $module,
             'collection' => $collection,
+            'module' => $module,
             'form' => $form->createView(),
+            'type' => $type
         );
     }
 
     /**
      * Creates a new Module entity.
      *
-     * @Route("/collection/{id}/module/create", name="module_create")
+     * @Route("/collection/{id}/module/create/type/{type}", name="module_create")
      * @Method("post")
      * @Template("PlantnetDataBundle:Backend\Modules:module_new.html.twig")
      */
-    public function module_createAction($id)
+    public function module_createAction($id,$type)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
@@ -83,10 +91,13 @@ class ModulesController extends Controller
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module = new Module();
+        $module->setType($type);
         $request = $this->getRequest();
-        // $collection->addModules($module);
         $parents_module = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findBy(array('collection.id' => $collection->getId()));
+            ->findBy(array(
+                'collection.id' => $collection->getId(),
+                'type' => 'text'
+            ));
         $idparent = array();
         foreach($parents_module as $mod){
             $idparent[$mod->getId()] = $mod->getName();
@@ -144,9 +155,11 @@ class ModulesController extends Controller
             }
         }
         return array(
+            'idparent' => $idparent,
             'collection' => $collection,
             'module' => $module,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'type' => $type
         );
     }
 
@@ -385,8 +398,6 @@ class ModulesController extends Controller
                     }
                     if($parent)
                     {
-                        // $parent->addImages($image);
-                        // $dm->persist($parent);
                         $image->setPlantunit($parent);
                         $dm->persist($image);
                     }
@@ -396,7 +407,6 @@ class ModulesController extends Controller
                         $plantunit->setModule($module);
                         $plantunit->setAttributes($attributes);
                         $plantunit->setIdentifier($image->getIdentifier());
-                        // $plantunit->addImages($image);
                         $dm->persist($plantunit);
                         $image->setPlantunit($plantunit);
                         $dm->persist($image);
@@ -450,8 +460,6 @@ class ModulesController extends Controller
                     }
                     if($parent)
                     {
-                        // $parent->addLocations($location);
-                        // $dm->persist($parent);
                         $location->setPlantunit($parent);
                         $dm->persist($location);
                     }
@@ -463,7 +471,6 @@ class ModulesController extends Controller
                         $plantunit->setIdentifier($location->getIdentifier());
                         $plantunit->setTitle1($location->getTitle1());
                         $plantunit->setTitle2($location->getTitle2());
-                        // $plantunit->addLocations($location);
                         $dm->persist($plantunit);
                         $location->setPlantunit($plantunit);
                         $dm->persist($location);
@@ -674,8 +681,6 @@ class ModulesController extends Controller
                         rmdir($dir);
                     }
                 }
-                // $dm->remove($module);
-                // $dm->flush();
                 $m->$db->Module->remove(
                     array('_id'=>new \MongoId($module->getId()))
                 );

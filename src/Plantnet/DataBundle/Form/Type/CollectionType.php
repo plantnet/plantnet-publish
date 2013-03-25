@@ -31,5 +31,4 @@ class CollectionType extends AbstractType
     {
         return 'collection';
     }
-    
 }

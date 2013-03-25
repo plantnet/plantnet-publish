@@ -9,35 +9,34 @@ class ModulesType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $module=$options['data'];
         $builder
-
             ->add('name')
-        
-            ->add('type', 'choice',array(
-                     'choices'   => array(
-                          'text'   => 'Text',
-                          'image' => 'Image',
-                          'locality'   => 'Localisation')))
-            /*->add('parent_module', 'entity', array(
-                'class'         => 'Plantnet\BotaBundle\Entity\Modules',
-                'query_builder' => function ($repository) { return $repository->createQueryBuilder('p')->orderBy('p.name', 'ASC'); },))*/
-            //->add('parent_module', 'choice', array($options))
-            //->add('attachment', 'file')
-            
-            ->add('properties', 'collection', array(
-                'type'       => new PropertiesType(),
-            ))
-            /*->add('collection', 'entity', array(
-                'class'         => 'Plantnet\BotaBundle\Entity\Collection',
-                'query_builder' => function ($repository) { return $repository->createQueryBuilder('p')->orderBy('p.name', 'ASC'); },
-            ))*/
-             
-
-
-
-
-
         ;
+        if($module->getType()=='text')
+        {
+            $builder
+                ->add('properties', 'collection', array(
+                    'type' => new PropertiesType(),
+                ))
+            ;
+        }
+        elseif($module->getType()=='locality')
+        {
+            $builder
+                ->add('properties', 'collection', array(
+                    'type' => new PropertiesLocalityType(),
+                ))
+            ;
+        }
+        elseif($module->getType()=='image')
+        {
+            $builder
+                ->add('properties', 'collection', array(
+                    'type' => new PropertiesImageType(),
+                ))
+            ;
+        }
     }
 
     public function getDefaultOptions(array $options)
@@ -51,5 +50,4 @@ class ModulesType extends AbstractType
     {
         return 'module';
     }
-    
 }

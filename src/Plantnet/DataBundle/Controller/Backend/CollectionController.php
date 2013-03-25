@@ -69,7 +69,10 @@ class CollectionController extends Controller
                 $document->setAlias($user->getUsername().'_'.$document->getName());
                 $dm->persist($document);
                 $dm->flush();
-                return $this->redirect($this->generateUrl('module_new', array('id' => $document->getId())));
+                return $this->redirect($this->generateUrl('module_new', array(
+                    'id' => $document->getId(),
+                    'type' => 'module'
+                )));
             }
         }
         return array(
@@ -194,8 +197,6 @@ class CollectionController extends Controller
                     }
                     rmdir($dir);
                 }
-                // $dm->remove($collection);
-                // $dm->flush();
                 $db=$this->container->getParameter('mdb_base');
                 $m=new \Mongo();
                 $m->$db->Collection->remove(

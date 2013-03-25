@@ -11,26 +11,13 @@
                 <a  class="view" href="{{ path('admin_collection_view', { 'collection': collection.name }) }}"></a>
                 <div class="arrow"></div>
                 <ul class="module toggle">
-                    {#
-                    {% for type in collection %}
-                        {% for row in type %}
-                            <li class='row-module'>
-                                <a  class="{{ row.type }}" href="{{ path('admin_module_view', { 'collection': collection.collection, 'module': row.Name }) }}">{{ row.Name }}</a>
-                                {% if is_granted('ROLE_USER') %}
-                                    <a  class="edit" href="{{ path('module_edit', { 'id': row.id }) }}"></a>
-                                {% endif %}
-                                <a  class="view" href="{{ path('admin_module_view', { 'collection': collection.collection, 'module': row.Name }) }}"></a>
-                            </li>
-                        {% endfor %}
-                    {% endfor %}
-                    #}
                     {% for module in collection.modules %}
                         <li class='row-module'>
-                            <a  class="{{ module.type }}" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
+                            <a class="{{ module.type }}" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
                             {% if is_granted('ROLE_USER') %}
-                                <a  class="edit" href="{{ path('module_edit', { 'id': module.id }) }}"></a>
+                                <a class="edit" href="{{ path('module_edit', { 'id': module.id }) }}"></a>
                             {% endif %}
-                            <a  class="view" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}"></a>
+                            <a class="view" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}"></a>
                             {% if module.type=='image' %}
                                 <a class="images" href="{{ path('plantnet_file_manager_homepage', {'name': module.uploaddir}) }}"></a>
                             {% endif %}
@@ -38,8 +25,13 @@
                     {% endfor %}
                     {% if is_granted('ROLE_USER') %}
                         <li class='add-module'>
-                            <a   href="{{ path('module_new', { 'id': collection.id }) }}">Add Module</a>
+                            <a href="{{ path('module_new', { 'id': collection.id, 'type': 'module' }) }}">Add Module</a>
                         </li>
+                        {% if collection.modules|length > 0 %}
+                            <li class='add-module'>
+                                <a href="{{ path('module_new', { 'id': collection.id, 'type': 'submodule' }) }}">Add Sub-module</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                 </ul>
             </li>

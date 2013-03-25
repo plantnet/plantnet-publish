@@ -10,9 +10,7 @@ class FileType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-
             ->add('file', 'file')
-             
         ;
     }
 
@@ -27,5 +25,4 @@ class FileType extends AbstractType
     {
         return 'file';
     }
-    
 }

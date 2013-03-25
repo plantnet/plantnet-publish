@@ -10,19 +10,34 @@ class ImportFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        
+        $module=$options['data'];
         $builder
             ->add('name')
-            ->add('type', 'choice',array(
-                     'choices'   => array(
-                          'text'   => 'Text',
-                          'image' => 'Image',
-                          'locality'   => 'Localisation')))
-            
-            ->add('properties', 'collection', array(
-                'type'       => new Type\PropertiesType(),
-            ))
         ;
+        if($module->getType()=='text')
+        {
+            $builder
+                ->add('properties', 'collection', array(
+                    'type' => new Type\PropertiesType(),
+                ))
+            ;
+        }
+        elseif($module->getType()=='locality')
+        {
+            $builder
+                ->add('properties', 'collection', array(
+                    'type' => new Type\PropertiesLocalityType(),
+                ))
+            ;
+        }
+        elseif($module->getType()=='image')
+        {
+            $builder
+                ->add('properties', 'collection', array(
+                    'type' => new Type\PropertiesImageType(),
+                ))
+            ;
+        }
     }
 
     public function getName()
@@ -33,9 +48,7 @@ class ImportFormType extends AbstractType
     public function getDefaultOptions(array $options)
     {
         return array(
-            
             'data_class' => 'Plantnet\DataBundle\Document\Module',
         );
     }
-
 }
