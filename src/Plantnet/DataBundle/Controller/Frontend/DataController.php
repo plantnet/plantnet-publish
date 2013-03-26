@@ -73,8 +73,13 @@ class DataController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $coll = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
+        $page = $dm->getRepository('PlantnetDataBundle:Page')
+            ->findOneBy(array(
+                'name'=>'home'
+            ));
         return $this->render('PlantnetDataBundle:Frontend:project.html.twig', array(
             'project' => $project,
+            'page' => $page,
             'collection' => $coll,
             'current' => 'project'
         ));
@@ -271,54 +276,44 @@ class DataController extends Controller
         ));
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-    
-
-    
-
-    
-
     /**
-     * @Route("/search", name="_search")
+     * @Route("/project/{project}/search", name="_search")
      * @Template()
      */
-    public function searchAction()
+    public function searchAction($project)
     {
+        $projects=$this->database_list();
+        if(!in_array($project,$projects))
+        {
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers_search.xml',0,true);
         return $this->render('PlantnetDataBundle:Frontend:search.html.twig', array(
+            'project' => $project,
             'layers' => $layers,
             'current' => 'taxonomy'
         ));
     }
 
     /**
-     * @Route("/result", name="_result")
+     * @Route("/project/{project}/result", name="_result")
      * @Method("post")
      * @Template()
      */
-    public function resultAction()
+    public function resultAction($project)
     {
+        $projects=$this->database_list();
+        if(!in_array($project,$projects))
+        {
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
         $request=$this->getRequest();
         if('POST'===$request->getMethod())
         {
             $data=$request->request->all();
             $dm = $this->get('doctrine.odm.mongodb.document_manager');
+            $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
             $plantunits=array();
             $ids=array();
             if(isset($data['x_lng_1_bottom_left'])&&!empty($data['x_lng_1_bottom_left']))
@@ -347,6 +342,7 @@ class DataController extends Controller
                 ->getQuery()
                 ->execute();
             return $this->render('PlantnetDataBundle:Frontend:result.html.twig', array(
+                'project' => $project,
                 'current' => 'taxonomy',
                 // 'paginator' => $paginator,
                 'plantunits' => $plantunits
@@ -354,12 +350,44 @@ class DataController extends Controller
         }
         else
         {
-            return $this->redirect($this->generateUrl('_search'));
+            return $this->redirect($this->generateUrl(
+                '_search',
+                array(
+                    'project' => $project
+                )
+            ));
         }
         return $this->render('PlantnetDataBundle:Frontend:result.html.twig', array(
+            'project' => $project,
             'current' => 'taxonomy'
         ));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
 
 

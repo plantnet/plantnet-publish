@@ -12,20 +12,18 @@
                         <th class="vtop">Title 1</th>
                         <th class="vtop">Title 2</th>
                         <th class="vtop">Collection / Module</th>
-                        <th class="vtop">Owner</th>
                 </tr>
             </thead>
             <tbody>
                 {% for plantunit in plantunits %}
-                    <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'owner': plantunit.module.collection.user.usernameCanonical, 'collection': plantunit.module.collection.name, 'module': plantunit.module.name, 'id': plantunit.id }) }}'">
+                    <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': plantunit.module.collection.name, 'module': plantunit.module.name, 'id': plantunit.id }) }}'">
                         <td>{{ plantunit.title1 }}</td>
                         <td>{{ plantunit.title2 }}</td>
                         <td>
-                            {{ plantunit.module.name }}
-                            /
                             {{ plantunit.module.collection.name }}
+                            /
+                            {{ plantunit.module.name }}
                         </td>
-                        <td>{{ plantunit.module.collection.user.username }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

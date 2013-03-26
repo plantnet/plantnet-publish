@@ -89,8 +89,8 @@
 		<nav id="main-nav">
 			<ul id="nav">
 				{% block sidebar %}
-					{#% include "PlantnetDataBundle:Backend/Collection:collection_list.html.twig" with {'list': list, 'collections' : collections } %#}
 					{% include "PlantnetDataBundle:Backend/Collection:collection_list.html.twig" with { 'collections' : collections } %}
+					{% render controller("PlantnetDataBundle:Backend/Admin:page_list") %}
 				{% endblock %}
 			</ul>
 		</nav>

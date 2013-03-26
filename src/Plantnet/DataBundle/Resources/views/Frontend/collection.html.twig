@@ -5,6 +5,12 @@
 {% endblock %}
 {% block header %}<h1>{{ collection.name }}</h1>{% endblock %}
 {% block main %}
+	<div>
+		{% autoescape false %}
+			{{ collection.description }}
+		{% endautoescape %}
+	</div>
+	<br />
 	<ul>
 		{% for module in collection.modules %}
 			{% if module.type == 'text' %}

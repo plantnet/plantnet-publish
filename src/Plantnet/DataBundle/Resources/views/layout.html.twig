@@ -112,7 +112,7 @@
 								</ul>
 							</li>
 							<li>
-								<a {% if current == 'search' %} class="active" {% endif %} href="{{ url('_search') }}">
+								<a {% if current == 'search' %} class="active" {% endif %} href="{{ url('_search', {'project': project}) }}">
 									Search
 								</a>
 							</li>

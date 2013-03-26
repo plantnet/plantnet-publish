@@ -94,7 +94,7 @@ class CollectionController extends Controller
         );
     }
 
-     /**
+    /**
      * Displays a form to edit an existing Collection entity.
      *
      * @Route("/{id}/edit", name="collection_edit")

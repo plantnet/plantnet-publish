@@ -8,7 +8,7 @@
 {% block main %}
 	{# LEAFLET MAP #}
     <div id="map"></div>
-    <form method="post" action="{{ path('_result') }}">
+    <form method="post" action="{{ path('_result', {'project': project}) }}">
     	<input type="hidden" name="y_lat_1_bottom_left" id="y_lat_1_bottom_left" class="coords" />
     	<input type="hidden" name="x_lng_1_bottom_left" id="x_lng_1_bottom_left" class="coords" />
     	<input type="hidden" name="y_lat_2_top_right" id="y_lat_2_top_right" class="coords" />

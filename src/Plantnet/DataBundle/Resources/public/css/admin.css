@@ -171,7 +171,7 @@ nav ul, nav li {
     margin-bottom: 48px;
 }
 
-#menu-collection {
+#menu-collection, #menu-pages {
     -moz-transition: color 400ms ease 0s;
     color: #666666;
     display: block;
