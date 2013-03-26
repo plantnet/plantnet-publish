@@ -1,0 +1,8 @@
+{% extends "PlantnetDataBundle::layout.html.twig" %}
+{% block title "Pl@ntnet - Introduction" %}
+{% block header %}<h1>Projet {{ project|capitalize }} - {{ page.name|capitalize }}</h1>{% endblock %}
+{% block main %}
+	{% autoescape false %}
+		{{ page.content }}
+	{% endautoescape %}
+{% endblock %}

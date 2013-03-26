@@ -143,29 +143,36 @@
 			</div>
 		</div>
 	<footer id="footer">
-		{# {% block footer %}
-		<ul>
-		<div id="logoPlantnet">
-		<li class="logofoot"><a href="http://www.plantnet-project.org" onclick="window.open(this.href);return false;"><img src="{{ asset('bundles/plantnetdata/images/footPlantnet.png') }}"  alt="Projet Plantnet"></a></li>
-
-		<li class="logofoot"><a href="http://www.agropolis-fondation.fr/" onclick="window.open(this.href);return false;"><img src="{{ asset('bundles/plantnetdata/images/footAF.png') }}"  alt="Agropolis Fondation"></a></li>
-		</div>
-
-
-		</ul>
-
-		<nav id="mention">
-		<ul>
-		<li class="liens"><a href="{{ url('_credits') }}">Credits</a></li>
-		<img src="{{ asset('bundles/plantnetdata/images/favicon.ico') }}"  alt="Projet Plantnet">
-		<li class="liens"><a href="{{ url('_mentions') }}">Mentions légales</a></li>
-		<img src="{{ asset('bundles/plantnetdata/images/favicon.ico') }}"  alt="Projet Plantnet">
-		<li class="liens"><a href="{{ url('_contacts') }}">Contacts</a></li>
-		<img src="{{ asset('bundles/plantnetdata/images/favicon.ico') }}"  alt="Projet Plantnet">
-		<li class="liens"><a href="#">Plan du site</a></li>
-		</ul>
-		</nav>
-		{% endblock %}#}
+		{% if current != 'index' %}
+			{% block footer %}
+				<ul>
+					<li class="logofoot">
+						<a href="http://www.plantnet-project.org" target="_blank">
+							<img src="{{ asset('bundles/plantnetdata/images/footPlantnet.png') }}" alt="Projet Plantnet"></a>
+					</li>
+					<li class="logofoot">
+						<a href="http://www.agropolis-fondation.fr/" target="_blank">
+							<img src="{{ asset('bundles/plantnetdata/images/footAF.png') }}" alt="Agropolis Fondation"></a>
+					</li>
+				</ul>
+				<nav id="mention">
+					<ul>
+						<li class="liens">
+							<a href="{{ url('_credits', {'project': project}) }}">Credits</a>
+						</li>
+						<li class="liens">
+							<a href="{{ url('_mentions', {'project': project}) }}">Mentions légales</a>
+						</li>
+						<li class="liens">
+							<a href="{{ url('_contacts', {'project': project}) }}">Contacts</a>
+						</li>
+						<li class="liens">
+							<a href="#">Plan du site</a>
+						</li>
+					</ul>
+				</nav>
+			{% endblock %}
+		{% endif %}
 	</footer>
 	{% block javascripts %}
 		{% javascripts

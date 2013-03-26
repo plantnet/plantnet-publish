@@ -363,6 +363,78 @@ class DataController extends Controller
         ));
     }
 
+    /**
+     * @Route("/project/{project}/credits", name="_credits")
+     * @Template()
+     */
+    public function creditsAction($project)
+    {
+        $projects=$this->database_list();
+        if(!in_array($project,$projects))
+        {
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $page = $dm->getRepository('PlantnetDataBundle:Page')
+            ->findOneBy(array(
+                'name'=>'credits'
+            ));
+        return $this->render('PlantnetDataBundle:Frontend:credits.html.twig', array(
+            'page' => $page,
+            'project' => $project,
+            'current' => 'credits'
+        ));
+    }
+
+    /**
+     * @Route("/project/{project}/mentions", name="_mentions")
+     * @Template()
+     */
+    public function mentionsAction($project)
+    {
+        $projects=$this->database_list();
+        if(!in_array($project,$projects))
+        {
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $page = $dm->getRepository('PlantnetDataBundle:Page')
+            ->findOneBy(array(
+                'name'=>'mentions'
+            ));
+        return $this->render('PlantnetDataBundle:Frontend:mentions.html.twig', array(
+            'page' => $page,
+            'project' => $project,
+            'current' => 'mentions'
+        ));
+    }
+
+    /**
+     * @Route("/project/{project}/contacts", name="_contacts")
+     * @Template()
+     */
+    public function contactsAction($project)
+    {
+        $projects=$this->database_list();
+        if(!in_array($project,$projects))
+        {
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $page = $dm->getRepository('PlantnetDataBundle:Page')
+            ->findOneBy(array(
+                'name'=>'contacts'
+            ));
+        return $this->render('PlantnetDataBundle:Frontend:contacts.html.twig', array(
+            'page' => $page,
+            'project' => $project,
+            'current' => 'contacts'
+        ));
+    }
+
 
 
 
@@ -457,38 +529,4 @@ class DataController extends Controller
         return $this->render('PlantnetDataBundle:Default:taxonomy.html.twig', array('current' => 'taxonomy'));
     }
     */
-
-    /**
-     * @Route("/credits", name="_credits")
-     * @Template()
-     */
-    /*
-    public function creditsAction()
-    {
-        return $this->render('PlantnetDataBundle:Default:credits.html.twig', array('current' => 'taxonomy'));
-    }
-    */
-
-    /**
-     * @Route("/mentions", name="_mentions")
-     * @Template()
-     */
-    /*
-    public function mentionsAction()
-    {
-        return $this->render('PlantnetDataBundle:Default:mentions.html.twig', array('current' => 'taxonomy'));
-    }
-    */
-
-    /**
-     * @Route("/contacts", name="_contacts")
-     * @Template()
-     */
-    /*
-    public function contactsAction()
-    {
-        return $this->render('PlantnetDataBundle:Default:contacts.html.twig', array('current' => 'taxonomy'));
-    }
-    */
-
 }
