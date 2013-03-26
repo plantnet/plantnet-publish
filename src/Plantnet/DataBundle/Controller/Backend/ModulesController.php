@@ -29,6 +29,19 @@ use Plantnet\DataBundle\Form\ImportFormType,
  */
 class ModulesController extends Controller
 {
+    private function getDataBase($user=null,$dm=null)
+    {
+        if($user)
+        {
+            return $user->getDbName();
+        }
+        elseif($dm)
+        {
+            return $dm->getConfiguration()->getDefaultDB();
+        }
+        return $this->container->getParameter('mdb_base');
+    }
+
     /**
      * Displays a form to create a new Module entity.
      *
@@ -38,11 +51,11 @@ class ModulesController extends Controller
     public function module_newAction($id,$type)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'id'=>$id,
-                'user.id'=>$user->getId()
+                'id'=>$id
             ));
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -81,11 +94,11 @@ class ModulesController extends Controller
     public function module_createAction($id,$type)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'id'=>$id,
-                'user.id'=>$user->getId()
+                'id'=>$id
             ));
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -107,6 +120,7 @@ class ModulesController extends Controller
             $form->bindRequest($request);
             if ($form->isValid()) {
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                 $module->setCollection($collection);
                 $idparent = $request->request->get('modules');
                 if(array_key_exists('parent', $idparent) && $idparent['parent'] != null){
@@ -170,11 +184,11 @@ class ModulesController extends Controller
     public function fields_typeAction($id, $idmodule)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'id'=>$id,
-                'user.id'=>$user->getId()
+                'id'=>$id
             ));
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -205,11 +219,11 @@ class ModulesController extends Controller
     public function save_fieldsAction($id, $idmodule)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'id'=>$id,
-                'user.id'=>$user->getId()
+                'id'=>$id
             ));
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -228,6 +242,7 @@ class ModulesController extends Controller
             $form->bindRequest($request);
             if ($form->isValid()) {
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                 $dm->persist($module);
                 $dm->flush();
                 return $this->redirect($this->generateUrl('import_data', array('id' => $id, 'idmodule' => $idmodule)));
@@ -246,11 +261,11 @@ class ModulesController extends Controller
     public function import_dataAction($id, $idmodule)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'id'=>$id,
-                'user.id'=>$user->getId()
+                'id'=>$id
             ));
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -285,13 +300,13 @@ class ModulesController extends Controller
         if($request->isXmlHttpRequest())
         {
             $user=$this->container->get('security.context')->getToken()->getUser();
-            $dm = $this->get('doctrine.odm.mongodb.document_manager');
+            $dm=$this->get('doctrine.odm.mongodb.document_manager');
+            $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
             $configuration = $dm->getConnection()->getConfiguration();
             $configuration->setLoggerCallable(null);
             $collection = $dm->getRepository('PlantnetDataBundle:Collection')
                 ->findOneBy(array(
-                    'id'=>$id,
-                    'user.id'=>$user->getId()
+                    'id'=>$id
                 ));
             if (!$collection) {
                 throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -389,7 +404,7 @@ class ModulesController extends Controller
             else
             {
                 $kernel=$this->get('kernel');
-                $command='php '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getEmail().' > /dev/null';
+                $command='php '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' > /dev/null';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
 
@@ -423,15 +438,16 @@ class ModulesController extends Controller
     public function module_editAction($id)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $entity = $dm->getRepository('PlantnetDataBundle:Module')
             ->find($id);
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        if($user->getId()!=$entity->getCollection()->getUser()->getId()){
-            throw $this->createNotFoundException('Unable to find Collection entity.');
-        }
+        // if($user->getId()!=$entity->getCollection()->getUser()->getId()){
+        //     throw $this->createNotFoundException('Unable to find Collection entity.');
+        // }
         $editForm = $this->get('form.factory')->create(new ModulesType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
         return array(
@@ -451,15 +467,16 @@ class ModulesController extends Controller
     public function module_updateAction($id)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $entity = $dm->getRepository('PlantnetDataBundle:Module')
             ->find($id);
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        if($user->getId()!=$entity->getCollection()->getUser()->getId()){
-            throw $this->createNotFoundException('Unable to find Collection entity.');
-        }
+        // if($user->getId()!=$entity->getCollection()->getUser()->getId()){
+        //     throw $this->createNotFoundException('Unable to find Collection entity.');
+        // }
         $editForm = $this->createForm(new ModulesType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
         $request = $this->getRequest();
@@ -467,6 +484,7 @@ class ModulesController extends Controller
             $editForm->bindRequest($request);
             if ($editForm->isValid()) {
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                 $dm->persist($entity);
                 $dm->flush();
                 return $this->redirect($this->generateUrl('module_edit', array('id' => $id)));
@@ -493,7 +511,8 @@ class ModulesController extends Controller
             $form->bindRequest($request);
             if ($form->isValid()) {
                 $user=$this->container->get('security.context')->getToken()->getUser();
-                $dm = $this->get('doctrine.odm.mongodb.document_manager');
+                $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                 $module = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
                 if(!$module){
                     throw $this->createNotFoundException('Unable to find Module entity.');
@@ -502,9 +521,9 @@ class ModulesController extends Controller
                 if(!$collection){
                     throw $this->createNotFoundException('Unable to find Collection entity.');
                 }
-                if($user->getId()!=$collection->getUser()->getId()){
-                    throw $this->createNotFoundException('Unable to find Collection entity.');
-                }
+                // if($user->getId()!=$collection->getUser()->getId()){
+                //     throw $this->createNotFoundException('Unable to find Collection entity.');
+                // }
                 /*
                 * Remove children
                 */
@@ -518,7 +537,7 @@ class ModulesController extends Controller
                         ));
                     }
                 }
-                $db=$this->container->getParameter('mdb_base');
+                $db=$this->getDataBase($user);
                 $m=new \Mongo();
                 /*
                 * Remove images

@@ -36,7 +36,7 @@ class Collection
     /**
      * @MongoDB\ReferenceOne(targetDocument="Plantnet\UserBundle\Document\User")
      */
-    protected $user;
+    // protected $user;
 
     /**
      * To String
@@ -151,20 +151,20 @@ class Collection
      *
      * @param Plantnet\UserBundle\Document\User $user
      */
-    public function setUser(\Plantnet\UserBundle\Document\User $user)
-    {
-        $this->user = $user;
-    }
+    // public function setUser(\Plantnet\UserBundle\Document\User $user)
+    // {
+    //     $this->user = $user;
+    // }
 
     /**
      * Get user
      *
      * @return Plantnet\UserBundle\Document\User $user
      */
-    public function getUser()
-    {
-        return $this->user;
-    }
+    // public function getUser()
+    // {
+    //     return $this->user;
+    // }
 
     /**
      * Add modules

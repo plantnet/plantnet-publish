@@ -39,6 +39,7 @@ class ImportationCommand extends ContainerAwareCommand
             ->setDescription('import data from csv')
             ->addArgument('collection',InputArgument::REQUIRED,'Specify a collection ID')
             ->addArgument('module',InputArgument::REQUIRED,'Specify a module ID')
+            ->addArgument('dbname',InputArgument::REQUIRED,'Specify a database name')
             ->addArgument('usermail',InputArgument::REQUIRED,'Specify a user e-mail')
         ;
     }
@@ -47,11 +48,13 @@ class ImportationCommand extends ContainerAwareCommand
     {
         $id=$input->getArgument('collection');
         $idmodule=$input->getArgument('module');
+        $dbname=$input->getArgument('dbname');
         $usermail=$input->getArgument('usermail');
-        if($id&&$idmodule&&$usermail)
+        if($id&&$idmodule&&$dbname&&$usermail)
         {
             $error='';
-            $dm = $this->getContainer()->get('doctrine.odm.mongodb.document_manager');
+            $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
+            $dm->getConfiguration()->setDefaultDB($dbname);
             $configuration = $dm->getConnection()->getConfiguration();
             $configuration->setLoggerCallable(null);
             $module = $dm->getRepository('PlantnetDataBundle:Module')

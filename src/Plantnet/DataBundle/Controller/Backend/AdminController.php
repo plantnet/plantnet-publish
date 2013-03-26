@@ -25,19 +25,38 @@ use Plantnet\DataBundle\Document\Location;
  */
 class AdminController extends Controller
 {
+    private function getDataBase($user=null,$dm=null)
+    {
+        if($user)
+        {
+            return $user->getDbName();
+        }
+        elseif($dm)
+        {
+            return $dm->getConfiguration()->getDefaultDB();
+        }
+        return $this->container->getParameter('mdb_base');
+    }
+
+    public function displayTitleAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        return $this->render('PlantnetDataBundle:Backend\Admin:title.html.twig', array(
+            'title'=>str_replace('bota_','',$user->getDbName())
+        ));
+    }
+
     /**
      * @Route("/", name="admin_index")
      * @Template("PlantnetDataBundle:Backend:index.html.twig")
      */
     public function indexAction()
     {
-        // $dm->getConfiguration()->setDefaultDB('foo');
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-            ->findBy(array(
-                'user.id'=>$user->getId()
-            ));
+            ->findAll();
         return $this->render('PlantnetDataBundle:Backend:index.html.twig',array(
             'collections' => $collections,
             'current' => 'administration'
@@ -51,11 +70,11 @@ class AdminController extends Controller
     public function collectionAction($collection)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'name'=>$collection,
-                'user.id'=>$user->getId()
+                'name'=>$collection
             ));
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -72,11 +91,11 @@ class AdminController extends Controller
     public function moduleAction($collection, $module)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'name'=>$collection,
-                'user.id'=>$user->getId()
+                'name'=>$collection
             ));
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -134,7 +153,7 @@ class AdminController extends Controller
                 ));
                 break;
             case 'locality':
-                $db=$this->container->getParameter('mdb_base');
+                $db=$this->getDataBase($user);
                 $m=new \Mongo();
                 $c_plantunits=$m->$db->Plantunit->find(
                     array('module.$id'=>new \MongoId($module->getId())),

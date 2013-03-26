@@ -64,7 +64,7 @@
 		{% block header %}
 			<header>
 				<a title="Back to Homepage" href="{{ path('admin_index') }}"></a>
-				<h1>[Publish]</h1>
+				<h1>[Publish - {% render controller("PlantnetDataBundle:Backend/Admin:displayTitle") %}]</h1>
 			</header>
 		{% endblock %}
 		<section id="user-info">

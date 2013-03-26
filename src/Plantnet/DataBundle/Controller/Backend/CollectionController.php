@@ -18,14 +18,26 @@ use Plantnet\DataBundle\Document\Collection,
  */
 class CollectionController extends Controller
 {
+    private function getDataBase($user=null,$dm=null)
+    {
+        if($user)
+        {
+            return $user->getDbName();
+        }
+        elseif($dm)
+        {
+            return $dm->getConfiguration()->getDefaultDB();
+        }
+        return $this->container->getParameter('mdb_base');
+    }
+
     public function collection_listAction()
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-            ->findBy(array(
-                'user.id'=>$user->getId()
-            ));
+            ->findAll();
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_list.html.twig',array(
             'collections' => $collections,
             'current' => 'administration'
@@ -63,9 +75,10 @@ class CollectionController extends Controller
         if ('POST' === $request->getMethod()) {
             $form->bindRequest($request);
             if ($form->isValid()) {
-                $dm = $this->get('doctrine.odm.mongodb.document_manager');
                 $user=$this->container->get('security.context')->getToken()->getUser();
-                $document->setUser($user);
+                $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                // $document->setUser($user);
                 $document->setAlias($user->getUsername().'_'.$document->getName());
                 $dm->persist($document);
                 $dm->flush();
@@ -90,11 +103,11 @@ class CollectionController extends Controller
     public function collection_editAction($id)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $entity = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'id'=>$id,
-                'user.id'=>$user->getId()
+                'id'=>$id
             ));
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -118,11 +131,11 @@ class CollectionController extends Controller
     public function collection_updateAction($id)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $entity = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'id'=>$id,
-                'user.id'=>$user->getId()
+                'id'=>$id
             ));
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -159,11 +172,11 @@ class CollectionController extends Controller
             $form->bindRequest($request);
             if ($form->isValid()) {
                 $user=$this->container->get('security.context')->getToken()->getUser();
-                $dm = $this->get('doctrine.odm.mongodb.document_manager');
+                $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                 $collection = $dm->getRepository('PlantnetDataBundle:Collection')
                     ->findOneBy(array(
-                        'id'=>$id,
-                        'user.id'=>$user->getId()
+                        'id'=>$id
                     ));
                 if(!$collection){
                     throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -197,7 +210,7 @@ class CollectionController extends Controller
                     }
                     rmdir($dir);
                 }
-                $db=$this->container->getParameter('mdb_base');
+                $db=$this->getDataBase($user);
                 $m=new \Mongo();
                 $m->$db->Collection->remove(
                     array('_id'=>new \MongoId($collection->getId()))
