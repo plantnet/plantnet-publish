@@ -25,9 +25,34 @@ class User extends BaseUser
      */
     protected $id;
 
+    /**
+     * @MongoDB\String
+     */
+    private $dbName;
+
     public function __construct()
     {
         parent::__construct();
         // your own logic
+    }
+
+    /**
+     * Set dbName
+     *
+     * @param string $dbName
+     */
+    public function setDbName($dbName)
+    {
+        $this->dbName = $dbName;
+    }
+
+    /**
+     * Get dbName
+     *
+     * @return string $dbName
+     */
+    public function getDbName()
+    {
+        return $this->dbName;
     }
 }

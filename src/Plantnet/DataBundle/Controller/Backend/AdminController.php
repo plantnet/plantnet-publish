@@ -31,6 +31,7 @@ class AdminController extends Controller
      */
     public function indexAction()
     {
+        // $dm->getConfiguration()->setDefaultDB('foo');
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
