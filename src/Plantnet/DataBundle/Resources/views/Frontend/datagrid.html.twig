@@ -16,7 +16,7 @@
                 </thead>
                 <tbody>
                     {% for row in paginator %}
-                        <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'owner': collection.user.usernameCanonical, 'collection': collection.name, 'module': module.name, 'id': row._id }) }}'">
+                        <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': row._id }) }}'">
                             {% for field in display %}
                                 <td>{{ row.attributes[field] }}</td>
                             {% endfor %}

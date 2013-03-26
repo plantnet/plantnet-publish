@@ -1,6 +1,6 @@
 {% for collection in collections %}
 	<li>
-		<a href="{{ path('_collection', { 'owner': collection.user.usernameCanonical, 'collection': collection.name }) }}">
+		<a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">
 			{{ collection.name }}
 		</a>
 	</li>

@@ -9,14 +9,14 @@
 		{% for module in collection.modules %}
 			{% if module.type == 'text' %}
 				<li class="module">
-					<a href="{{ path('_module', { 'owner': collection.user.usernameCanonical, 'collection': collection.name, 'module': module.name }) }}">
+					<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
 						{{ module.name }}
 					</a>
 					{% if module.children|length > 0 %}
 						<ul>
 							{% for child in module.children %}
 								<li>
-									<a href="{{ path('_module', { 'owner': collection.user.usernameCanonical, 'collection': collection.name, 'module': child.name }) }}">
+									<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': child.name }) }}">
 										{{ child.name }}
 									</a>
 								</li>

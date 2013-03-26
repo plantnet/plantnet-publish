@@ -104,21 +104,25 @@
 								{{ "tab-home"|trans }}
 							</a>
 						</li>
-						<li class="dropdown">
-							<a class="dropdown-toggle" href="#">{{ "tab-coll"|trans}}</a>
-							<ul class="dropdown-menu">
-								{% render controller("PlantnetDataBundle:Frontend\\Data:menuCollectionList") %}
-							</ul>
-						</li>
-						<li>
-							<a {% if current == 'search' %} class="active" {% endif %} href="{{ url('_search') }}">
-								Search
-							</a>
-						</li>
+						{% if current != 'index' %}
+							<li class="dropdown">
+								<a class="dropdown-toggle" href="#">{{ "tab-coll"|trans}}</a>
+								<ul class="dropdown-menu">
+									{% render controller("PlantnetDataBundle:Frontend\\Data:menuCollectionList", {'project': project}) %}
+								</ul>
+							</li>
+							<li>
+								<a {% if current == 'search' %} class="active" {% endif %} href="{{ url('_search') }}">
+									Search
+								</a>
+							</li>
+						{% endif %}
 					</ul>
+					{% if current != 'index' %}
 					<form action="" class="pull-right">
 						<input type="text" placeholder="{{ 'search-field'|trans }}">
 					</form>
+					{% endif %}
 				</div>
 			</div>
 		</div>

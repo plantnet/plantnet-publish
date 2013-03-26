@@ -1,11 +1,11 @@
 {% block breadcrumb %}
  <ul class="breadcrumb">
     <li>
-        <a href="{{ path('_collection', { 'owner': collection.user.usernameCanonical, 'collection': collection.name }) }}">{{ collection.name }}</a>
+        <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
         <span class="divider">/</span>
     </li>
     <li class="active">
-        <a href="{{ path('_module', { 'owner': collection.user.usernameCanonical, 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
+        <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
         <span class="divider">></span>
     </li>
     <li>{{ type }}</li>
