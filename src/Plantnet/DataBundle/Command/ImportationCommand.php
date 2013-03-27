@@ -166,12 +166,12 @@ class ImportationCommand extends ContainerAwareCommand
                                 case 'idmodule':
                                     $location->setIdentifier($value);
                                     break;
-                                case 'title1':
-                                    $location->setTitle1($value);
-                                    break;
-                                case 'title2':
-                                    $location->setTitle2($value);
-                                    break;
+                                // case 'title1':
+                                //     $location->setTitle1($value);
+                                //     break;
+                                // case 'title2':
+                                //     $location->setTitle2($value);
+                                //     break;
                             }
                         }
                         $location->setCoordinates($coordinates);

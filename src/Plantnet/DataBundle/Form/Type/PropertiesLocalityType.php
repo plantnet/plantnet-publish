@@ -14,20 +14,18 @@ class PropertiesLocalityType extends AbstractType
 			->add('type', 'choice',array(
 				'choices' => array(
 					'idparent' => 'Parent',
-					'title1' => 'Title 1',
-					'title2' => 'Title 2',
 					'lon' => 'Longitude',
 					'lat' => 'Latitude'
 				),
 				'multiple' => false,
 				'required' => false
 			))
-			->add('main', 'checkbox', array(
-				'required' => false
-			))
-			->add('details', 'checkbox', array(
-				'required' => false
-			))
+			// ->add('main', 'checkbox', array(
+			// 	'required' => false
+			// ))
+			// ->add('details', 'checkbox', array(
+			// 	'required' => false
+			// ))
 		;
 	}
 

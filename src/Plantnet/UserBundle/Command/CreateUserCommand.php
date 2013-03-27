@@ -85,10 +85,10 @@ class CreateUserCommand extends BaseCommand
 	        $db->createCollection('Plantunit');
 	        $db->createCollection('Page');
 	        $db->Location->ensureIndex(array("coordinates"=>"2d"));
-	        $db->Page->insert(array('name'=>'home'));
-	        $db->Page->insert(array('name'=>'credits'));
-	        $db->Page->insert(array('name'=>'mentions'));
-	        $db->Page->insert(array('name'=>'contacts'));
+	        $db->Page->insert(array('name'=>'home','order'=>1));
+	        $db->Page->insert(array('name'=>'mentions','order'=>2));
+	        $db->Page->insert(array('name'=>'credits','order'=>3));
+	        $db->Page->insert(array('name'=>'contacts','order'=>4));
 		}
 		else
 		{

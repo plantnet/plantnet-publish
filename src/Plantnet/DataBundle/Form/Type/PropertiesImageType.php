@@ -20,12 +20,12 @@ class PropertiesImageType extends AbstractType
 				'multiple' => false,
 				'required' => false
 			))
-			->add('main', 'checkbox', array(
-				'required' => false
-			))
-			->add('details', 'checkbox', array(
-				'required' => false
-			))
+			// ->add('main', 'checkbox', array(
+			// 	'required' => false
+			// ))
+			// ->add('details', 'checkbox', array(
+			// 	'required' => false
+			// ))
 		;
 	}
 

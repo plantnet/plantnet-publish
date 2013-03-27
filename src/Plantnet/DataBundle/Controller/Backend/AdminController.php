@@ -158,35 +158,48 @@ class AdminController extends Controller
             case 'locality':
                 $db=$this->getDataBase($user);
                 $m=new \Mongo();
+                $plantunits=array();
                 $c_plantunits=$m->$db->Plantunit->find(
                     array('module.$id'=>new \MongoId($module->getId())),
-                    array('_id'=>1)
+                    array('_id'=>1,'title1'=>1,'title2'=>1)
                 );
-                $id_plantunits=array();
                 foreach($c_plantunits as $id=>$p)
                 {
-                    $id_plantunits[]=new \MongoId($id);
+                    $plant=array();
+                    $plant['title1']=$p['title1'];
+                    $plant['title2']=$p['title2'];
+                    $plantunits[$id]=$plant;
                 }
                 unset($c_plantunits);
                 $locations=array();
                 $c_locations=$m->$db->Location->find(
                     array(
-                        'plantunit.$id'=>array('$in'=>$id_plantunits),
                         'module.$id'=>new \MongoId($mod->getId())
                     ),
-                    array('_id'=>1,'latitude'=>1,'longitude'=>1,'title1'=>1,'title2'=>1)
+                    array('_id'=>1,'latitude'=>1,'longitude'=>1,'plantunit.$id'=>1)
                 );
-                unset($id_plantunits);
                 foreach($c_locations as $id=>$l)
                 {
                     $loc=array();
                     $loc['id']=$id;
                     $loc['latitude']=$l['latitude'];
                     $loc['longitude']=$l['longitude'];
-                    $loc['title1']=$l['title1'];
-                    $loc['title2']=$l['title2'];
+                    $loc['title1']='';
+                    $loc['title2']='';
+                    if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
+                    {
+                        if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))
+                        {
+                            $loc['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];
+                        }
+                        if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title2']))
+                        {
+                            $loc['title2']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title2'];
+                        }
+                    }
                     $locations[]=$loc;
                 }
+                unset($plantunits);
                 unset($c_locations);
                 unset($m);
                 $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
@@ -206,8 +219,10 @@ class AdminController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $pages = $dm->getRepository('PlantnetDataBundle:Page')
-            ->findAll();
+        $pages = $dm->createQueryBuilder('PlantnetDataBundle:Page')
+            ->sort('order','ASC')
+            ->getQuery()
+            ->execute();
         return $this->render('PlantnetDataBundle:Backend\Admin:page_list.html.twig',array(
             'pages' => $pages,
             'current' => 'administration'

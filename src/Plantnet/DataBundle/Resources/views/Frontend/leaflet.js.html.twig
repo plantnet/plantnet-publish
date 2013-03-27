@@ -130,8 +130,20 @@
 	});
 	{% if locations is defined %}
 		{% for location in locations %}
+			{% set title1 = '' %}
+			{% if location.title1 is defined and location.title1 is not empty %}
+				{% set title1 = location.title1 %}
+			{% elseif location.plantunit.title1 is defined %}
+				{% set title1 = location.plantunit.title1 %}
+			{% endif %}
+			{% set title2 = '' %}
+			{% if location.title2 is defined and location.title1 is not empty %}
+				{% set title2 = location.title2 %}
+			{% elseif location.plantunit.title2 is defined %}
+				{% set title2 = location.plantunit.title2 %}
+			{% endif %}
 			var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
-			marker_{{ location.id }}.bindPopup('<b>{{ location.title1|escape('js') }}</b><br />{{ location.title2|escape('js') }}');
+			marker_{{ location.id }}.bindPopup('<b>{{ title1|escape('js') }}</b><br />{{ title2|escape('js') }}');
 			markers.addLayer(marker_{{ location.id }});
 		{% endfor %}
 	{% endif %}

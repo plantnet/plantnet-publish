@@ -25,13 +25,17 @@
                 <tr>
                     <td>Field</td>
                     <td>Type</td>
-                    <td colspan="2">Display</td>
+                    {% if module.type == 'text' %}
+                        <td colspan="2">Display</td>
+                    {% endif %}
                 </tr>
                 <tr>
                     <td></td>
                     <td></td>
-                    <td>Main</td>
-                    <td>Details</td>
+                    {% if module.type == 'text' %}
+                        <td>Main</td>
+                        <td>Details</td>
+                    {% endif %}
                 <tr>
             </thead>
             <tbody>
@@ -45,14 +49,16 @@
                             {{ form_errors(property.type) }}
                             {{ form_widget(property.type) }}
                         </td>
-                        <td>
-                            {{ form_errors(property.main) }}
-                            {{ form_widget(property.main) }}
-                        </td>
-                        <td>
-                            {{ form_errors(property.details) }}
-                            {{ form_widget(property.details) }}
-                        </td>
+                        {% if module.type == 'text' %}
+                            <td>
+                                {{ form_errors(property.main) }}
+                                {{ form_widget(property.main) }}
+                            </td>
+                            <td>
+                                {{ form_errors(property.details) }}
+                                {{ form_widget(property.details) }}
+                            </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

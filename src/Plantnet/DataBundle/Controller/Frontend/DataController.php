@@ -166,6 +166,7 @@ class DataController extends Controller
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
                 return $this->render('PlantnetDataBundle:Frontend:datagrid.html.twig', array(
                     'project' => $project,
+                    'current' => 'module',
                     'paginator' => $paginator,
                     'field' => $field,
                     'collection' => $collection,
@@ -183,6 +184,7 @@ class DataController extends Controller
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
                 return $this->render('PlantnetDataBundle:Frontend:gallery.html.twig', array(
                     'project' => $project,
+                    'current' => 'module',
                     'paginator' => $paginator,
                     'collection' => $collection,
                     'module' => $mod,
@@ -192,41 +194,55 @@ class DataController extends Controller
             case 'locality':
                 $db=$this->get_prefix().$project;
                 $m=new \Mongo();
+                $plantunits=array();
                 $c_plantunits=$m->$db->Plantunit->find(
                     array('module.$id'=>new \MongoId($module->getId())),
-                    array('_id'=>1)
+                    array('_id'=>1,'title1'=>1,'title2'=>1)
                 );
-                $id_plantunits=array();
                 foreach($c_plantunits as $id=>$p)
                 {
-                    $id_plantunits[]=new \MongoId($id);
+                    $plant=array();
+                    $plant['title1']=$p['title1'];
+                    $plant['title2']=$p['title2'];
+                    $plantunits[$id]=$plant;
                 }
                 unset($c_plantunits);
                 $locations=array();
                 $c_locations=$m->$db->Location->find(
                     array(
-                        'plantunit.$id'=>array('$in'=>$id_plantunits),
                         'module.$id'=>new \MongoId($mod->getId())
                     ),
-                    array('_id'=>1,'latitude'=>1,'longitude'=>1,'title1'=>1,'title2'=>1)
+                    array('_id'=>1,'latitude'=>1,'longitude'=>1,'plantunit.$id'=>1)
                 );
-                unset($id_plantunits);
                 foreach($c_locations as $id=>$l)
                 {
                     $loc=array();
                     $loc['id']=$id;
                     $loc['latitude']=$l['latitude'];
                     $loc['longitude']=$l['longitude'];
-                    $loc['title1']=$l['title1'];
-                    $loc['title2']=$l['title2'];
+                    $loc['title1']='';
+                    $loc['title2']='';
+                    if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
+                    {
+                        if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))
+                        {
+                            $loc['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];
+                        }
+                        if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title2']))
+                        {
+                            $loc['title2']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title2'];
+                        }
+                    }
                     $locations[]=$loc;
                 }
+                unset($plantunits);
                 unset($c_locations);
                 unset($m);
                 $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
                 return $this->render('PlantnetDataBundle:Frontend:map.html.twig',array(
                     'project' => $project,
+                    'current' => 'module',
                     'collection' => $collection,
                     'module' => $mod,
                     'type' => 'localisation',
@@ -268,6 +284,7 @@ class DataController extends Controller
         return $this->render('PlantnetDataBundle:Frontend:details.html.twig', array(
             'idplantunit' => $plantunit->getId(),
             'project' => $project,
+            'current' => 'details',
             'display' => $display,
             'layers' => $layers,
             'collection' => $coll,
@@ -292,7 +309,7 @@ class DataController extends Controller
         return $this->render('PlantnetDataBundle:Frontend:search.html.twig', array(
             'project' => $project,
             'layers' => $layers,
-            'current' => 'taxonomy'
+            'current' => 'search'
         ));
     }
 
@@ -343,7 +360,7 @@ class DataController extends Controller
                 ->execute();
             return $this->render('PlantnetDataBundle:Frontend:result.html.twig', array(
                 'project' => $project,
-                'current' => 'taxonomy',
+                'current' => 'result',
                 // 'paginator' => $paginator,
                 'plantunits' => $plantunits
             ));
@@ -359,7 +376,7 @@ class DataController extends Controller
         }
         return $this->render('PlantnetDataBundle:Frontend:result.html.twig', array(
             'project' => $project,
-            'current' => 'taxonomy'
+            'current' => 'result'
         ));
     }
 
