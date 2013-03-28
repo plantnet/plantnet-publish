@@ -18,28 +18,28 @@
 				{% endautoescape %}
 			</p>
 		{% endif %}
-		<p>{{ collection.modules|length }} module{% if collection.modules|length >= 2 %}s{% endif %}</p>
+		<br />
 		<ul>
 			{% for module in collection.modules %}
-				<li>
-					{{ module.name }} - [ type : {{ module.type }} ]
-					<ul>
-						{% if module.parent is not null %}
-							<li>Under {{ module.parent.name }}</li>
+				{% if module.type == 'text' %}
+					<li>
+						{{ module.name }} - [ Module ]
+						{% if module.children|length > 0 %}
+							<ul>
+								{% for child in module.children %}
+									<li>
+										{{ child.name }} - [ Sub-module : {{ child.type }} ]
+									</li>
+								{% endfor %}
+							</ul>
 						{% endif %}
-						{#
-						{% if module.plantunits|length > 0 %}
-							<li>{{ module.plantunits|length }} Plantunit{% if module.plantunits|length >= 2 %}s{% endif %}</li>
-						{% endif %}
-						{% if module.images|length > 0 %}
-							<li>{{ module.images|length }} Image{% if module.images|length >= 2 %}s{% endif %}</li>
-						{% endif %}
-						{% if module.locations|length > 0 %}
-							<li>{{ module.locations|length }} Localisation{% if module.locations|length >= 2 %}s{% endif %}</li>
-						{% endif %}
-						#}
-					</ul>
-				</li>
+						<ul>
+							{% if module.parent is not null %}
+								<li>Under {{ module.parent.name }}</li>
+							{% endif %}
+						</ul>
+					</li>
+				{% endif %}
 			{% endfor %}
 		</ul>
 		{#<ul>
