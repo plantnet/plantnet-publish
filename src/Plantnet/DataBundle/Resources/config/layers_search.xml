@@ -5,4 +5,12 @@
 		<url><![CDATA[http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png]]></url>
 		<attrib><![CDATA[Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
 	</layer><!-- http://www.openstreetmap.org/copyright : Open Data Commons Open Database License || Creative Commons paternité – partage à l’identique 2.0 -->
+	<layer name="OpenCycleMap" alias="OCM" minimap="false">
+		<url><![CDATA[http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Thunderforest <a href="http://thunderforest.com/">OpenCycleMap</a>. Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
+	</layer><!-- http://www.thunderforest.com/terms/ : Creative Commons licence, specifically CC-BY-SA 2.0 -->
+	<layer name="MapQuest-OSM" alias="MQOSM" minimap="false">
+		<url><![CDATA[http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png]]></url>
+		<attrib><![CDATA[Tiles Courtesy of <a href="http://thunderforest.com/">MapQuest</a>. Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors]]></attrib>
+	</layer><!-- http://developer.mapquest.com/web/products/open/map : Free -->
 </layers>
