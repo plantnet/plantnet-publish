@@ -35,6 +35,11 @@ class Property
     private $details;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $search;
+
+    /**
      * Get id
      *
      * @return id $id
@@ -112,6 +117,26 @@ class Property
     public function getDetails()
     {
         return $this->details;
+    }
+
+    /**
+     * Set search
+     *
+     * @param boolean $search
+     */
+    public function setSearch($search)
+    {
+        $this->search = $search;
+    }
+
+    /**
+     * Get search
+     *
+     * @return boolean $search
+     */
+    public function getSearch()
+    {
+        return $this->search;
     }
 
     /**

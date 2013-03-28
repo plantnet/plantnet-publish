@@ -26,6 +26,9 @@ class PropertiesType extends AbstractType
 			->add('details', 'checkbox', array(
 				'required' => false
 			))
+			->add('search', 'checkbox', array(
+				'required' => false
+			))
 		;
 	}
 
