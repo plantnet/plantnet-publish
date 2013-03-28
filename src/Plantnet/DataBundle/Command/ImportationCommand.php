@@ -217,6 +217,15 @@ class ImportationCommand extends ContainerAwareCommand
                         //gc_collect_cycles();
                     }
                 }
+                if($module->getType()=='image')
+                {
+                    $module->setNbimages($rowCount);
+                }
+                if($module->getType()=='locality')
+                {
+                    $module->setNblocations($rowCount);
+                }
+                $dm->persist($module);
                 $dm->flush();
                 $dm->clear();
                 //echo "Memory usage after: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;

@@ -79,6 +79,21 @@ class Module
     private $locations = array();
 
     /**
+     * @MongoDB\Int
+     */
+    private $nbplantunits;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $nbimages;
+
+    /**
+     * @MongoDB\Int
+     */
+    private $nblocations;
+
+    /**
      * To String
      *
      * @return string
@@ -356,6 +371,66 @@ class Module
     public function getLocations()
     {
         return $this->locations;
+    }
+
+    /**
+     * Set nbplantunits
+     *
+     * @param int $nbplantunits
+     */
+    public function setNbplantunits($nbplantunits)
+    {
+        $this->nbplantunits = $nbplantunits;
+    }
+
+    /**
+     * Get nbplantunits
+     *
+     * @return int $nbplantunits
+     */
+    public function getNbplantunits()
+    {
+        return $this->nbplantunits;
+    }
+
+    /**
+     * Set nbimages
+     *
+     * @param int $nbimages
+     */
+    public function setNbimages($nbimages)
+    {
+        $this->nbimages = $nbimages;
+    }
+
+    /**
+     * Get nbimages
+     *
+     * @return int $nbimages
+     */
+    public function getNbimages()
+    {
+        return $this->nbimages;
+    }
+
+    /**
+     * Set nblocations
+     *
+     * @param int $nblocations
+     */
+    public function setNblocations($nblocations)
+    {
+        $this->nblocations = $nblocations;
+    }
+
+    /**
+     * Get nblocations
+     *
+     * @return int $nblocations
+     */
+    public function getNblocations()
+    {
+        return $this->nblocations;
     }
 
     /**

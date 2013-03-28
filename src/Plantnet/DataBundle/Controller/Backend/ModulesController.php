@@ -386,6 +386,8 @@ class ModulesController extends Controller
                         //gc_collect_cycles();
                     }
                 }
+                $module->setNbplantunits($rowCount);
+                $dm->persist($module);
                 $dm->flush();
                 $dm->clear();
                 //echo "Memory usage after: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
