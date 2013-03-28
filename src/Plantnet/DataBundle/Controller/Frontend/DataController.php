@@ -7,7 +7,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller,
-	Symfony\Component\HttpFoundation\Response;
+	Symfony\Component\HttpFoundation\Response,
+    Symfony\Component\HttpFoundation\Request;
+
+use Symfony\Component\Validator\Constraints\Type as TypeConstraint;
 
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
@@ -293,6 +296,24 @@ class DataController extends Controller
         ));
     }
 
+    private function createSearchForm()
+    {
+        $defaults=null;
+        $constraints=array(
+            'y_lat_1_bottom_left'=>new TypeConstraint('float'),
+            'x_lng_1_bottom_left'=>new TypeConstraint('float'),
+            'y_lat_2_top_right'=>new TypeConstraint('float'),
+            'x_lng_2_top_right'=>new TypeConstraint('float'),
+        );
+        $form=$this->createFormBuilder($defaults,array('constraints'=>$constraints))
+            ->add('y_lat_1_bottom_left','hidden',array('required'=>false))
+            ->add('x_lng_1_bottom_left','hidden',array('required'=>false))
+            ->add('y_lat_2_top_right','hidden',array('required'=>false))
+            ->add('x_lng_2_top_right','hidden',array('required'=>false))
+            ->getForm();
+        return $form;
+    }
+
     /**
      * @Route("/project/{project}/search", name="_search")
      * @Template()
@@ -306,29 +327,32 @@ class DataController extends Controller
         }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers_search.xml',0,true);
+        $form=$this->createSearchForm();
         return $this->render('PlantnetDataBundle:Frontend:search.html.twig', array(
             'project' => $project,
             'layers' => $layers,
+            'form' => $form->createView(),
             'current' => 'search'
         ));
     }
 
     /**
      * @Route("/project/{project}/result", name="_result")
-     * @Method("post")
+     * @Method("get")
      * @Template()
      */
-    public function resultAction($project)
+    public function resultAction($project,Request $request)
     {
         $projects=$this->database_list();
         if(!in_array($project,$projects))
         {
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $request=$this->getRequest();
-        if('POST'===$request->getMethod())
+        $form=$this->createSearchForm();
+        if($request->isMethod('GET'))
         {
-            $data=$request->request->all();
+            $form->bind($request);
+            $data=$form->getData();
             $dm = $this->get('doctrine.odm.mongodb.document_manager');
             $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
             $plantunits=array();
@@ -336,33 +360,30 @@ class DataController extends Controller
             if(isset($data['x_lng_1_bottom_left'])&&!empty($data['x_lng_1_bottom_left']))
             {
                 $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
-                ->field('coordinates')->withinBox(
-                    floatval($data['x_lng_1_bottom_left']),
-                    floatval($data['y_lat_1_bottom_left']),
-                    floatval($data['x_lng_2_top_right']),
-                    floatval($data['y_lat_2_top_right']))
-                ->hydrate(false)
-                ->getQuery()
-                ->execute();
+                    ->field('coordinates')->withinBox(
+                        floatval($data['x_lng_1_bottom_left']),
+                        floatval($data['y_lat_1_bottom_left']),
+                        floatval($data['x_lng_2_top_right']),
+                        floatval($data['y_lat_2_top_right']))
+                    ->hydrate(false)
+                    ->getQuery()
+                    ->execute();
                 foreach($locations as $location)
                 {
                     $ids[]=$location['plantunit']['$id']->{'$id'};
                 }
             }
-            // $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-            //     ->field('_id')->in($ids);
-            // $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
-            // $paginator->setMaxPerPage(50);
-            // $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
             $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->field('_id')->in($ids)
-                ->getQuery()
-                ->execute();
+                ->field('_id')->in($ids);
+            $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
+            $paginator->setMaxPerPage(50);
+            $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+            $nbResults=$paginator->getNbResults();
             return $this->render('PlantnetDataBundle:Frontend:result.html.twig', array(
                 'project' => $project,
                 'current' => 'result',
-                // 'paginator' => $paginator,
-                'plantunits' => $plantunits
+                'paginator' => $paginator,
+                'nbResults' => $nbResults
             ));
         }
         else
