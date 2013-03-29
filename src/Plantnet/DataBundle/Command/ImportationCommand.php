@@ -212,19 +212,9 @@ class ImportationCommand extends ContainerAwareCommand
                         $dm->flush();
                         $dm->clear();
                         $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-                        //$dm->detach($plantunit);
-                        //unset($plantunit);
-                        //gc_collect_cycles();
                     }
                 }
-                if($module->getType()=='image')
-                {
-                    $module->setNbimages($rowCount);
-                }
-                if($module->getType()=='locality')
-                {
-                    $module->setNblocations($rowCount);
-                }
+                $module->setNbrows($rowCount);
                 $dm->persist($module);
                 $dm->flush();
                 $dm->clear();
@@ -236,9 +226,7 @@ class ImportationCommand extends ContainerAwareCommand
                 {
                     unlink($csvfile);
                 }
-
                 $message='Importation Success: '.$rowCount.' objects imported';
-
                 /*
                 // Récupération du mailer service.
                 $container=$this->getContainer();

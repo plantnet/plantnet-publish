@@ -285,6 +285,7 @@ label {
 
 #main-nav .collections > li{
     clear:both;
+    margin-bottom:10px;
 }
 
 #main-nav .collections li .toggleLink{
@@ -331,7 +332,7 @@ label {
 
 }
 #main-nav .module li{
-    margin-left: 20px;
+    margin-left: 13px;
     font-family: "Open Sans",Tahoma;
 }
 #main-nav .module li a:hover{
@@ -341,7 +342,7 @@ label {
 }
 
 #main-nav .row-module{
-    margin-bottom: 6px;
+    margin-bottom: 0px;
 }
 
 #main-nav .module .text{
@@ -355,6 +356,10 @@ label {
 #main-nav .module .locality{
     background: url("../images/world.png") no-repeat scroll 13px 1px transparent;
     padding-left: 35px;
+}
+#main-nav .module b{
+    font-size:80%;
+    color:#99B551;
 }
 
 section#admin-content {
@@ -381,7 +386,7 @@ section#admin-content {
     background: url("../images/icn_new_article.png") no-repeat scroll 0px center transparent;
     padding-left: 20px;
     font-style: italic;
-    margin-top: 15px;
+    margin-top: 10px;
     margin-bottom: 3px;
     margin-left: -24px;
     font-size: 12px;

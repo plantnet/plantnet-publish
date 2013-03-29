@@ -23,12 +23,12 @@
 			{% for module in collection.modules %}
 				{% if module.type == 'text' %}
 					<li>
-						{{ module.name }} - [ Module ]
+						{{ module.name }} - [ Module ~ {{ module.nbrows }} rows ]
 						{% if module.children|length > 0 %}
 							<ul>
 								{% for child in module.children %}
 									<li>
-										{{ child.name }} - [ Sub-module : {{ child.type }} ]
+										{{ child.name }} - [ Sub-module : {{ child.type }} ~ {{ child.nbrows }} rows  ]
 									</li>
 								{% endfor %}
 							</ul>

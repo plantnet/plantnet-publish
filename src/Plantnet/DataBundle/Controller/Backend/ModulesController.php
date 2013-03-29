@@ -386,7 +386,7 @@ class ModulesController extends Controller
                         //gc_collect_cycles();
                     }
                 }
-                $module->setNbplantunits($rowCount);
+                $module->setNbrows($rowCount);
                 $dm->persist($module);
                 $dm->flush();
                 $dm->clear();

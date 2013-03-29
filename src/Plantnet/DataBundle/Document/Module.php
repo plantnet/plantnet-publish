@@ -81,17 +81,7 @@ class Module
     /**
      * @MongoDB\Int
      */
-    private $nbplantunits;
-
-    /**
-     * @MongoDB\Int
-     */
-    private $nbimages;
-
-    /**
-     * @MongoDB\Int
-     */
-    private $nblocations;
+    private $nbrows;
 
     /**
      * To String
@@ -374,63 +364,23 @@ class Module
     }
 
     /**
-     * Set nbplantunits
+     * Set nbrows
      *
-     * @param int $nbplantunits
+     * @param int $nbrows
      */
-    public function setNbplantunits($nbplantunits)
+    public function setNbrows($nbrows)
     {
-        $this->nbplantunits = $nbplantunits;
+        $this->nbrows = $nbrows;
     }
 
     /**
-     * Get nbplantunits
+     * Get nbrows
      *
-     * @return int $nbplantunits
+     * @return int $nbrows
      */
-    public function getNbplantunits()
+    public function getNbrows()
     {
-        return $this->nbplantunits;
-    }
-
-    /**
-     * Set nbimages
-     *
-     * @param int $nbimages
-     */
-    public function setNbimages($nbimages)
-    {
-        $this->nbimages = $nbimages;
-    }
-
-    /**
-     * Get nbimages
-     *
-     * @return int $nbimages
-     */
-    public function getNbimages()
-    {
-        return $this->nbimages;
-    }
-
-    /**
-     * Set nblocations
-     *
-     * @param int $nblocations
-     */
-    public function setNblocations($nblocations)
-    {
-        $this->nblocations = $nblocations;
-    }
-
-    /**
-     * Get nblocations
-     *
-     * @return int $nblocations
-     */
-    public function getNblocations()
-    {
-        return $this->nblocations;
+        return $this->nbrows;
     }
 
     /**
