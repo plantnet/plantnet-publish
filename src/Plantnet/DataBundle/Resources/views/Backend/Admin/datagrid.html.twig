@@ -15,13 +15,6 @@
                 {{ pagerfanta(paginator, 'default') }}
             </div>
             <table align='center' cellpadding="3" class="tablesorter searchresults" id="simplesearch">
-                {#
-                <colgroup>
-                    <col width=33%>
-                    <col width=33%>
-                    <col width=33%>
-                </colgroup>
-                #}
                 <thead>
                     <tr class="rowtop">
                         {% for row in display %}
@@ -33,22 +26,10 @@
                 </thead>
                 <tbody>
                     {% for row in paginator %}
-                        {#<tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'owner': collection.User.UsernameCanonical, 'collection': collection.Name, 'module': module.Name, 'id': row._id }) }}'">#}
                         <tr class="">
-                            {#{{ row.attributes['Individu']|var_dump }}
-                            {% for Data in row.attributes %}
-
-                            <td>{{ Data }}</td>
-
-                            {% endfor %}#}
                             {% for field in display %}
                                 <td>{{ row.attributes[field] }}</td>
                             {% endfor %}
-                            {#{% for Data in row.attributes %}
-                            {% if Data.main == true %}
-                            <td>{{ Data.value }}</td>
-                            {% endif %}
-                            {% endfor %}#}
                             <td>
                                 {{ row.images|length }}
                             </td>
@@ -85,7 +66,6 @@
                 $(this).prev().append('<div class="page-loading"></div>');
                 $.get($url, function(data) {
                     $('#content').html(data);
-                    //$(".page-loading").remove();
                 });
             });
         });

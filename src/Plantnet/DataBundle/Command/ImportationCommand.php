@@ -1,15 +1,5 @@
 <?php
 
-/**
- * This file is part of the Identify package.
- *
- * (c) Julien Barbe <julien.barbe@me.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- */
-
 namespace Plantnet\DataBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -166,12 +156,6 @@ class ImportationCommand extends ContainerAwareCommand
                                 case 'idmodule':
                                     $location->setIdentifier($value);
                                     break;
-                                // case 'title1':
-                                //     $location->setTitle1($value);
-                                //     break;
-                                // case 'title2':
-                                //     $location->setTitle2($value);
-                                //     break;
                             }
                         }
                         $location->setCoordinates($coordinates);
@@ -245,7 +229,6 @@ class ImportationCommand extends ContainerAwareCommand
             {
                 $message=$error;
             }
-
             mail($usermail,'Pl@ntnet - Publish',$message);
         }
     }

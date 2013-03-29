@@ -51,17 +51,11 @@ class AdminController extends Controller
 
     /**
      * @Route("/", name="admin_index")
-     * @Template("PlantnetDataBundle:Backend:index.html.twig")
+     * @Template()
      */
     public function indexAction()
     {
-        $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-            ->findAll();
         return $this->render('PlantnetDataBundle:Backend:index.html.twig',array(
-            'collections' => $collections,
             'current' => 'administration'
         ));
     }
@@ -82,7 +76,7 @@ class AdminController extends Controller
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        return $this->render('PlantnetDataBundle:Backend\Admin:collection_view.html.twig', array(
+        return $this->render('PlantnetDataBundle:Backend\Admin:collection.html.twig', array(
             'collection'=>$collection
         ));
     }
@@ -166,8 +160,16 @@ class AdminController extends Controller
                 foreach($c_plantunits as $id=>$p)
                 {
                     $plant=array();
-                    $plant['title1']=$p['title1'];
-                    $plant['title2']=$p['title2'];
+                    $plant['title1']='';
+                    $plant['title2']='';
+                    if(isset($p['title1']))
+                    {
+                        $plant['title1']=$p['title1'];
+                    }
+                    if(isset($p['title2']))
+                    {
+                        $plant['title2']=$p['title2'];
+                    }
                     $plantunits[$id]=$plant;
                 }
                 unset($c_plantunits);
@@ -248,10 +250,10 @@ class AdminController extends Controller
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
         $editForm = $this->createForm(new PageType(), $page);
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Admin:page_edit.html.twig',array(
             'page' => $page,
             'edit_form' => $editForm->createView()
-        );
+        ));
     }
 
     /**
@@ -259,7 +261,7 @@ class AdminController extends Controller
      *
      * @Route("/page/{name}/update", name="page_update")
      * @Method("post")
-     * @Template("PlantnetBotaBundle:Backend\Admin:page_edit.html.twig")
+     * @Template()
      */
     public function page_updateAction($name)
     {
@@ -283,9 +285,9 @@ class AdminController extends Controller
                 return $this->redirect($this->generateUrl('page_edit', array('name' => $name)));
             }
         }
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Admin:page_edit.html.twig',array(
             'page' => $page,
             'edit_form' => $editForm->createView()
-        );
+        ));
     }
 }

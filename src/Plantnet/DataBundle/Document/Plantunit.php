@@ -42,17 +42,6 @@ class Plantunit
     private $files = array();
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Plantunit", nullable="true", inversedBy="children")
-     * 
-     */
-    //private $parent;
-
-    /**
-     * @MongoDB\ReferenceMany(targetDocument="Plantunit", mappedBy="parent", cascade={"remove"})
-     */
-    //private $children;
-
-    /**
      * @MongoDB\ReferenceOne(targetDocument="Module", inversedBy="plantunits")
      */
     private $module;
@@ -214,46 +203,6 @@ class Plantunit
     {
         return $this->files;
     }
-
-    /**
-     * Set parent
-     *
-     * @param Plantnet\DataBundle\Document\Plantunit $parent
-     */
-    // public function setParent(\Plantnet\DataBundle\Document\Plantunit $parent)
-    // {
-    //     $this->parent = $parent;
-    // }
-
-    /**
-     * Get parent
-     *
-     * @return Plantnet\DataBundle\Document\Plantunit $parent
-     */
-    // public function getParent()
-    // {
-    //     return $this->parent;
-    // }
-
-    /**
-     * Add children
-     *
-     * @param Plantnet\DataBundle\Document\Plantunit $children
-     */
-    // public function addChildren(\Plantnet\DataBundle\Document\Plantunit $children)
-    // {
-    //     $this->children[] = $children;
-    // }
-
-    /**
-     * Get children
-     *
-     * @return Doctrine\Common\Collections\Collection $children
-     */
-    // public function getChildren()
-    // {
-    //     return $this->children;
-    // }
 
     /**
      * Set module

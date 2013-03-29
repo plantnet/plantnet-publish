@@ -34,11 +34,6 @@ class Collection
     private $modules = array();
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Plantnet\UserBundle\Document\User")
-     */
-    // protected $user;
-
-    /**
      * To String
      *
      * @return string
@@ -145,26 +140,6 @@ class Collection
     {
         return $this->modules;
     }
-
-    /**
-     * Set user
-     *
-     * @param Plantnet\UserBundle\Document\User $user
-     */
-    // public function setUser(\Plantnet\UserBundle\Document\User $user)
-    // {
-    //     $this->user = $user;
-    // }
-
-    /**
-     * Get user
-     *
-     * @return Plantnet\UserBundle\Document\User $user
-     */
-    // public function getUser()
-    // {
-    //     return $this->user;
-    // }
 
     /**
      * Add modules

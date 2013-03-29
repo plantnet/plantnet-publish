@@ -12,8 +12,8 @@
 			{% for row in paginator %}
 				{% set imgspe = row.path|basename %}
 				{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
-				<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ row.copyright }}">
-					<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" border="0" /></a>
+				<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ row.copyright }}" data-content="{{ row.plantunit.title1 }}<br />{{ row.plantunit.title2 }}">
+					<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" border="0" class=".row-image" /></a>
 			{% endfor %}
 			<div class="pagerfanta">
 				{{ pagerfanta(paginator, 'twitter_bootstrap') }}
@@ -25,7 +25,7 @@
 	{{ parent() }}
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("a#single_image").fancybox();
+			// $("a#single_image").fancybox();
 			/* Apply fancybox to multiple items */
 			$("a.grouped_elements").fancybox({
 				'transitionIn':'elastic',
@@ -37,14 +37,14 @@
 				'titlePosition':'inside',
 				'overlayShow':false
 			});
-			// $("a[rel=group-image]").popover('show')
-			// .popover({
-			// 	offset: 0,
-			// 	html: true
-			// })
-			// .click(function(e) {
-			// 	e.preventDefault()
-			// })
+			$("a[rel=group]").popover({
+				trigger: 'hover',
+				offset: 0,
+				html: true
+			})
+			.click(function(e) {
+				e.preventDefault()
+			});
 			// $(".row-image").preloader();
 		});
 	</script>

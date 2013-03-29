@@ -21,10 +21,10 @@ class DefaultController extends Controller
     {
         $zipData=new ZipData();
         $form=$this->createForm(new ZipForm(),$zipData);
-        return array(
+        return $this->render('PlantnetFileManagerBundle:Default:index.html.twig',array(
             'form'=>$form->createView(),
             'name'=>$name
-        );
+        ));
     }
     /**
     * @Template()
@@ -45,9 +45,9 @@ class DefaultController extends Controller
                 $zipData->extractTo($dir);
             }
         }
-        return array(
+        return $this->render('PlantnetFileManagerBundle:Default:upload.html.twig',array(
             'form'=>$form->createView(),
             'name'=>$name
-        );
+        ));
     }
 }

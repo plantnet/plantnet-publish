@@ -1,16 +1,16 @@
-<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/leaflet/leaflet.css') }}" />
+<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/leaflet/leaflet.css') }}" />
 <!--[if lte IE 8]>
-  <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/leaflet/leaflet.ie.css') }}" />
+  <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/leaflet/leaflet.ie.css') }}" />
 <![endif]-->
-<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.css') }}" />
-<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.Default.css') }}" />
+<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/leaflet/plugins/marker_cluster/MarkerCluster.css') }}" />
+<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/leaflet/plugins/marker_cluster/MarkerCluster.Default.css') }}" />
 <!--[if lte IE 8]>
-  <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/marker_cluster/MarkerCluster.Default.ie.css') }}" />
+  <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/leaflet/plugins/marker_cluster/MarkerCluster.Default.ie.css') }}" />
 <![endif]-->
-<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/mini_map/Control.MiniMap.css') }}" />
-<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/draw/leaflet.draw.css') }}" />
+<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/leaflet/plugins/mini_map/Control.MiniMap.css') }}" />
+<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/leaflet.draw.css') }}" />
 <!--[if lte IE 8]>
-  <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/leaflet/draw/leaflet.draw.ie.css') }}" />
+  <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/leaflet.draw.ie.css') }}" />
 <![endif]-->
 <style type="text/css">
   #map{
@@ -18,7 +18,7 @@
     height:450px;
   }
   .leaflet-control-zoom-fullscreen{
-    background-image:url({{ asset('bundles/plantnetdata/images/leaflet/icon-fullscreen.png') }});
+    background-image:url({{ asset('bundles/plantnetdata/leaflet/plugins/full_screen/images/icon-fullscreen.png') }});
   }
   .leaflet-control-layers-base label,.leaflet-control-layers-overlays label{
     clear:both;

@@ -1,10 +1,8 @@
-{% extends "PlantnetDataBundle::layout.html.twig" %}
+{% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
 {% block title module.name %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
-    {#<link href="{{ asset('bundles/plantnetdata/js/cloud-zoom/cloud-zoom.css') }}" rel="stylesheet" type="text/css" />#}
-    {#<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/css/comments.css') }}" type="text/css" />#}
     {% if plantunit.locations|length > 0 %}
         {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
     {% endif %}
@@ -53,28 +51,24 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    {#<script type="text/JavaScript" src="{{ asset('bundles/plantnetdata/js/cloud-zoom/cloud-zoom.1.0.2.js') }}"></script>#}
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            $("a#single_image").fancybox();
+            // $("a#single_image").fancybox();
             /* Apply fancybox to multiple items */
             $("a.grouped_elements").fancybox({
-                'transitionIn'	:	'elastic',
-                'transitionOut'	:	'elastic',
-                'speedIn'		:	200,
-                'speedOut'		:	200,
-                'enableEscapeButton'    :true,
-                'hideOnContentClick'    : true,
-                'titlePosition'         : 'inside',
-                'overlayShow'	:	false
+                'transitionIn' : 'elastic',
+                'transitionOut' : 'elastic',
+                'speedIn' : 200,
+                'speedOut' : 200,
+                'enableEscapeButton' : true,
+                'hideOnContentClick' : true,
+                'titlePosition' : 'inside',
+                'overlayShow' : false
             });
         });
     </script>
-    {# {% javascripts '@FOSCommentBundle/Resources/assets/js/comments.js' %}
-        <script type="text/javascript" src="{{ asset_url }}"></script>
-    {% endjavascripts %}#}
     {% if plantunit.locations|length > 0 %}
         {% set locations = plantunit.locations %}
         {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}

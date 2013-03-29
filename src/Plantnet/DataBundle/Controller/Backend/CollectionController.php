@@ -54,10 +54,10 @@ class CollectionController extends Controller
     {
         $document = new Collection();
         $form = $this->createForm(new CollectionType(), $document);
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Collection:collection_new.html.twig',array(
             'entity' => $document,
             'form' => $form->createView()
-        );
+        ));
     }
 
     /**
@@ -88,10 +88,10 @@ class CollectionController extends Controller
                 )));
             }
         }
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Collection:collection_new.html.twig',array(
             'entity' => $document,
             'form' => $form->createView()
-        );
+        ));
     }
 
     /**
@@ -114,11 +114,11 @@ class CollectionController extends Controller
         }
         $editForm = $this->createForm(new CollectionType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Collection:collection_edit.html.twig',array(
             'entity' => $entity,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-        );
+        ));
     }
 
     /**
@@ -126,7 +126,7 @@ class CollectionController extends Controller
      *
      * @Route("/{id}/update", name="collection_update")
      * @Method("post")
-     * @Template("PlantnetBotaBundle:Backend\Collection:collection_edit.html.twig")
+     * @Template()
      */
     public function collection_updateAction($id)
     {
@@ -151,11 +151,11 @@ class CollectionController extends Controller
                 return $this->redirect($this->generateUrl('collection_edit', array('id' => $id)));
             }
         }
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Collection:collection_edit.html.twig',array(
             'entity' => $entity,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-        );
+        ));
     }
 
     /**

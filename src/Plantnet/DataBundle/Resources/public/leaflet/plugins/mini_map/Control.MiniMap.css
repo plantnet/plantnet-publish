@@ -21,7 +21,7 @@
 }
 
 .leaflet-control-minimap-toggle-display {
-    background-image: url("../../../images/leaflet/toggle.png");
+    background-image: url("./images/toggle.png");
     border-radius: 4px 4px 4px 4px;
     height: 19px;
     width: 19px;

@@ -12,11 +12,6 @@ class CollectionType extends AbstractType
         $builder
             ->add('name')
             ->add('description', 'textarea', array('required'=>false))
-            /*->add('modules', 'collection', array(
-                'type'       => new ModulesType(),
-                'modifiable' => true,
-            ))*/
-        
         ;
     }
 

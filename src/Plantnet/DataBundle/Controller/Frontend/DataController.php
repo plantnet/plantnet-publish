@@ -88,7 +88,7 @@ class DataController extends Controller
         ));
     }
 
-    public function menuCollectionListAction($project)
+    public function Collection_listAction($project)
     {
         $projects=$this->database_list();
         if(!in_array($project,$projects))
@@ -99,7 +99,7 @@ class DataController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
-        return $this->render('PlantnetDataBundle:Frontend:menuCollectionList.html.twig', array(
+        return $this->render('PlantnetDataBundle:Frontend:collection_list.html.twig', array(
             'project' => $project,
             'collections' => $collections
         ));
@@ -180,8 +180,7 @@ class DataController extends Controller
                 break;
             case 'image':
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Image')
-                    ->field('module')->references($mod)
-                    ->hydrate(false);
+                    ->field('module')->references($mod);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(20);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
@@ -472,90 +471,6 @@ class DataController extends Controller
             'current' => 'contacts'
         ));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-
-
-
-
-
-
-
-    /*
-    public function listAction()
-    {
-            $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-            $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-                                ->findAll();
-            $list = array();
-        foreach($collections as $collection){
-            $coll = array('collection'=>$collection->getName());
-
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
-                                ->findBy(array('collection' => $collection->getId()));
-            array_push($coll, $module);
-            array_push($list, $coll);
-        }
-
-
-            return $this->render('PlantnetDataBundle:Frontend:collectionList.html.twig', array('collections' => $collections, 'list' => $list, 'current' => 'collections'));
-
-    }
-    */
-
-    /**
-     * @Route("/collections", name="_collectionList")
-     * @Template()
-     */
-    /*
-    public function collectionListAction()
-    {
-            $dm = $this->get('doctrine.odm.mongodb.document_manager');
-
-            $collections = $dm->getRepository('PlantnetDataBundle:Collection')
-                                ->findAll();
-            $list = array();
-        foreach($collections as $collection){
-            $coll = array('collection'=>$collection->getName());
-
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
-                                ->findBy(array('collection' => $collection->getId()));
-            array_push($coll, $module);
-            array_push($list, $coll);
-        }
-
-
-            return $this->render(new ControllerReference('PlantnetDataBundle:Frontend:collectionList.html.twig', array('collections' => $collections, 'list' => $list, 'current' => 'collections')));
-
-    }
-    */
 
     /**
      * @Route("/taxa", name="_taxa")

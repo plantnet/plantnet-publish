@@ -5,10 +5,10 @@ class TwigPregExtension extends \Twig_Extension {
 
     public function getFilters() {
         return array(
-            'var_dump'   => new \Twig_Filter_Function('var_dump'),
-            'highlight'  => new \Twig_Filter_Method($this, 'highlight'),
-            'basename'  => new \Twig_Filter_Method($this, 'basename'),
-            'round'  => new \Twig_Filter_Method($this, 'round'),
+            'var_dump' => new \Twig_Filter_Function('var_dump'),
+            'highlight' => new \Twig_Filter_Method($this, 'highlight'),
+            'basename' => new \Twig_Filter_Method($this, 'basename'),
+            'round' => new \Twig_Filter_Method($this, 'round'),
             
         );
     }

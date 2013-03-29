@@ -15,7 +15,6 @@ class Coordinates
     /** @MongoDB\Float */
     protected $y;
 
-
     /**
      * Set x
      *

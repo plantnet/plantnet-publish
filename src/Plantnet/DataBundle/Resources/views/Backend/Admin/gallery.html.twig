@@ -47,7 +47,6 @@
                 $(this).prev().append('<div class="page-loading"></div>');
                 $.get($url, function(data) {
                     $('#content').html(data);
-                    //$(".page-loading").remove();
                 });
             });
         });

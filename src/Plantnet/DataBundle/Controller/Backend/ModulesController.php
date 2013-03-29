@@ -75,13 +75,13 @@ class ModulesController extends Controller
             }
         }
         $form = $this->createForm(new ModuleFormType(), $module, array('idparent' => $idparent));
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_new.html.twig',array(
             'idparent' => $idparent,
             'collection' => $collection,
             'module' => $module,
             'form' => $form->createView(),
             'type' => $type
-        );
+        ));
     }
 
     /**
@@ -89,7 +89,7 @@ class ModulesController extends Controller
      *
      * @Route("/collection/{id}/module/create/type/{type}", name="module_create")
      * @Method("post")
-     * @Template("PlantnetDataBundle:Backend\Modules:module_new.html.twig")
+     * @Template()
      */
     public function module_createAction($id,$type)
     {
@@ -168,13 +168,13 @@ class ModulesController extends Controller
                 return $this->redirect($this->generateUrl('fields_type', array('id' => $collection->getId(), 'idmodule' => $module->getId())));
             }
         }
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_new.html.twig',array(
             'idparent' => $idparent,
             'collection' => $collection,
             'module' => $module,
             'form' => $form->createView(),
             'type' => $type
-        );
+        ));
     }
 
     /**
@@ -203,18 +203,18 @@ class ModulesController extends Controller
         }
         $form = $this->get('form.factory')->create(new ImportFormType(), $module);
         $count='';
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Modules:fields_type.html.twig',array(
             'collection' => $collection,
             'module' => $module,
             'importCount' => $count,
             'form' => $form->createView(),
-        );
+        ));
     }
 
     /**
      * @Route("/collection/{id}/module/{idmodule}/save_fields", name="save_fields")
      * @Method("post")
-     * @Template("PlantnetDataBundle:Backend\Modules:fields_type.html.twig")
+     * @Template()
      */
     public function save_fieldsAction($id, $idmodule)
     {
@@ -248,10 +248,13 @@ class ModulesController extends Controller
                 return $this->redirect($this->generateUrl('import_data', array('id' => $id, 'idmodule' => $idmodule)));
             }
         }
-        return array(
+        $count='';
+        return $this->render('PlantnetDataBundle:Backend\Modules:fields_type.html.twig',array(
+            'collection' => $collection,
             'module' => $module,
+            'importCount' => $count,
             'form' => $form->createView(),
-        );
+        ));
     }
 
     /**
@@ -280,12 +283,12 @@ class ModulesController extends Controller
         }
         $form = $this->get('form.factory')->create(new ImportFormType(), $module);
         $count='';
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Modules:import_data.html.twig',array(
             'collection' => $collection,
             'module' => $module,
             'importCount' => $count,
             'form' => $form->createView(),
-        );
+        ));
     }
 
     /**
@@ -369,21 +372,11 @@ class ModulesController extends Controller
                         }
                         $plantunit->setAttributes($attributes);
                         $dm->persist($plantunit);
-                        // if($module->getParent()){
-                        //     $moduleid = $module->getParent()->getId();
-                        //     $parent = $dm->getRepository('PlantnetDataBundle:Plantunit')
-                        //         ->findOneBy(array('module.id' => $moduleid, 'identifier' => $plantunit->getIdparent()));
-                        //     $plantunit->setParent($parent);
-                        //     $dm->persist($plantunit);
-                        // }
                     }
                     if (($rowCount % $batchSize) == 0) {
                         $dm->flush();
                         $dm->clear();
                         $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-                        //$dm->detach($plantunit);
-                        //unset($plantunit);
-                        //gc_collect_cycles();
                     }
                 }
                 $module->setNbrows($rowCount);
@@ -398,7 +391,6 @@ class ModulesController extends Controller
                 {
                     unlink($csvfile);
                 }
-                
                 return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:import_moduledata.html.twig', array(
                     'importCount' => 'Importation Success: '.$rowCount.' objects imported'
                 ));
@@ -409,7 +401,6 @@ class ModulesController extends Controller
                 $command='php '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' > /dev/null';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
-
                 return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:import_moduledata.html.twig', array(
                     'importCount' => 'En cours d\'importation, un email vous sera envoyé à la fin du traitement.'
                 ));
@@ -447,16 +438,13 @@ class ModulesController extends Controller
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        // if($user->getId()!=$entity->getCollection()->getUser()->getId()){
-        //     throw $this->createNotFoundException('Unable to find Collection entity.');
-        // }
         $editForm = $this->get('form.factory')->create(new ModulesType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_edit.html.twig',array(
             'entity' => $entity,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-        );
+        ));
     }
 
     /**
@@ -464,7 +452,7 @@ class ModulesController extends Controller
      *
      * @Route("/{id}/update", name="module_update")
      * @Method("post")
-     * @Template("PlantnetBotaBundle:Backend\Modules:module_edit.html.twig")
+     * @Template()
      */
     public function module_updateAction($id)
     {
@@ -476,9 +464,6 @@ class ModulesController extends Controller
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        // if($user->getId()!=$entity->getCollection()->getUser()->getId()){
-        //     throw $this->createNotFoundException('Unable to find Collection entity.');
-        // }
         $editForm = $this->createForm(new ModulesType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
         $request = $this->getRequest();
@@ -492,11 +477,11 @@ class ModulesController extends Controller
                 return $this->redirect($this->generateUrl('module_edit', array('id' => $id)));
             }
         }
-        return array(
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_edit.html.twig',array(
             'entity' => $entity,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-        );
+        ));
     }
 
     /**
@@ -523,9 +508,6 @@ class ModulesController extends Controller
                 if(!$collection){
                     throw $this->createNotFoundException('Unable to find Collection entity.');
                 }
-                // if($user->getId()!=$collection->getUser()->getId()){
-                //     throw $this->createNotFoundException('Unable to find Collection entity.');
-                // }
                 /*
                 * Remove children
                 */

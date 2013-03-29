@@ -1,8 +1,8 @@
-<!DOCTYPE html">
+<!DOCTYPE html>
 <!--[if lt IE 7 ]> <html class="ie6"> <![endif]-->
-<!--[if IE 7 ]>    <html class="ie7"> <![endif]-->
-<!--[if IE 8 ]>    <html class="ie8"> <![endif]-->
-<!--[if IE 9 ]>    <html class="ie9"> <![endif]-->
+<!--[if IE 7 ]> <html class="ie7"> <![endif]-->
+<!--[if IE 8 ]> <html class="ie8"> <![endif]-->
+<!--[if IE 9 ]> <html class="ie9"> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> <html> <!--<![endif]-->
 <head>
 	{% block head %}
@@ -15,14 +15,17 @@
 		<meta name="author" content="Barbe Julien (AMAP)"/>
 		<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
 		<!--[if lt IE 9]>
-		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 		<title>{% block title %}Plantnet{% endblock %}</title>
 		<link type="image/x-icon" rel="shortcut icon" href="{{ asset('bundles/plantnetdata/images/favicon.ico') }}" />
 		{% block stylesheets %}
+			{#
 			{% stylesheets filter='less,cssrewrite,?yui_css' output='css/publish.css' debug=false 'bundles/plantnetdata/less/bootstrap.less' %}
 				<link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
 			{% endstylesheets %}
+			#}
+			<link href="{{ asset('bundles/plantnetdata/bootstrap/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet" />
 		{% endblock %}
 		<style type="text/css">
 			/* Override some defaults */
@@ -91,7 +94,7 @@
 </head>
 <body>
 	{% block topbar %}
-		<div id="menu" class="topbar" data-dropdown="dropdown">
+		<div id="menu" class="topbar">
 			<div class="fill">
 				<div class="container">
 					<a class="brand" href="{{ path('_index') }}"></a>
@@ -100,15 +103,21 @@
 							{% set current = '#' %}
 						{% endif %}
 						<li>
-							<a {% if current == 'index' %} class="active" {% endif %} href="{{ url('_index') }}">
-								{{ "tab-home"|trans }}
-							</a>
+							{% if project is not defined %}
+								<a {% if current == 'index' %} class="active" {% endif %} href="{{ url('_index') }}">
+									{{ "tab-home"|trans }}
+								</a>
+							{% else %}
+								<a {% if current == 'index' %} class="active" {% endif %} href="{{ url('_project', {'project': project}) }}">
+									{{ "tab-home"|trans }}
+								</a>
+							{% endif %}
 						</li>
 						{% if current != 'index' %}
 							<li class="dropdown">
-								<a class="dropdown-toggle" href="#">{{ "tab-coll"|trans}}</a>
-								<ul class="dropdown-menu">
-									{% render controller("PlantnetDataBundle:Frontend\\Data:menuCollectionList", {'project': project}) %}
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans}}</a>
+								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+									{% render controller("PlantnetDataBundle:Frontend\\Data:Collection_list", {'project': project}) %}
 								</ul>
 							</li>
 							<li>
@@ -177,15 +186,8 @@
 	{% block javascripts %}
 		{% javascripts
 			'bundles/plantnetdata/js/jquery-1.7.min.js'
+			'bundles/plantnetdata/bootstrap/js/bootstrap.min.js'
 			'bundles/plantnetdata/js/jquery.preloader.js'
-			'bundles/plantnetdata/js/bootstrap/bootstrap-alerts.js'
-			'bundles/plantnetdata/js/bootstrap/bootstrap-buttons.js'
-			'bundles/plantnetdata/js/bootstrap/bootstrap-dropdown.js'
-			'bundles/plantnetdata/js/bootstrap/bootstrap-modal.js'
-			'bundles/plantnetdata/js/bootstrap/bootstrap-twipsy.js'
-			'bundles/plantnetdata/js/bootstrap/bootstrap-popover.js'
-			'bundles/plantnetdata/js/bootstrap/bootstrap-scrollspy.js'
-			'bundles/plantnetdata/js/bootstrap/bootstrap-tabs.js'
 			'bundles/plantnetdata/js/spin.min.js'
 			filter='?yui_js' output="js/publish.js" debug=false %}
 			<script src="{{ asset_url }}"></script>
@@ -266,7 +268,7 @@
 				var target = document.getElementById("page-loading");
 				var spinner = new Spinner(opts).spin(target);
 			}
-			$(".row .span10").preloader();
+			/*$(".row .span10").preloader();*/
 		</script>
 	{% endblock %}
 </body>
