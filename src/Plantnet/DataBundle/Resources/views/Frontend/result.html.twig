@@ -6,11 +6,23 @@
 {% block header %}<h1>Result</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
-        {% if nbResults == 0 %}
-            <li>No result</li>
-        {% else %}
-            <li>{{ nbResults }} row{% if nbResults >= 2 %}s{% endif %}</li>
-        {% endif %}
+        <li>
+            <a href="{{ url('_project', {'project': project}) }}">{{ project|capitalize }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ url('_search', {'project': project}) }}">Search</a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            Result
+            <span class="divider">></span>
+            {% if nbResults == 0 %}
+                No result
+            {% else %}
+                {{ nbResults }} row{% if nbResults >= 2 %}s{% endif %}
+            {% endif %}
+        </li>
         <div id="page-loading"></div>
     </ul>
 {% endblock %}
@@ -19,12 +31,12 @@
         <div class="pagerfanta">
             {{ pagerfanta(paginator, 'twitter_bootstrap') }}
         </div>
-        <table cellpadding="3" class="zebra-striped">
+        <table class="table table-striped table-hover">
             <thead>
-                <tr class="rowtop">
-                        <th class="vtop">Title 1</th>
-                        <th class="vtop">Title 2</th>
-                        <th class="vtop">Collection / Module</th>
+                <tr>
+                    <th>Title 1</th>
+                    <th>Title 2</th>
+                    <th>Collection / Module</th>
                 </tr>
             </thead>
             <tbody>

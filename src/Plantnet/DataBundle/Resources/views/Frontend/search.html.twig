@@ -5,6 +5,18 @@
     {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
 {% endblock %}
 {% block header %}<h1>Search</h1>{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ url('_project', {'project': project}) }}">{{ project|capitalize }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            Search
+        </li>
+        <div id="page-loading"></div>
+    </ul>
+{% endblock %}
 {% block main %}
 	{# LEAFLET MAP #}
     <div id="map"></div>
@@ -13,7 +25,7 @@
         {{ form_widget(form.x_lng_1_bottom_left, {'id':'x_lng_1_bottom_left'}) }}
         {{ form_widget(form.y_lat_2_top_right, {'id':'y_lat_2_top_right'}) }}
         {{ form_widget(form.x_lng_2_top_right, {'id':'x_lng_2_top_right'}) }}
-        <input type="submit" value="Chercher" />
+        <input type="submit" value="Chercher" class="btn" />
     </form>
 {% endblock %}
 {% block javascripts %}

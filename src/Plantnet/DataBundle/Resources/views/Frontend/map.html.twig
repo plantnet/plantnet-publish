@@ -6,18 +6,21 @@
 {% endblock %}
 {% block header %}<h1>{{ collection.name }} / {{ module.name }}</h1>{% endblock %}
 {% block breadcrumb %}
- <ul class="breadcrumb">
-    <li>
-        <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
-        <span class="divider">/</span>
-    </li>
-    <li class="active">
-        <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
-        <span class="divider">></span>
-    </li>
-    <li>localisations</li>
-    <li>~ {{ module.nbrows }} entities</li>
- </ul>
+     <ul class="breadcrumb">
+        <li>
+            <a href="{{ url('_project', {'project': project}) }}">{{ project|capitalize }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ module.name }}
+            <span class="divider">></span>
+            {{ module.nbrows }} entities
+        </li>
+    </ul>
 {% endblock %}
 {% block main %}
 	{# LEAFLET MAP #}

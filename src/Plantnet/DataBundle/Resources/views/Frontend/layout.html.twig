@@ -7,18 +7,18 @@
 <head>
 	{% block head %}
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<!--[if IE]><![endif]-->
 		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
 		Remove this if you use the .htaccess -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 		<meta name="description" content=""/>
-		<meta name="author" content="Barbe Julien (AMAP)"/>
+		<meta name="author" content="Barbe Julien (AMAP), Affouard Antoine (AMAP)"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
 		<!--[if lt IE 9]>
 			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-		<title>{% block title %}Plantnet{% endblock %}</title>
 		<link type="image/x-icon" rel="shortcut icon" href="{{ asset('bundles/plantnetdata/images/favicon.ico') }}" />
+		<title>{% block title %}Plantnet{% endblock %}</title>
 		{% block stylesheets %}
 			{#
 			{% stylesheets filter='less,cssrewrite,?yui_css' output='css/publish.css' debug=false 'bundles/plantnetdata/less/bootstrap.less' %}
@@ -26,112 +26,166 @@
 			{% endstylesheets %}
 			#}
 			<link href="{{ asset('bundles/plantnetdata/bootstrap/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet" />
+			<style type="text/css">
+				html {
+					overflow-y: scroll;
+				}
+				html, body {
+					background-color: #eee;
+				}
+				body {
+					padding-top: 40px; /* 40px to make the container go all the way to the bottom of the topbar */
+				}
+				/* The white background content wrapper */
+				.container > .content {
+					background-color: #fff;
+					padding: 20px;
+					margin: 0 -20px 40px -20px;/* negative indent the amount of the padding to maintain the grid system */
+					-webkit-border-radius: 0 0 12px 12px;
+					-moz-border-radius: 0 0 12px 12px;
+					border-radius: 0 0 12px 12px;
+					-webkit-box-shadow: 0 2px 4px rgba(0,0,0,.15);
+					-moz-box-shadow: 0 2px 4px rgba(0,0,0,.15);
+					box-shadow: 0 2px 4px rgba(0,0,0,.15);
+				}
+				/* Page header tweaks */
+				.page-header {
+					background-color: #f5f5f5;
+					padding: 4px 8px 23px;
+					margin: -20px -20px 20px;
+				}
+				/* Popover */
+				.popover {
+					padding: 5px 15px;
+				}
+				/* Custom */
+				.brand {
+				margin-bottom: -12px;
+				height: 16px;
+				width: 169px;
+				background: url({{ asset('bundles/plantnetdata/images/plantnet.png') }}) no-repeat;
+				}
+				.brand:hover {
+					margin-bottom: -12px;
+					height: 16px;
+					width: 169px;
+					background: url({{ asset('bundles/plantnetdata/images/plantnet.png') }}) no-repeat;
+				}
+				.breadcrumb{
+					border: solid 1px #EEE;
+				}
+				#page-loading{
+					float: right;
+					margin-top: 8px;
+				}
+				.gallery {
+					margin-bottom:20px;
+				}
+				.img-polaroid {
+					margin-right: 7px;
+					margin-bottom: 7px;
+					width: 100px;
+					height: 100px;
+				}
+				.unstyled-list {
+					list-style-type: none;
+				}
+				.preloader {
+					display: inline-block;
+					background:#FFF;
+					margin-right: 7px;
+					margin-bottom: 7px;
+					width: 100px;
+					height: 100px;
+					border:dashed 5px #CCC;
+					-webkit-border-radius: 10px;
+					-moz-border-radius: 10px;
+					border-radius: 10px;
+				}
+				.preloader > img {
+					margin-top:-5px;
+					margin-left:-5px;
+				}
+				/* Footer */
+				#footer {
+					height: 79px;
+					padding-top: 10px;
+				}
+				#footer ul {
+					list-style-type: none;
+					float: left;
+					margin: 0;
+				}
+				#mention ul {
+					float: right;
+					margin-top: 30px;
+				}
+				#footer li {
+					float: left;
+					margin-right: 20px;
+				}
+				#mention li {
+					margin-right: 0;
+					margin-left: 20px;
+				}
+				/* Map */
+				#map {
+					-webkit-border-radius: 6px;
+					-moz-border-radius: 6px;
+					border-radius: 6px;
+					border: solid 1px #CCC;
+					-webkit-box-shadow: 0 0 5px #888;
+					-moz-box-shadow: 0 0 5px #888;
+					box-shadow: 0 0 5px #888;
+					margin-bottom: 20px;
+				}
+			</style>
+			<link href="{{ asset('bundles/plantnetdata/bootstrap/css/bootstrap-responsive.min.css') }}" type="text/css" rel="stylesheet" />
 		{% endblock %}
-		<style type="text/css">
-			/* Override some defaults */
-			html, body {
-				background-color: #eee;
-			}
-			body {
-				padding-top: 40px; /* 40px to make the container go all the way to the bottom of the topbar */
-			}
-			.container > footer p {
-				text-align: center; /* center align it with the container */
-			}
-			.container {
-				width: 70%; /* downsize our container to make the content feel a bit tighter and more cohesive. NOTE: this removes two full columns from the grid, meaning you only go to 14 columns and not 16. */
-			}
-			/* The white background content wrapper */
-			.container > .content {
-				background-color: #fff;
-				padding: 20px;
-				margin: 0 -20px; /* negative indent the amount of the padding to maintain the grid system */
-				-webkit-border-radius: 0 0 6px 6px;
-				-moz-border-radius: 0 0 6px 6px;
-				border-radius: 0 0 6px 6px;
-				-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.15);
-				-moz-box-shadow: 0 1px 2px rgba(0,0,0,.15);
-				box-shadow: 0 1px 2px rgba(0,0,0,.15);
-			}
-			/* Page header tweaks */
-			.page-header {
-				background-color: #f5f5f5;
-				padding: 4px 8px 23px;
-				margin: -20px -20px 20px;
-			}
-			/* Styles you shouldn't keep as they are for displaying this base example only */
-			.content .span10,
-			.content .span4 {
-				min-height: 500px;
-			}
-			.content .span10{
-				width: 76%;
-			}
-			/* Give a quick and non-cross-browser friendly divider */
-			.content .span4 {
-				margin-left: 10px;
-				padding-left: 19px;
-				border-left: 1px solid #eee;
-			}
-			#page-loading{
-				float: right;
-				margin-top: 8px;
-			}
-			.brand {
-				margin-bottom: -12px;
-				height: 16px;
-				width: 169px;
-				background: url({{ asset('bundles/plantnetdata/images/plantnet.png') }}) no-repeat;
-			}
-			.brand:hover {
-				margin-bottom: -12px;
-				height: 16px;
-				width: 169px;
-				background: url({{ asset('bundles/plantnetdata/images/plantnet.png') }}) no-repeat;
-			}
-		</style>
 	{% endblock %}
 </head>
 <body>
 	{% block topbar %}
-		<div id="menu" class="topbar">
-			<div class="fill">
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
 				<div class="container">
 					<a class="brand" href="{{ path('_index') }}"></a>
-					<ul class="nav">
-						{% if current is not defined %}
-							{% set current = '#' %}
-						{% endif %}
-						<li>
-							{% if project is not defined %}
-								<a {% if current == 'index' %} class="active" {% endif %} href="{{ url('_index') }}">
-									{{ "tab-home"|trans }}
-								</a>
-							{% else %}
-								<a {% if current == 'index' %} class="active" {% endif %} href="{{ url('_project', {'project': project}) }}">
-									{{ "tab-home"|trans }}
-								</a>
+					<div class="nav-collapse collapse">
+						<ul class="nav">
+							{% if current is not defined %}
+								{% set current = '#' %}
 							{% endif %}
-						</li>
+							<li{% if current == 'index' or current == 'project' %} class="active" {% endif %}>
+								{% if project is not defined %}
+									<a href="{{ url('_index') }}">
+										{{ "tab-home"|trans }}
+									</a>
+								{% else %}
+									<a href="{{ url('_project', {'project': project}) }}">
+										{{ "tab-home"|trans }}
+									</a>
+								{% endif %}
+							</li>
+							{% if current != 'index' %}
+								<li class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans}} <span class="caret"></span></a>
+									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+										{% render controller("PlantnetDataBundle:Frontend\\Data:Collection_list", {'project': project}) %}
+									</ul>
+								</li>
+								<li{% if current == 'search' %} class="active" {% endif %}>
+									<a href="{{ url('_search', {'project': project}) }}">
+										Search
+									</a>
+								</li>
+							{% endif %}
+						</ul>
 						{% if current != 'index' %}
-							<li class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans}}</a>
-								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-									{% render controller("PlantnetDataBundle:Frontend\\Data:Collection_list", {'project': project}) %}
-								</ul>
-							</li>
-							<li>
-								<a {% if current == 'search' %} class="active" {% endif %} href="{{ url('_search', {'project': project}) }}">
-									Search
-								</a>
-							</li>
+							<form action="#" class="navbar-search pull-right">
+								<input type="text" class="search-query" placeholder="{{ 'search-field'|trans }}">
+							</form>
 						{% endif %}
-					</ul>
-					{% if current != 'index' %}
-					<form action="" class="pull-right">
-						<input type="text" placeholder="{{ 'search-field'|trans }}">
-					</form>
-					{% endif %}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -151,36 +205,39 @@
 				</div>
 			</div>
 		</div>
+	</div>
 	<footer id="footer">
 		{% if current != 'index' %}
-			{% block footer %}
-				<ul>
-					<li class="logofoot">
-						<a href="http://www.plantnet-project.org" target="_blank">
-							<img src="{{ asset('bundles/plantnetdata/images/footPlantnet.png') }}" alt="Projet Plantnet"></a>
-					</li>
-					<li class="logofoot">
-						<a href="http://www.agropolis-fondation.fr/" target="_blank">
-							<img src="{{ asset('bundles/plantnetdata/images/footAF.png') }}" alt="Agropolis Fondation"></a>
-					</li>
-				</ul>
-				<nav id="mention">
+			<div class="container">
+				{% block footer %}
 					<ul>
-						<li class="liens">
-							<a href="{{ url('_credits', {'project': project}) }}">Credits</a>
+						<li class="logofoot">
+							<a href="http://www.plantnet-project.org" target="_blank">
+								<img src="{{ asset('bundles/plantnetdata/images/footPlantnet.png') }}" alt="Projet Plantnet"></a>
 						</li>
-						<li class="liens">
-							<a href="{{ url('_mentions', {'project': project}) }}">Mentions légales</a>
-						</li>
-						<li class="liens">
-							<a href="{{ url('_contacts', {'project': project}) }}">Contacts</a>
-						</li>
-						<li class="liens">
-							<a href="#">Plan du site</a>
+						<li class="logofoot">
+							<a href="http://www.agropolis-fondation.fr/" target="_blank">
+								<img src="{{ asset('bundles/plantnetdata/images/footAF.png') }}" alt="Agropolis Fondation"></a>
 						</li>
 					</ul>
-				</nav>
-			{% endblock %}
+					<nav id="mention">
+						<ul>
+							<li class="liens">
+								<a href="{{ url('_credits', {'project': project}) }}">Credits</a>
+							</li>
+							<li class="liens">
+								<a href="{{ url('_mentions', {'project': project}) }}">Mentions légales</a>
+							</li>
+							<li class="liens">
+								<a href="{{ url('_contacts', {'project': project}) }}">Contacts</a>
+							</li>
+							<li class="liens">
+								<a href="#">Plan du site</a>
+							</li>
+						</ul>
+					</nav>
+				{% endblock %}
+			</div>
 		{% endif %}
 	</footer>
 	{% block javascripts %}
@@ -196,64 +253,10 @@
 		<script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 		<script type="text/javascript" src="{{ asset('bundles/bazingaexposetranslation/js/translation.js') }}"></script>
 		<script type="text/javascript" src="{{ url('bazinga_exposetranslation_js') }}"></script>
-		{#<script type="text/javascript">
-		(function () {
-		if (/Microsoft/.test(navigator.appName)) { return }
-
-		window.onload = function () {
-		var menu = document.getElementById('menu');
-		var init = menu.offsetTop;
-		var docked;
-
-		window.onscroll = function () {
-		if (!docked && (menu.offsetTop - scrollTop() < 0)) {
-		menu.style.top = 0;
-		menu.style.position = 'fixed';
-		menu.className = 'docked';
-		docked = true;
-		} else if (docked && scrollTop() <= init) {
-		menu.style.position = 'absolute';
-		menu.style.top = init + 'px';
-		menu.className = menu.className.replace('docked', 'topbar');
-		docked = false;
-		}
-		};
-
-
-		(function () {
-		var link     = document.getElementById('guide-link'),
-		menu     = document.getElementById('menu'),
-		dropdown = document.getElementById('dropdown');
-
-
-
-		})();
-		};
-
-		function scrollTop() {
-		return document.body.scrollTop || document.documentElement.scrollTop;
-		}
-		})();
-		</script>#}
 		<script type="text/javascript">
-			$.ajaxSetup ({
+			$.ajaxSetup({
 				cache: false
 			});
-			{#$(".span10 li").on("click","a", function(event){
-			event.preventDefault();
-			var $url = $(this).attr('href');
-
-			ajaxLoader();
-
-			$(".span10").load($url);
-
-			});#}
-
-
-
-			{#$("#load_basic").click(function(){
-			$(".span10").hide().load($url).fadeIn('slow');
-			});#}
 			function ajaxLoader(){
 				var opts = {
 					lines: 10, // The number of lines to draw
@@ -268,7 +271,7 @@
 				var target = document.getElementById("page-loading");
 				var spinner = new Spinner(opts).spin(target);
 			}
-			/*$(".row .span10").preloader();*/
+			{#$(".row .span10").preloader();#}
 		</script>
 	{% endblock %}
 </body>

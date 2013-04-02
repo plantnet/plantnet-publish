@@ -1,21 +1,24 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block header %}<h1>{{ collection.name }} / {{ module.name }}</h1>{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
 {% endblock %}
+{% block header %}<h1>{{ collection.name }} / {{ module.name }}</h1>{% endblock %}
 {% block breadcrumb %}
 	<ul class="breadcrumb">
+		<li>
+            <a href="{{ url('_project', {'project': project}) }}">{{ project|capitalize }}</a>
+            <span class="divider">/</span>
+        </li>
 		<li>
 			<a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
 			<span class="divider">/</span>
 		</li>
 		<li class="active">
-			<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
+			{{ module.name }}
 			<span class="divider">></span>
+			{{ module.nbrows }} entities
 		</li>
-		<li>{{ type }}</li>
-		<li>~ {{ module.nbrows }} entities</li>
 		<div id="page-loading"></div>
 	</ul>
 {% endblock %}
@@ -26,27 +29,13 @@
 	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
 	<script type="text/javascript">
-		$(".pagerfanta").on("click","a", function(event){
+		$('.pagerfanta').on('click','a', function(event){
 			event.preventDefault();
 			if($(this).attr('href').length){
 				var $url = $(this).attr('href');
 				ajaxLoader();
-				$(".span10").load($url);
+				$('.span10').load($url);
 			}
 		});
-		function ajaxLoader(){
-			var opts = {
-				lines: 10, // The number of lines to draw
-				length: 2, // The length of each line
-				width: 3, // The line thickness
-				radius: 7, // The radius of the inner circle
-				color: '#2B5261', // #rgb or #rrggbb
-				speed: 1.2, // Rounds per second
-				trail: 50, // Afterglow percentage
-				shadow: false // Whether to render a shadow
-			};
-			var target = document.getElementById("page-loading");
-			var spinner = new Spinner(opts).spin(target);
-		}
 	</script>
 {% endblock %}

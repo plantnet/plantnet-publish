@@ -1,27 +1,30 @@
 {% block breadcrumb %}
-<ul class="breadcrumb">
-    <li>
-        <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
-        <span class="divider">/</span>
-    </li>
-    <li class="active">
-        <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
-        <span class="divider">></span>
-    </li>
-    <li>{{ type }}</li>
-    <li>~ {{ module.nbrows }} entities</li>
-    <div id="page-loading"></div>
- </ul>
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ url('_project', {'project': project}) }}">{{ project|capitalize }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ module.name }}
+            <span class="divider">></span>
+            {{ module.nbrows }} entities
+        </li>
+        <div id="page-loading"></div>
+    </ul>
 {% endblock %}
 {% block main %}{% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
-        $(".pagerfanta").on("click","a", function(event){
+        $('.pagerfanta').on('click','a', function(event){
             event.preventDefault();
             if($(this).attr('href').length){
                 var $url = $(this).attr('href');
                 ajaxLoader();
-                $(".span10").load($url);
+                $('.span10').load($url);
             }
         });
     </script>

@@ -6,17 +6,17 @@
             <div class="pagerfanta">
                 {{ pagerfanta(paginator, 'twitter_bootstrap') }}
             </div>
-             <table cellpadding="3" class="zebra-striped">
+             <table class="table table-striped table-hover">
                 <thead>
-                    <tr class="rowtop">
+                    <tr>
                         {% for row in display %}
-                            <th class="vtop">{{ row }}</th>
+                            <th>{{ row }}</th>
                         {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
                     {% for row in paginator %}
-                        <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': row._id }) }}'">
+                        <tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': row._id }) }}'">
                             {% for field in display %}
                                 <td>{{ row.attributes[field] }}</td>
                             {% endfor %}
