@@ -2,9 +2,7 @@
 {% block title "Pl@ntnet - " ~ "line-introduction"|trans %}
 {% block header %}<h1>{{ project|capitalize }}</h1>{% endblock %}
 {% block row %}
-	<div class="span12">
-		{% autoescape false %}
-			{{ page.content }}
-		{% endautoescape %}
-	</div>
+	{% autoescape false %}
+		{{ page.content }}
+	{% endautoescape %}
 {% endblock %}

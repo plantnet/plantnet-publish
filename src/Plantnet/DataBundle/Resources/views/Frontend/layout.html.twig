@@ -20,119 +20,18 @@
 		<link type="image/x-icon" rel="shortcut icon" href="{{ asset('bundles/plantnetdata/images/favicon.ico') }}" />
 		<title>{% block title %}Pl@ntnet{% endblock %}</title>
 		{% block stylesheets %}
-			{#
-			{% stylesheets filter='less,cssrewrite,?yui_css' output='css/publish.css' debug=false 'bundles/plantnetdata/less/bootstrap.less' %}
-				<link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
+			{% stylesheets
+				filter='less,cssrewrite,?yui_css'
+				output='css/publish.css'
+				debug=false
+				'bundles/plantnetdata/bootstrap/css/less/bootstrap.less'
+				'bundles/plantnetdata/css/frontend/styles.less'
+				'bundles/plantnetdata/css/frontend/map.less'
+				'bundles/plantnetdata/bootstrap/css/less/responsive.less'
+				'bundles/plantnetdata/css/frontend/styles-responsive.less'
+			%}
+			<link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
 			{% endstylesheets %}
-			#}
-			<link href="{{ asset('bundles/plantnetdata/bootstrap/css/bootstrap.min.css') }}" type="text/css" rel="stylesheet" />
-			<style type="text/css">
-				html{
-					overflow-y:scroll;
-				}
-				html,body{
-					background-color:#eee;
-				}
-				body{
-					padding-top:40px; /* 40px to make the container go all the way to the bottom of the topbar */
-				}
-				/* The white background content wrapper */
-				.container > .content{
-					background-color:#fff;
-					padding:20px;
-					margin:0 -20px 40px -20px;/* negative indent the amount of the padding to maintain the grid system */
-					-webkit-border-radius:0 0 12px 12px;
-					-moz-border-radius:0 0 12px 12px;
-					border-radius:0 0 12px 12px;
-					-webkit-box-shadow:0 2px 4px rgba(0,0,0,.15);
-					-moz-box-shadow:0 2px 4px rgba(0,0,0,.15);
-					box-shadow:0 2px 4px rgba(0,0,0,.15);
-				}
-				/* Page header tweaks */
-				.page-header{
-					background-color:#f5f5f5;
-					padding:4px 8px 23px;
-					margin:-20px -20px 20px;
-				}
-				/* Popover */
-				.popover{
-					padding:5px 15px;
-				}
-				/* Custom */
-				.brand{
-					margin-bottom:-12px;
-					height:16px;
-					width:169px;
-					background:url({{ asset('bundles/plantnetdata/images/plantnet.png') }}) no-repeat;
-				}
-				.brand:hover{
-					margin-bottom:-12px;
-					height:16px;
-					width:169px;
-					background:url({{ asset('bundles/plantnetdata/images/plantnet.png') }}) no-repeat;
-				}
-				.breadcrumb{
-					border:solid 1px #EEE;
-				}
-				#page-loading{
-					float:right;
-					margin-top:8px;
-				}
-				.gallery{
-					margin-bottom:20px;
-				}
-				.gallery > a{
-					display:inline-block;
-					background-color:rgba(0, 0, 0, 0.2);;
-					margin-right:7px;
-					margin-bottom:9px;
-				}
-				.gallery > a > .img-polaroid{
-					opacity:0;
-					width:100px;
-					height:100px;
-				}
-				.unstyled-list{
-					list-style-type:none;
-				}
-				li.child{
-					padding-left:30px;
-				}
-				/* Footer */
-				#footer{
-					height:79px;
-					padding-top:10px;
-				}
-				#footer ul{
-					list-style-type:none;
-					float:left;
-					margin:0;
-				}
-				#mention ul{
-					float:right;
-					margin-top:30px;
-				}
-				#footer li{
-					float:left;
-					margin-right:20px;
-				}
-				#mention li{
-					margin-right:0;
-					margin-left:20px;
-				}
-				/* Map */
-				#map{
-					-webkit-border-radius:6px;
-					-moz-border-radius:6px;
-					border-radius:6px;
-					border:solid 1px #CCC;
-					-webkit-box-shadow:0 0 5px #888;
-					-moz-box-shadow:0 0 5px #888;
-					box-shadow:0 0 5px #888;
-					margin-bottom:20px;
-				}
-			</style>
-			<link href="{{ asset('bundles/plantnetdata/bootstrap/css/bootstrap-responsive.min.css') }}" type="text/css" rel="stylesheet" />
 		{% endblock %}
 	{% endblock %}
 </head>
@@ -141,6 +40,11 @@
 		<div class="navbar navbar-inverse navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container">
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
 					<a class="brand" href="{{ path('_index') }}"></a>
 					<div class="nav-collapse collapse">
 						<ul class="nav">
@@ -159,7 +63,7 @@
 								{% endif %}
 							</li>
 							{% if current != 'index' %}
-								<li class="dropdown">
+								<li class="dropdown{% if current == 'collection' %} active {% endif %}">
 									<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans}} <span class="caret"></span></a>
 									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 										{% render controller("PlantnetDataBundle:Frontend\\Data:Collection_list", {'project': project}) %}

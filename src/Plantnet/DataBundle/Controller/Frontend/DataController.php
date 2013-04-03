@@ -169,7 +169,7 @@ class DataController extends Controller
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
                 return $this->render('PlantnetDataBundle:Frontend:datagrid.html.twig', array(
                     'project' => $project,
-                    'current' => 'module',
+                    'current' => 'collection',
                     'paginator' => $paginator,
                     'field' => $field,
                     'collection' => $collection,
@@ -186,7 +186,7 @@ class DataController extends Controller
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
                 return $this->render('PlantnetDataBundle:Frontend:gallery.html.twig', array(
                     'project' => $project,
-                    'current' => 'module',
+                    'current' => 'collection',
                     'paginator' => $paginator,
                     'collection' => $collection,
                     'module' => $mod,
@@ -244,7 +244,7 @@ class DataController extends Controller
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
                 return $this->render('PlantnetDataBundle:Frontend:map.html.twig',array(
                     'project' => $project,
-                    'current' => 'module',
+                    'current' => 'collection',
                     'collection' => $collection,
                     'module' => $mod,
                     'type' => 'localisation',
@@ -286,7 +286,7 @@ class DataController extends Controller
         return $this->render('PlantnetDataBundle:Frontend:details.html.twig', array(
             'idplantunit' => $plantunit->getId(),
             'project' => $project,
-            'current' => 'details',
+            'current' => 'collection',
             'display' => $display,
             'layers' => $layers,
             'collection' => $coll,
@@ -380,7 +380,7 @@ class DataController extends Controller
             $nbResults=$paginator->getNbResults();
             return $this->render('PlantnetDataBundle:Frontend:result.html.twig', array(
                 'project' => $project,
-                'current' => 'result',
+                'current' => 'search',
                 'paginator' => $paginator,
                 'nbResults' => $nbResults
             ));
@@ -396,7 +396,7 @@ class DataController extends Controller
         }
         return $this->render('PlantnetDataBundle:Frontend:result.html.twig', array(
             'project' => $project,
-            'current' => 'result'
+            'current' => 'search'
         ));
     }
 

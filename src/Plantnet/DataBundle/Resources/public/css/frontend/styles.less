@@ -1,0 +1,140 @@
+//
+// Custom Styles
+// --------------------------------------------------
+
+
+// Values
+// --------------------------------------------------
+// -- page
+@html_overflow_y:				scroll;
+@page_bg_color:					#EEE;
+// -- top bar
+@top_bar_height:				40px;
+// -- content
+@content_bg_color:				#FFF;
+@content_padding:				20px;
+@content_border_radius:			0 0 12px 12px;
+@content_box_shadow:			0 2px 4px rgba(0,0,0,.15);
+// -- page header
+@page_header_bg_color:			#F5F5F5;
+@page_header_padding_top:		4px;
+@page_header_padding_left:		8px;
+@page_header_padding_right:		8px;
+@page_header_padding_bottom:	4px;
+// -- popover
+@popover_padding:				5px 15px;
+// -- breadcrumb
+@breadcrumb_border:				solid 1px #EEE;
+// -- brand
+@brand_height:					16px;
+@brand_width:					169px;
+@brand_bg_image:				"../../images/plantnet.png";
+// -- page loading
+@page_loading_float:			right;
+@page_loading_margin_top:		8px;
+// -- gallery
+@gallery_margin_bottom:			20px;
+@gallery_link_display:			inline-block;
+@gallery_link_bg_color:			rgba(0, 0, 0, 0.2);
+@gallery_link_margin_right:		7px;
+@gallery_link_margin_bottom:	9px;
+@gallery_img_opacity:			0;
+@gallery_img_width:				100px;
+@gallery_img_height:			100px;
+// -- footer
+@footer_height:					79px;
+@footer_ul_style:				none;
+@footer_ul_float:				left;
+@footer_ul_margin:				0;
+@footer_li_float:				left;
+@footer_mention_float:			right;
+@footer_mention_margin_top:		30px;
+@footer_mention_li_margin_right:0;
+// -- lost + found
+@li_child:						30px;
+
+
+// Styles
+// --------------------------------------------------
+html{
+	overflow-y:@html_overflow_y;
+}
+html,body{
+	background-color:@page_bg_color;
+}
+body{
+	padding-top:@top_bar_height; // @top_bar_height to make the container go all the way to the bottom of the topbar
+}
+.container > .content{
+	background-color:@content_bg_color;
+	padding:@content_padding;
+	margin:0 -@content_padding @top_bar_height -@content_padding; // negative indent the amount of the padding to maintain the grid system
+	-webkit-border-radius:@content_border_radius;
+	   -moz-border-radius:@content_border_radius;
+	        border-radius:@content_border_radius;
+	-webkit-box-shadow:@content_box_shadow;
+	   -moz-box-shadow:@content_box_shadow;
+	        box-shadow:@content_box_shadow;
+}
+.page-header{
+	background-color:@page_header_bg_color;
+	margin:-@content_padding -@content_padding @content_padding;
+	padding-top:@page_header_padding_top;
+	padding-left:@page_header_padding_left;
+	padding-right:@page_header_padding_right;
+	padding-bottom:@page_header_padding_bottom;
+}
+.popover{
+	padding:@popover_padding;
+}
+.breadcrumb{
+	border:@breadcrumb_border;
+}
+.brand{
+	height:@brand_height;
+	width:@brand_width;
+	padding-left:20px;
+	padding-right:20px;
+	background:url(@brand_bg_image) no-repeat;
+}
+#page-loading{
+	float:@page_loading_float;
+	margin-top:@page_loading_margin_top;
+}
+.gallery{
+	margin-bottom:@gallery_margin_bottom;
+}
+.gallery > a{
+	display:@gallery_link_display;
+	background-color:@gallery_link_bg_color;
+	margin-right:@gallery_link_margin_right;
+	margin-bottom:@gallery_link_margin_bottom;
+}
+.gallery > a > img{
+	opacity:@gallery_img_opacity;
+	width:@gallery_img_width;
+	height:@gallery_img_height;
+}
+#footer{
+	height:@footer_height;
+}
+#footer ul{
+	list-style-type:@footer_ul_style;
+	float:@footer_ul_float;
+	margin:@footer_ul_margin;
+}
+#footer li{
+	float:@footer_li_float;
+	margin-right:@content_padding;
+}
+#mention ul{
+	float:@footer_mention_float;
+	margin-top:@footer_mention_margin_top;
+}
+#mention li{
+	margin-right:@footer_mention_li_margin_right;
+	margin-left:@content_padding;
+}
+li.child{
+	padding-left:@li_child;
+}
