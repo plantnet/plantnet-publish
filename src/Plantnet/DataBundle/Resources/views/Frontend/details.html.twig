@@ -73,7 +73,15 @@
                 'titlePosition' : 'inside',
                 'overlayShow' : false
             });
-            $('.gallery').preloader();
+            $('.gallery img').one('load',function(){
+                var img=$(this);
+                img.fadeTo(200,1);
+            }).each(function(){
+                if(this.complete)
+                {
+                    $(this).load();
+                }
+            });
         });
     </script>
     {% if plantunit.locations|length > 0 %}

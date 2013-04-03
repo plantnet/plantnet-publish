@@ -26,8 +26,14 @@
 {% block javascripts %}
 	{{ parent() }}
 	<script type="text/javascript">
+		// $(window).ready(function(){
+		// 	$('.img-polaroid').load(function(){
+		// 		$("#waiter").text("Done!").fadeOut(function(){
+		// 			$("#image").fadeIn();
+		// 		});
+		// 	});
+		// });
 		$(document).ready(function() {
-			// $('a#single_image').fancybox();
 			/* Apply fancybox to multiple items */
 			$('a.grouped_elements').fancybox({
 				'transitionIn':'elastic',
@@ -47,7 +53,21 @@
 			.click(function(e) {
 				e.preventDefault()
 			});
-			$('.gallery').preloader();
+			$('.gallery img').each(function(){
+				var img=$(this);
+				img.load(function(){
+					img.fadeTo(200,1);
+				});
+			});
+			$('.gallery img').one('load',function(){
+				var img=$(this);
+				img.fadeTo(200,1);
+			}).each(function(){
+				if(this.complete)
+				{
+					$(this).load();
+				}
+			});
 		});
 	</script>
 {% endblock %}
