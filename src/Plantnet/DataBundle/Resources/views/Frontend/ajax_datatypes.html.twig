@@ -11,7 +11,7 @@
         <li class="active">
             {{ module.name }}
             <span class="divider">></span>
-            {{ module.nbrows }} entities
+            {{ module.nbrows }} {{ "line-entities"|trans }}
         </li>
         <div id="page-loading"></div>
     </ul>
@@ -24,7 +24,7 @@
             if($(this).attr('href').length){
                 var $url = $(this).attr('href');
                 ajaxLoader();
-                $('.span10').load($url);
+                $('#data-load').load($url);
             }
         });
     </script>

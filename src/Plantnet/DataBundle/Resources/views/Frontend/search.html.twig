@@ -1,10 +1,10 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title "Pl@ntnet - Search" %}
+{% block title "Pl@ntnet - " ~ "tab-search"|trans %}
 {% block stylesheets %}
     {{ parent() }}
     {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
 {% endblock %}
-{% block header %}<h1>Search</h1>{% endblock %}
+{% block header %}<h1>{{ "tab-search"|trans }}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
@@ -12,7 +12,7 @@
             <span class="divider">/</span>
         </li>
         <li class="active">
-            Search
+            {{ "tab-search"|trans }}
         </li>
         <div id="page-loading"></div>
     </ul>

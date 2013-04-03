@@ -7,7 +7,7 @@
 	<div class="results">
 		{% if paginator|length > 0 %}
 			<div class="pagerfanta">
-				{{ pagerfanta(paginator, 'twitter_bootstrap') }}
+				{{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
 			</div>
 			<div class="gallery">
 				{% for row in paginator %}
@@ -18,7 +18,7 @@
 				{% endfor %}
 			</div>
 			<div class="pagerfanta">
-				{{ pagerfanta(paginator, 'twitter_bootstrap') }}
+				{{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
 			</div>
 		{% endif %}
 	</div>

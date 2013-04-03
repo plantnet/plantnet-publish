@@ -1,8 +1,10 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title "Pl@ntnet - Introduction" %}
-{% block header %}<h1>Projet {{ project|capitalize }}</h1>{% endblock %}
-{% block main %}
-	{% autoescape false %}
-		{{ page.content }}
-	{% endautoescape %}
+{% block title "Pl@ntnet - " ~ "line-introduction"|trans %}
+{% block header %}<h1>{{ project|capitalize }}</h1>{% endblock %}
+{% block row %}
+	<div class="span12">
+		{% autoescape false %}
+			{{ page.content }}
+		{% endautoescape %}
+	</div>
 {% endblock %}

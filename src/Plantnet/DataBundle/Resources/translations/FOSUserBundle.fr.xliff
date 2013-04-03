@@ -9,7 +9,7 @@
       <trans-unit id="0" resname="layout.logout">
         <jms:reference-file line="49">views/Backend/layout.html.twig</jms:reference-file>
         <source>layout.logout</source>
-        <target state="new">layout.logout</target>
+        <target state="new">Déconnexion</target>
       </trans-unit>
     </body>
   </file>

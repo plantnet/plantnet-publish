@@ -21,6 +21,58 @@
         <source>tab-home</source>
         <target state="new">Accueil</target>
       </trans-unit>
+      <trans-unit id="3" resname="line-projects-list">
+        <source>line-projects-list</source>
+        <target state="new">Projets "Publish v2" :</target>
+      </trans-unit>
+      <trans-unit id="4" resname="tab-search">
+        <source>tab-search</source>
+        <target state="new">Recherche</target>
+      </trans-unit>
+      <trans-unit id="5" resname="footer-credits">
+        <source>footer-credits</source>
+        <target state="new">Crédits</target>
+      </trans-unit>
+      <trans-unit id="6" resname="footer-legal">
+        <source>footer-legal</source>
+        <target state="new">Mentions légales</target>
+      </trans-unit>
+      <trans-unit id="7" resname="footer-contacts">
+        <source>footer-contacts</source>
+        <target state="new">Contacts</target>
+      </trans-unit>
+      <trans-unit id="8" resname="footer-sitemap">
+        <source>footer-sitemap</source>
+        <target state="new">Plan du site</target>
+      </trans-unit>
+      <trans-unit id="9" resname="line-projects">
+        <source>line-projects</source>
+        <target state="new">Projets</target>
+      </trans-unit>
+      <trans-unit id="10" resname="line-introduction">
+        <source>line-introduction</source>
+        <target state="new">Introduction</target>
+      </trans-unit>
+      <trans-unit id="11" resname="tab-result">
+        <source>tab-result</source>
+        <target state="new">Résultat</target>
+      </trans-unit>
+      <trans-unit id="12" resname="line-no-result">
+        <source>line-no-result</source>
+        <target state="new">Pas de résultat</target>
+      </trans-unit>
+      <trans-unit id="13" resname="line-row">
+        <source>line-row</source>
+        <target state="new">ligne</target>
+      </trans-unit>
+      <trans-unit id="14" resname="line-entities">
+        <source>line-entities</source>
+        <target state="new">entités</target>
+      </trans-unit>
+      <trans-unit id="15" resname="line-details">
+        <source>line-details</source>
+        <target state="new">Détails</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -18,7 +18,7 @@
 			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 		<link type="image/x-icon" rel="shortcut icon" href="{{ asset('bundles/plantnetdata/images/favicon.ico') }}" />
-		<title>{% block title %}Plantnet{% endblock %}</title>
+		<title>{% block title %}Pl@ntnet{% endblock %}</title>
 		{% block stylesheets %}
 			{#
 			{% stylesheets filter='less,cssrewrite,?yui_css' output='css/publish.css' debug=false 'bundles/plantnetdata/less/bootstrap.less' %}
@@ -164,7 +164,7 @@
 								</li>
 								<li{% if current == 'search' %} class="active" {% endif %}>
 									<a href="{{ url('_search', {'project': project}) }}">
-										Search
+										{{ "tab-search"|trans }}
 									</a>
 								</li>
 							{% endif %}
@@ -185,13 +185,15 @@
 				{% block header %}{% endblock %}
 			</div>
 			<div class="row">
-				<div class="span10">
-					{% block breadcrumb %}{% endblock %}
-					{% block main %}{% endblock %}
-				</div>
-				<div class="span4">
-					{% block side %}{% endblock %}
-				</div>
+				{% block row %}
+					<div class="span8" id="data-load">
+						{% block breadcrumb %}{% endblock %}
+						{% block main %}{% endblock %}
+					</div>
+					<div class="span4">
+						{% block side %}{% endblock %}
+					</div>
+				{% endblock %}
 			</div>
 		</div>
 	</div>
@@ -212,16 +214,16 @@
 					<nav id="mention">
 						<ul>
 							<li class="liens">
-								<a href="{{ url('_credits', {'project': project}) }}">Credits</a>
+								<a href="{{ url('_credits', {'project': project}) }}">{{ "footer-credits"|trans }}</a>
 							</li>
 							<li class="liens">
-								<a href="{{ url('_mentions', {'project': project}) }}">Mentions légales</a>
+								<a href="{{ url('_mentions', {'project': project}) }}">{{ "footer-legal"|trans }}</a>
 							</li>
 							<li class="liens">
-								<a href="{{ url('_contacts', {'project': project}) }}">Contacts</a>
+								<a href="{{ url('_contacts', {'project': project}) }}">{{ "footer-contacts"|trans }}</a>
 							</li>
 							<li class="liens">
-								<a href="#">Plan du site</a>
+								<a href="#">{{ "footer-sitemap"|trans }}</a>
 							</li>
 						</ul>
 					</nav>
@@ -259,7 +261,6 @@
 				var target = document.getElementById("page-loading");
 				var spinner = new Spinner(opts).spin(target);
 			}
-			{#$(".row .span10").preloader();#}
 		</script>
 	{% endblock %}
 </body>
