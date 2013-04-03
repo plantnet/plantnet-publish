@@ -1,5 +1,11 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
 {% block title module.name %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { collection: collection } %}
+{% endblock %}
 {% block main %}
     <div class="results">
         {% if paginator|length > 0 %}

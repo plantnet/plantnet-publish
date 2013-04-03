@@ -22,6 +22,9 @@
         </li>
     </ul>
 {% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { collection: collection } %}
+{% endblock %}
 {% block main %}
 	{# LEAFLET MAP #}
 	<div id="map"></div>

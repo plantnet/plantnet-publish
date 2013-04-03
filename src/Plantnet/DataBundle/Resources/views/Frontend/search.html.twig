@@ -17,7 +17,7 @@
         <div id="page-loading"></div>
     </ul>
 {% endblock %}
-{% block main %}
+{% block row %}
 	{# LEAFLET MAP #}
     <div id="map"></div>
     <form action="{{ path('_result', {'project': project}) }}" method="get" {{ form_enctype(form) }}>

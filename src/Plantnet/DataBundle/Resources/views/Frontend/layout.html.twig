@@ -95,6 +95,9 @@
 				.unstyled-list{
 					list-style-type:none;
 				}
+				li.child{
+					padding-left:30px;
+				}
 				/* Footer */
 				#footer{
 					height:79px;
@@ -185,15 +188,19 @@
 				{% block header %}{% endblock %}
 			</div>
 			<div class="row">
-				{% block row %}
-					<div class="span8" id="data-load">
-						{% block breadcrumb %}{% endblock %}
-						{% block main %}{% endblock %}
-					</div>
-					<div class="span4">
-						{% block side %}{% endblock %}
-					</div>
-				{% endblock %}
+				<div class="span12">
+					{% block breadcrumb %}{% endblock %}
+					{% block row %}
+						<div class="row">
+							<div class="span3">
+								{% block side %}{% endblock %}
+							</div>
+							<div class="span9" id="data-load">
+								{% block main %}{% endblock %}
+							</div>
+						</div>
+					{% endblock %}
+				</div>
 			</div>
 		</div>
 	</div>
@@ -248,18 +255,18 @@
 				cache: false
 			});
 			function ajaxLoader(){
-				var opts = {
-					lines: 10, // The number of lines to draw
-					length: 2, // The length of each line
-					width: 3, // The line thickness
-					radius: 7, // The radius of the inner circle
-					color: '#2B5261', // #rgb or #rrggbb
-					speed: 1.2, // Rounds per second
-					trail: 50, // Afterglow percentage
-					shadow: false // Whether to render a shadow
+				var opts={
+					lines:10, // The number of lines to draw
+					length:2, // The length of each line
+					width:3, // The line thickness
+					radius:7, // The radius of the inner circle
+					color:'#2B5261', // #rgb or #rrggbb
+					speed:1.2, // Rounds per second
+					trail:50, // Afterglow percentage
+					shadow:false // Whether to render a shadow
 				};
-				var target = document.getElementById("page-loading");
-				var spinner = new Spinner(opts).spin(target);
+				var target=document.getElementById("page-loading");
+				var spinner=new Spinner(opts).spin(target);
 			}
 		</script>
 	{% endblock %}

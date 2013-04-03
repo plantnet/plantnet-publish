@@ -3,6 +3,9 @@
 {% block stylesheets %}
     {{ parent() }}
 {% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { collection: collection } %}
+{% endblock %}
 {% block main %}
 	<div class="results">
 		{% if paginator|length > 0 %}
@@ -43,10 +46,11 @@
 				'enableEscapeButton':true,
 				'hideOnContentClick':true,
 				'titlePosition':'inside',
-				'overlayShow':false
+				'overlayShow':true
 			});
 			$('a[rel=group]').popover({
 				trigger: 'hover',
+				placement: 'left',
 				offset: 0,
 				html: true
 			})
