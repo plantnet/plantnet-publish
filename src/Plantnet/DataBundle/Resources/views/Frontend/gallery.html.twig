@@ -16,8 +16,8 @@
 				{% for row in paginator %}
 					{% set imgspe = row.path|basename %}
 					{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
-					<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ row.copyright }}" data-content="{{ row.plantunit.title1 }}<br />{{ row.plantunit.title2 }}">
-						<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" class="img-polaroid" /></a>
+					<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ row.copyright }}">
+						<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" class="img-polaroid" title="{{ row.plantunit.title1 }}" data-content="{{ row.plantunit.title1 }}<br />{{ row.plantunit.title2 }}" /></a>
 				{% endfor %}
 			</div>
 			<div class="pagerfanta">
@@ -41,20 +41,14 @@
 				'titlePosition':'inside',
 				'overlayShow':true
 			});
-			$('a[rel=group]').popover({
+			$('.gallery img').popover({
 				trigger: 'hover',
 				placement: 'left',
-				offset: 0,
-				html: true
+				html: true,
+				container: 'body'
 			})
 			.click(function(e) {
 				e.preventDefault()
-			});
-			$('.gallery img').each(function(){
-				var img=$(this);
-				img.load(function(){
-					img.fadeTo(200,1);
-				});
 			});
 			$('.gallery img').one('load',function(){
 				var img=$(this);
