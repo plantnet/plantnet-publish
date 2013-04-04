@@ -20,7 +20,7 @@
             {% if nbResults == 0 %}
                 {{ "line-no-result"|trans }}
             {% else %}
-                {{ nbResults }} {{ "line-row"|trans }}{% if nbResults >= 2 %}s{% endif %}
+                <span class="badge">{{ nbResults }}</span> {{ "line-row"|trans }}{% if nbResults >= 2 %}s{% endif %}
             {% endif %}
         </li>
         <div id="page-loading"></div>
