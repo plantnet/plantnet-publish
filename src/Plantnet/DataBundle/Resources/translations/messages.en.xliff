@@ -77,6 +77,10 @@
         <source>line-back-form</source>
         <target state="new">Back to form</target>
       </trans-unit>
+      <trans-unit id="17" resname="line-search-in">
+        <source>line-search-in</source>
+        <target state="new">Search in</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

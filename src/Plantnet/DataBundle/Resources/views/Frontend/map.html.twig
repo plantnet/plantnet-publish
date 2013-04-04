@@ -1,5 +1,5 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title module.name %}
+{% block title collection.name ~ ' - ' ~ module.name %}
 {% block stylesheets %}
 	{{ parent() }}
 	{% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}

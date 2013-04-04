@@ -1,6 +1,6 @@
-<ul class="nav nav-tabs nav-stacked">
-	{% for module in collection.modules %}
-		{% if module.type == 'text' %}
+{% for module in collection.modules %}
+	{% if module.type == 'text' %}
+		<ul class="nav nav-tabs nav-stacked">
 			<li class="module">
 				<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
 					<i class="icon-list"></i>
@@ -23,6 +23,12 @@
 					{% endfor %}
 				{% endif %}
 			</li>
-		{% endif %}
-	{% endfor %}
-</ul>
+			<li>
+				<a href="{{ path('_module_search', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
+					<i class="icon-search"></i>
+					{{ "line-search-in"|trans }} {{ module.name }}
+				</a>
+			</li>
+		</ul>
+	{% endif %}
+{% endfor %}

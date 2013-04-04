@@ -1,5 +1,5 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title "Pl@ntnet - " ~ "line-introduction"|trans %}
+{% block title "Pl@ntnet - " ~ project|capitalize %}
 {% block header %}<h1>{{ project|capitalize }}</h1>{% endblock %}
 {% block row %}
 	{% autoescape false %}

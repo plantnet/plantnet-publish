@@ -402,6 +402,162 @@ class DataController extends Controller
         ));
     }
 
+    private function createModuleSearchForm($fields)
+    {
+        $defaults=null;
+        $constraints=array(
+            'y_lat_1_bottom_left'=>new TypeConstraint('float'),
+            'x_lng_1_bottom_left'=>new TypeConstraint('float'),
+            'y_lat_2_top_right'=>new TypeConstraint('float'),
+            'x_lng_2_top_right'=>new TypeConstraint('float'),
+        );
+        $form=$this->createFormBuilder($defaults,array('constraints'=>$constraints))
+            ->add('y_lat_1_bottom_left','hidden',array('required'=>false))
+            ->add('x_lng_1_bottom_left','hidden',array('required'=>false))
+            ->add('y_lat_2_top_right','hidden',array('required'=>false))
+            ->add('x_lng_2_top_right','hidden',array('required'=>false));
+        $field_num=0;
+        foreach($fields as $field)
+        {
+            $form->add('field_'.$field_num++,'text',array('required'=>false,'label'=>$field));
+        }
+        $form=$form->getForm();
+        return $form;
+    }
+
+    /**
+     * @Route("/project/{project}/collection/{collection}/{module}/search", name="_module_search")
+     * @Template()
+     */
+    public function module_searchAction($project, $collection, $module)
+    {
+        $projects=$this->database_list();
+        if(!in_array($project,$projects))
+        {
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        $mod = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
+        if($mod->getParent()){
+            $module = $dm->getRepository('PlantnetDataBundle:Module')
+                ->find($mod->getParent()->getId());
+        }else{
+            $module = $dm->getRepository('PlantnetDataBundle:Module')
+                ->find($mod->getId());
+        }
+        $fields = array();
+        $field = $mod->getProperties();
+        foreach($field as $row){
+            if($row->getSearch() == true){
+                $fields[] = $row->getName();
+            }
+        }
+        $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
+        $layers=new \SimpleXMLElement($dir.'layers_search.xml',0,true);
+        $form=$this->createModuleSearchForm($fields);
+        return $this->render('PlantnetDataBundle:Frontend:module_search.html.twig', array(
+            'project' => $project,
+            'collection' => $collection,
+            'module' => $module,
+            'layers' => $layers,
+            'form' => $form->createView(),
+            'current' => 'collection'
+        ));
+    }
+
+    /**
+     * @Route("/project/{project}/collection/{collection}/{module}/result", name="_module_result")
+     * @Method("get")
+     * @Template()
+     */
+    public function module_resultAction($project, $collection, $module, Request $request)
+    {
+        $projects=$this->database_list();
+        if(!in_array($project,$projects))
+        {
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        $mod = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
+        if($mod->getParent()){
+            $module = $dm->getRepository('PlantnetDataBundle:Module')
+                ->find($mod->getParent()->getId());
+        }else{
+            $module = $dm->getRepository('PlantnetDataBundle:Module')
+                ->find($mod->getId());
+        }
+        $fields = array();
+        $field = $mod->getProperties();
+        foreach($field as $row){
+            if($row->getSearch() == true){
+                $fields[] = $row->getName();
+            }
+        }
+        $form=$this->createModuleSearchForm($fields);
+        if($request->isMethod('GET'))
+        {
+            $form->bind($request);
+            $data=$form->getData();
+            $dm = $this->get('doctrine.odm.mongodb.document_manager');
+            $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+            $plantunits=array();
+            $ids=array();
+            if(isset($data['x_lng_1_bottom_left'])&&!empty($data['x_lng_1_bottom_left']))
+            {
+                $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+                    ->field('coordinates')->withinBox(
+                        floatval($data['x_lng_1_bottom_left']),
+                        floatval($data['y_lat_1_bottom_left']),
+                        floatval($data['x_lng_2_top_right']),
+                        floatval($data['y_lat_2_top_right']))
+                    ->hydrate(false)
+                    ->getQuery()
+                    ->execute();
+                foreach($locations as $location)
+                {
+                    $ids[]=$location['plantunit']['$id']->{'$id'};
+                }
+                unset($locations);
+            }
+            $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                ->field('_id')->in($ids)
+                ->field('module.id')->equals($module->getId());
+            $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
+            $paginator->setMaxPerPage(50);
+            $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+            $nbResults=$paginator->getNbResults();
+            return $this->render('PlantnetDataBundle:Frontend:module_result.html.twig', array(
+                'project' => $project,
+                'collection' => $collection,
+                'module' => $module,
+                'current' => 'collection',
+                'paginator' => $paginator,
+                'nbResults' => $nbResults
+            ));
+        }
+        else
+        {
+            return $this->redirect($this->generateUrl(
+                '_search',
+                array(
+                    'project' => $project
+                )
+            ));
+        }
+        return $this->render('PlantnetDataBundle:Frontend:result.html.twig', array(
+            'project' => $project,
+            'current' => 'search'
+        ));
+    }
+
     /**
      * @Route("/project/{project}/credits", name="_credits")
      * @Template()

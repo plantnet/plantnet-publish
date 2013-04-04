@@ -210,7 +210,7 @@ class ImportationCommand extends ContainerAwareCommand
                 {
                     unlink($csvfile);
                 }
-                $message='Importation Success: '.$rowCount.' objects imported';
+                $message='Importation Success: '.$rowCount.' objects imported in '.($e-$s).' seconds';
                 /*
                 // Récupération du mailer service.
                 $container=$this->getContainer();
