@@ -495,10 +495,14 @@ class DataController extends Controller
                 ->find($mod->getId());
         }
         $fields = array();
+        $display = array();
         $field = $mod->getProperties();
         foreach($field as $row){
             if($row->getSearch() == true){
                 $fields[] = $row->getName();
+            }
+            if($row->getMain() == true){
+                $display[] = $row->getName();
             }
         }
         $form=$this->createModuleSearchForm($fields);
@@ -540,6 +544,8 @@ class DataController extends Controller
                 'module' => $module,
                 'current' => 'collection',
                 'paginator' => $paginator,
+                'field' => $field,
+                'display' => $display,
                 'nbResults' => $nbResults
             ));
         }

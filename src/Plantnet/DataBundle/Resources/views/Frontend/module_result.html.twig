@@ -41,21 +41,17 @@
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Title 1</th>
-                    <th>Title 2</th>
-                    <th>Collection / Module</th>
+                    {% for row in display %}
+                        <th>{{ row }}</th>
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>
                 {% for plantunit in paginator %}
-                    <tr class= "" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': plantunit.module.collection.name, 'module': plantunit.module.name, 'id': plantunit.id }) }}'">
-                        <td>{{ plantunit.title1 }}</td>
-                        <td>{{ plantunit.title2 }}</td>
-                        <td>
-                            {{ plantunit.module.collection.name }}
-                            /
-                            {{ plantunit.module.name }}
-                        </td>
+                    <tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}'">
+                        {% for field in display %}
+                            <td>{{ plantunit.attributes[field] }}</td>
+                        {% endfor %}
                     </tr>
                 {% endfor %}
             </tbody>
