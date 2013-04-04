@@ -26,7 +26,13 @@
         <div id="page-loading"></div>
     </ul>
 {% endblock %}
-{% block row %}
+{% block side %}
+    <a href="{{ url('_search', {'project': project}) }}" class="btn back">
+        <i class="icon-arrow-left"></i>
+        {{ "line-back-form"|trans }}
+    </a>
+{% endblock %}
+{% block main %}
     {% if paginator|length > 0 %}
         <div class="pagerfanta">
             {{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
@@ -60,4 +66,12 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('a.back').click(function(event){
+                event.preventDefault();
+                history.back(1);
+            });
+        });
+    </script>
 {% endblock %}

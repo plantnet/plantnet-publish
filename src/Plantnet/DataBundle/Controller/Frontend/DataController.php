@@ -309,6 +309,7 @@ class DataController extends Controller
             ->add('x_lng_1_bottom_left','hidden',array('required'=>false))
             ->add('y_lat_2_top_right','hidden',array('required'=>false))
             ->add('x_lng_2_top_right','hidden',array('required'=>false))
+            ->add('search','search',array('required'=>false,'label'=>false))
             ->getForm();
         return $form;
     }
@@ -371,6 +372,7 @@ class DataController extends Controller
                 {
                     $ids[]=$location['plantunit']['$id']->{'$id'};
                 }
+                unset($locations);
             }
             $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                 ->field('_id')->in($ids);

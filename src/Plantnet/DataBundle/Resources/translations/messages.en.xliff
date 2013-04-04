@@ -73,6 +73,10 @@
         <source>line-details</source>
         <target state="new">Details</target>
       </trans-unit>
+      <trans-unit id="16" resname="line-back-form">
+        <source>line-back-form</source>
+        <target state="new">Back to form</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
