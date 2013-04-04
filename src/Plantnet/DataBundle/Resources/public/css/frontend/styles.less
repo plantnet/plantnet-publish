@@ -8,6 +8,8 @@
 // -- page
 @html_overflow_y:				scroll;
 @page_bg_color:					#EEE;
+// -- nav bar
+@nav_bar_bg_image:				"../../images/overlay.png";
 // -- top bar
 @top_bar_height:				40px;
 // -- content
@@ -64,6 +66,9 @@ html,body{
 }
 body{
 	padding-top:@top_bar_height; // @top_bar_height to make the container go all the way to the bottom of the topbar
+}
+.navbar-inverse .navbar-inner, .navbar-inverse .nav .active > a, .navbar-inverse .nav .active > a:hover, .navbar-inverse .nav .active > a:focus, .navbar-inverse .nav li.dropdown.open > .dropdown-toggle, .navbar-inverse .nav li.dropdown.active > .dropdown-toggle, .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle{
+	background-image:url(@nav_bar_bg_image);
 }
 .container > .content{
 	background-color:@content_bg_color;
