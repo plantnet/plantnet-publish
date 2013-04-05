@@ -74,7 +74,7 @@ class DataController extends Controller
         }
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $coll = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collections = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
         $page = $dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
@@ -83,7 +83,7 @@ class DataController extends Controller
         return $this->render('PlantnetDataBundle:Frontend:project.html.twig', array(
             'project' => $project,
             'page' => $page,
-            'collection' => $coll,
+            'collections' => $collections,
             'current' => 'project'
         ));
     }

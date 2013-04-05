@@ -2,7 +2,22 @@
 {% block title "Pl@ntnet - " ~ project|capitalize %}
 {% block header %}<h1>{{ project|capitalize }}</h1>{% endblock %}
 {% block row %}
-	{% autoescape false %}
-		{{ page.content }}
-	{% endautoescape %}
+	<div>
+		{% autoescape false %}
+			{{ page.content }}
+		{% endautoescape %}
+	</div>
+	{% for collection in collections %}
+		{% include "PlantnetDataBundle:Frontend\\collection:collection_presentation.html.twig" with { collection: collection } %}
+	{% endfor %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+        	$('.carousel').carousel({
+        		interval: 4000
+        	});
+        });
+    </script>
 {% endblock %}

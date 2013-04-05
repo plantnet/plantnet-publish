@@ -1,0 +1,129 @@
+{% set imgs = [] %}
+{% set nb_img = 3 %}
+<div class="presentation">
+	<div class="head well well-small">
+		<h4>
+			<a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">
+				{{ collection.name|capitalize }}
+			</a>
+		</h4>
+	</div>
+	<div class="row">
+		<div class="span7 content">
+			<div class="mod">
+				<table>
+					{% for module in collection.modules %}
+						{% if module.type == 'text' %}
+							<tr>
+								<td>
+									<h5>
+										<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
+											{{ module.name|capitalize }}
+										</a>
+									</h5>
+								</td>
+								{% set nbimg = 0 %}
+								{% set nbloc = 0 %}
+								{% for child in module.children %}
+									{% if child.type == 'image' %}
+										{% set nbimg = nbimg+child.nbrows %}
+										{% if child.nbrows > 0 and imgs|length < nb_img %}
+											{% for image in child.images if imgs|length < nb_img %}
+												{% set imgs = imgs|merge([image]) %}
+											{% endfor %}
+										{% endif %}
+									{% elseif child.type == 'locality' %}
+										{% set nbloc = nbloc+child.nbrows %}
+									{% endif %}
+								{% endfor %}
+								{% if module.nbrows > 0 %}
+									<td>
+										<span class="badge">
+											<i class="icon-list"></i>
+											{{ module.nbrows }}
+										</span>
+									</td>
+								{% endif %}
+								{% if nbimg > 0 %}
+									<td>
+										<span class="badge">
+											<i class="icon-camera"></i>
+											{{ nbimg }}
+										</span>
+									</td>
+								{% endif %}
+								{% if nbloc > 0 %}
+									<td>
+										<span class="badge">
+											<i class="icon-map-marker"></i>
+											{{ nbloc }}
+										</span>
+									</td>
+								{% endif %}
+							</tr>
+						{% endif %}
+					{% endfor %}
+				</table>
+			</div>
+			<div>
+				{% autoescape false %}
+					{{ collection.description }}
+				{% endautoescape %}
+			</div>
+		</div>
+		<div class="span4 details">
+			{% if imgs|length > 0 %}
+				<div id="carousel_{{ collection.id }}" class="carousel slide">
+					<ol class="carousel-indicators">
+						<li data-target="#carousel_{{ collection.id }}" data-slide-to="0" class="active"></li>
+						<li data-target="#carousel_{{ collection.id }}" data-slide-to="1"></li>
+						<li data-target="#carousel_{{ collection.id }}" data-slide-to="2"></li>
+					</ol>
+					<div class="carousel-inner">
+						<div class="active item">
+							<img src="http://imalbum.aufeminin.com/album/D20120418/844566_HKZD4IN1AONUSGLF5HFL2PZ7DRBZ2J_dsc05676_H223249_L.jpg" alt="img1" />
+							<div class="carousel-caption">
+								<p>Lorem ipsum dolor</p>
+							</div>
+						</div>
+						<div class="item">
+							<img src="http://imalbum.aufeminin.com/album/D20070330/278809_ABM36EU2I1F4CU73FQF5OX4D7BLPBW_jardin_botanique_sur_la_route_de_l_ourika_H220053_L.jpg" alt="img2" />
+							<div class="carousel-caption">
+								<p>sit amet, consectetur</p>
+							</div>
+						</div>
+						<div class="item">
+							<img src="http://ile-de-la-reunion.info/photos/im/sentier-botanique-plaine-palmistes.jpg" alt="img3" />
+							<div class="carousel-caption">
+								<p>adipiscing elit</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				{#
+				<div id="carousel_{{ collection.id }}" class="carousel slide">
+					<ol class="carousel-indicators">
+						{% for image in imgs %}
+							<li data-target="#carousel_{{ collection.id }}" data-slide-to="{{ loop.index0 }}"{% if loop.index0 == 0 %} class="active"{% endif %}></li>
+						{% endfor %}
+					</ol>
+					<div class="carousel-inner">
+						{% for image in imgs %}
+							{% set imgspe = image.path|basename %}
+							{% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+							<div class="{% if loop.index0 == 0 %}active {% endif %}item">
+								<img src="{{ asset(img) }}" alt="{{ image.copyright }}" />
+								<div class="carousel-caption">
+									<p>{{ image.copyright }}</p>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+				#}
+			{% else %}
+				<div class="img_empty"></div>
+			{% endif %}
+		</div>
+	</div>
+</div>

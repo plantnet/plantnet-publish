@@ -2,12 +2,14 @@
 {% block title "Pl@ntnet - " ~ "line-introduction"|trans %}
 {% block header %}<h1>{{ "line-projects"|trans }}</h1>{% endblock %}
 {% block row %}
-	<p>
-		{{ "line-projects-list"|trans }}
-	</p>
-	<div class="btn-group btn-group-vertical">
-		{% for project in projects %}
-			<a href="{{ url('_project', {'project': project}) }}" class="btn">{{ project|capitalize }}</a>
-		{% endfor %}
+	<div>
+		<p>
+			{{ "line-projects-list"|trans }}
+		</p>
+		<div class="btn-group btn-group-vertical">
+			{% for project in projects %}
+				<a href="{{ url('_project', {'project': project}) }}" class="btn">{{ project|capitalize }}</a>
+			{% endfor %}
+		</div>
 	</div>
 {% endblock %}

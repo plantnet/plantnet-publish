@@ -29,7 +29,7 @@ class Collection
     protected $description;
     
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Module", mappedBy="collection", cascade={"remove"})
+     * @MongoDB\ReferenceMany(targetDocument="Module", criteria={"type" : "text"}, mappedBy="collection", cascade={"remove"})
      */
     private $modules = array();
 
