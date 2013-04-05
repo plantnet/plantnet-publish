@@ -80,6 +80,9 @@ class DataController extends Controller
             ->findOneBy(array(
                 'name'=>'home'
             ));
+        if(!$page){
+            throw $this->createNotFoundException('Unable to find Page entity.');
+        }
         return $this->render('PlantnetDataBundle:Frontend:project.html.twig', array(
             'project' => $project,
             'page' => $page,
@@ -99,7 +102,7 @@ class DataController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collections = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
-        return $this->render('PlantnetDataBundle:Frontend:collection_list.html.twig', array(
+        return $this->render('PlantnetDataBundle:Frontend\Collection:collection_list.html.twig', array(
             'project' => $project,
             'collections' => $collections
         ));
@@ -118,14 +121,42 @@ class DataController extends Controller
         }
         $dm = $this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $coll = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
         return $this->render('PlantnetDataBundle:Frontend:collection.html.twig', array(
             'project' => $project,
-            'collection' => $coll,
+            'collection' => $collection,
             'current' => 'collection'
         ));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    
 
     /**
      * @Route("/project/{project}/collection/{collection}/{module}", name="_module")

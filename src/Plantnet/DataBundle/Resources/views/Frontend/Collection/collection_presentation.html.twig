@@ -1,0 +1,102 @@
+{% set imgs = [] %}
+{% set nb_img = 3 %}
+<div class="collection_presentation">
+	<div class="head well well-small">
+		<h4>
+			<a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">
+				{{ collection.name|capitalize }}
+			</a>
+		</h4>
+	</div>
+	<div class="row">
+		<div class="span8">
+			<div class="content">
+				<div class="details">
+					<table>
+						{% for module in collection.modules %}
+							{% set nbimg = 0 %}
+							{% set nbloc = 0 %}
+							{% for child in module.children %}
+								{% if child.type == 'image' %}
+									{% set nbimg = nbimg+child.nbrows %}
+									{% if child.nbrows > 0 and imgs|length < nb_img %}
+										{% for image in child.images if imgs|length < nb_img %}
+											{% set imgs = imgs|merge([image]) %}
+										{% endfor %}
+									{% endif %}
+								{% elseif child.type == 'locality' %}
+									{% set nbloc = nbloc+child.nbrows %}
+								{% endif %}
+							{% endfor %}
+							<tr>
+								<td>
+									<h5>
+										<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
+											{{ module.name|capitalize }}
+										</a>
+									</h5>
+								</td>
+								<td>
+									{% if module.nbrows > 0 %}
+										<span class="badge pop-tooltip" data-toggle="tooltip" title="{{ module.nbrows }} {{ "line-entities"|trans }}">
+											<i class="icon-list"></i>
+											{{ module.nbrows }}
+										</span>
+									{% endif %}
+								</td>
+								<td>
+									{% if nbimg > 0 %}
+										<span class="badge pop-tooltip" data-toggle="tooltip" title="{{ nbimg }} {{ "line-images"|trans }}">
+											<i class="icon-camera"></i>
+											{{ nbimg }}
+										</span>
+									{% endif %}
+								</td>
+								<td>
+								{% if nbloc > 0 %}
+									<span class="badge pop-tooltip" data-toggle="tooltip" title="{{ nbloc }} {{ "line-locations"|trans }}">
+										<i class="icon-map-marker"></i>
+										{{ nbloc }}
+									</span>
+								{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</table>
+				</div>
+				<div>
+					{% autoescape false %}
+						{{ collection.description }}
+					{% endautoescape %}
+				</div>
+			</div>
+		</div>
+		<div class="span4">
+			<div class="images">
+				{% if imgs|length > 0 %}
+					<div id="carousel_{{ collection.id }}" class="carousel slide">
+						<ol class="carousel-indicators">
+							{% for image in imgs %}
+								<li data-target="#carousel_{{ collection.id }}" data-slide-to="{{ loop.index0 }}"{% if loop.index0 == 0 %} class="active"{% endif %}></li>
+							{% endfor %}
+						</ol>
+						<div class="carousel-inner">
+							{% for image in imgs %}
+								{% set imgspe = image.path|basename %}
+								{% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+								<div class="{% if loop.index0 == 0 %}active {% endif %}item">
+									<img src="{{ asset(img) }}" alt="{{ image.copyright }}" />
+									<div class="carousel-caption">
+										<p>{{ image.copyright }}</p>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				{% else %}
+					<div class="img_empty"></div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>

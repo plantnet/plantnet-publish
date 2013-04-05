@@ -1,10 +1,10 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title "Pl@ntnet - " ~ "line-introduction"|trans %}
-{% block header %}<h1>{{ "line-projects"|trans }}</h1>{% endblock %}
+{% block title "Pl@ntnet - " ~ "line-introduction"|trans|capitalize %}
+{% block header %}<h1>{{ "line-projects"|trans|capitalize }}</h1>{% endblock %}
 {% block row %}
 	<div>
 		<p>
-			{{ "line-projects-list"|trans }}
+			{{ "line-projects-list"|trans|capitalize }}
 		</p>
 		<div class="btn-group btn-group-vertical">
 			{% for project in projects %}

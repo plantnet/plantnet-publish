@@ -1,7 +1,7 @@
 {% for collection in collections %}
 	<li>
 		<a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">
-			{{ collection.name }}
+			{{ collection.name|capitalize }}
 		</a>
 	</li>
 {% endfor %}

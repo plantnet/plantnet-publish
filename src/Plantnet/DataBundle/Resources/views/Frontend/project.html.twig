@@ -7,17 +7,20 @@
 			{{ page.content }}
 		{% endautoescape %}
 	</div>
-	{% for collection in collections %}
-		{% include "PlantnetDataBundle:Frontend\\collection:collection_presentation.html.twig" with { collection: collection } %}
-	{% endfor %}
+	<div>
+		{% for collection in collections %}
+			{% include "PlantnetDataBundle:Frontend\\Collection:collection_presentation.html.twig" with { collection: collection } %}
+		{% endfor %}
+	</div>
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">
         $(document).ready(function(){
         	$('.carousel').carousel({
-        		interval: 4000
+        		interval:4000
         	});
         });
+        $('.pop-tooltip').tooltip();
     </script>
 {% endblock %}

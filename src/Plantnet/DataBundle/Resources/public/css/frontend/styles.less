@@ -5,169 +5,89 @@
 
 // Values
 // --------------------------------------------------
-// -- page
-@html_overflow_y:				scroll;
-@page_bg_color:					#EEE;
-// -- nav bar
-@nav_bar_bg_image:				"../../images/overlay.png";
-// -- top bar
 @top_bar_height:				40px;
-// -- content
-@content_bg_color:				#FFF;
 @content_padding:				20px;
-@content_border_radius:			0 0 12px 12px;
-@content_box_shadow:			0 2px 4px rgba(0,0,0,.15);
-// -- page header
-@page_header_bg_color:			#F5F5F5;
-@page_header_padding_top:		4px;
-@page_header_padding_left:		8px;
-@page_header_padding_right:		8px;
-@page_header_padding_bottom:	4px;
-// -- popover
-@popover_padding:				5px 15px;
-// -- breadcrumb
-@breadcrumb_border:				solid 1px #EEE;
-// -- brand
-@brand_height:					16px;
-@brand_width:					169px;
-@brand_bg_image:				"../../images/plantnet.png";
-// -- page loading
-@page_loading_float:			right;
-@page_loading_margin_top:		8px;
-// -- gallery
-@gallery_margin_bottom:			20px;
-@gallery_link_display:			inline-block;
-@gallery_link_bg_color:			rgba(0, 0, 0, 0.2);
-@gallery_link_margin_right:		7px;
-@gallery_link_margin_bottom:	9px;
-@gallery_img_opacity:			0;
-@gallery_img_width:				100px;
-@gallery_img_height:			100px;
-// -- footer
-@footer_height:					79px;
-@footer_ul_style:				none;
-@footer_ul_float:				left;
-@footer_ul_margin:				0;
-@footer_li_float:				left;
-@footer_mention_float:			right;
-@footer_mention_margin_top:		25px;
-@footer_mention_li_margin_left:	10px;
-@footer_mention_li_margin_right:0;
-// -- lost + found
-@li_child:						30px;
 
 
 // Styles
 // --------------------------------------------------
 html{
-	overflow-y:@html_overflow_y;
+	overflow-y:scroll;
 }
 html,body{
-	background-color:@page_bg_color;
+	background-color:#EEE;
 }
 body{
 	padding-top:@top_bar_height; // @top_bar_height to make the container go all the way to the bottom of the topbar
 }
 .navbar-inverse .navbar-inner, .navbar-inverse .nav .active > a, .navbar-inverse .nav .active > a:hover, .navbar-inverse .nav .active > a:focus, .navbar-inverse .nav li.dropdown.open > .dropdown-toggle, .navbar-inverse .nav li.dropdown.active > .dropdown-toggle, .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle{
-	background-image:url(@nav_bar_bg_image);
-}
-.container > .content{
-	background-color:@content_bg_color;
-	padding:@content_padding;
-	margin:0 -@content_padding @top_bar_height -@content_padding; // negative indent the amount of the padding to maintain the grid system
-	-webkit-border-radius:@content_border_radius;
-	   -moz-border-radius:@content_border_radius;
-	        border-radius:@content_border_radius;
-	-webkit-box-shadow:@content_box_shadow;
-	   -moz-box-shadow:@content_box_shadow;
-	        box-shadow:@content_box_shadow;
-}
-.page-header{
-	background-color:@page_header_bg_color;
-	margin:-@content_padding -@content_padding @content_padding;
-	padding-top:@page_header_padding_top;
-	padding-left:@page_header_padding_left;
-	padding-right:@page_header_padding_right;
-	padding-bottom:@page_header_padding_bottom;
-}
-.popover{
-	padding:@popover_padding;
-}
-.breadcrumb{
-	border:@breadcrumb_border;
+	background-image:url(../../images/overlay.png);
 }
 .brand{
-	height:@brand_height;
-	width:@brand_width;
+	height:16px;
+	width:169px;
 	padding-left:20px;
 	padding-right:20px;
-	background:url(@brand_bg_image) no-repeat;
+	background:url(../../images/plantnet.png) no-repeat;
 }
-#page-loading{
-	float:@page_loading_float;
-	margin-top:@page_loading_margin_top;
+.container > .content{
+	background-color:#FFF;
+	padding:@content_padding;
+	margin-top:0;
+	margin-left:-@content_padding; // negative indent the amount of the padding to maintain the grid system
+	margin-right:-@content_padding; // negative indent the amount of the padding to maintain the grid system
+	margin-bottom:@top_bar_height;
+	-webkit-border-radius:0 0 12px 12px;
+	   -moz-border-radius:0 0 12px 12px;
+	        border-radius:0 0 12px 12px;
+	-webkit-box-shadow:0 2px 4px rgba(0,0,0,.15);
+	   -moz-box-shadow:0 2px 4px rgba(0,0,0,.15);
+	        box-shadow:0 2px 4px rgba(0,0,0,.15);
 }
-.gallery{
-	margin-bottom:@gallery_margin_bottom;
-}
-.gallery > a{
-	display:@gallery_link_display;
-	background-color:@gallery_link_bg_color;
-	margin-right:@gallery_link_margin_right;
-	margin-bottom:@gallery_link_margin_bottom;
-}
-.gallery > a > img{
-	opacity:@gallery_img_opacity;
-	width:@gallery_img_width;
-	height:@gallery_img_height;
-}
-#footer{
-	height:@footer_height;
-}
-#footer ul{
-	list-style-type:@footer_ul_style;
-	float:@footer_ul_float;
-	margin:@footer_ul_margin;
-}
-#footer li{
-	float:@footer_li_float;
-	margin-right:@content_padding;
-}
-#mention ul{
-	float:@footer_mention_float;
-	margin-top:@footer_mention_margin_top;
-}
-#mention li{
-	margin-right:@footer_mention_li_margin_right;
-	margin-left:@footer_mention_li_margin_left;
-}
-li.child{
-	padding-left:@li_child;
+.page-header{
+	background-color:#F5F5F5;
+	margin:-@content_padding -@content_padding @content_padding -@content_padding;
+	padding-top:4px;
+	padding-left:20px;
+	padding-right:20px;
+	padding-bottom:4px;
 }
 
 
+// Bootstrap : Custom
+// --------------------------------------------------
+span.pop-tooltip{
+	cursor:default;
+}
+.carousel .item{
+	text-align:center;
+}
 
 
-
-.presentation{
+// Collection : Presentation
+// --------------------------------------------------
+.collection_presentation{
 	margin-top:20px;
 }
-.presentation .head{
+.collection_presentation .head{
 	margin-bottom:0px;
 }
-.presentation .head h4{
+.collection_presentation .head h4{
 	margin:0px;
 }
-.presentation .content{
+.collection_presentation .content{
 	margin-top:-1px;
-	margin-left:40px;
+	margin-left:20px;
 	padding:20px;
 	border:1px solid #E3E3E3;
 	-webkit-border-radius:0 0 8px 8px;
 	   -moz-border-radius:0 0 8px 8px;
 	        border-radius:0 0 8px 8px;
+	-webkit-box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
+	   -moz-box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
+	        box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
 }
-.presentation .content div.mod{
+.collection_presentation .content div.details{
 	float:right;
 	padding:10px;
 	margin-top:-20px;
@@ -177,16 +97,129 @@ li.child{
 	border-left:1px solid #E3E3E3;
 	border-bottom:1px solid #E3E3E3;
 }
-.presentation .content div.mod h5{
+.collection_presentation .content div.details h5{
 	display:inline;
 	margin:0px;
 }
-.presentation .content div.mod span{
+.collection_presentation .content div.details span{
 	margin-left:2px;
 }
-.presentation .details{
-	float:right;
-	margin-top:20px;
-	margin-right:20px;
-	margin-left:0px;
+.collection_presentation .images{
+	padding-top:20px;
+	padding-right:20px;
 }
+
+
+// Module : Presentation
+// --------------------------------------------------
+.module_presentation{
+	margin-top:20px;
+}
+.module_presentation .head{
+	margin-bottom:0px;
+	margin-left:-3px;
+	margin-right:-3px;
+}
+.module_presentation .head h4, .module_presentation h5{
+	margin:0px;
+	display:inline;
+}
+.module_presentation .content{
+	margin-top:-1px;
+	padding:20px;
+	border:1px solid #E3E3E3;
+	-webkit-border-radius:0 0 8px 8px;
+	   -moz-border-radius:0 0 8px 8px;
+	        border-radius:0 0 8px 8px;
+	-webkit-box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
+	   -moz-box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
+	        box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
+}
+.module_presentation .content div.details{
+	float:right;
+	padding:10px;
+	margin-top:-20px;
+	margin-right:-20px;
+	margin-left:10px;
+	margin-bottom:10px;
+	border-left:1px solid #E3E3E3;
+	border-bottom:1px solid #E3E3E3;
+}
+.module_presentation .content div.details span{
+	margin-left:2px;
+}
+.module_presentation .images{
+	padding-top:20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.breadcrumb{
+	border:solid 1px #EEE;
+}
+#page-loading{
+	float:right;
+	margin-top:8px;
+}
+.gallery{
+	margin-bottom:20px;
+}
+.gallery > a{
+	display:inline-block;
+	background-color:rgba(0, 0, 0, 0.2);
+	margin-right:7px;
+	margin-bottom:9px;
+}
+.gallery > a > img{
+	opacity:0;
+	width:100px;
+	height:100px;
+}
+#footer{
+	height:79px;
+}
+#footer ul{
+	list-style-type:none;
+	float:left;
+	margin:0;
+}
+#footer li{
+	float:left;
+	margin-right:@content_padding;
+}
+#mention ul{
+	float:right;
+	margin-top:25px;
+}
+#mention li{
+	margin-right:0;
+	margin-left:10px;
+}
+li.child{
+	padding-left:30px;
+}
+
+
+
+
+

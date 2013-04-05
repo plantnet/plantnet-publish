@@ -41,9 +41,7 @@
 			<div class="navbar-inner">
 				<div class="container">
 					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
+						<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
 					</button>
 					<a class="brand" href="{{ path('_index') }}"></a>
 					<div class="nav-collapse collapse">
@@ -54,33 +52,23 @@
 							<li{% if current == 'index' or current == 'project' %} class="active" {% endif %}>
 								{% if project is not defined %}
 									<a href="{{ url('_index') }}">
-										{{ "tab-home"|trans }}
+										{{ "tab-home"|trans|capitalize }}
 									</a>
 								{% else %}
 									<a href="{{ url('_project', {'project': project}) }}">
-										{{ "tab-home"|trans }}
+										{{ "tab-home"|trans|capitalize }}
 									</a>
 								{% endif %}
 							</li>
 							{% if current != 'index' %}
 								<li class="dropdown{% if current == 'collection' %} active {% endif %}">
-									<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans}} <span class="caret"></span></a>
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans|capitalize }} <span class="caret"></span></a>
 									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 										{% render controller("PlantnetDataBundle:Frontend\\Data:Collection_list", {'project': project}) %}
 									</ul>
 								</li>
-								<li{% if current == 'search' %} class="active" {% endif %}>
-									<a href="{{ url('_search', {'project': project}) }}">
-										{{ "tab-search"|trans }}
-									</a>
-								</li>
 							{% endif %}
 						</ul>
-						{% if current != 'index' %}
-							<form action="#" class="navbar-search pull-right">
-								<input type="text" class="search-query" placeholder="{{ 'search-field'|trans }}">
-							</form>
-						{% endif %}
 					</div>
 				</div>
 			</div>
@@ -109,38 +97,46 @@
 		</div>
 	</div>
 	<footer id="footer">
-		{% if current != 'index' %}
-			<div class="container">
-				{% block footer %}
-					<ul>
-						<li class="logofoot">
-							<a href="http://www.plantnet-project.org" target="_blank">
-								<img src="{{ asset('bundles/plantnetdata/images/footPlantnet.png') }}" alt="Projet Plantnet"></a>
-						</li>
-						<li class="logofoot">
-							<a href="http://www.agropolis-fondation.fr/" target="_blank">
-								<img src="{{ asset('bundles/plantnetdata/images/footAF.png') }}" alt="Agropolis Fondation"></a>
-						</li>
-					</ul>
+		<div class="container">
+			{% block footer %}
+				<ul>
+					<li class="logofoot">
+						<a href="http://www.plantnet-project.org" target="_blank">
+							<img src="{{ asset('bundles/plantnetdata/images/footPlantnet.png') }}" alt="Projet Plantnet"></a>
+					</li>
+					<li class="logofoot">
+						<a href="http://www.agropolis-fondation.fr/" target="_blank">
+							<img src="{{ asset('bundles/plantnetdata/images/footAF.png') }}" alt="Agropolis Fondation"></a>
+					</li>
+				</ul>
+				{% if current != 'index' %}
 					<nav id="mention">
 						<ul>
 							<li class="liens">
-								<a href="{{ url('_credits', {'project': project}) }}" class="btn btn-small">{{ "footer-credits"|trans }}</a>
+								<a href="{{ url('_credits', {'project': project}) }}" class="btn btn-small">
+									{{ "footer-credits"|trans|capitalize }}
+								</a>
 							</li>
 							<li class="liens">
-								<a href="{{ url('_mentions', {'project': project}) }}" class="btn btn-small">{{ "footer-legal"|trans }}</a>
+								<a href="{{ url('_mentions', {'project': project}) }}" class="btn btn-small">
+									{{ "footer-legal"|trans|capitalize }}
+								</a>
 							</li>
 							<li class="liens">
-								<a href="{{ url('_contacts', {'project': project}) }}" class="btn btn-small">{{ "footer-contacts"|trans }}</a>
+								<a href="{{ url('_contacts', {'project': project}) }}" class="btn btn-small">
+									{{ "footer-contacts"|trans|capitalize }}
+								</a>
 							</li>
 							<li class="liens">
-								<a href="#" class="btn btn-small">{{ "footer-sitemap"|trans }}</a>
+								<a href="#" class="btn btn-small">
+									{{ "footer-sitemap"|trans|capitalize }}
+								</a>
 							</li>
 						</ul>
 					</nav>
-				{% endblock %}
-			</div>
-		{% endif %}
+				{% endif %}
+			{% endblock %}
+		</div>
 	</footer>
 	{% block javascripts %}
 		{% javascripts

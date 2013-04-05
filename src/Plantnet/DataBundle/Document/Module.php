@@ -22,6 +22,11 @@ class Module
     /**
      * @MongoDB\String
      */
+    protected $description;
+
+    /**
+     * @MongoDB\String
+     */
     private $type;
 
     /**
@@ -141,6 +146,26 @@ class Module
         $filename=eregi_replace("[ ]+",'-',strtolower($filename));
         $filename=preg_replace('/([^.a-z0-9]+)/i','_',$filename);
         return $filename;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string $description
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**

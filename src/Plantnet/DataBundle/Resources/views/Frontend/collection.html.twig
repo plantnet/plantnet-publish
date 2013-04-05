@@ -1,9 +1,9 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title collection.name %}
+{% block title collection.name|capitalize %}
 {% block stylesheets %}
 	{{ parent() }}
 {% endblock %}
-{% block header %}<h1>{{ collection.name }}</h1>{% endblock %}
+{% block header %}<h1>{{ collection.name|capitalize }}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
@@ -11,21 +11,38 @@
             <span class="divider">/</span>
         </li>
         <li class="active">
-            {{ collection.name }}
+            {{ collection.name|capitalize }}
         </li>
-        <div id="page-loading"></div>
     </ul>
 {% endblock %}
-{% block side %}
-	{% include "PlantnetDataBundle:Frontend:side.html.twig" with { collection: collection } %}
-{% endblock %}
-{% block main %}
-	<div>
-		{% autoescape false %}
-			{{ collection.description }}
-		{% endautoescape %}
-	</div>
+{% block row %}
+    <div>
+        {% autoescape false %}
+            {{ collection.description }}
+        {% endautoescape %}
+    </div>
+    <div>
+        <div class="row">
+            {% set item_size = '12' %}
+            {% if collection.modules|length > 1 %}
+                {% set item_size = '6' %}
+            {% endif %}
+            {% for module in collection.modules %}
+                <div class="span{{ item_size }}">
+                     {% include "PlantnetDataBundle:Frontend\\Modules:module_presentation.html.twig" with { collection: collection } %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.carousel').carousel({
+                interval:4000
+            });
+        });
+        $('.pop-tooltip').tooltip();
+    </script>
 {% endblock %}

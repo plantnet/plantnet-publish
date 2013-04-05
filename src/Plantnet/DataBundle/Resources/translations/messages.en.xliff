@@ -9,57 +9,57 @@
       <trans-unit id="0" resname="search-field">
         <jms:reference-file line="141">Resources/views/layout.html.twig</jms:reference-file>
         <source>search-field</source>
-        <target state="new">Search</target>
+        <target state="new">search</target>
       </trans-unit>
       <trans-unit id="1" resname="tab-coll">
         <jms:reference-file line="129">Resources/views/layout.html.twig</jms:reference-file>
         <source>tab-coll</source>
-        <target state="new">Collections</target>
+        <target state="new">collections</target>
       </trans-unit>
       <trans-unit id="2" resname="tab-home">
         <jms:reference-file line="125">Resources/views/layout.html.twig</jms:reference-file>
         <source>tab-home</source>
-        <target state="new">Home</target>
+        <target state="new">home</target>
       </trans-unit>
       <trans-unit id="3" resname="line-projects-list">
         <source>line-projects-list</source>
-        <target state="new">"Publish v2" projects:</target>
+        <target state="new">"publish v2" projects:</target>
       </trans-unit>
       <trans-unit id="4" resname="tab-search">
         <source>tab-search</source>
-        <target state="new">Search</target>
+        <target state="new">search</target>
       </trans-unit>
       <trans-unit id="5" resname="footer-credits">
         <source>footer-credits</source>
-        <target state="new">Credits</target>
+        <target state="new">credits</target>
       </trans-unit>
       <trans-unit id="6" resname="footer-legal">
         <source>footer-legal</source>
-        <target state="new">Legal details</target>
+        <target state="new">legal details</target>
       </trans-unit>
       <trans-unit id="7" resname="footer-contacts">
         <source>footer-contacts</source>
-        <target state="new">Contacts</target>
+        <target state="new">contacts</target>
       </trans-unit>
       <trans-unit id="8" resname="footer-sitemap">
         <source>footer-sitemap</source>
-        <target state="new">Site map</target>
+        <target state="new">site map</target>
       </trans-unit>
       <trans-unit id="9" resname="line-projects">
         <source>line-projects</source>
-        <target state="new">Projects</target>
+        <target state="new">projects</target>
       </trans-unit>
       <trans-unit id="10" resname="line-introduction">
         <source>line-introduction</source>
-        <target state="new">Introduction</target>
+        <target state="new">introduction</target>
       </trans-unit>
       <trans-unit id="11" resname="tab-result">
         <source>tab-result</source>
-        <target state="new">Result</target>
+        <target state="new">result</target>
       </trans-unit>
       <trans-unit id="12" resname="line-no-result">
         <source>line-no-result</source>
-        <target state="new">No result</target>
+        <target state="new">no result</target>
       </trans-unit>
       <trans-unit id="13" resname="line-row">
         <source>line-row</source>
@@ -71,15 +71,23 @@
       </trans-unit>
       <trans-unit id="15" resname="line-details">
         <source>line-details</source>
-        <target state="new">Details</target>
+        <target state="new">details</target>
       </trans-unit>
       <trans-unit id="16" resname="line-back-form">
         <source>line-back-form</source>
-        <target state="new">Back to form</target>
+        <target state="new">back to form</target>
       </trans-unit>
       <trans-unit id="17" resname="line-search-in">
         <source>line-search-in</source>
-        <target state="new">Search in</target>
+        <target state="new">search in</target>
+      </trans-unit>
+      <trans-unit id="18" resname="line-images">
+        <source>line-images</source>
+        <target state="new">images</target>
+      </trans-unit>
+      <trans-unit id="19" resname="line-locations">
+        <source>line-locations</source>
+        <target state="new">locations</target>
       </trans-unit>
     </body>
   </file>

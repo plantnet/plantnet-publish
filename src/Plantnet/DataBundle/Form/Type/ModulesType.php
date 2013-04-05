@@ -16,6 +16,9 @@ class ModulesType extends AbstractType
         if($module->getType()=='text')
         {
             $builder
+                ->add('description', 'textarea', array(
+                    'required'=>false
+                ))
                 ->add('properties', 'collection', array(
                     'type' => new PropertiesType(),
                 ))
