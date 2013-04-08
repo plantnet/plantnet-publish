@@ -86,9 +86,11 @@
 								{% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
 								<div class="{% if loop.index0 == 0 %}active {% endif %}item">
 									<img src="{{ asset(img) }}" alt="{{ image.copyright }}" />
-									<div class="carousel-caption">
-										<p>{{ image.copyright }}</p>
-									</div>
+									{% if image.copyright is not empty %}
+										<div class="carousel-caption">
+											<p>{{ image.copyright }}</p>
+										</div>
+									{% endif %}
 								</div>
 							{% endfor %}
 						</div>

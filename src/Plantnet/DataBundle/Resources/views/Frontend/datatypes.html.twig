@@ -1,9 +1,10 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
+{% block title %}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
 {% endblock %}
-{% block header %}<h1>{{ collection.name }} / {{ module.name }}</h1>{% endblock %}
+{% block header %}<h1>{{ module.name|capitalize }}</h1>{% endblock %}
 {% block breadcrumb %}
 	<ul class="breadcrumb">
 		<li>
@@ -11,11 +12,17 @@
             <span class="divider">/</span>
         </li>
 		<li>
-			<a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
+			<a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name|capitalize }}</a>
 			<span class="divider">/</span>
 		</li>
+		{% if module_parent is defined %}
+			<li>
+				<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module_parent.name }) }}">{{ module_parent.name|capitalize }}</a>
+				<span class="divider">/</span>
+			</li>
+		{% endif %}
 		<li class="active">
-			{{ module.name }}
+			{{ module.name|capitalize }}
 			<span class="divider">></span>
 			{{ module.nbrows }} {{ "line-entities"|trans }}
 		</li>

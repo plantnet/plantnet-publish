@@ -29,7 +29,13 @@ class Collection
     protected $description;
     
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Module", criteria={"type" : "text"}, mappedBy="collection", cascade={"remove"})
+     * @MongoDB\ReferenceMany(
+     *      targetDocument="Module",
+     *      criteria={"type":"text"},
+     *      sort={"name"="asc"},
+     *      mappedBy="collection",
+     *      cascade={"remove"}
+     *  )
      */
     private $modules = array();
 

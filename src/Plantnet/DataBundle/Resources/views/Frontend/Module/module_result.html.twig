@@ -1,0 +1,82 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
+{% block title collection.name|capitalize ~ ' - ' ~ module.name|capitalize ~ ' - ' ~ "tab-result"|trans|capitalize %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block header %}<h1>{{ module.name|capitalize }} - {{ "tab-result"|trans|capitalize }}</h1>{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ url('_project', {'project': project}) }}">{{ project|capitalize }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name|capitalize }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('_collection', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name|capitalize }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('_module_search', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
+                {{ "tab-search"|trans|capitalize }}
+            </a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ "tab-result"|trans|capitalize }}
+            <span class="divider">></span>
+            {% if nbResults == 0 %}
+                {{ "line-no-result"|trans }}
+            {% else %}
+                <span class="badge">{{ nbResults }}</span> {{ "line-row"|trans }}{% if nbResults >= 2 %}s{% endif %}
+            {% endif %}
+        </li>
+        <div id="page-loading"></div>
+    </ul>
+{% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
+{% endblock %}
+{% block main %}
+    <div class="results">
+        {% if paginator|length > 0 %}
+            <div class="pagerfanta">
+                {{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        {% for row in display %}
+                            <th>{{ row|capitalize }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plantunit in paginator %}
+                        <tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}'">
+                            {% for field in display %}
+                                <td>{{ plantunit.attributes[field] }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="pagerfanta">
+                {{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('a.back').click(function(event){
+                event.preventDefault();
+                history.back(1);
+            });
+        });
+    </script>
+{% endblock %}

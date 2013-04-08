@@ -3,9 +3,9 @@
 {% block header %}<h1>{{ "line-projects"|trans|capitalize }}</h1>{% endblock %}
 {% block row %}
 	<div>
-		<p>
+		<h5>
 			{{ "line-projects-list"|trans|capitalize }}
-		</p>
+		</h5>
 		<div class="btn-group btn-group-vertical">
 			{% for project in projects %}
 				<a href="{{ url('_project', {'project': project}) }}" class="btn">{{ project|capitalize }}</a>

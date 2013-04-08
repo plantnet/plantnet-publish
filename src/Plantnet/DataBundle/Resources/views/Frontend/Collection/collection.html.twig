@@ -25,11 +25,11 @@
         <div class="row">
             {% set item_size = '12' %}
             {% if collection.modules|length > 1 %}
-                {% set item_size = '6' %}
+                {% set item_size = item_size/2 %}
             {% endif %}
             {% for module in collection.modules %}
                 <div class="span{{ item_size }}">
-                     {% include "PlantnetDataBundle:Frontend\\Modules:module_presentation.html.twig" with { collection: collection } %}
+                     {% include "PlantnetDataBundle:Frontend\\Module:module_presentation.html.twig" with { collection: collection } %}
                 </div>
             {% endfor %}
         </div>

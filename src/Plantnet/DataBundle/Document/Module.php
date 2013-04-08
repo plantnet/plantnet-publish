@@ -64,7 +64,13 @@ class Module
     private $parent;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Module", nullable="true", mappedBy="parent", cascade={"remove"})
+     * @MongoDB\ReferenceMany(
+     *      targetDocument="Module",
+     *      sort={"name"="asc"},
+     *      nullable="true",
+     *      mappedBy="parent",
+     *      cascade={"remove"}
+     *  )
      */
     private $children;
 

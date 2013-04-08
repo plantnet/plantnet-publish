@@ -1,10 +1,10 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
-{% block title collection.name ~ ' - ' ~ module.name %}
+{% block title collection.name|capitalize ~ ' - ' ~ module.name|capitalize %}
 {% block stylesheets %}
     {{ parent() }}
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { collection: collection } %}
+    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module_parent } %}
 {% endblock %}
 {% block main %}
 	<div class="results">
@@ -13,11 +13,11 @@
 				{{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
 			</div>
 			<div class="gallery">
-				{% for row in paginator %}
-					{% set imgspe = row.path|basename %}
+				{% for image in paginator %}
+					{% set imgspe = image.path|basename %}
 					{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
-					<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ row.copyright }}">
-						<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" class="img-polaroid" title="{{ row.plantunit.title1 }}" data-content="{{ row.plantunit.title1 }}<br />{{ row.plantunit.title2 }}" /></a>
+					<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ image.copyright }}">
+						<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" class="img-polaroid" title="{{ image.plantunit.title1|capitalize }}" data-content="{{ image.plantunit.title1|capitalize }}<br />{{ image.plantunit.title2|capitalize }}" /></a>
 				{% endfor %}
 			</div>
 			<div class="pagerfanta">
@@ -50,6 +50,7 @@
 			.click(function(e) {
 				e.preventDefault()
 			});
+			$('.gallery img').addClass('blind');
 			$('.gallery img').one('load',function(){
 				var img=$(this);
 				img.fadeTo(200,1);

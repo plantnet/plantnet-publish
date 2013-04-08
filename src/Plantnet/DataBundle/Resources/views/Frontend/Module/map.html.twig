@@ -1,0 +1,19 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
+{% block title collection.name|capitalize ~ ' - ' ~ module.name|capitalize %}
+{% block stylesheets %}
+	{{ parent() }}
+	{% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
+{% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module_parent } %}
+{% endblock %}
+{% block main %}
+    <div>
+    	{# LEAFLET MAP #}
+    	<div id="map"></div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	{% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
+{% endblock %}

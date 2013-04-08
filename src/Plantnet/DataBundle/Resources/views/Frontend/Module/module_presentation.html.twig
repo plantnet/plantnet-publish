@@ -14,21 +14,6 @@
     <div class="content">
         <div class="details">
             <table>
-                {% for child in module.children if child.type == 'locality' %}
-                    <tr>
-                        <td>
-                            <i class="icon-map-marker"></i>
-                            <h5>
-                                {{ child.name|capitalize }}
-                            </h5>
-                        </td>
-                        <td>
-                            <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-locations"|trans }}">
-                                {{ child.nbrows }}
-                            </span>
-                        </td>
-                    </tr>
-                {% endfor %}
                 {% for child in module.children if child.type == 'image' %}
                     {% if child.nbrows > 0 and imgs|length < nb_img %}
                         {% for image in child.images if imgs|length < nb_img %}
@@ -44,6 +29,21 @@
                         </td>
                         <td>
                             <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-images"|trans }}">
+                                {{ child.nbrows }}
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                {% for child in module.children if child.type == 'locality' %}
+                    <tr>
+                        <td>
+                            <i class="icon-map-marker"></i>
+                            <h5>
+                                {{ child.name|capitalize }}
+                            </h5>
+                        </td>
+                        <td>
+                            <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-locations"|trans }}">
                                 {{ child.nbrows }}
                             </span>
                         </td>
@@ -70,9 +70,11 @@
                             {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
                             <div class="{% if loop.index0 == 0 %}active {% endif %}item">
                                 <img src="{{ asset(img) }}" alt="{{ image.copyright }}" />
-                                <div class="carousel-caption">
-                                    <p>{{ image.copyright }}</p>
-                                </div>
+                                {% if image.copyright is not empty %}
+                                    <div class="carousel-caption">
+                                        <p>{{ image.copyright }}</p>
+                                    </div>
+                                {% endif %}
                             </div>
                         {% endfor %}
                     </div>

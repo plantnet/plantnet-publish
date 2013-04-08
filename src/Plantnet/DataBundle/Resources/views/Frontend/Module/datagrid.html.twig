@@ -1,10 +1,10 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
-{% block title collection.name ~ ' - ' ~ module.name %}
+{% block title collection.name|capitalize ~ ' - ' ~ module.name|capitalize %}
 {% block stylesheets %}
     {{ parent() }}
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { collection: collection } %}
+    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     <div class="results">
@@ -16,15 +16,15 @@
                 <thead>
                     <tr>
                         {% for row in display %}
-                            <th>{{ row }}</th>
+                            <th>{{ row|capitalize }}</th>
                         {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for row in paginator %}
-                        <tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': row._id }) }}'">
+                    {% for plantunit in paginator %}
+                        <tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit._id }) }}'">
                             {% for field in display %}
-                                <td>{{ row.attributes[field] }}</td>
+                                <td>{{ plantunit.attributes[field] }}</td>
                             {% endfor %}
                         </tr>
                     {% endfor %}

@@ -1,8 +1,0 @@
-{% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title "Pl@ntnet - " ~ project ~ ' - ' ~ "footer-legal"|trans %}
-{% block header %}<h1>{{ project|capitalize }} - {{ "footer-legal"|trans }}</h1>{% endblock %}
-{% block row %}
-	{% autoescape false %}
-		{{ page.content }}
-	{% endautoescape %}
-{% endblock %}

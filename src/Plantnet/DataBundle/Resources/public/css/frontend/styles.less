@@ -52,6 +52,10 @@ body{
 	padding-right:20px;
 	padding-bottom:4px;
 }
+#page-loading{
+	float:right;
+	margin-top:8px;
+}
 
 
 // Bootstrap : Custom
@@ -61,6 +65,22 @@ span.pop-tooltip{
 }
 .carousel .item{
 	text-align:center;
+}
+
+.results .pagerfanta:first-child .pagination{
+	margin-top:0;
+}
+
+.results .pagerfanta:last-child .pagination{
+	margin-bottom:0;
+}
+
+.breadcrumb{
+	border:solid 1px #EEE;
+}
+
+.nav-stacked li.child{
+	padding-left:30px;
 }
 
 
@@ -105,8 +125,9 @@ span.pop-tooltip{
 	margin-left:2px;
 }
 .collection_presentation .images{
-	padding-top:20px;
-	padding-right:20px;
+	background-color:rgba(0, 0, 0, 0.2);
+	margin-top:20px;
+	margin-right:20px;
 }
 
 
@@ -149,39 +170,17 @@ span.pop-tooltip{
 	margin-left:2px;
 }
 .module_presentation .images{
-	padding-top:20px;
+	background-color:rgba(0, 0, 0, 0.2);
+	margin-top:20px;
+}
+.module_presentation .images .carousel{
+	margin-bottom:0;
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.breadcrumb{
-	border:solid 1px #EEE;
-}
-#page-loading{
-	float:right;
-	margin-top:8px;
-}
-.gallery{
+// Gallery
+// --------------------------------------------------
+#details .gallery{
 	margin-bottom:20px;
 }
 .gallery > a{
@@ -191,10 +190,16 @@ span.pop-tooltip{
 	margin-bottom:9px;
 }
 .gallery > a > img{
-	opacity:0;
 	width:100px;
 	height:100px;
 }
+.gallery > a > img.blind{
+	opacity:0;
+}
+
+
+// Footer
+// --------------------------------------------------
 #footer{
 	height:79px;
 }
@@ -215,11 +220,3 @@ span.pop-tooltip{
 	margin-right:0;
 	margin-left:10px;
 }
-li.child{
-	padding-left:30px;
-}
-
-
-
-
-
