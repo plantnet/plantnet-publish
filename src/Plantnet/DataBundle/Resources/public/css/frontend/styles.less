@@ -183,21 +183,58 @@ span.pop-tooltip{
 
 // Gallery
 // --------------------------------------------------
-#details .gallery{
-	margin-bottom:20px;
-}
-.gallery > a{
+.gallery a.thumbn{
 	display:inline-block;
 	background-color:rgba(0, 0, 0, 0.2);
-	margin-right:7px;
-	margin-bottom:9px;
 }
-.gallery > a > img{
-	width:100px;
-	height:100px;
+.gallery a.thumbn > img{
+	width:180px;
+	height:120px;
 }
-.gallery > a > img.blind{
+.gallery a.thumbn > img.blind{
 	opacity:0;
+}
+ul.thumbnails.per3 > li:nth-child(3n+1){
+	clear:left;
+}
+div.thumbnail{
+	text-align:center;
+	border-color:#EEE;
+	background-color:#F5F5F5;
+	padding:8px;
+}
+div.thumbnail:hover{
+	border-color:#DDD;
+	background-color:#EEE;
+	-webkit-box-shadow: 0px 3px 6px rgba(0,0,0,.15);
+	   -moz-box-shadow: 0px 3px 6px rgba(0,0,0,.15);
+	        box-shadow: 0px 3px 6px rgba(0,0,0,.15);
+}
+div.thumbnail h5, div.thumbnail p{
+	margin:0;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	-o-text-overflow:ellipsis;
+	white-space:nowrap;
+	width:100%;
+}
+div.thumbnail h5{
+	font-size:12px;
+	line-height:15px;
+}
+div.thumbnail p{
+	font-size:11px;
+	line-height:14px;
+}
+div.thumbnail .access{
+	margin-top:8px;
+	padding-top:8px;
+	padding-right:8px;
+	border-top:solid 1px #EEE;
+	text-align:right;
+}
+div.thumbnail:hover .access{
+	border-color:#DDD;
 }
 
 

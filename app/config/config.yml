@@ -230,6 +230,6 @@ liip_imagine:
         max_width_900:
             filters:
                 relative_resize: { widen: 900 }
-        thumb_100_100:
+        thumb_180_120:
             filters:
-                thumbnail: { size: [100, 100], mode: outbound }
+                thumbnail: { size: [180, 120], mode: outbound }

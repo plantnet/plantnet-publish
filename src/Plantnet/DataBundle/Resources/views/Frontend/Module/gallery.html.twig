@@ -13,12 +13,40 @@
 				{{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
 			</div>
 			<div class="gallery">
-				{% for image in paginator %}
-					{% set imgspe = image.path|basename %}
-					{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
-					<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ image.copyright }}">
-						<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" class="img-polaroid" title="{{ image.plantunit.title1|capitalize }}" data-content="{{ image.plantunit.title1|capitalize }}<br />{{ image.plantunit.title2|capitalize }}" /></a>
-				{% endfor %}
+				<ul class="thumbnails per3">
+					{% for image in paginator %}
+						{% set imgspe = image.path|basename %}
+						{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
+						<li class="span3">
+							<div class="thumbnail">
+								<a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
+									<img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid" alt="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}</strong><br />{{ image.copyright }}" />
+								</a>
+								<h5>
+									{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}
+								</h5>
+								{% if image.copyright is not empty %}
+									<p>
+										{{ image.copyright }}
+									</p>
+								{% endif %}
+								<div class="access">
+									<a href="{{ path('_details', { 'project': project, 'collection': collection.name, 'module': image.plantunit.module.name, 'id': image.plantunit.id }) }}">
+										<i class="icon-list"></i>
+									</a>
+									<a class="html-box" href="#data_{{ image.id }}">
+										<i class="icon-eye-open"></i>
+									</a>
+									<div style="display:none">
+										<div id="data_{{ image.id }}">
+											{{ image.id }}
+										</div>
+									</div>
+								</div>
+						</div>
+						</li>
+					{% endfor %}
+				</ul>
 			</div>
 			<div class="pagerfanta">
 				{{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
@@ -39,17 +67,10 @@
 				'enableEscapeButton':true,
 				'hideOnContentClick':true,
 				'titlePosition':'inside',
-				'overlayShow':true
+				'overlayShow':true,
+				'titleFromAlt':true
 			});
-			$('.gallery img').popover({
-				trigger: 'hover',
-				placement: 'left',
-				html: true,
-				container: 'body'
-			})
-			.click(function(e) {
-				e.preventDefault()
-			});
+			$('a.html-box').fancybox();
 			$('.gallery img').addClass('blind');
 			$('.gallery img').one('load',function(){
 				var img=$(this);

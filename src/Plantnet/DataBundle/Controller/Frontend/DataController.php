@@ -195,7 +195,7 @@ class DataController extends Controller
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($module);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
-                $paginator->setMaxPerPage(20);
+                $paginator->setMaxPerPage(15);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
                 return $this->render('PlantnetDataBundle:Frontend\Module:gallery.html.twig', array(
                     'project' => $project,

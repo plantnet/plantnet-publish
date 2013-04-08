@@ -46,12 +46,27 @@
         </table>
         {% if plantunit.images|length > 0 %}
             <div class="gallery">
-                {% for image in plantunit.images %}
-                    {% set imgspe = image.path|basename %}
-                    {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
-                    <a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ image.copyright }}">
-                        <img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" class="img-polaroid" /></a>
-                {% endfor %}
+                <ul class="thumbnails per3">
+                    {% for image in plantunit.images %}
+                        {% set imgspe = image.path|basename %}
+                        {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+                        <li class="span3">
+                            <div class="thumbnail">
+                                <a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
+                                    <img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid" alt="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}</strong><br />{{ image.copyright }}" />
+                                </a>
+                                <h5>
+                                    {{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}
+                                </h5>
+                                {% if image.copyright is not empty %}
+                                    <p>
+                                        {{ image.copyright }}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
         {% endif %}
         {% if plantunit.locations|length > 0 %}
@@ -77,7 +92,8 @@
                 'enableEscapeButton':true,
                 'hideOnContentClick':true,
                 'titlePosition':'inside',
-                'overlayShow':true
+                'overlayShow':true,
+                'titleFromAlt':true
             });
             $('.gallery img').addClass('blind');
             $('.gallery img').one('load',function(){
