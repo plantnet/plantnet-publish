@@ -7,6 +7,11 @@
     {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
+    <div class="description">
+        {% autoescape false %}
+            {{ module.description }}
+        {% endautoescape %}
+    </div>
     <div class="results">
         {% if paginator|length > 0 %}
             <div class="pagerfanta">
