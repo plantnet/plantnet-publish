@@ -105,17 +105,17 @@ class CollectionController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $entity = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
                 'id'=>$id
             ));
-        if (!$entity) {
+        if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $editForm = $this->createForm(new CollectionType(), $entity);
+        $editForm = $this->createForm(new CollectionType(), $collection);
         $deleteForm = $this->createDeleteForm($id);
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_edit.html.twig',array(
-            'entity' => $entity,
+            'entity' => $collection,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
@@ -133,26 +133,26 @@ class CollectionController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $entity = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
                 'id'=>$id
             ));
-        if (!$entity) {
+        if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $editForm = $this->createForm(new CollectionType(), $entity);
+        $editForm = $this->createForm(new CollectionType(), $collection);
         $deleteForm = $this->createDeleteForm($id);
         $request = $this->getRequest();
         if ('POST' === $request->getMethod()) {
             $editForm->bindRequest($request);
             if ($editForm->isValid()) {
-                $dm->persist($entity);
+                $dm->persist($collection);
                 $dm->flush();
                 return $this->redirect($this->generateUrl('collection_edit', array('id' => $id)));
             }
         }
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_edit.html.twig',array(
-            'entity' => $entity,
+            'entity' => $collection,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));

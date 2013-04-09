@@ -433,15 +433,15 @@ class ModulesController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $entity = $dm->getRepository('PlantnetDataBundle:Module')
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
             ->find($id);
-        if (!$entity) {
+        if (!$module) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $editForm = $this->get('form.factory')->create(new ModulesType(), $entity);
+        $editForm = $this->get('form.factory')->create(new ModulesType(), $module);
         $deleteForm = $this->createDeleteForm($id);
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit.html.twig',array(
-            'entity' => $entity,
+            'entity' => $module,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
@@ -459,12 +459,12 @@ class ModulesController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $entity = $dm->getRepository('PlantnetDataBundle:Module')
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
             ->find($id);
-        if (!$entity) {
+        if (!$module) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $editForm = $this->createForm(new ModulesType(), $entity);
+        $editForm = $this->createForm(new ModulesType(), $module);
         $deleteForm = $this->createDeleteForm($id);
         $request = $this->getRequest();
         if ('POST' === $request->getMethod()) {
@@ -472,13 +472,13 @@ class ModulesController extends Controller
             if ($editForm->isValid()) {
                 $dm = $this->get('doctrine.odm.mongodb.document_manager');
                 $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-                $dm->persist($entity);
+                $dm->persist($module);
                 $dm->flush();
                 return $this->redirect($this->generateUrl('module_edit', array('id' => $id)));
             }
         }
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit.html.twig',array(
-            'entity' => $entity,
+            'entity' => $module,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
