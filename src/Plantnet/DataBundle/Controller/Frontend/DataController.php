@@ -156,13 +156,14 @@ class DataController extends Controller
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
+        $display = array();
+        $field = $module->getProperties();
         $module_parent=null;
         if($module->getParent()){
             $module_parent = $dm->getRepository('PlantnetDataBundle:Module')
                 ->find($module->getParent()->getId());
+            $field = $module_parent->getProperties();
         }
-        $display = array();
-        $field = $module->getProperties();
         foreach($field as $row){
             if($row->getMain() == true){
                 $display[] = $row->getName();
@@ -201,6 +202,7 @@ class DataController extends Controller
                     'project' => $project,
                     'current' => 'collection',
                     'paginator' => $paginator,
+                    'display' => $display,
                     'collection' => $collection,
                     'module_parent' => $module_parent,
                     'module' => $module,

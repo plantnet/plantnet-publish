@@ -18,7 +18,11 @@
 						{% set imgspe = image.path|basename %}
 						{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
 						<li class="span3">
-							<div class="thumbnail">
+							{% set content = '' %}
+							{% for field in display %}
+								{% set content = content ~ '<strong>' ~ field ~ '</strong> : ' ~ image.plantunit.attributes[field] ~ '<br />' %}
+							{% endfor %}
+							<div class="thumbnail" data-title="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}" data-content="{{ content }}</strong>">
 								<a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
 									<img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid" alt="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}</strong><br />{{ image.copyright }}" />
 								</a>
@@ -139,6 +143,11 @@
 				{
 					$(this).load();
 				}
+			});
+			$('div.thumbnail').popover({
+				html:true,
+				placement:'left',
+				trigger:'hover'
 			});
 		});
 	</script>
