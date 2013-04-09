@@ -85,7 +85,7 @@
 								{% set imgspe = image.path|basename %}
 								{% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
 								<div class="{% if loop.index0 == 0 %}active {% endif %}item">
-									<img src="{{ asset(img) }}" alt="{{ image.copyright }}" />
+									<img src="{{ asset(img) | imagine_filter('thumb_280_158') }}" alt="{{ image.copyright }}" />
 									{% if image.copyright is not empty %}
 										<div class="carousel-caption">
 											<p>{{ image.copyright }}</p>

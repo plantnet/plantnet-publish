@@ -56,32 +56,42 @@
                 {{ module.description }}
             {% endautoescape %}
         </div>
-        <div class="images">
-            {% if imgs|length > 0 %}
-                <div id="carousel_{{ module.id }}" class="carousel slide">
-                    <ol class="carousel-indicators">
-                        {% for image in imgs %}
-                            <li data-target="#carousel_{{ module.id }}" data-slide-to="{{ loop.index0 }}"{% if loop.index0 == 0 %} class="active"{% endif %}></li>
-                        {% endfor %}
-                    </ol>
-                    <div class="carousel-inner">
-                        {% for image in imgs %}
-                            {% set imgspe = image.path|basename %}
-                            {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
-                            <div class="{% if loop.index0 == 0 %}active {% endif %}item">
-                                <img src="{{ asset(img) }}" alt="{{ image.copyright }}" />
-                                {% if image.copyright is not empty %}
-                                    <div class="carousel-caption">
-                                        <p>{{ image.copyright }}</p>
-                                    </div>
-                                {% endif %}
+        <div>
+            <div class="row">
+                <div class="span{{ item_size/2 }} middle">
+                    <div class="images {% if item_size/2 == 3 %}mini{% elseif item_size/2 == 6 %}maxi{% endif %}">
+                        {% if imgs|length > 0 %}
+                            <div id="carousel_{{ module.id }}" class="carousel slide">
+                                <ol class="carousel-indicators">
+                                    {% for image in imgs %}
+                                        <li data-target="#carousel_{{ module.id }}" data-slide-to="{{ loop.index0 }}"{% if loop.index0 == 0 %} class="active"{% endif %}></li>
+                                    {% endfor %}
+                                </ol>
+                                <div class="carousel-inner">
+                                    {% for image in imgs %}
+                                        {% set imgspe = image.path|basename %}
+                                        {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+                                        <div class="{% if loop.index0 == 0 %}active {% endif %}item">
+                                            {% if item_size/2 == 3 %}
+                                                <img src="{{ asset(img) | imagine_filter('thumb_220_124') }}" alt="{{ image.copyright }}" />
+                                            {% elseif item_size/2 == 6 %}
+                                                <img src="{{ asset(img) | imagine_filter('thumb_460_259') }}" alt="{{ image.copyright }}" />
+                                            {% endif %}
+                                            {% if image.copyright is not empty %}
+                                                <div class="carousel-caption">
+                                                    <p>{{ image.copyright }}</p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             </div>
-                        {% endfor %}
+                        {% else %}
+                            <div class="img_empty"></div>
+                        {% endif %}
                     </div>
                 </div>
-            {% else %}
-                <div class="img_empty"></div>
-            {% endif %}
+            </div>
         </div>
     </div>
 </div>

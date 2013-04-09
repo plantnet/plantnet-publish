@@ -29,7 +29,7 @@
             {% endif %}
             {% for module in collection.modules %}
                 <div class="span{{ item_size }}">
-                     {% include "PlantnetDataBundle:Frontend\\Module:module_presentation.html.twig" with { collection: collection } %}
+                     {% include "PlantnetDataBundle:Frontend\\Module:module_presentation.html.twig" with { collection: collection, item_size: item_size } %}
                 </div>
             {% endfor %}
         </div>
