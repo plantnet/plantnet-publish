@@ -173,8 +173,7 @@ class DataController extends Controller
         {
             case 'text':
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                    ->field('module')->references($module)
-                    ->hydrate(false);
+                    ->field('module')->references($module);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(50);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
