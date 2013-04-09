@@ -14,8 +14,8 @@ class PropertiesType extends AbstractType
 			->add('type', 'choice',array(
 				'choices' => array(
 					'idmodule' => 'Id',
-					'title1' => 'Taxon',
-					'title2' => 'Family'
+					'title1' => 'Title 1',
+					'title2' => 'Title 2'
 				),
 				'multiple' => false,
 				'required' => false
