@@ -21,25 +21,23 @@
 		<br />
 		<ul>
 			{% for module in collection.modules %}
-				{% if module.type == 'text' %}
-					<li>
-						{{ module.name }} - [ Module ~ {{ module.nbrows }} rows ]
-						{% if module.children|length > 0 %}
-							<ul>
-								{% for child in module.children %}
-									<li>
-										{{ child.name }} - [ Sub-module : {{ child.type }} ~ {{ child.nbrows }} rows  ]
-									</li>
-								{% endfor %}
-							</ul>
-						{% endif %}
+				<li>
+					{{ module.name }} - [ Module ~ {{ module.nbrows }} rows ]
+					{% if module.children|length > 0 %}
 						<ul>
-							{% if module.parent is not null %}
-								<li>Under {{ module.parent.name }}</li>
-							{% endif %}
+							{% for child in module.children %}
+								<li>
+									{{ child.name }} - [ Sub-module : {{ child.type }} ~ {{ child.nbrows }} rows  ]
+								</li>
+							{% endfor %}
 						</ul>
-					</li>
-				{% endif %}
+					{% endif %}
+					<ul>
+						{% if module.parent is not null %}
+							<li>Under {{ module.parent.name }}</li>
+						{% endif %}
+					</ul>
+				</li>
 			{% endfor %}
 		</ul>
 	</div>
