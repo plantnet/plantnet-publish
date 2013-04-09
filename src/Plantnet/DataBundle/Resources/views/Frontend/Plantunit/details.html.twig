@@ -3,6 +3,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.css') }}" type="text/css" />
     {% if plantunit.locations|length > 0 %}
         {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
     {% endif %}
@@ -63,6 +64,39 @@
                                         {{ image.copyright }}
                                     </p>
                                 {% endif %}
+                                <div class="access">
+                                    <a class="html-box" href="#data_{{ image.id }}">
+                                        <i class="icon-eye-open"></i>
+                                    </a>
+                                    <div style="display:none">
+                                        <div id="data_{{ image.id }}" data-src="{{ asset(img) }}">
+                                            <div id="v_data_{{ image.id }}" class="viewer"></div>
+                                            <div class="control-panel">
+                                                <div class="btn-group">
+                                                    <a id="v_data_{{ image.id }}_in" href="#" class="btn">
+                                                        <i class="icon-plus-sign"></i>
+                                                    </a>
+                                                    <a id="v_data_{{ image.id }}_out" href="#" class="btn">
+                                                        <i class="icon-minus-sign"></i>
+                                                    </a>
+                                                    <a id="v_data_{{ image.id }}_orig" href="#" class="btn">
+                                                        <i class="icon-refresh"></i>
+                                                    </a>
+                                                    <a id="v_data_{{ image.id }}_fit" href="#" class="btn">
+                                                        <i class="icon-fullscreen"></i>
+                                                    </a>
+                                                    <a id="v_data_{{ image.id }}_right" href="#" class="btn">
+                                                        <i class="icon-retweet"></i>
+                                                    </a>
+                                                </div>
+                                                <div class="input-append">
+                                                    <input type="text" id="v_data_{{ image.id }}_percent" value="100" class="input-mini uneditable-input" readonly="readonly" />
+                                                    <span class="add-on"><strong>%</strong></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </li>
                     {% endfor %}
@@ -81,6 +115,8 @@
     {{ parent() }}
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-ui-1.9.2.custom.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.min.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             /* Apply fancybox to multiple items */
@@ -94,6 +130,43 @@
                 'titlePosition':'inside',
                 'overlayShow':true,
                 'titleFromAlt':true
+            });
+            $('a.html-box').fancybox({
+                onComplete:function(){
+                    var id=$(this).attr('href');
+                    var img_src=$(id).attr('data-src');
+                    id=id.replace('#','v_');
+                    var iv=$('#'+id).iviewer({
+                        src:img_src,
+                        ui_disabled:true,
+                        zoom:'fit',
+                        zoom_min:25,
+                        zoom_max:1000,
+                        onAfterZoom:function(ev,new_zoom){
+                            $('#'+id+'_percent').val(Math.round(new_zoom));
+                        }
+                    });
+                    $('#'+id+'_in').click(function(event){
+                        event.preventDefault();
+                        iv.iviewer('zoom_by',1);
+                    });
+                    $('#'+id+'_out').click(function(event){
+                        event.preventDefault();
+                        iv.iviewer('zoom_by',-1);
+                    });
+                    $('#'+id+'_orig').click(function(event){
+                        event.preventDefault();
+                        iv.iviewer('set_zoom',100);
+                    });
+                    $('#'+id+'_fit').click(function(event){
+                        event.preventDefault();
+                        iv.iviewer('fit');
+                    });
+                    $('#'+id+'_right').click(function(event){
+                        event.preventDefault();
+                        iv.iviewer('angle',90,false);
+                    });
+                }
             });
             $('.gallery img').addClass('blind');
             $('.gallery img').one('load',function(){
