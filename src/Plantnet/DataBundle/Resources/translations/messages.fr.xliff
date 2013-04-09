@@ -79,7 +79,7 @@
       </trans-unit>
       <trans-unit id="17" resname="line-search-in">
         <source>line-search-in</source>
-        <target state="new">hercher dans</target>
+        <target state="new">chercher dans</target>
       </trans-unit>
       <trans-unit id="18" resname="line-images">
         <source>line-images</source>
