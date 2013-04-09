@@ -328,8 +328,6 @@ label {
     margin-left: 30px;
 }
 #main-nav .module{
-    margin-top: 12px;
-
 }
 #main-nav .module li{
     margin-left: 13px;
@@ -343,6 +341,10 @@ label {
 
 #main-nav .row-module{
     margin-bottom: 0px;
+}
+
+#main-nav .sup{
+    margin-top:12px;
 }
 
 #main-nav .module .text{
@@ -428,4 +430,10 @@ section#breadcrumbs {
     padding-top: 7px;
     text-shadow: 1px 1px #DEDEDE;
     width: 100%;
+}
+
+.flash-error{
+    color:red;
+    font-weight:bold !important;
+    margin-bottom:10px;
 }

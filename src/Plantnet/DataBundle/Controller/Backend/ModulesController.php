@@ -22,6 +22,8 @@ use Plantnet\DataBundle\Form\ImportFormType,
     Plantnet\DataBundle\Form\Type\ModulesType,
     Plantnet\DataBundle\Form\ModuleFormType;
 
+use Symfony\Component\Form\FormError;
+
 /**
  * Module controller.
  *
@@ -239,14 +241,56 @@ class ModulesController extends Controller
         $form = $this->createForm(new ImportFormType(), $module);
         $request = $this->getRequest();
         if ('POST' === $request->getMethod()) {
-            $form->bindRequest($request);
-            if ($form->isValid()) {
-                $dm = $this->get('doctrine.odm.mongodb.document_manager');
-                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-                $dm->persist($module);
-                $dm->flush();
-                return $this->redirect($this->generateUrl('import_data', array('id' => $id, 'idmodule' => $idmodule)));
+            /* à modifier / optimiser / nettoyer / améliorer / ... */
+            $required=array(
+                'text'=>array(
+                    'idmodule'=>0,
+                    'title1'=>0,
+                    'title2'=>0,
+                ),
+                'image'=>array(
+                    'idparent'=>0,
+                    'file'=>0,
+                    'copyright'=>0,
+                ),
+                'locality'=>array(
+                    'idparent'=>0,
+                    'lon'=>0,
+                    'lat'=>0,
+                ),
+            );
+            $data=$request->request->all();
+            $data=$data['modules']['properties'];
+            foreach($data as $prop)
+            {
+                foreach($prop as $key=>$val)
+                {
+                    if($key=='type'&&!empty($val))
+                    {
+                        $required[$module->getType()][$val]=$required[$module->getType()][$val]+1;
+                    }
+                }
             }
+            $error=false;
+            foreach($required[$module->getType()] as $key=>$val)
+            {
+                if($val!=1)
+                {
+                    $error=true;
+                }
+            }
+            $form->bindRequest($request);
+            if(!$error)
+            {
+                if ($form->isValid()) {
+                    $dm = $this->get('doctrine.odm.mongodb.document_manager');
+                    $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                    $dm->persist($module);
+                    $dm->flush();
+                    return $this->redirect($this->generateUrl('import_data', array('id' => $id, 'idmodule' => $idmodule)));
+                }
+            }
+            $this->get('session')->getFlashBag()->add('error', 'Choose 1 '.implode(', 1 ', array_keys($required[$module->getType()])));
         }
         $count='';
         return $this->render('PlantnetDataBundle:Backend\Modules:fields_type.html.twig',array(

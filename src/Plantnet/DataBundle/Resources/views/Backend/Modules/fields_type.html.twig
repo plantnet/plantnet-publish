@@ -12,6 +12,11 @@
             {{ form_errors(form.name) }}
             {{ form_widget(form.name) }}
         </div >
+        {% if app.session.hasFlash('error') %}
+            <div id="flashmessage" class="flash-error">
+                {{ app.session.flash('error') }}
+            </div>
+        {% endif %}
         <table id="table-form">
             <thead>
                 <tr>

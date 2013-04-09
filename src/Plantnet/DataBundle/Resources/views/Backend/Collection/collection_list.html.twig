@@ -12,7 +12,7 @@
                 <div class="arrow"></div>
                 <ul class="module toggle">
                     {% for module in collection.modules %}
-                        <li class='row-module'>
+                        <li class='row-module sup'>
                             <a class="{{ module.type }}" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}">{{ module.name }} <b>({{ module.nbrows }})</b></a>
                             {% if is_granted('ROLE_USER') %}
                                 <a class="edit" href="{{ path('module_edit', { 'id': module.id }) }}"></a>
