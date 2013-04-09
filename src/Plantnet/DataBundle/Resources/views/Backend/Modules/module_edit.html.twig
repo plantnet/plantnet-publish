@@ -24,14 +24,14 @@
             <thead>
                 <tr>
                     <td>Field</td>
-                    <td>Type</td>
+                    <td style="display:none;">Type</td>
                     {% if entity.type == 'text' %}
                         <td colspan="3">Display</td>
                     {% endif %}
                 </tr>
                 <tr>
                     <td></td>
-                    <td></td>
+                    <td style="display:none;"></td>
                     {% if entity.type == 'text' %}
                         <td>Main-</td>
                         <td>Details-</td>
@@ -46,7 +46,7 @@
                             {{ form_errors(property.name) }}
                             {{ form_widget(property.name) }}
                         </td>
-                        <td>
+                        <td style="display:none;">
                             {{ form_errors(property.type) }}
                             {{ form_widget(property.type) }}
                         </td>
