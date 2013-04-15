@@ -67,6 +67,25 @@ class DataController extends Controller
      */
     public function projectAction($project)
     {
+        // $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        // $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+
+        // $plantunitFinder=$this->container->get('fos_elastica.index.bota.plantunit');
+        // $resultSet=$plantunitFinder->search('Artabotrys');
+        // echo count($resultSet);
+
+
+        // $plantunitFinder=$this->container->get('fos_elastica.finder.bota.plantunit');
+        // $boolQuery=new \Elastica_Query_Bool();
+        // $fieldQuery=new \Elastica_Query_Text();
+        // $fieldQuery->setFieldQuery('Climbing Mode', 'Not described');
+        // $boolQuery->addMust($fieldQuery);
+        // $data=$plantunitFinder->find($boolQuery,1000);
+        // echo count($data);
+
+
+
+
         $projects=$this->database_list();
         if(!in_array($project,$projects))
         {
