@@ -340,7 +340,9 @@ class DataController extends Controller
         $field_num=0;
         foreach($fields as $field)
         {
-            $form->add('field_'.$field_num++,'text',array('required'=>false,'label'=>$field));
+            $form->add('field_'.$field_num,'text',array('required'=>false,'label'=>$field));
+            $form->add('name_field_'.$field_num,'hidden',array('required'=>true,'data'=>$field));
+            $field_num++;
         }
         $form=$form->getForm();
         return $form;
@@ -445,8 +447,8 @@ class DataController extends Controller
             $data=$form->getData();
             $dm = $this->get('doctrine.odm.mongodb.document_manager');
             $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-            $plantunits=array();
-            $ids=array();
+            $ids_punit=array();
+            // Locations
             if(isset($data['x_lng_1_bottom_left'])&&!empty($data['x_lng_1_bottom_left']))
             {
                 $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
@@ -460,17 +462,45 @@ class DataController extends Controller
                     ->execute();
                 foreach($locations as $location)
                 {
-                    $ids[]=$location['plantunit']['$id']->{'$id'};
+                    $ids_punit[]=$location['plantunit']['$id']->{'$id'};
                 }
                 unset($locations);
             }
-            $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->field('_id')->in($ids)
-                ->field('module.id')->equals($module->getId());
-            $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
-            $paginator->setMaxPerPage(50);
-            $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-            $nbResults=$paginator->getNbResults();
+            // Fields
+            $fields=array();
+            foreach($data as $key=>$val)
+            {
+                if(substr_count($key,'name_field_'))
+                {
+                    if(isset($data[str_replace('name_','',$key)])&&!empty($data[str_replace('name_','',$key)]))
+                    {
+                        $fields[$val]=$data[str_replace('name_','',$key)];
+                    }
+                }
+            }
+            // Search
+            $paginator=null;
+            $nbResults=0;
+            if(count($ids_punit)||count($fields))
+            {
+                $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                    ->field('module.id')->equals($module->getId());
+                if(count($ids_punit))
+                {
+                    $plantunits->field('_id')->in($ids_punit);
+                }
+                if(count($fields))
+                {
+                    foreach($fields as $key=>$value)
+                    {
+                        $plantunits->field('attributes.'.$key)->equals(new \MongoRegex('/.*'.$value.'.*/i'));
+                    }
+                }
+                $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
+                $paginator->setMaxPerPage(50);
+                $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+                $nbResults=$paginator->getNbResults();
+            }
             return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig', array(
                 'project' => $project,
                 'collection' => $collection,
