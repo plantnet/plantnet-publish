@@ -12,45 +12,47 @@
         </small>
     </div>
     <div class="content">
-        <div class="details">
-            <table>
-                {% for child in module.children if child.type == 'image' %}
-                    {% if child.nbrows > 0 and imgs|length < nb_img %}
-                        {% for image in child.images if imgs|length < nb_img %}
-                            {% set imgs = imgs|merge([image]) %}
-                        {% endfor %}
-                    {% endif %}
-                    <tr>
-                        <td>
-                            <i class="icon-camera"></i>
-                            <h5>
-                                {{ child.name|capitalize }}
-                            </h5>
-                        </td>
-                        <td>
-                            <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-images"|trans }}">
-                                {{ child.nbrows }}
-                            </span>
-                        </td>
-                    </tr>
-                {% endfor %}
-                {% for child in module.children if child.type == 'locality' %}
-                    <tr>
-                        <td>
-                            <i class="icon-map-marker"></i>
-                            <h5>
-                                {{ child.name|capitalize }}
-                            </h5>
-                        </td>
-                        <td>
-                            <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-locations"|trans }}">
-                                {{ child.nbrows }}
-                            </span>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
+        {% if module.children|length > 0 %}
+            <div class="details">
+                <table>
+                    {% for child in module.children if child.type == 'image' %}
+                        {% if child.nbrows > 0 and imgs|length < nb_img %}
+                            {% for image in child.images if imgs|length < nb_img %}
+                                {% set imgs = imgs|merge([image]) %}
+                            {% endfor %}
+                        {% endif %}
+                        <tr>
+                            <td>
+                                <i class="icon-camera"></i>
+                                <h5>
+                                    {{ child.name|capitalize }}
+                                </h5>
+                            </td>
+                            <td>
+                                <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-images"|trans }}">
+                                    {{ child.nbrows }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% for child in module.children if child.type == 'locality' %}
+                        <tr>
+                            <td>
+                                <i class="icon-map-marker"></i>
+                                <h5>
+                                    {{ child.name|capitalize }}
+                                </h5>
+                            </td>
+                            <td>
+                                <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-locations"|trans }}">
+                                    {{ child.nbrows }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endif %}
         <div>
             {% autoescape false %}
                 {{ module.description }}
