@@ -245,3 +245,24 @@ liip_imagine:
         thumb_460_259:
             filters:
                 thumbnail: { size: [460, 259], mode: outbound }
+
+fos_elastica:
+    clients:
+        default: { host: localhost, port: 9200 }
+    indexes:
+        bota:
+            client: default
+            types:
+                plantunit:
+                    mappings:
+                        identifier: { boost: 5 }
+                        title1: { boost: 5 }
+                        attributes: { boost: 5 }
+                    persistence:
+                        driver: mongodb
+                        model: Plantnet\DataBundle\Document\Plantunit
+                        provider: ~
+                        listener:
+                            insert: true
+                            update: true
+                            delete: true

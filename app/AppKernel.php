@@ -42,6 +42,8 @@ class AppKernel extends Kernel
             new Plantnet\FileManagerBundle\PlantnetFileManagerBundle(),
 
             new Liip\ImagineBundle\LiipImagineBundle(),
+            
+            new FOS\ElasticaBundle\FOSElasticaBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

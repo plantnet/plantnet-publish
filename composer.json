@@ -37,7 +37,9 @@
 
         "raulfraile/ladybug-bundle": "dev-master",
 
-        "liip/imagine-bundle": "dev-master"
+        "liip/imagine-bundle": "dev-master",
+
+        "friendsofsymfony/elastica-bundle": "2.0.*@dev"
 
     },
     "scripts": {
