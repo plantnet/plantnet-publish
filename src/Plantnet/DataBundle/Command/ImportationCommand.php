@@ -199,6 +199,7 @@ class ImportationCommand extends ContainerAwareCommand
                     }
                 }
                 $module->setNbrows($rowCount);
+                $module->setUpdating(false);
                 $dm->persist($module);
                 $dm->flush();
                 $dm->clear();

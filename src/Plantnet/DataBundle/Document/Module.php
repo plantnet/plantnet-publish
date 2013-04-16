@@ -75,6 +75,11 @@ class Module
     private $children;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $updating;
+
+    /**
      * @MongoDB\ReferenceMany(targetDocument="Plantunit", mappedBy="module", cascade={"remove"})
      */
     private $plantunits = array();
@@ -332,6 +337,26 @@ class Module
     public function getChildren()
     {
         return $this->children;
+    }
+
+    /**
+     * Set updating
+     *
+     * @param boolean $updating
+     */
+    public function setUpdating($updating)
+    {
+        $this->updating = $updating;
+    }
+
+    /**
+     * Get updating
+     *
+     * @return boolean $updating
+     */
+    public function getUpdating()
+    {
+        return $this->updating;
     }
 
     /**

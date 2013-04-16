@@ -73,14 +73,29 @@
             <button type="submit">Update</button>
         </p>
     </form>
-    <ul class="record_actions">
-        <li>
-            <form action="{{ path('module_delete', { 'id': entity.id }) }}" method="post">
-                {{ form_widget(delete_form) }}
-                <button type="submit">Delete</button>
-            </form>
-        </li>
-    </ul>
+    {% set updating = false %}
+    {% if entity.updating == true %}
+        {% set updating = true %}
+    {% endif %}
+    {% for child in entity.children %}
+        {% if child.updating == true %}
+            {% set updating = true %}
+        {% endif %}
+    {% endfor %}
+    {% if updating == false %}
+        <ul class="record_actions">
+            <li>
+                <form action="{{ path('module_delete', { 'id': entity.id }) }}" method="post">
+                    {{ form_widget(delete_form) }}
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        </ul>
+    {% else %}
+        <p>
+            Des traitements sont en cours, suppression impossible pour le moment ...
+        </p>
+    {% endif %}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

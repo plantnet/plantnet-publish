@@ -441,6 +441,9 @@ class ModulesController extends Controller
             }
             else
             {
+                $module->setUpdating(true);
+                $dm->persist($module);
+                $dm->flush();
                 $kernel=$this->get('kernel');
                 $command='php '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' > /dev/null';
                 $process=new \Symfony\Component\Process\Process($command);
