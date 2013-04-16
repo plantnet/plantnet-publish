@@ -80,6 +80,11 @@ class Module
     private $updating;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $deleting;
+
+    /**
      * @MongoDB\ReferenceMany(targetDocument="Plantunit", mappedBy="module", cascade={"remove"})
      */
     private $plantunits = array();
@@ -357,6 +362,26 @@ class Module
     public function getUpdating()
     {
         return $this->updating;
+    }
+
+    /**
+     * Set deleting
+     *
+     * @param boolean $deleting
+     */
+    public function setDeleting($deleting)
+    {
+        $this->deleting = $deleting;
+    }
+
+    /**
+     * Get deleting
+     *
+     * @return boolean $deleting
+     */
+    public function getDeleting()
+    {
+        return $this->deleting;
     }
 
     /**

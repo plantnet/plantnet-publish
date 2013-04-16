@@ -172,49 +172,53 @@ class CollectionController extends Controller
             $form->bindRequest($request);
             if ($form->isValid()) {
                 $user=$this->container->get('security.context')->getToken()->getUser();
-                $dm=$this->get('doctrine.odm.mongodb.document_manager');
-                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-                $collection = $dm->getRepository('PlantnetDataBundle:Collection')
-                    ->findOneBy(array(
-                        'id'=>$id
-                    ));
-                if(!$collection){
-                    throw $this->createNotFoundException('Unable to find Collection entity.');
-                }
-                /*
-                * Remove Modules
-                */
-                $modules=$collection->getModules();
-                if(count($modules))
-                {
-                    foreach($modules as $module)
-                    {
-                        $this->forward('PlantnetDataBundle:Backend\Modules:module_delete',array(
-                            'id'=>$module->getId()
-                        ));
-                    }
-                }
-                /*
-                * Remove csv directory (and files)
-                */
-                $dir=__DIR__.'/../../Resources/uploads/'.$collection->getAlias();
-                if(file_exists($dir)&&is_dir($dir))
-                {
-                    $files=scandir($dir);
-                    foreach($files as $file)
-                    {
-                        if($file!='.'&&$file!='..')
-                        {
-                            unlink($dir.'/'.$file);
-                        }
-                    }
-                    rmdir($dir);
-                }
-                $db=$this->getDataBase($user);
-                $m=new \Mongo();
-                $m->$db->Collection->remove(
-                    array('_id'=>new \MongoId($collection->getId()))
-                );
+                // $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                // $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                // $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+                //     ->findOneBy(array(
+                //         'id'=>$id
+                //     ));
+                // if(!$collection){
+                //     throw $this->createNotFoundException('Unable to find Collection entity.');
+                // }
+                // /*
+                // * Remove Modules
+                // */
+                // $modules=$collection->getModules();
+                // if(count($modules))
+                // {
+                //     foreach($modules as $module)
+                //     {
+                //         $this->forward('PlantnetDataBundle:Backend\Modules:module_delete',array(
+                //             'id'=>$module->getId()
+                //         ));
+                //     }
+                // }
+                // /*
+                // * Remove csv directory (and files)
+                // */
+                // $dir=__DIR__.'/../../Resources/uploads/'.$collection->getAlias();
+                // if(file_exists($dir)&&is_dir($dir))
+                // {
+                //     $files=scandir($dir);
+                //     foreach($files as $file)
+                //     {
+                //         if($file!='.'&&$file!='..')
+                //         {
+                //             unlink($dir.'/'.$file);
+                //         }
+                //     }
+                //     rmdir($dir);
+                // }
+                // $db=$this->getDataBase($user);
+                // $m=new \Mongo();
+                // $m->$db->Collection->remove(
+                //     array('_id'=>new \MongoId($collection->getId()))
+                // );
+                $kernel=$this->get('kernel');
+                $command='php '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' > /dev/null';
+                $process=new \Symfony\Component\Process\Process($command);
+                $process->start();
             }
         }
         return $this->redirect($this->generateUrl('admin_index'));

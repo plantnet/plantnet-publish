@@ -40,6 +40,11 @@ class Collection
     private $modules = array();
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $deleting;
+
+    /**
      * To String
      *
      * @return string
@@ -165,5 +170,25 @@ class Collection
     public function removeModule(\Plantnet\DataBundle\Document\Module $modules)
     {
         $this->modules->removeElement($modules);
+    }
+
+    /**
+     * Set deleting
+     *
+     * @param boolean $deleting
+     */
+    public function setDeleting($deleting)
+    {
+        $this->deleting = $deleting;
+    }
+
+    /**
+     * Get deleting
+     *
+     * @return boolean $deleting
+     */
+    public function getDeleting()
+    {
+        return $this->deleting;
     }
 }

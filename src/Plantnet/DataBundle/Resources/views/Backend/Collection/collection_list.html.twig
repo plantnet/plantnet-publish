@@ -2,7 +2,7 @@
     <a id="menu-collection" href="#">Collections</a>
     <div class="arrow"></div>
     <ul class="collections toggle">
-        {% for collection in collections %}
+        {% for collection in collections if (collection.deleting is not defined or collection.deleting != true) %}
             <li>
                 <a  class="collection" href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">{{ collection.name }}</a>
                 {% if is_granted('ROLE_USER') %}
@@ -11,7 +11,7 @@
                 <a  class="view" href="{{ path('admin_collection_view', { 'collection': collection.name }) }}"></a>
                 <div class="arrow"></div>
                 <ul class="module toggle">
-                    {% for module in collection.modules %}
+                    {% for module in collection.modules if (module.deleting is not defined or module.deleting != true) %}
                         <li class='row-module sup'>
                             <a class="{{ module.type }}" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}">{{ module.name }} <b>({{ module.nbrows }})</b></a>
                             {% if is_granted('ROLE_USER') %}

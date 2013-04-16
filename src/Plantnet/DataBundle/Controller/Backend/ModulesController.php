@@ -545,80 +545,84 @@ class ModulesController extends Controller
             $form->bindRequest($request);
             if ($form->isValid()) {
                 $user=$this->container->get('security.context')->getToken()->getUser();
-                $dm=$this->get('doctrine.odm.mongodb.document_manager');
-                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-                $module = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
-                if(!$module){
-                    throw $this->createNotFoundException('Unable to find Module entity.');
-                }
-                $collection=$module->getCollection();
-                if(!$collection){
-                    throw $this->createNotFoundException('Unable to find Collection entity.');
-                }
-                /*
-                * Remove children
-                */
-                $children=$module->getChildren();
-                if(count($children))
-                {
-                    foreach($children as $child)
-                    {
-                        $this->forward('PlantnetDataBundle:Backend\Modules:module_delete',array(
-                            'id'=>$child->getId()
-                        ));
-                    }
-                }
-                $db=$this->getDataBase($user);
-                $m=new \Mongo();
-                /*
-                * Remove images
-                */
-                $m->$db->Image->remove(
-                    array('module.$id'=>new \MongoId($module->getId()))
-                );
-                /*
-                * Remove locations
-                */
-                $m->$db->Location->remove(
-                    array('module.$id'=>new \MongoId($module->getId()))
-                );
-                /*
-                * Remove plantunits
-                */
-                $m->$db->Plantunit->remove(
-                    array('module.$id'=>new \MongoId($module->getId()))
-                );
-                /*
-                * Remove csv file
-                */
-                $csvfile=__DIR__.'/../../Resources/uploads/'.$collection->getAlias().'/'.$module->getName_fname().'.csv';
-                if(file_exists($csvfile))
-                {
-                    unlink($csvfile);
-                }
-                /*
-                * Remove upload directory
-                */
-                $dir=$module->getUploaddir();
-                if($dir)
-                {
-                    $dir=$this->get('kernel')->getRootDir().'/../web/uploads/'.$dir;
-                    if(file_exists($dir)&&is_dir($dir))
-                    {
-                        $files=scandir($dir);
-                        foreach($files as $file)
-                        {
-                            if($file!='.'&&$file!='..')
-                            {
-                                unlink($dir.'/'.$file);
-                            }
-                        }
-                        rmdir($dir);
-                    }
-                }
-                $m->$db->Module->remove(
-                    array('_id'=>new \MongoId($module->getId()))
-                );
+                // $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                // $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                // $module = $dm->getRepository('PlantnetDataBundle:Module')->find($id);
+                // if(!$module){
+                //     throw $this->createNotFoundException('Unable to find Module entity.');
+                // }
+                // $collection=$module->getCollection();
+                // if(!$collection){
+                //     throw $this->createNotFoundException('Unable to find Collection entity.');
+                // }
+                // /*
+                // * Remove children
+                // */
+                // $children=$module->getChildren();
+                // if(count($children))
+                // {
+                //     foreach($children as $child)
+                //     {
+                //         $this->forward('PlantnetDataBundle:Backend\Modules:module_delete',array(
+                //             'id'=>$child->getId()
+                //         ));
+                //     }
+                // }
+                // $db=$this->getDataBase($user);
+                // $m=new \Mongo();
+                // /*
+                // * Remove images
+                // */
+                // $m->$db->Image->remove(
+                //     array('module.$id'=>new \MongoId($module->getId()))
+                // );
+                // /*
+                // * Remove locations
+                // */
+                // $m->$db->Location->remove(
+                //     array('module.$id'=>new \MongoId($module->getId()))
+                // );
+                // /*
+                // * Remove plantunits
+                // */
+                // $m->$db->Plantunit->remove(
+                //     array('module.$id'=>new \MongoId($module->getId()))
+                // );
+                // /*
+                // * Remove csv file
+                // */
+                // $csvfile=__DIR__.'/../../Resources/uploads/'.$collection->getAlias().'/'.$module->getName_fname().'.csv';
+                // if(file_exists($csvfile))
+                // {
+                //     unlink($csvfile);
+                // }
+                // /*
+                // * Remove upload directory
+                // */
+                // $dir=$module->getUploaddir();
+                // if($dir)
+                // {
+                //     $dir=$this->get('kernel')->getRootDir().'/../web/uploads/'.$dir;
+                //     if(file_exists($dir)&&is_dir($dir))
+                //     {
+                //         $files=scandir($dir);
+                //         foreach($files as $file)
+                //         {
+                //             if($file!='.'&&$file!='..')
+                //             {
+                //                 unlink($dir.'/'.$file);
+                //             }
+                //         }
+                //         rmdir($dir);
+                //     }
+                // }
+                // $m->$db->Module->remove(
+                //     array('_id'=>new \MongoId($module->getId()))
+                // );
+                $kernel=$this->get('kernel');
+                $command='php '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' > /dev/null';
+                $process=new \Symfony\Component\Process\Process($command);
+                $process->start();
             }
         }
         return $this->redirect($this->generateUrl('admin_index'));
