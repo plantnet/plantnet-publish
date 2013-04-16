@@ -37,9 +37,7 @@
 
         "raulfraile/ladybug-bundle": "dev-master",
 
-        "liip/imagine-bundle": "dev-master",
-
-        "friendsofsymfony/elastica-bundle": "2.0.*@dev"
+        "liip/imagine-bundle": "dev-master"
 
     },
     "scripts": {
@@ -59,7 +57,7 @@
     "config": {
         "bin-dir": "bin"
     },
-    "minimum-stability": "alpha",
+    "minimum-stability": "dev",
     "extra": {
         "symfony-app-dir": "app",
         "symfony-web-dir": "web",

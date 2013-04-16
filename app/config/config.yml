@@ -246,28 +246,28 @@ liip_imagine:
             filters:
                 thumbnail: { size: [460, 259], mode: outbound }
 
-fos_elastica:
-    default_manager: mongodb
-    clients:
-        default: { host: localhost, port: 9200 }
-    indexes:
-        bota:
-            client: default
-            types:
-                plantunit:
-                    mappings:
-                        id: ~
-                        identifier: ~
-                        title1: { boost: 2 }
-                        title2: { boost: 2 }
-                        attributes: { boost: 5 }
-                    persistence:
-                        driver: mongodb
-                        model: Plantnet\DataBundle\Document\Plantunit
-                        identifier: id
-                        provider: ~
-                        finder: ~
-                        listener:
-                            insert: false
-                            update: false
-                            delete: false
+#fos_elastica:
+    #default_manager: mongodb
+    #clients:
+        #default: { host: localhost, port: 9200 }
+    #indexes:
+        #bota:
+            #client: default
+            #types:
+                #plantunit:
+                    #mappings:
+                        #id: ~
+                        #identifier: ~
+                        #title1: { boost: 2 }
+                        #title2: { boost: 2 }
+                        #attributes: { boost: 5 }
+                    #persistence:
+                        #driver: mongodb
+                        #model: Plantnet\DataBundle\Document\Plantunit
+                        #identifier: id
+                        #provider: ~
+                        #finder: ~
+                        #listener:
+                            #insert: false
+                            #update: true
+                            #delete: true

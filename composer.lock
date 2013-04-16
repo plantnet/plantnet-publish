@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "16952ff5069a724aad52b4599011847d",
+    "hash": "7678da6fb092c86eb49fedbdde6b8388",
     "packages": [
         {
             "name": "dflydev/markdown",
@@ -668,12 +668,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/mongodb-odm.git",
-                "reference": "09dda904a6ae72015139877bbb22230eaa3e20e2"
+                "reference": "49c171ce226ccbdd0cbbd7328b792441b37b79a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/09dda904a6ae72015139877bbb22230eaa3e20e2",
-                "reference": "09dda904a6ae72015139877bbb22230eaa3e20e2",
+                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/49c171ce226ccbdd0cbbd7328b792441b37b79a8",
+                "reference": "49c171ce226ccbdd0cbbd7328b792441b37b79a8",
                 "shasum": ""
             },
             "require": {
@@ -710,7 +710,7 @@
                     "homepage": "http://avalanche123.com"
                 },
                 {
-                    "name": "Jonathan Wage",
+                    "name": "Jonathan H. Wage",
                     "email": "jonwage@gmail.com",
                     "homepage": "http://www.jwage.com/"
                 },
@@ -733,7 +733,7 @@
                 "odm",
                 "persistence"
             ],
-            "time": "2013-04-11 04:15:02"
+            "time": "2013-04-15 21:04:42"
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
@@ -931,81 +931,6 @@
                 "wsse"
             ],
             "time": "2013-03-25 09:53:05"
-        },
-        {
-            "name": "friendsofsymfony/elastica-bundle",
-            "version": "2.0.x-dev",
-            "target-dir": "FOS/ElasticaBundle",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/FriendsOfSymfony/FOSElasticaBundle.git",
-                "reference": "v2.0.1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSElasticaBundle/zipball/v2.0.1",
-                "reference": "v2.0.1",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.2",
-                "ruflin/elastica": "0.19.8",
-                "symfony/console": ">=2.1.0,<2.3.0-dev",
-                "symfony/form": ">=2.1.0,<2.3.0-dev",
-                "symfony/framework-bundle": ">=2.1.0,<2.3.0-dev"
-            },
-            "require-dev": {
-                "doctrine/mongodb-odm": "1.0.*@dev",
-                "doctrine/orm": ">=2.2,<2.5-dev",
-                "knplabs/knp-components": "1.2.*",
-                "pagerfanta/pagerfanta": "1.0.*@dev",
-                "propel/propel1": "1.6.*"
-            },
-            "suggest": {
-                "doctrine/mongodb-odm": "1.0.*@dev",
-                "doctrine/orm": ">=2.2,<2.5-dev",
-                "knplabs/knp-components": "1.2.*",
-                "pagerfanta/pagerfanta": "1.0.*@dev",
-                "propel/propel1": "1.6.*",
-                "symfony/property-access": "2.2.*"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-0": {
-                    "FOS\\ElasticaBundle": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Thibault Duplessis",
-                    "email": "thibault.duplessis@gmail.com",
-                    "homepage": "http://ornicar.github.com"
-                },
-                {
-                    "name": "Jeremy Mikola",
-                    "email": "jmikola@gmail.com",
-                    "homepage": "http://jmikola.net"
-                },
-                {
-                    "name": "Richard Miller",
-                    "email": "richard.miller@limethinking.co.uk"
-                }
-            ],
-            "description": "Elasticsearch PHP integration for your Symfony2 project using Elastica",
-            "homepage": "https://github.com/FriendsOfSymfony/FOSElasticaBundle",
-            "keywords": [
-                "doctrine2",
-                "elastica",
-                "elasticsearch",
-                "mongodb",
-                "propel",
-                "search"
-            ],
-            "time": "2013-04-04 15:46:06"
         },
         {
             "name": "friendsofsymfony/jsrouting-bundle",
@@ -2624,47 +2549,6 @@
             "time": "2013-01-22 07:28:09"
         },
         {
-            "name": "ruflin/elastica",
-            "version": "v0.19.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ruflin/Elastica",
-                "reference": "v0.19.8.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/ruflin/Elastica/zipball/v0.19.8.0",
-                "reference": "v0.19.8.0",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Elastica": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache 2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Ruflin",
-                    "homepage": "http://ruflin.com/"
-                }
-            ],
-            "description": "Elasticsearch Client",
-            "homepage": "http://ruflin.github.com/Elastica/",
-            "keywords": [
-                "client",
-                "search"
-            ],
-            "time": "2012-08-12 09:51:36"
-        },
-        {
             "name": "sensio/distribution-bundle",
             "version": "dev-master",
             "target-dir": "Sensio/Bundle/DistributionBundle",
@@ -3394,8 +3278,7 @@
         "escapestudios/wsse-authentication-bundle": 20,
         "jms/i18n-routing-bundle": 20,
         "raulfraile/ladybug-bundle": 20,
-        "liip/imagine-bundle": 20,
-        "friendsofsymfony/elastica-bundle": 20
+        "liip/imagine-bundle": 20
     },
     "platform": {
         "php": ">=5.3.3"
