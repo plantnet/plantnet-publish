@@ -89,6 +89,10 @@
         <source>line-locations</source>
         <target state="new">localisations</target>
       </trans-unit>
+      <trans-unit id="20" resname="line-or">
+        <source>line-or</source>
+        <target state="new">ou</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

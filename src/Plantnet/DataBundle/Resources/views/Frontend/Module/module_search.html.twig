@@ -56,12 +56,21 @@
         $(document).ready(function(){
             $('#form .str').each(function(){
                 var item_class=$(this).attr('class').replace('str ','');
-                $(this).parent('div').append('<a href="#'+item_class+'" class="btn btn-mini add-btn"><i class="icon-plus"></i></a>');
+                $(this).parent('div').first().children('label').first().append('<a href="#'+item_class+'" class="btn btn-mini add-btn"><i class="icon-plus"></i></a>');
             });
             $('.add-btn').click(function(event){
                 event.preventDefault();
                 var item_class=$(this).attr('href').replace('#','');
-                $('<input type="text" class="'+item_class+'" />').insertBefore($(this));
+                $(this).parent('label').first().parent('div').first().append(''
+                    +'<div class="input-prepend input-append">'
+                    +'<span class="add-on">{{ "line-or"|trans }}</span>'
+                    +'<input type="text" class="'+item_class+' span2" />'
+                    +'<button class="btn rm-btn" type="button"><i class="icon-minus"></i></button>'
+                    +'</div>');
+            });
+            $(document).on('click','.rm-btn',function(event){
+                event.preventDefault();
+                $(this).parent('div').first().remove();
             });
             $('#search_form').submit(function(event){
                 $('#form .str').each(function(){
