@@ -21,6 +21,7 @@
                 <thead>
                     <tr>
                         <th></th>
+                        <th></th>
                         {% for row in display %}
                             <th>{{ row|capitalize }}</th>
                         {% endfor %}
@@ -29,20 +30,22 @@
                 <tbody>
                     {% for plantunit in paginator %}
                         <tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}'">
+                            {% set img = false %}
+                            {% set loc = false %}
+                            {% for child in plantunit.module.children if img == false or loc == false %}
+                                {% if child.type == 'image' and child.nbrows > 0 %}
+                                    {% set img = true %}
+                                {% endif %}
+                                {% if child.type == 'locality' and child.nbrows > 0 %}
+                                    {% set loc = true %}
+                                {% endif %}
+                            {% endfor %}
                             <td>
-                                {% set img = false %}
-                                {% set loc = false %}
-                                {% for child in plantunit.module.children if img == false or loc == false %}
-                                    {% if child.type == 'image' and child.nbrows > 0 %}
-                                        {% set img = true %}
-                                    {% endif %}
-                                    {% if child.type == 'locality' and child.nbrows > 0 %}
-                                        {% set loc = true %}
-                                    {% endif %}
-                                {% endfor %}
                                 {% if img %}
                                     <i class="icon-camera"></i>
                                 {% endif %}
+                            </td>
+                            <td>
                                 {% if loc %}
                                     <i class="icon-map-marker"></i>
                                 {% endif %}
