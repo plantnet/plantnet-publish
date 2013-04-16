@@ -31,7 +31,7 @@
     <div class="row">
         <div class="span3">
             <div>
-            	<form action="{{ path('_module_result', {'project': project, 'collection': collection, 'module': module}) }}" method="get" {{ form_enctype(form) }}>
+            	<form action="{{ path('_module_result', {'project': project, 'collection': collection, 'module': module}) }}" method="get" {{ form_enctype(form) }} id="search_form">
                     {{ form_widget(form.y_lat_1_bottom_left, {'id':'y_lat_1_bottom_left','attr':{'class':'coords'}}) }}
                     {{ form_widget(form.x_lng_1_bottom_left, {'id':'x_lng_1_bottom_left','attr':{'class':'coords'}}) }}
                     {{ form_widget(form.y_lat_2_top_right, {'id':'y_lat_2_top_right','attr':{'class':'coords'}}) }}
@@ -52,4 +52,30 @@
 {% block javascripts %}
 	{{ parent() }}
     {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#form .str').each(function(){
+                var item_class=$(this).attr('class').replace('str ','');
+                $(this).parent('div').append('<a href="#'+item_class+'" class="btn btn-mini add-btn"><i class="icon-plus"></i></a>');
+            });
+            $('.add-btn').click(function(event){
+                event.preventDefault();
+                var item_class=$(this).attr('href').replace('#','');
+                $('<input type="text" class="'+item_class+'" />').insertBefore($(this));
+            });
+            $('#search_form').submit(function(event){
+                $('#form .str').each(function(){
+                    var item_class=$(this).attr('class').replace('str ','');
+                    var string='';
+                    $('.'+item_class).each(function(){
+                        if(string!=''&&$(this).val()!=''){
+                            string+='~|~';
+                        }
+                        string+=$(this).val();
+                    });
+                    $('.string_'+item_class).val(string);
+                });
+            });
+        });
+    </script>
 {% endblock %}

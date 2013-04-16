@@ -340,8 +340,24 @@ class DataController extends Controller
         $field_num=0;
         foreach($fields as $field)
         {
-            $form->add('field_'.$field_num,'text',array('required'=>false,'label'=>$field));
-            $form->add('name_field_'.$field_num,'hidden',array('required'=>true,'data'=>$field));
+            $form->add('field_'.$field_num,'text',array(
+                'required'=>false,
+                'label'=>$field,
+                'attr'=>array(
+                    'class'=>'str str_'.$field_num
+                )
+            ));
+            $form->add('name_field_'.$field_num,'hidden',array(
+                'required'=>true,
+                'data'=>$field
+            ));
+            $form->add('field_'.$field_num.'_string','hidden',array(
+                'required'=>false,
+                'label'=>false,
+                'attr'=>array(
+                    'class'=>'string_str_'.$field_num
+                )
+            ));
             $field_num++;
         }
         $form=$form->getForm();
@@ -472,7 +488,11 @@ class DataController extends Controller
             {
                 if(substr_count($key,'name_field_'))
                 {
-                    if(isset($data[str_replace('name_','',$key)])&&!empty($data[str_replace('name_','',$key)]))
+                    if(isset($data[str_replace('name_','',$key).'_string'])&&!empty($data[str_replace('name_','',$key).'_string']))
+                    {
+                        $fields[$val]=explode('~|~',$data[str_replace('name_','',$key).'_string']);
+                    }
+                    elseif(isset($data[str_replace('name_','',$key)])&&!empty($data[str_replace('name_','',$key)]))
                     {
                         $fields[$val]=$data[str_replace('name_','',$key)];
                     }
@@ -493,7 +513,24 @@ class DataController extends Controller
                 {
                     foreach($fields as $key=>$value)
                     {
-                        $plantunits->field('attributes.'.$key)->equals(new \MongoRegex('/.*'.$value.'.*/i'));
+                        if(is_array($value))
+                        {
+                            for($i=0;$i<count($value);$i++)
+                            {
+                                $value[$i]=new \MongoRegex('/.*'.$value[$i].'.*/i');
+                            }
+                            $plantunits->field('attributes.'.$key)->in(
+                                $value
+                            );
+                        }
+                        else
+                        {
+                            $plantunits->field('attributes.'.$key)->in(
+                                array(
+                                    new \MongoRegex('/.*'.$value.'.*/i')
+                                )
+                            );
+                        }
                     }
                 }
                 $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
