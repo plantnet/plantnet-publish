@@ -68,8 +68,6 @@ class DeleteCommand extends ContainerAwareCommand
         }
         $module->setDeleting(true);
         $dm->persist($module);
-        $collection->setDeleting(true);
-        $dm->persist($collection);
         $dm->flush();
         $children=$module->getChildren();
         if(count($children))
