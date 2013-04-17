@@ -100,6 +100,11 @@ class Module
     private $locations = array();
 
     /**
+     * @MongoDB\ReferenceMany(targetDocument="Other", mappedBy="module", cascade={"remove"})
+     */
+    private $others = array();
+
+    /**
      * @MongoDB\Int
      */
     private $nbrows;
@@ -119,6 +124,7 @@ class Module
         $this->properties = new \Doctrine\Common\Collections\ArrayCollection();
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->plantunits = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->others = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -442,6 +448,26 @@ class Module
     public function getLocations()
     {
         return $this->locations;
+    }
+
+    /**
+     * Add others
+     *
+     * @param Plantnet\DataBundle\Document\Other $others
+     */
+    public function addOthers(\Plantnet\DataBundle\Document\Other $others)
+    {
+        $this->others[] = $others;
+    }
+
+    /**
+     * Get others
+     *
+     * @return Doctrine\Common\Collections\Collection $others
+     */
+    public function getOthers()
+    {
+        return $this->others;
     }
 
     /**

@@ -359,6 +359,9 @@ label {
     background: url("../images/world.png") no-repeat scroll 13px 1px transparent;
     padding-left: 35px;
 }
+#main-nav .module .other{
+    padding-left: 35px;
+}
 #main-nav .module b{
     font-size:80%;
     color:#99B551;

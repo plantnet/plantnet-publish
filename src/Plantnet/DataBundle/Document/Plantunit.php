@@ -56,12 +56,17 @@ class Plantunit
      */
     private $locations = array();
 
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Other", mappedBy="plantunit", cascade={"remove"})
+     */
+    private $others = array();
+
     public function __construct()
     {
         $this->files = new \Doctrine\Common\Collections\ArrayCollection();
-        //$this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->images = new \Doctrine\Common\Collections\ArrayCollection();
         $this->locations = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->others = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -265,6 +270,26 @@ class Plantunit
     }
 
     /**
+     * Add others
+     *
+     * @param Plantnet\DataBundle\Document\Other $others
+     */
+    public function addOthers(\Plantnet\DataBundle\Document\Other $others)
+    {
+        $this->others[] = $others;
+    }
+
+    /**
+     * Get others
+     *
+     * @return Doctrine\Common\Collections\Collection $others
+     */
+    public function getOthers()
+    {
+        return $this->others;
+    }
+
+    /**
      * Add files
      *
      * @param Plantnet\DataBundle\Document\File $files
@@ -322,5 +347,25 @@ class Plantunit
     public function removeLocation(\Plantnet\DataBundle\Document\Location $locations)
     {
         $this->locations->removeElement($locations);
+    }
+
+    /**
+     * Add others
+     *
+     * @param Plantnet\DataBundle\Document\Other $others
+     */
+    public function addOther(\Plantnet\DataBundle\Document\Other $others)
+    {
+        $this->others[] = $others;
+    }
+
+    /**
+    * Remove others
+    *
+    * @param <variableType$others
+    */
+    public function removeOther(\Plantnet\DataBundle\Document\Other $others)
+    {
+        $this->others->removeElement($others);
     }
 }

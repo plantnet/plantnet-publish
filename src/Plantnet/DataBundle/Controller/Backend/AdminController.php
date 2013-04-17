@@ -214,6 +214,19 @@ class AdminController extends Controller
                     'layers' => $layers
                 ));
                 break;
+            case 'other':
+                $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Other')
+                    ->field('module')->references($mod)
+                    ->hydrate(false);
+                $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+                $paginator->setMaxPerPage(50);
+                $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+                return $this->render('PlantnetDataBundle:Backend\Admin:other.html.twig', array(
+                    'paginator' => $paginator,
+                    'collection' => $collection,
+                    'module' => $mod
+                ));
+                break;
         }
     }
 
