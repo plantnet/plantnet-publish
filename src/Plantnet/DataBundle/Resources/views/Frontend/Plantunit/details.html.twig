@@ -45,6 +45,34 @@
                 {% endif %}
             {% endfor %}
         </table>
+        {% if tab_others_groups|length > 0 %}
+            <div class="accordion other" id="accordion">
+                {% for group in tab_others_groups %}
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ group.0.id }}">
+                                {{ group.0.name }}
+                            </a>
+                        </div>
+                        <div id="collapse{{ group.0.id }}" class="accordion-body collapse">
+                            <div class="accordion-inner">
+                                {% for other in group.1 %}
+                                    <table>
+                                        {% for prop in other.property %}
+                                            <tr>
+                                                <td>
+                                                    ok
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         {% if plantunit.images|length > 0 %}
             <div class="gallery">
                 <ul class="thumbnails per3">
