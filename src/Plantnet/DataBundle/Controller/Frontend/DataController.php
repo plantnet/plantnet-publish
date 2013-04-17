@@ -309,7 +309,6 @@ class DataController extends Controller
         if(!$plantunit){
             throw $this->createNotFoundException('Unable to find Plantunit entity.');
         }
-
         $others=$plantunit->getOthers();
         $tab_others_groups=array();
         if(count($others))
@@ -326,8 +325,6 @@ class DataController extends Controller
                 $tab_others_groups[$other->getModule()->getId()][1][]=$other;
             }
         }
-
-
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
         return $this->render('PlantnetDataBundle:Frontend\Plantunit:details.html.twig', array(
