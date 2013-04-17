@@ -33,7 +33,6 @@
                 <span class="badge">{{ nbResults }}</span> {{ "line-row"|trans }}{% if nbResults >= 2 %}s{% endif %}
             {% endif %}
         </li>
-        <div id="page-loading"></div>
     </ul>
 {% endblock %}
 {% block side %}
@@ -93,12 +92,4 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript">
-        $(document).ready(function(){
-            $('a.back').click(function(event){
-                event.preventDefault();
-                history.back(1);
-            });
-        });
-    </script>
 {% endblock %}

@@ -61,11 +61,12 @@
             $('.add-btn').click(function(event){
                 event.preventDefault();
                 var item_class=$(this).attr('href').replace('#','');
-                $(this).parent('label').first().parent('div').first().append(''
+                $(this).parent('label').first().parent('div').first().append('<div>'
                     +'<div class="input-prepend input-append">'
                     +'<span class="add-on">{{ "line-or"|trans }}</span>'
                     +'<input type="text" class="'+item_class+' span2" />'
                     +'<button class="btn rm-btn" type="button"><i class="icon-minus"></i></button>'
+                    +'</div>'
                     +'</div>');
             });
             $(document).on('click','.rm-btn',function(event){

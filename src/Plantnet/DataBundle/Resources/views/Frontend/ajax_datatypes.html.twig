@@ -3,8 +3,9 @@
     <script type="text/javascript">
         $('.pagerfanta').on('click','a', function(event){
             event.preventDefault();
-            if($(this).attr('href').length){
-                var $url = $(this).attr('href');
+            if($(this).attr('href').length&&$(this).attr('href')!='#'&&!$(this).parent('li').first().hasClass('active')){
+                var $url=$(this).attr('href');
+                $('.pagerfanta ul').append('<li class="disabled"><a href="#">&nbsp;<div id="page-loading"></div>&nbsp;</a></li>');
                 ajaxLoader();
                 $('#data-load').load($url,function(){
                     $('#page-loading').empty();
