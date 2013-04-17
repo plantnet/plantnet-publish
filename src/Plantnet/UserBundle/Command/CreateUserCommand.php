@@ -81,6 +81,7 @@ class CreateUserCommand extends BaseCommand
 	        $db->createCollection('Collection');
 	        $db->createCollection('Image');
 	        $db->createCollection('Location');
+	        $db->createCollection('Other');
 	        $db->createCollection('Module');
 	        $db->createCollection('Plantunit');
 	        $db->createCollection('Page');

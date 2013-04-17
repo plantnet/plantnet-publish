@@ -22,7 +22,8 @@ class ModuleFormType extends AbstractType
                 ->add('type', 'choice',array(
                     'choices' => array(
                         'image' => 'Image',
-                        'locality' => 'Localisation'
+                        'locality' => 'Localisation',
+                        'other' => 'Other'
                     ),
                     'multiple' => false
                 ))

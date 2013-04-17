@@ -38,6 +38,14 @@ class ImportFormType extends AbstractType
                 ))
             ;
         }
+        else
+        {
+            $builder
+                ->add('properties', 'collection', array(
+                    'type' => new Type\PropertiesOtherType(),
+                ))
+            ;
+        }
     }
 
     public function getName()

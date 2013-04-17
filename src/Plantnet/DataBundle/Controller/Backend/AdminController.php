@@ -20,6 +20,7 @@ use Plantnet\DataBundle\Document\Page,
 use Plantnet\DataBundle\Document\Plantunit;
 use Plantnet\DataBundle\Document\Image;
 use Plantnet\DataBundle\Document\Location;
+use Plantnet\DataBundle\Document\Other;
 
 /**
  * Admin controller.

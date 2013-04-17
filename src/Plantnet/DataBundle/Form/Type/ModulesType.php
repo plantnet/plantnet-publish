@@ -40,6 +40,14 @@ class ModulesType extends AbstractType
                 ))
             ;
         }
+        else
+        {
+            $builder
+                ->add('properties', 'collection', array(
+                    'type' => new PropertiesOtherType(),
+                ))
+            ;
+        }
     }
 
     public function getDefaultOptions(array $options)

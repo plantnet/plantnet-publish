@@ -16,7 +16,8 @@ use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Property,
     Plantnet\DataBundle\Document\Image,
     Plantnet\DataBundle\Document\Location,
-    Plantnet\DataBundle\Document\Coordinates;
+    Plantnet\DataBundle\Document\Coordinates,
+    Plantnet\DataBundle\Document\Other;
 
 use Plantnet\DataBundle\Form\ImportFormType,
     Plantnet\DataBundle\Form\Type\ModulesType,
@@ -258,6 +259,9 @@ class ModulesController extends Controller
                     'lon'=>0,
                     'lat'=>0,
                 ),
+                'other'=>array(
+                    'idparent'=>0,
+                ),
             );
             $data=$request->request->all();
             $data=$data['modules']['properties'];
@@ -452,7 +456,6 @@ class ModulesController extends Controller
                     'importCount' => 'En cours d\'importation, un email vous sera envoyé à la fin du traitement.'
                 ));
             }
-
         }else{
             return $this->import_dataAction($id, $idmodule);
         }

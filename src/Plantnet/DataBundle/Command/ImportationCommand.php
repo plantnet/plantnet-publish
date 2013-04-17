@@ -16,7 +16,8 @@ use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Property,
     Plantnet\DataBundle\Document\Image,
     Plantnet\DataBundle\Document\Location,
-    Plantnet\DataBundle\Document\Coordinates;
+    Plantnet\DataBundle\Document\Coordinates,
+    Plantnet\DataBundle\Document\Other;
 
 ini_set('memory_limit', '-1');
 
@@ -190,6 +191,53 @@ class ImportationCommand extends ContainerAwareCommand
                             $dm->persist($plantunit);
                             $location->setPlantunit($plantunit);
                             $dm->persist($location);
+                        }
+                    }
+                    elseif ($module->getType() == 'other'){
+                        $other = new Other();
+                        $attributes = array();
+                        for($c=0; $c < $num; $c++)
+                        {
+                            $value = $this->data_encode($data[$c]);
+                            $attributes[$fields[$c]->getName()] = $value;
+                            switch($fields[$c]->getType()){
+                                case 'idparent':
+                                    $other->setIdparent($value);
+                                    break;
+                                case 'idmodule':
+                                    $other->setIdentifier($value);
+                                    break;
+                            }
+                        }
+                        $other->setProperty($attributes);
+                        $other->setModule($module);
+                        $parent=null;
+                        if($module->getParent())
+                        {
+                            $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                                ->field('module.id')->equals($module->getParent()->getId())
+                                ->field('identifier')->equals($other->getIdparent())
+                                ->getQuery()
+                                ->execute();
+                            foreach($parent_q as $p)
+                            {
+                                $parent=$p;
+                            }
+                        }
+                        if($parent)
+                        {
+                            $other->setPlantunit($parent);
+                            $dm->persist($other);
+                        }
+                        else
+                        {
+                            $plantunit=new Plantunit();
+                            $plantunit->setModule($module);
+                            $plantunit->setAttributes($attributes);
+                            $plantunit->setIdentifier($other->getIdentifier());
+                            $dm->persist($plantunit);
+                            $other->setPlantunit($plantunit);
+                            $dm->persist($other);
                         }
                     }
                     if (($rowCount % $batchSize) == 0) {

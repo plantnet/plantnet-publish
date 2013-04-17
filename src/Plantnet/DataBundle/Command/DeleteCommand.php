@@ -16,7 +16,8 @@ use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Property,
     Plantnet\DataBundle\Document\Image,
     Plantnet\DataBundle\Document\Location,
-    Plantnet\DataBundle\Document\Coordinates;
+    Plantnet\DataBundle\Document\Coordinates,
+    Plantnet\DataBundle\Document\Other;
 
 ini_set('memory_limit', '-1');
 
