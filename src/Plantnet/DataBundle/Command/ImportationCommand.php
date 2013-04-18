@@ -88,7 +88,7 @@ class ImportationCommand extends ContainerAwareCommand
                         for($c=0; $c < $num; $c++)
                         {
                             $value = $this->data_encode($data[$c]);
-                            $attributes[$fields[$c]->getName()] = $value;
+                            $attributes[$fields[$c]->getId()] = $value;
                             switch($fields[$c]->getType()){
                                 case 'file':
                                     $image->setPath($value);
@@ -141,7 +141,7 @@ class ImportationCommand extends ContainerAwareCommand
                         for($c=0; $c < $num; $c++)
                         {
                             $value = $this->data_encode($data[$c]);
-                            $attributes[$fields[$c]->getName()] = $value;
+                            $attributes[$fields[$c]->getId()] = $value;
                             switch($fields[$c]->getType()){
                                 case 'lon':
                                     $location->setLongitude(str_replace(',','.',$value));
@@ -199,7 +199,7 @@ class ImportationCommand extends ContainerAwareCommand
                         for($c=0; $c < $num; $c++)
                         {
                             $value = $this->data_encode($data[$c]);
-                            $attributes[$fields[$c]->getName()] = $value;
+                            $attributes[$fields[$c]->getId()] = $value;
                             switch($fields[$c]->getType()){
                                 case 'idparent':
                                     $other->setIdparent($value);

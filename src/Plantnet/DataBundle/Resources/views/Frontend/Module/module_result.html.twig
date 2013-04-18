@@ -49,8 +49,8 @@
                     <tr>
                         <th></th>
                         <th></th>
-                        {% for row in display %}
-                            <th>{{ row|capitalize }}</th>
+                        {% for property in module.properties if property.id in display %}
+                            <th>{{ property.name|capitalize }}</th>
                         {% endfor %}
                     </tr>
                 </thead>

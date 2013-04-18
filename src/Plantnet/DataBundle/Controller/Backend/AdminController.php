@@ -117,7 +117,7 @@ class AdminController extends Controller
         $field = $module->getProperties();
         foreach($field as $row){
             if($row->getMain() == true){
-                $display[] = $row->getName();
+                $display[] = $row->getId();
             }
         }
         switch ($mod->getType())
@@ -131,7 +131,6 @@ class AdminController extends Controller
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
                 return $this->render('PlantnetDataBundle:Backend\Admin:datagrid.html.twig', array(
                     'paginator' => $paginator,
-                    'field' => $field,
                     'collection' => $collection,
                     'module' => $module,
                     'display' => $display

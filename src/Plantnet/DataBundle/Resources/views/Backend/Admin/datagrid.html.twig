@@ -17,24 +17,24 @@
             <table align='center' cellpadding="3" class="tablesorter searchresults" id="simplesearch">
                 <thead>
                     <tr class="rowtop">
-                        {% for row in display %}
-                            <th class="vtop">{{ row }}</th>
+                        {% for property in module.properties if property.id in display %}
+                            <th>{{ property.name|capitalize }}</th>
                         {% endfor %}
                         <th>Images</th>
                         <th>Locations</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for row in paginator %}
+                    {% for plantunit in paginator %}
                         <tr class="">
                             {% for field in display %}
-                                <td>{{ row.attributes[field] }}</td>
+                                <td>{{ plantunit.attributes[field] }}</td>
                             {% endfor %}
                             <td>
-                                {{ row.images|length }}
+                                {{ plantunit.images|length }}
                             </td>
                              <td>
-                                {{ row.locations|length }}
+                                {{ plantunit.locations|length }}
                             </td>
                         </tr>
                     {% endfor %}

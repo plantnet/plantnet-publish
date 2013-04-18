@@ -166,7 +166,7 @@ class DataController extends Controller
         }
         foreach($field as $row){
             if($row->getMain() == true){
-                $display[] = $row->getName();
+                $display[] = $row->getId();
             }
         }
         switch ($module->getType())
@@ -181,7 +181,6 @@ class DataController extends Controller
                     'project' => $project,
                     'current' => 'collection',
                     'paginator' => $paginator,
-                    'field' => $field,
                     'collection' => $collection,
                     'module' => $module,
                     'type' => 'table',
@@ -301,7 +300,7 @@ class DataController extends Controller
         $field = $module->getProperties();
         foreach($field as $row){
             if($row->getDetails() == true){
-                $display[] = $row->getName();
+                $display[] = $row->getId();
             }
         }
         $plantunit = $dm->getRepository('PlantnetDataBundle:Plantunit')
@@ -415,7 +414,7 @@ class DataController extends Controller
         $field = $module->getProperties();
         foreach($field as $row){
             if($row->getSearch() == true){
-                $fields[] = $row->getName();
+                $fields[] = $row->getId();
             }
         }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
@@ -467,10 +466,10 @@ class DataController extends Controller
         $field = $module->getProperties();
         foreach($field as $row){
             if($row->getSearch() == true){
-                $fields[] = $row->getName();
+                $fields[] = $row->getId();
             }
             if($row->getMain() == true){
-                $display[] = $row->getName();
+                $display[] = $row->getId();
             }
         }
         $form=$this->createModuleSearchForm($fields);
@@ -561,7 +560,6 @@ class DataController extends Controller
                 'module' => $module,
                 'current' => 'collection',
                 'paginator' => $paginator,
-                'field' => $field,
                 'display' => $display,
                 'nbResults' => $nbResults
             ));
