@@ -339,8 +339,15 @@ class DataController extends Controller
         ));
     }
 
-    private function createModuleSearchForm($fields)
+    private function createModuleSearchForm($fields,$module)
     {
+        $properties=$module->getProperties();
+        $tab_prop=array();
+        foreach($properties as $prop)
+        {
+            $tab_prop[$prop->getId()]=$prop;
+        }
+        unset($properties);
         $defaults=null;
         $constraints=array(
             'y_lat_1_bottom_left'=>new TypeConstraint('float'),
@@ -356,9 +363,10 @@ class DataController extends Controller
         $field_num=0;
         foreach($fields as $field)
         {
+            $prop=$tab_prop[$field];
             $form->add('field_'.$field_num,'text',array(
                 'required'=>false,
-                'label'=>$field,
+                'label'=>$prop->getName(),
                 'attr'=>array(
                     'class'=>'str str_'.$field_num
                 )
@@ -419,7 +427,7 @@ class DataController extends Controller
         }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers_search.xml',0,true);
-        $form=$this->createModuleSearchForm($fields);
+        $form=$this->createModuleSearchForm($fields,$module);
         return $this->render('PlantnetDataBundle:Frontend\Module:module_search.html.twig', array(
             'project' => $project,
             'collection' => $collection,
@@ -472,7 +480,7 @@ class DataController extends Controller
                 $display[] = $row->getId();
             }
         }
-        $form=$this->createModuleSearchForm($fields);
+        $form=$this->createModuleSearchForm($fields,$module);
         if($request->isMethod('GET'))
         {
             $form->bind($request);

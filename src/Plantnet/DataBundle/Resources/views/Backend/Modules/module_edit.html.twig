@@ -27,7 +27,7 @@
                     <td style="display:none;">Type</td>
                     {% if entity.type == 'text' %}
                         <td colspan="3">Display</td>
-                    {% elseif entity.type == 'other' %}
+                    {% elseif entity.type == 'other' or entity.type == 'image' %}
                         <td colspan="1">Display</td>
                     {% endif %}
                 </tr>
@@ -38,7 +38,7 @@
                         <td>Main-</td>
                         <td>Details-</td>
                         <td>Search</td>
-                    {% elseif entity.type == 'other' %}
+                    {% elseif entity.type == 'other' or entity.type == 'image' %}
                         <td>-</td>
                     {% endif %}
                 <tr>
@@ -67,7 +67,7 @@
                                 {{ form_errors(property.search) }}
                                 {{ form_widget(property.search) }}
                             </td>
-                        {% elseif entity.type == 'other' %}
+                        {% elseif entity.type == 'other' or entity.type == 'image' %}
                             <td>
                                 {{ form_errors(property.details) }}
                                 {{ form_widget(property.details) }}
