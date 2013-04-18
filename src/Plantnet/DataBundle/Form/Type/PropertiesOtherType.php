@@ -18,6 +18,9 @@ class PropertiesOtherType extends AbstractType
 				'multiple' => false,
 				'required' => false
 			))
+			->add('details', 'checkbox', array(
+				'required' => false
+			))
 		;
 	}
 

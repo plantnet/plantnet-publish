@@ -24,6 +24,8 @@
                     <td>Type</td>
                     {% if module.type == 'text' %}
                         <td colspan="3">Display</td>
+                    {% elseif module.type == 'other' %}
+                        <td colspan="1">Display</td>
                     {% endif %}
                 </tr>
                 <tr>
@@ -33,6 +35,8 @@
                         <td>Main-</td>
                         <td>Details-</td>
                         <td>Search</td>
+                    {% elseif module.type == 'other' %}
+                        <td>-</td>
                     {% endif %}
                 <tr>
             </thead>
@@ -59,6 +63,11 @@
                             <td>
                                 {{ form_errors(property.search) }}
                                 {{ form_widget(property.search) }}
+                            </td>
+                        {% elseif module.type == 'other' %}
+                            <td>
+                                {{ form_errors(property.details) }}
+                                {{ form_widget(property.details) }}
                             </td>
                         {% endif %}
                     </tr>

@@ -57,19 +57,27 @@
                         <div id="collapse{{ group.0.id }}" class="accordion-body collapse">
                             <div class="accordion-inner">
                                 <table class="table table-striped table-hover">
+                                    {% set not_display = [] %}
                                     <tr>
                                         {% for property in group.0.properties %}
-                                            <td>
-                                                {{ property.name }}
-                                            </td>
+                                            {% if property.details == true %}
+                                                <td>
+                                                    {{ property.name }}
+                                                </td>
+                                            {% else %}
+                                                {% set hidden = loop.index %}
+                                                {% set not_display = not_display|merge([hidden]) %}
+                                            {% endif %}
                                         {% endfor %}
                                     </tr>
                                     {% for other in group.1 %}
                                         <tr>
                                             {% for prop in other.property %}
-                                                <td>
-                                                    {{ prop }}
-                                                </td>
+                                                {% if loop.index not in not_display %}
+                                                    <td>
+                                                        {{ prop }}
+                                                    </td>
+                                                {% endif %}
                                             {% endfor %}
                                         </tr>
                                     {% endfor %}
