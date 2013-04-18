@@ -22,9 +22,14 @@
 							{% for property in module_parent.properties if property.id in display %}
 								{% set content = content ~ '<strong>' ~ property.name|capitalize ~ '</strong> : ' ~ image.plantunit.attributes[property.id] ~ '<br />' %}
 							{% endfor %}
-							<div class="thumbnail" data-title="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}" data-content="{{ content }}</strong>">
+							{% for property in module.properties if property.details == true %}
+								{% set content = content ~ '<br />' ~ property.name|capitalize %}
+								{% set content = content ~ ': ' ~ image.property[property.id] %}
+							{% endfor %}
+							<div class="thumbnail" data-title="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}</strong>" data-content="{{ content }}">
 								<a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
-									<img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid" alt="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}</strong><br />{{ image.copyright }}" />
+									{% set img_data = '<strong>' ~ image.plantunit.title1 ~ ' - ' ~ image.plantunit.title2 ~ '</strong><br />' ~ image.copyright %}
+									<img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid" alt="{{ img_data }}" />
 								</a>
 								<h5>
 									{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}
