@@ -19,7 +19,7 @@
 						{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
 						<li class="span3">
 							{% set content = '' %}
-							{% for property in module.properties if property.id in display %}
+							{% for property in module_parent.properties if property.id in display %}
 								{% set content = content ~ '<strong>' ~ property.name|capitalize ~ '</strong> : ' ~ image.plantunit.attributes[property.id] ~ '<br />' %}
 							{% endfor %}
 							<div class="thumbnail" data-title="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}" data-content="{{ content }}</strong>">
