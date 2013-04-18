@@ -35,10 +35,10 @@
 {% endblock %}
 {% block main %}
     <section id="details">
-        <table class="table table-striped table-bordered table-hover">
+        <table class="table table-striped table-bordered table-hover table-condensed">
             {% for field in display %}
                 {% if plantunit.attributes[field] %}
-                    <tr class= "">
+                    <tr>
                         <td class="field-name">{{ field|capitalize }}</td>
                         <td class="field-value">{{ plantunit.attributes[field] }}</td>
                     </tr>
@@ -56,17 +56,24 @@
                         </div>
                         <div id="collapse{{ group.0.id }}" class="accordion-body collapse">
                             <div class="accordion-inner">
-                                {% for other in group.1 %}
-                                    <table>
-                                        {% for prop in other.property %}
-                                            <tr>
-                                                <td>
-                                                    ok
-                                                </td>
-                                            </tr>
+                                <table class="table table-striped table-hover">
+                                    <tr>
+                                        {% for property in group.0.properties %}
+                                            <td>
+                                                {{ property.name }}
+                                            </td>
                                         {% endfor %}
-                                    </table>
-                                {% endfor %}
+                                    </tr>
+                                    {% for other in group.1 %}
+                                        <tr>
+                                            {% for prop in other.property %}
+                                                <td>
+                                                    {{ prop }}
+                                                </td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </table>
                             </div>
                         </div>
                     </div>

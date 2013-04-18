@@ -5,30 +5,30 @@
 			{{ module.name|capitalize }}
 			<small class="muted">{{ module.nbrows }} {{ "line-entities"|trans }}</small>
 		</a>
-		{% if module.children|length > 0 %}
-			{% for child in module.children if child.type == 'image' %}
-				<li class="child">
-					<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': child.name }) }}">
-						<i class="icon-camera"></i>
-						{{ child.name|capitalize }}
-						<small class="muted">{{ child.nbrows }} {{ "line-entities"|trans }}</small>
-					</a>
-				</li>
-			{% endfor %}
-			{% for child in module.children if child.type == 'locality' %}
-				<li class="child">
-					<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': child.name }) }}">
-						<i class="icon-map-marker"></i>
-						{{ child.name|capitalize }}
-						<small class="muted">{{ child.nbrows }} {{ "line-entities"|trans }}</small>
-					</a>
-				</li>
-			{% endfor %}
-		{% endif %}
 	</li>
+	{% if module.children|length > 0 %}
+		{% for child in module.children if child.type == 'image' %}
+			<li class="child">
+				<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': child.name }) }}">
+					<i class="icon-camera"></i>
+					{{ child.name|capitalize }}
+					<small class="muted">{{ child.nbrows }} {{ "line-entities"|trans }}</small>
+				</a>
+			</li>
+		{% endfor %}
+		{% for child in module.children if child.type == 'locality' %}
+			<li class="child">
+				<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': child.name }) }}">
+					<i class="icon-map-marker"></i>
+					{{ child.name|capitalize }}
+					<small class="muted">{{ child.nbrows }} {{ "line-entities"|trans }}</small>
+				</a>
+			</li>
+		{% endfor %}
+	{% endif %}
 	<li>
 		<a href="{{ path('_module_search', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
-			<i class="icon-search"></i>
+			<i class="icon-search zz"></i>
 			{{ "line-search-in"|trans|capitalize }} {{ module.name|capitalize }}
 		</a>
 	</li>
