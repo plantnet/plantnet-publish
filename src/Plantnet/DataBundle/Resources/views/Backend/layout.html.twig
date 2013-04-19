@@ -123,10 +123,10 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$('#nav a').click(function(e) {
-				e.preventDefault();
 				var $url = $(this).attr('href');
-				if($url!='#')
+				if($url!='#'&&!$(this).hasClass('export'))
 				{
+					e.preventDefault();
 					$(this).parent().prepend('<div class="page-loading"></div>');
 					$.get($url, function(data) {
 						$('#content').html(data);
