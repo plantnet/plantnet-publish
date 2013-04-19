@@ -37,6 +37,7 @@ class ExportController extends Controller
      */
     public function module_export_idaoAction($collection,$module)
     {
+        set_time_limit(0);
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -58,12 +59,25 @@ class ExportController extends Controller
         if($module->getType()!='text'){
             throw $this->createNotFoundException('Unable to load data.');
         }
+        $mt=str_replace('.','',microtime(true));
         $this->dir_name='./uploads/_tmp';
-        $this->dir_name.=str_replace('.','',microtime(true));
+        $this->dir_name.=$mt;
         mkdir($this->dir_name);
         mkdir($this->dir_name.'/'.$this->imgs_dir_name);
         mkdir($this->dir_name.'/'.$this->thumbs_dir_name);
         $this->load_plantunits($dm,$module);
+        if(!file_exists('./_tmp'))
+        {
+            mkdir('./_tmp');
+        }
+        $zip=$this->folder_to_zip($this->dir_name.'/','./_tmp/Publish_to_IDAO_'.$mt.'.zip');
+        if($zip)
+        {
+            header('Content-Transfer-Encoding: binary');
+            header('Content-Disposition: attachment; filename="Publish_to_IDAO.zip"');
+            header('Content-Length: '.filesize('./_tmp/Publish_to_IDAO_'.$mt.'.zip'));
+            readfile('./_tmp/Publish_to_IDAO_'.$mt.'.zip');
+        }
         if(file_exists($this->dir_name)&&is_dir($this->dir_name))
         {
             $this->remove_directory($this->dir_name);
@@ -153,14 +167,6 @@ class ExportController extends Controller
                     copy($thumb_source_dir.'/'.$img_name,$this->dir_name.'/'.$this->thumbs_dir_name.'/'.$img_name);
                 }
             }
-        }
-        $zip=$this->folder_to_zip($this->dir_name.'/','./Publish_to_IDAO.zip');
-        if($zip)
-        {
-            header('Content-Transfer-Encoding: binary');
-            header('Content-Disposition: attachment; filename="Publish_to_IDAO.zip"');
-            header('Content-Length: '.filesize('./Publish_to_IDAO.zip'));
-            readfile('./Publish_to_IDAO.zip');
         }
     }
 
