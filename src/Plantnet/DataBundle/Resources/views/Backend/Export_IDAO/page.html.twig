@@ -1,0 +1,88 @@
+{% extends "PlantnetDataBundle:Backend\\Export_IDAO:layout.html.twig" %}
+{% block title %}{{ plantunit.title1 ~ ' - ' ~ plantunit.title2 }}{% endblock %}
+{% block stylesheets %}
+	{{ parent() }}
+{% endblock %}
+{% block body %}
+	<h1>{{ plantunit.title1 }}</h1>
+	<table>
+        {% for property in module.properties if property.id in display %}
+            <tr>
+                <td>{{ property.name|capitalize }}</td>
+                <td>{{ plantunit.attributes[property.id] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% if tab_others_groups|length > 0 %}
+        <div>
+            {% for group in tab_others_groups %}
+                <div>
+                    <div>
+                        <h5>
+                            {{ group.0.name }}
+                        </h5>
+                    </div>
+                    <div>
+                        <table>
+                            {% set not_display = [] %}
+                            <tr>
+                                {% for property in group.0.properties %}
+                                    {% if property.details == true %}
+                                        <td>
+                                            {{ property.name }}
+                                        </td>
+                                    {% else %}
+                                        {% set hidden = loop.index %}
+                                        {% set not_display = not_display|merge([hidden]) %}
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            {% for other in group.1 %}
+                                <tr>
+                                    {% for prop in other.property %}
+                                        {% if loop.index not in not_display %}
+                                            <td>
+                                                {{ prop }}
+                                            </td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% if plantunit.images|length > 0 %}
+        <div>
+            <ul>
+                {% for image in plantunit.images %}
+                    {% set imgspe = image.path|basename %}
+                    {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+                    <li>
+                        {% set content = '' %}
+                        {% for property in image.module.properties if property.details == true %}
+                            {% set content = content ~ property.name|capitalize %}
+                            {% set content = content ~ ': ' ~ image.property[property.id] ~ '<br />' %}
+                        {% endfor %}
+                        <div>
+                            <a href="./{{ imgs_dir_name }}/{{ imgspe }}">
+                                <img src="./{{ thumbs_dir_name }}/{{ imgspe }}" alt="{{ imgspe }}" />
+                            </a>
+                            <p>
+	                            <strong>© {{ image.copyright }}</strong>
+	                        </p>
+	                        <p>
+                        		{% autoescape false %}{{ content }}{% endautoescape %}
+                        	</p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+{% endblock %}

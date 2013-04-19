@@ -18,6 +18,7 @@
                                 <a class="edit" href="{{ path('module_edit', { 'id': module.id }) }}"></a>
                             {% endif %}
                             <a class="view" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}"></a>
+                            <a href="{{ path('admin_module_export_idao', { 'collection': collection.name, 'module': module.name }) }}">e</a>
                             {% if module.children|length > 0 %}
                                 <ul>
                                     {% for child in module.children %}
