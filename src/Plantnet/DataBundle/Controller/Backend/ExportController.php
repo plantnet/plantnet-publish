@@ -7,6 +7,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+ini_set('memory_limit','-1');
+
 /**
  * Export controller.
  *
@@ -40,6 +42,7 @@ class ExportController extends Controller
         set_time_limit(0);
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConnection()->getConfiguration()->setLoggerCallable(null);
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
@@ -65,7 +68,13 @@ class ExportController extends Controller
         mkdir($this->dir_name);
         mkdir($this->dir_name.'/'.$this->imgs_dir_name);
         mkdir($this->dir_name.'/'.$this->thumbs_dir_name);
-        $this->load_plantunits($dm,$module);
+        //-------
+        $module_id=$module->getId();
+        $module=null;
+        unset($module);
+        $dm->clear();
+        $this->load_plantunits($module_id);
+        //-------
         if(!file_exists('./_tmp'))
         {
             mkdir('./_tmp');
@@ -82,41 +91,58 @@ class ExportController extends Controller
         {
             $this->remove_directory($this->dir_name);
         }
-        echo 'ok';
+        echo 'zip';
         exit;
         return $this->render('PlantnetDataBundle:Backend:index.html.twig',array(
             'current'=>'administration'
         ));
     }
 
-    private function load_plantunits($dm,$module)
+    private function load_plantunits($module_id)
     {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConnection()->getConfiguration()->setLoggerCallable(null);
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'id'=>$module_id
+            ));
         $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
             ->field('module')->references($module)
             ->hydrate(false)
             ->select('id')
             ->getQuery()
             ->execute();
-        foreach($plantunits as $plantunit)
-        {
-            $this->load_plantunit_data($dm,$module,$plantunit['_id']);
-        }
-    }
-
-    private function load_plantunit_data($dm,$module,$plantunit_id)
-    {
-        $plantunit=$dm->getRepository('PlantnetDataBundle:Plantunit')
-            ->findOneBy(array(
-                'module.id'=>$module->getId(),
-                'id'=>$plantunit_id
-            ));
         $display=array();
         $fields=$module->getProperties();
+        $module_id=$module->getId();
+        $module=null;
+        unset($module);
+        $dm->clear();
         foreach($fields as $row){
             if($row->getDetails()==true){
                 $display[]=$row->getId();
             }
         }
+        foreach($plantunits as $plantunit)
+        {
+            $dm->clear();
+            $this->load_plantunit_data($plantunit['_id'],$module_id,$display);
+        }
+    }
+
+    private function load_plantunit_data($plantunit_id,$module_id,$display)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConnection()->getConfiguration()->setLoggerCallable(null);
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $plantunit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+            ->findOneBy(array(
+                'module.id'=>$module_id,
+                'id'=>$plantunit_id
+            ));
         $others=$plantunit->getOthers();
         $tab_others_groups=array();
         if(count($others))
@@ -135,7 +161,7 @@ class ExportController extends Controller
         }
         $template=$this->container->get('twig')->loadTemplate('PlantnetDataBundle:Backend\Export_IDAO:page.html.twig');
         $page=$template->render(array(
-            'module'=>$module,
+            'module'=>$plantunit->getModule(),
             'plantunit'=>$plantunit,
             'display'=>$display,
             'tab_others_groups'=>$tab_others_groups,
@@ -168,6 +194,13 @@ class ExportController extends Controller
                 }
             }
         }
+        $plantunit=null;
+        unset($plantunit);
+        $others=null;
+        unset($others);
+        $images=null;
+        unset($images);
+        $dm->clear();
     }
 
     private function remove_directory($dir_name)
