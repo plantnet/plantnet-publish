@@ -40,6 +40,7 @@ class ExportController extends Controller
     public function module_export_idaoAction($collection,$module)
     {
         set_time_limit(0);
+        ignore_user_abort(true);
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConnection()->getConfiguration()->setLoggerCallable(null);
@@ -86,6 +87,7 @@ class ExportController extends Controller
             header('Content-Disposition: attachment; filename="Publish_to_IDAO.zip"');
             header('Content-Length: '.filesize('./_tmp/Publish_to_IDAO_'.$mt.'.zip'));
             readfile('./_tmp/Publish_to_IDAO_'.$mt.'.zip');
+            unlink('./_tmp/Publish_to_IDAO_'.$mt.'.zip');
         }
         if(file_exists($this->dir_name)&&is_dir($this->dir_name))
         {
