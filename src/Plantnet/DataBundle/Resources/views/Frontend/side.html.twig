@@ -9,7 +9,7 @@
 	{% if module.children|length > 0 %}
 		{% for child in module.children if child.type == 'image' %}
 			<li class="child">
-				<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': child.name }) }}">
+				<a href="{{ path('_submodule', { 'project': project, 'collection': collection.name, 'module': module.name, 'submodule': child.name }) }}">
 					<i class="icon-camera"></i>
 					{{ child.name|capitalize }}
 					<small class="muted">{{ child.nbrows }} {{ "line-entities"|trans }}</small>
@@ -18,7 +18,7 @@
 		{% endfor %}
 		{% for child in module.children if child.type == 'locality' %}
 			<li class="child">
-				<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': child.name }) }}">
+				<a href="{{ path('_submodule', { 'project': project, 'collection': collection.name, 'module': module.name, 'submodule': child.name }) }}">
 					<i class="icon-map-marker"></i>
 					{{ child.name|capitalize }}
 					<small class="muted">{{ child.nbrows }} {{ "line-entities"|trans }}</small>

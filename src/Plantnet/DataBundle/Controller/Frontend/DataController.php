@@ -153,17 +153,69 @@ class DataController extends Controller
         }
         $module = $dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
-        if(!$module){
+        if(!$module||$module->getType()!='text'){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $display = array();
         $field = $module->getProperties();
-        $module_parent=null;
-        if($module->getParent()){
-            $module_parent = $dm->getRepository('PlantnetDataBundle:Module')
-                ->find($module->getParent()->getId());
-            $field = $module_parent->getProperties();
+        foreach($field as $row){
+            if($row->getMain() == true){
+                $display[] = $row->getId();
+            }
         }
+        $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            ->field('module')->references($module);
+        $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+        $paginator->setMaxPerPage(50);
+        $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+        return $this->render('PlantnetDataBundle:Frontend\Module:datagrid.html.twig', array(
+            'project' => $project,
+            'current' => 'collection',
+            'paginator' => $paginator,
+            'collection' => $collection,
+            'module' => $module,
+            'type' => 'table',
+            'display' => $display
+        ));
+    }
+
+    /**
+     * @Route("/project/{project}/collection/{collection}/{module}/{submodule}", name="_submodule")
+     * @Template()
+     */
+    public function submoduleAction($project, $collection, $module, $submodule)
+    {
+        $projects=$this->database_list();
+        if(!in_array($project,$projects))
+        {
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $module_parent = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=> $module,
+                'collection.id' => $collection->getId()
+            ));
+        if(!$module_parent){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=> $submodule,
+                'parent.id'=>$module_parent->getId(),
+                'collection.id' => $collection->getId()
+            ));
+        if(!$module||$module->getType()=='text'){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $display = array();
+        $field = $module_parent->getProperties();
         foreach($field as $row){
             if($row->getMain() == true){
                 $display[] = $row->getId();
@@ -171,26 +223,7 @@ class DataController extends Controller
         }
         switch ($module->getType())
         {
-            case 'text':
-                $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                    ->field('module')->references($module);
-                $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
-                $paginator->setMaxPerPage(50);
-                $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-                return $this->render('PlantnetDataBundle:Frontend\Module:datagrid.html.twig', array(
-                    'project' => $project,
-                    'current' => 'collection',
-                    'paginator' => $paginator,
-                    'collection' => $collection,
-                    'module' => $module,
-                    'type' => 'table',
-                    'display' => $display
-                ));
-                break;
             case 'image':
-                if(!$module_parent){
-                    throw $this->createNotFoundException('Unable to find Module entity.');
-                }
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($module);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
@@ -208,9 +241,6 @@ class DataController extends Controller
                 ));
                 break;
             case 'locality':
-                if(!$module_parent){
-                    throw $this->createNotFoundException('Unable to find Module entity.');
-                }
                 $db=$this->get_prefix().$project;
                 $m=new \Mongo();
                 $plantunits=array();

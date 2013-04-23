@@ -98,20 +98,67 @@ class AdminController extends Controller
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $mod = $dm->getRepository('PlantnetDataBundle:Module')
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
                 'name'=> $module,
                 'collection.id' => $collection->getId()
             ));
-        if (!$mod) {
+        if (!$module||$module->getType()!='text') {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        if($mod->getParent()){
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
-                ->find($mod->getParent()->getId());
-        }else{
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
-                ->find($mod->getId());
+        $display = array();
+        $field = $module->getProperties();
+        foreach($field as $row){
+            if($row->getMain() == true){
+                $display[] = $row->getId();
+            }
+        }
+        $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            ->field('module')->references($module)
+            ->hydrate(true);
+        $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+        $paginator->setMaxPerPage(50);
+        $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+        return $this->render('PlantnetDataBundle:Backend\Admin:datagrid.html.twig', array(
+            'paginator' => $paginator,
+            'collection' => $collection,
+            'module' => $module,
+            'display' => $display
+        ));
+    }
+
+    /**
+     * @Route("/collection/{collection}/module/{module}/{submodule}", name="admin_submodule_view")
+     * @Template()
+     */
+    public function submoduleAction($collection, $module, $submodule)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneBy(array(
+                'name'=>$collection
+            ));
+        if (!$collection) {
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=> $module,
+                'collection.id' => $collection->getId()
+            ));
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $mod = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=> $submodule,
+                'parent.id'=>$module->getId(),
+                'collection.id' => $collection->getId()
+            ));
+        if (!$mod||$mod->getType()=='text') {
+            throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $display = array();
         $field = $module->getProperties();
@@ -122,20 +169,6 @@ class AdminController extends Controller
         }
         switch ($mod->getType())
         {
-            case 'text':
-                $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                    ->field('module')->references($module)
-                    ->hydrate(true);
-                $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
-                $paginator->setMaxPerPage(50);
-                $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-                return $this->render('PlantnetDataBundle:Backend\Admin:datagrid.html.twig', array(
-                    'paginator' => $paginator,
-                    'collection' => $collection,
-                    'module' => $module,
-                    'display' => $display
-                ));
-                break;
             case 'image':
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($mod)

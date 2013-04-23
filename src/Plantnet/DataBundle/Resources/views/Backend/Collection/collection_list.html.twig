@@ -23,11 +23,11 @@
                                 <ul>
                                     {% for child in module.children %}
                                         <li class='row-module'>
-                                            <a class="{{ child.type }}" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': child.name }) }}">{{ child.name }} <b>({{ child.nbrows }})</b></a>
+                                            <a class="{{ child.type }}" href="{{ path('admin_submodule_view', { 'collection': collection.name, 'module': module.name, 'submodule': child.name }) }}">{{ child.name }} <b>({{ child.nbrows }})</b></a>
                                             {% if is_granted('ROLE_USER') %}
                                                 <a class="edit" href="{{ path('module_edit', { 'id': child.id }) }}"></a>
                                             {% endif %}
-                                            <a class="view" href="{{ path('admin_module_view', { 'collection': collection.name, 'module': child.name }) }}"></a>
+                                            <a class="view" href="{{ path('admin_submodule_view', { 'collection': collection.name, 'module': module.name, 'submodule': child.name }) }}"></a>
                                             {% if child.type=='image' %}
                                                 <a class="images" href="{{ path('plantnet_file_manager_homepage', {'name': child.uploaddir}) }}"></a>
                                             {% endif %}
