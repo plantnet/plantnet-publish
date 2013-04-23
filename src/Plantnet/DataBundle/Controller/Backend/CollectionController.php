@@ -69,15 +69,15 @@ class CollectionController extends Controller
      */
     public function collection_createAction()
     {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $document = new Collection();
         $request = $this->getRequest();
         $form = $this->createForm(new CollectionType(), $document);
         if ('POST' === $request->getMethod()) {
             $form->bindRequest($request);
             if ($form->isValid()) {
-                $user=$this->container->get('security.context')->getToken()->getUser();
-                $dm=$this->get('doctrine.odm.mongodb.document_manager');
-                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                 // $document->setUser($user);
                 $document->setAlias($user->getUsername().'_'.$document->getName());
                 $dm->persist($document);

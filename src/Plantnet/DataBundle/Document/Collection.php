@@ -2,9 +2,11 @@
 namespace Plantnet\DataBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\CollectionRepository")
+ * @MongoDBUnique(fields="name")
  */
 class Collection
 {

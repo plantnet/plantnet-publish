@@ -121,54 +121,85 @@ class ModulesController extends Controller
         $form = $this->createForm(new ModuleFormType(), $module, array('idparent' => $idparent));
         if ('POST' === $request->getMethod()) {
             $form->bindRequest($request);
-            if ($form->isValid()) {
-                $dm = $this->get('doctrine.odm.mongodb.document_manager');
-                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-                $module->setCollection($collection);
-                $idparent = $request->request->get('modules');
-                if(array_key_exists('parent', $idparent) && $idparent['parent'] != null){
-                    $module_parent = $dm->getRepository('PlantnetDataBundle:Module')->find($idparent['parent']);
-                    $module->setParent($module_parent);
-                }
-                $module->setType($module->getType());
-                $uploadedFile = $module->getFile();
-                try{
-                    $uploadedFile->move(
-                        __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/',
-                        $module->getName_fname().'.csv'
-                    );
-                }
-                catch(FilePermissionException $e)
-                {
-                    return false;
-                }
-                catch(\Exception $e)
-                {
-                    throw new \Exception($e->getMessage());
-                }
-                $csv = __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
-                $handle = fopen($csv, "r");
-                $field=fgetcsv($handle,0,";");
-                foreach($field as $col){
-                    $property = new Property();
-                    $cur_encoding = mb_detect_encoding($col) ;
-                    if($cur_encoding == "UTF-8" && mb_check_encoding($col,"UTF-8")){
-                        $property->setName($col);
+            $check_name=$module->getName();
+            if($module->getType()=='text')
+            {
+                $nb_mods=$dm->createQueryBuilder('PlantnetDataBundle:Module')
+                    ->field('collection')->references($collection)
+                    ->field('name')->equals($check_name)
+                    ->hydrate(true)
+                    ->getQuery()
+                    ->execute()
+                    ->count();
+            }
+            else
+            {
+                $idsup=$request->request->get('modules');
+                $idsup=$idsup['parent'];
+                $nb_mods=$dm->createQueryBuilder('PlantnetDataBundle:Module')
+                    ->field('collection')->references($collection)
+                    ->field('parent.id')->equals($idsup)
+                    ->field('name')->equals($check_name)
+                    ->hydrate(true)
+                    ->getQuery()
+                    ->execute()
+                    ->count();
+            }
+            if($nb_mods===0)
+            {
+                if ($form->isValid()) {
+                    $dm = $this->get('doctrine.odm.mongodb.document_manager');
+                    $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                    $module->setCollection($collection);
+                    $idparent = $request->request->get('modules');
+                    if(array_key_exists('parent', $idparent) && $idparent['parent'] != null){
+                        $module_parent = $dm->getRepository('PlantnetDataBundle:Module')->find($idparent['parent']);
+                        $module->setParent($module_parent);
                     }
-                    else {
-                        $property->setName(utf8_encode($col));
+                    $module->setType($module->getType());
+                    $uploadedFile = $module->getFile();
+                    try{
+                        $uploadedFile->move(
+                            __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/',
+                            $module->getName_fname().'.csv'
+                        );
                     }
-                    $property->setDetails(true);
-                    $dm->persist($property);
-                    $module->addProperties($property);
+                    catch(FilePermissionException $e)
+                    {
+                        return false;
+                    }
+                    catch(\Exception $e)
+                    {
+                        throw new \Exception($e->getMessage());
+                    }
+                    $csv = __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
+                    $handle = fopen($csv, "r");
+                    $field=fgetcsv($handle,0,";");
+                    foreach($field as $col){
+                        $property = new Property();
+                        $cur_encoding = mb_detect_encoding($col) ;
+                        if($cur_encoding == "UTF-8" && mb_check_encoding($col,"UTF-8")){
+                            $property->setName($col);
+                        }
+                        else {
+                            $property->setName(utf8_encode($col));
+                        }
+                        $property->setDetails(true);
+                        $dm->persist($property);
+                        $module->addProperties($property);
+                    }
+                    if($module->getType()=='image')
+                    {
+                        $module->setUploaddir($collection->getAlias().'_'.$module->getName_fname());
+                    }
+                    $dm->persist($module);
+                    $dm->flush();
+                    return $this->redirect($this->generateUrl('fields_type', array('id' => $collection->getId(), 'idmodule' => $module->getId())));
                 }
-                if($module->getType()=='image')
-                {
-                    $module->setUploaddir($collection->getAlias().'_'.$module->getName_fname());
-                }
-                $dm->persist($module);
-                $dm->flush();
-                return $this->redirect($this->generateUrl('fields_type', array('id' => $collection->getId(), 'idmodule' => $module->getId())));
+            }
+            else
+            {
+                $form->get('name')->addError(new FormError('This value is already used at the same tree level.'));
             }
         }
         return $this->render('PlantnetDataBundle:Backend\Modules:module_new.html.twig',array(
@@ -346,15 +377,15 @@ class ModulesController extends Controller
      */
     public function importationAction($id, $idmodule)
     {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $configuration = $dm->getConnection()->getConfiguration();
+        $configuration->setLoggerCallable(null);
         $request = $this->container->get('request');
         set_time_limit(0);
         if($request->isXmlHttpRequest())
         {
-            $user=$this->container->get('security.context')->getToken()->getUser();
-            $dm=$this->get('doctrine.odm.mongodb.document_manager');
-            $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-            $configuration = $dm->getConnection()->getConfiguration();
-            $configuration->setLoggerCallable(null);
             $collection = $dm->getRepository('PlantnetDataBundle:Collection')
                 ->findOneBy(array(
                     'id'=>$id
