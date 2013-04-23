@@ -23,7 +23,7 @@
 								{% set content = content ~ '<strong>' ~ property.name|capitalize ~ '</strong> : ' ~ image.plantunit.attributes[property.id] ~ '<br />' %}
 							{% endfor %}
 							{% for property in module.properties if property.details == true %}
-								{% set content = content ~ '<br />' ~ property.name|capitalize %}
+								{% set content = content ~ '<br />' ~ '<u>' ~ property.name|capitalize ~ '</u>' %}
 								{% set content = content ~ ': ' ~ image.property[property.id] %}
 							{% endfor %}
 							<div class="thumbnail" data-title="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}</strong>" data-content="{{ content }}">

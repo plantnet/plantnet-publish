@@ -95,7 +95,7 @@
                         <li class="span3">
                             {% set content = '' %}
                             {% for property in image.module.properties if property.details == true %}
-                                {% set content = content ~ property.name|capitalize %}
+                                {% set content = content ~ '<u>' ~ property.name|capitalize ~ '</u>' %}
                                 {% set content = content ~ ': ' ~ image.property[property.id] ~ '<br />' %}
                             {% endfor %}
                             <div class="thumbnail" data-content="{{ content }}">
