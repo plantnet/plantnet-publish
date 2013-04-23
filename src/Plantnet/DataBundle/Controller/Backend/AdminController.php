@@ -128,7 +128,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/collection/{collection}/module/{module}/{submodule}", name="admin_submodule_view")
+     * @Route("/collection/{collection}/module/{module}/module/{submodule}", name="admin_submodule_view")
      * @Template()
      */
     public function submoduleAction($collection, $module, $submodule)

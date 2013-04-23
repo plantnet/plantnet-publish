@@ -180,7 +180,7 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/{submodule}", name="_submodule")
+     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}", name="_submodule")
      * @Template()
      */
     public function submoduleAction($project, $collection, $module, $submodule)

@@ -36,7 +36,7 @@ class Module
     
     /**
      * @MongoDB\ReferenceOne(targetDocument="File")
-     * @Assert\File(maxSize = "30M", mimeTypes = {
+     * @Assert\File(maxSize = "60M", mimeTypes = {
      *   "text/plain"
      * })
      */
@@ -49,7 +49,7 @@ class Module
 
     /**
      * 
-     * @Assert\File(maxSize = "30M")
+     * @Assert\File(maxSize = "60M")
      */
     protected $file;
 

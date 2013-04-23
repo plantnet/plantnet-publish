@@ -21,7 +21,7 @@ class File
     
     /**
      * @MongoDB\File
-     * @Assert\File(maxSize = "30M", mimeTypes = {
+     * @Assert\File(maxSize = "60M", mimeTypes = {
      *   "image/jpeg",
      *   "image/png"
      * })
