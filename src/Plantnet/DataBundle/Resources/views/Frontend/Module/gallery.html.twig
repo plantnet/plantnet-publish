@@ -103,6 +103,12 @@
 				'titleFromAlt':true
 			});
 			$('a.html-box').fancybox({
+				onStart:function(){
+					var width=$(window).width();
+					var height=$(window).height();
+					$('.viewer').width(Math.round(width*85/100));
+					$('.viewer').height(Math.round(height*75/100));
+				},
 				onComplete:function(){
 					var id=$(this).attr('href');
 					var img_src=$(id).attr('data-src');
