@@ -3,34 +3,32 @@
 	{{ parent() }}
 {% endblock %}
 {% block form %}
-	<div id="title-form">Collection Creation</div>
-		<form action="{{ path('collection_create') }}" method="post" {{ form_enctype(form) }}>
-			{{ form_errors(form) }}
-			<div class="field-form">
-				{{ form_label(form.name) }}
-				<br>
-				{{ form_errors(form.name) }}
-				{{ form_widget(form.name) }}
-			</div>
-			<div class="field-form">
-				{{ form_label(form.description) }}
-				<br>
-				{{ form_errors(form.description) }}
-				{{ form_widget(form.description) }}
-			</div>
-			{{ form_rest(form) }}
-			<p>
-				<button type="submit">Create</button>
-			</p>
-		</form>
+	<div id="title-form">
+		<h4 class="text-info">Collection creation</h4>
 	</div>
+	<form action="{{ path('collection_create') }}" method="post" {{ form_enctype(form) }}>
+		{{ form_errors(form, {'attr': {'class': 'error'}}) }}
+		<div class="field-form">
+			{{ form_label(form.name) }}
+			{{ form_errors(form.name) }}
+			{{ form_widget(form.name) }}
+		</div>
+		<div class="field-form">
+			{{ form_label(form.description) }}
+			{{ form_errors(form.description) }}
+			{{ form_widget(form.description) }}
+		</div>
+		{{ form_rest(form) }}
+		<br />
+		<button type="submit" class="btn">Create</button>
+	</form>
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("textarea").cleditor({
-				width: 500, // width not including margins, borders or padding
+				width: '100%', // width not including margins, borders or padding
 				height: 200, // height not including margins, borders or padding
 				controls: // controls to add to the toolbar
 					"bold italic underline strikethrough subscript superscript | font size " +

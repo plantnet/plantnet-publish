@@ -2,43 +2,53 @@
 {% block title collection.name %}
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/tablesorter/style.css') }}" type="text/css" />
 {% endblock %}
 {% block body %}
-	<section id="breadcrumbs">
-		<a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">{{ collection.name }}</a>
-	</section>
+	<ul class="breadcrumb">
+		<li class="active">
+			{{ collection.name }}
+		</li>
+	</ul>
 	<div>
 		{% if (collection.description is defined) and (collection.description is not empty) %}
-			<p>
-				Description :
-				<br>
-				{% autoescape false %}
-					{{ collection.description }}
-				{% endautoescape %}
-			</p>
+			<dl>
+				<dt class="text-info">
+					Description :
+				</dt>
+				<dd>
+					{% autoescape false %}
+						{{ collection.description }}
+					{% endautoescape %}
+				</dd>
+			</dl>
 		{% endif %}
-		<br />
-		<ul>
-			{% for module in collection.modules %}
-				<li>
-					{{ module.name }} - [ Module ~ {{ module.nbrows }} rows ]
-					{% if module.children|length > 0 %}
-						<ul>
-							{% for child in module.children %}
-								<li>
-									{{ child.name }} - [ Sub-module : {{ child.type }} ~ {{ child.nbrows }} rows  ]
-								</li>
-							{% endfor %}
-						</ul>
-					{% endif %}
-					<ul>
-						{% if module.parent is not null %}
-							<li>Under {{ module.parent.name }}</li>
-						{% endif %}
-					</ul>
-				</li>
-			{% endfor %}
-		</ul>
+		<dl>
+			<dt class="text-info">
+				Content :
+			</dt>
+			<dd>
+				<ul>
+					{% for module in collection.modules %}
+						<li>
+							{{ module.name }} - [ Module ~ {{ module.nbrows }} rows ]
+							{% if module.children|length > 0 %}
+								<ul>
+									{% for child in module.children %}
+										<li>
+											{{ child.name }} - [ Sub-module : {{ child.type }} ~ {{ child.nbrows }} rows  ]
+										</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+							<ul>
+								{% if module.parent is not null %}
+									<li>Under {{ module.parent.name }}</li>
+								{% endif %}
+							</ul>
+						</li>
+					{% endfor %}
+				</ul>
+			</dd>
+		</dl>
 	</div>
 {% endblock %}

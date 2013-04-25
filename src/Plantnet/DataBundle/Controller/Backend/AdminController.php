@@ -57,7 +57,7 @@ class AdminController extends Controller
     public function indexAction()
     {
         return $this->render('PlantnetDataBundle:Backend:index.html.twig',array(
-            'current' => 'administration'
+            'current' => 'index'
         ));
     }
 
@@ -179,7 +179,8 @@ class AdminController extends Controller
                 return $this->render('PlantnetDataBundle:Backend\Admin:gallery.html.twig', array(
                     'paginator' => $paginator,
                     'collection' => $collection,
-                    'module' => $mod
+                    'module' => $mod,
+                    'module_parent' => $module,
                 ));
                 break;
             case 'locality':
@@ -242,6 +243,7 @@ class AdminController extends Controller
                 return $this->render('PlantnetDataBundle:Backend\Admin:map.html.twig',array(
                     'collection' => $collection,
                     'module' => $mod,
+                    'module_parent' => $module,
                     'locations' => $locations,
                     'layers' => $layers
                 ));
@@ -256,7 +258,8 @@ class AdminController extends Controller
                 return $this->render('PlantnetDataBundle:Backend\Admin:other.html.twig', array(
                     'paginator' => $paginator,
                     'collection' => $collection,
-                    'module' => $mod
+                    'module' => $mod,
+                    'module_parent' => $module,
                 ));
                 break;
         }
@@ -298,7 +301,8 @@ class AdminController extends Controller
         $editForm = $this->createForm(new PageType(), $page);
         return $this->render('PlantnetDataBundle:Backend\Admin:page_edit.html.twig',array(
             'page' => $page,
-            'edit_form' => $editForm->createView()
+            'edit_form' => $editForm->createView(),
+            'current' => 'pages'
         ));
     }
 
@@ -333,7 +337,8 @@ class AdminController extends Controller
         }
         return $this->render('PlantnetDataBundle:Backend\Admin:page_edit.html.twig',array(
             'page' => $page,
-            'edit_form' => $editForm->createView()
+            'edit_form' => $editForm->createView(),
+            'current' => 'pages'
         ));
     }
 }

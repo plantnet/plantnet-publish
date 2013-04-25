@@ -16,7 +16,18 @@
 	<title>{% block title %}Plantnet{% endblock %}</title>
 	<link type="image/x-icon" rel="shortcut icon" href="{{ asset('bundles/plantnetdata/images/favicon.ico') }}" />
 	{% block stylesheets %}
-		<link rel="stylesheet" type="text/css" href="{{ asset('bundles/plantnetdata/css/admin.css') }}" media="screen" />
+		{#<link rel="stylesheet" type="text/css" href="{{ asset('bundles/plantnetdata/css/admin.css') }}" media="screen" />#}
+		{% stylesheets
+			filter='less,cssrewrite,?yui_css'
+			output='css/admin.css'
+			debug=false
+			'bundles/plantnetdata/bootstrap/css/less/bootstrap.less'
+			'bundles/plantnetdata/css/backend/styles.less'
+			'bundles/plantnetdata/bootstrap/css/less/responsive.less'
+			'bundles/plantnetdata/css/backend/styles-responsive.less'
+		%}
+		<link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
+		{% endstylesheets %}
 		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.css') }}" type="text/css" />
 		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/tablesorter/style.css') }}" type="text/css" />
 		<link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
@@ -33,9 +44,8 @@
 		<link rel="stylesheet" type="text/css" media="screen" href="{{ asset('bundles/plantnetfilemanager/css/style.css') }}" />
 		<style type="text/css">
 			#map_leaflet{
-				width:650px;
+				width:100%;
 				height:450px;
-				background:#333333;
 			}
 			.leaflet-control-zoom-fullscreen{
 				background-image:url({{ asset('bundles/plantnetdata/leaflet/plugins/full_screen/images/icon-fullscreen.png') }});
@@ -66,104 +76,167 @@
 {% endblock %}
 </head>
 <body>
-	<section role="navigation">
-		{% block header %}
-			<header>
-				<a title="Back to Homepage" href="{{ path('admin_index') }}"></a>
-				<h1>[Publish - {% render controller("PlantnetDataBundle:Backend/Admin:displayTitle") %}]</h1>
-			</header>
-		{% endblock %}
-		<section id="user-info">
-			<img alt="Sample User Avatar" src="{{ asset('bundles/plantnetdata/images/sample_user.png') }}">
-			<div>
-				<a title="Account Settings and Profile Page" href="#">{{ app.user.username }}</a>
-				<em>Administrator</em>
-				<ul>
-					<li>
-						<a rel="tooltip" title="Public Website" href="{{ path('_index') }}" class="button-link">view website</a>
-					</li>
-					{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-						{% block user_panel %}
-							<li>
-								<a rel="tooltip" title="Logout" href="{{ path('fos_user_security_logout') }}" class="button-link">{{ 'layout.logout'|trans([], 'FOSUserBundle') }}</a>
+	<div class="container">
+		<div class="masthead">
+			{% block header %}
+				<header>
+					<a title="Back to Homepage" href="{{ path('admin_index') }}"></a>
+					<h3 class="muted">
+						[Publish - {% render controller("PlantnetDataBundle:Backend/Admin:displayTitle") %}]
+					</h3>
+				</header>
+			{% endblock %}
+			<div class="navbar">
+				<div class="navbar-inner">
+					<div class="container">
+						<ul id="menu" class="nav">
+							{% if current is not defined %}
+								{% set current = '#' %}
+							{% endif %}
+							<li{% if current == 'index' %} class="active"{% endif %}>
+								<a href="{{ path('admin_index') }}">
+									<i class="icon-home"></i>
+									Home
+								</a>
 							</li>
-						{% endblock %}
-					{% endif %}
-				</ul>
+							<li class="dropdown{% if current == 'pages' %} active{% endif %}">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+									<i class="icon-edit"></i>
+									Edit pages
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+									{% render controller("PlantnetDataBundle:Backend/Admin:page_list") %}
+								</ul>
+							</li>
+							<li>
+								<a title="Public Website" href="{{ path('_index') }}">
+									<i class="icon-globe"></i>
+									View website
+								</a>
+							</li>
+						</ul>
+						<ul class="nav pull-right">
+							<li class="dropdown">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+									<i class="icon-user"></i>
+									{{ app.user.username }}
+									<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+									<li class="disabled">
+										<a tabindex="-1" href="#">
+											<em><strong>Administrator</strong></em>
+										</a>
+									</li>
+									{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+										{% block user_panel %}
+											<li>
+												<a title="Account Settings and Profile Page" href="#">
+													<i class="icon-wrench"></i>
+													Settings
+												</a>
+											</li>
+											<li class="divider"></li>
+											<li>
+												<a title="Logout" href="{{ path('fos_user_security_logout') }}">
+													<i class="icon-off"></i>
+													{{ 'layout.logout'|trans([], 'FOSUserBundle')|capitalize }}
+												</a>
+											</li>
+										{% endblock %}
+									{% endif %}
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
 			</div>
-		</section>
-		<nav id="main-nav">
-			<ul id="nav">
+		</div>
+		<div class="row">
+			<div class="span4">
 				{% block sidebar %}
-					{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
-					{% render controller("PlantnetDataBundle:Backend/Admin:page_list") %}
+					<div class="well wellnav">
+						<ul id="left-menu" class="nav nav-list">
+							{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
+						</ul>
+					</div>
 				{% endblock %}
-			</ul>
-		</nav>
-	</section>
-	<section id='content' role="main">
-		{% block body %}{% endblock %}
-	</section>
-</body>
-{% block javascripts %}
-	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-1.7.min.js') }}"></script>
-	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/hideshow.js') }}"></script>
-	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.pager.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
-	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
-	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/leaflet-src.js') }}"></script>
-	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/marker_cluster/leaflet.markercluster.js') }}"></script>
-	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/full_screen/Control.FullScreen.js') }}"></script>
-	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/mini_map/Control.MiniMap.js') }}"></script>
-	<script src="http://openweathermap.org/js/leaflet-layer.js"></script>
-	<script type="text/javascript" src="//malsup.github.com/jquery.form.js"></script>
-	<script type="text/javascript" src="{{ asset('bundles/plantnetfilemanager/js/script.js') }}"></script>
-	<script type="text/javascript">
-		$(document).ready(function(){
-			$('#nav a').click(function(e) {
-				var $url = $(this).attr('href');
-				if($url!='#'&&!$(this).hasClass('export'))
-				{
-					e.preventDefault();
-					$(this).parent().prepend('<div class="page-loading"></div>');
-					$.get($url, function(data) {
-						$('#content').html(data);
-						$(".page-loading").remove();
-					});
-				}
-			});
-			(function () {
-				if (/Microsoft/.test(navigator.appName)) { return }
-				window.onload = function () {
-					var menu = document.getElementById('nav');
-					var init = menu.offsetTop;
-					var docked;
-					window.onscroll = function () {
-						if (!docked && (menu.offsetTop - scrollTop() < 0)) {
-							menu.style.top = 0;
-							menu.style.position = 'fixed';
-							menu.className = 'docked';
-							docked = true;
-						} else if (docked && scrollTop() <= init) {
-							menu.style.position = 'absolute';
-							menu.style.top = init + 'px';
-							menu.className = menu.className.replace('docked', 'topbar');
-							docked = false;
-						}
+			</div>
+			<div class="span8">
+				<div id="content" class="well wellcontent">
+					{% block body %}{% endblock %}
+				</div>
+			</div>
+		</div>
+	</div>
+	{% block javascripts %}
+		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-1.7.min.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/bootstrap/js/bootstrap.min.js') }}"></script>
+		{#<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/hideshow.js') }}"></script>#}
+		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.min.js') }}"></script>
+	    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.min.js') }}"></script>
+	    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.pager.js') }}"></script>
+	    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/leaflet-src.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/marker_cluster/leaflet.markercluster.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/full_screen/Control.FullScreen.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/mini_map/Control.MiniMap.js') }}"></script>
+		<script src="http://openweathermap.org/js/leaflet-layer.js"></script>
+		<script type="text/javascript" src="//malsup.github.com/jquery.form.js"></script>
+		<script type="text/javascript" src="{{ asset('bundles/plantnetfilemanager/js/script.js') }}"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('a.ajax').click(function(e){
+					var $url=$(this).attr('href');
+					if($url!='#')
+					{
+						e.preventDefault();
+						$('#menu > li,#left-menu > li').each(function(){
+							$(this).removeClass('active');
+						});
+						$(this).parents('li.dropdown').addClass('active');
+						$('#content').prepend('<div class="page-loading"></div>');
+						$.get($url,function(data) {
+							$('#content').html(data);
+							$(".page-loading").remove();
+						});
+					}
+				});
+				/*
+				(function () {
+					if (/Microsoft/.test(navigator.appName)) { return }
+					window.onload = function () {
+						var menu = document.getElementById('nav');
+						var init = menu.offsetTop;
+						var docked;
+						window.onscroll = function () {
+							if (!docked && (menu.offsetTop - scrollTop() < 0)) {
+								menu.style.top = 0;
+								menu.style.position = 'fixed';
+								menu.className = 'docked';
+								docked = true;
+							} else if (docked && scrollTop() <= init) {
+								menu.style.position = 'absolute';
+								menu.style.top = init + 'px';
+								menu.className = menu.className.replace('docked', 'topbar');
+								docked = false;
+							}
+						};
+						(function () {
+							var link = document.getElementById('guide-link'),
+							menu = document.getElementById('menu'),
+							dropdown = document.getElementById('dropdown');
+						})();
 					};
-					(function () {
-						var link = document.getElementById('guide-link'),
-						menu = document.getElementById('menu'),
-						dropdown = document.getElementById('dropdown');
-					})();
-				};
-				function scrollTop() {
-					return document.body.scrollTop || document.documentElement.scrollTop;
-				}
-			})();
-		});
-	</script>
-{% endblock %}  
+					function scrollTop() {
+						return document.body.scrollTop || document.documentElement.scrollTop;
+					}
+				})();
+				*/
+			});
+		</script>
+	{% endblock %}
+</body>
 </html>

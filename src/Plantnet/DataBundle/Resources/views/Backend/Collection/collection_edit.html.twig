@@ -3,57 +3,53 @@
 	{{ parent() }}
 {% endblock %}
 {% block form %}
-	<div id="title-form">Collection Edit</div>
-		<form action="{{ path('collection_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-			{{ form_errors(edit_form) }}
-			<div class="field-form">
-				{{ form_label(edit_form.name) }}
-				<br>
-				{{ form_errors(edit_form.name) }}
-				{{ form_widget(edit_form.name) }}
-			</div>
-			<div class="field-form">
-				{{ form_label(edit_form.description) }}
-				<br>
-				{{ form_errors(edit_form.description) }}
-				{{ form_widget(edit_form.description) }}
-			</div>
-			{{ form_rest(edit_form) }}
-			<p>
-				<button type="submit">Update</button>
-			</p>
-		</form>
-		{% set updating = false %}
-		{% for module in entity.modules %}
-	        {% if module.updating == true %}
+	<div id="title-form">
+		<h4 class="text-info">Collection edit</h4>
+	</div>
+	<form action="{{ path('collection_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+		{{ form_errors(edit_form) }}
+		<div class="field-form">
+			{{ form_label(edit_form.name) }}
+			{{ form_errors(edit_form.name) }}
+			{{ form_widget(edit_form.name) }}
+		</div>
+		<div class="field-form">
+			{{ form_label(edit_form.description) }}
+			{{ form_errors(edit_form.description) }}
+			{{ form_widget(edit_form.description) }}
+		</div>
+		{{ form_rest(edit_form) }}
+		<br />
+		<button type="submit" class="btn">Update</button>
+	</form>
+	{% set updating = false %}
+	{% for module in entity.modules %}
+        {% if module.updating == true %}
+            {% set updating = true %}
+        {% endif %}
+        {% for child in module.children %}
+        	{% if child.updating == true %}
 	            {% set updating = true %}
 	        {% endif %}
-	        {% for child in module.children %}
-	        	{% if child.updating == true %}
-		            {% set updating = true %}
-		        {% endif %}
-	        {% endfor %}
-	    {% endfor %}
-	    {% if updating == false %}
-			<ul class="record_actions">
-				<form action="{{ path('collection_delete', { 'id': entity.id }) }}" method="post">
-					{{ form_widget(delete_form) }}
-					<button type="submit">Delete</button>
-				</form>
-			</ul>
-		{% else %}
-			<p>
-	            Des traitements sont en cours, suppression impossible pour le moment ...
-	        </p>
-		{% endif %}
-	</div>
+        {% endfor %}
+    {% endfor %}
+    {% if updating == false %}
+		<form action="{{ path('collection_delete', { 'id': entity.id }) }}" method="post">
+			{{ form_widget(delete_form) }}
+			<button type="submit" class="btn"><i class="icon-trash"></i> Delete</button>
+		</form>
+	{% else %}
+		<p class="text-warning">
+            There is a work in progress, delete action is disabled.
+        </p>
+	{% endif %}
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("textarea").cleditor({
-				width: 500, // width not including margins, borders or padding
+				width: '100%', // width not including margins, borders or padding
 				height: 200, // height not including margins, borders or padding
 				controls: // controls to add to the toolbar
 					"bold italic underline strikethrough subscript superscript | font size " +

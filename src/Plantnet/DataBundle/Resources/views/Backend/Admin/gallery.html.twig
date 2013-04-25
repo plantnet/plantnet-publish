@@ -4,21 +4,34 @@
 	{{ parent() }}
 {% endblock %}
 {% block body %}
-	<section id="breadcrumbs">
-		<a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">{{ collection.name }}</a>
-		>
-		<a href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
-	</section>
+	<ul class="breadcrumb">
+        <li>
+            <a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">
+            	{{ collection.name }}
+            </a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module_parent.name }) }}">
+            	{{ module_parent.name }}
+            </a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ module.name }}
+        </li>
+    </ul>
 	<div id="thumbsresults">
 		{% if paginator|length > 0 %}
 			<div class="pagerfanta">
-				{{ pagerfanta(paginator, 'default') }}
-			</div>
+                {{ pagerfanta(paginator, 'twitter_bootstrap') }}
+            </div>
 			{% for row in paginator %}
 				{% set imgspe = row.path|basename %}
 				{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
 				<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ row.copyright }}">
-					<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" border="0" /></a>
+					<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" border="0" />
+				</a>
 			{% endfor %}
 		{% endif %}
 	</div>
@@ -37,14 +50,14 @@
 				'enableEscapeButton':true,
 				'hideOnContentClick':true,
 				'titlePosition':'inside',
-				'overlayShow':false
+				'overlayShow':true
 			});
 		});
 		$(document).ready(function() {
-            $('.pagerfanta a').click(function(e) {
+			$('.pagerfanta a').click(function(e) {
                 e.preventDefault();
-                var $url = $(this).attr('href');
-                $(this).prev().append('<div class="page-loading"></div>');
+                var $url=$(this).attr('href');
+                $('#content').prepend('<div class="page-loading"></div>');
                 $.get($url, function(data) {
                     $('#content').html(data);
                 });

@@ -4,11 +4,23 @@
 	{{ parent() }}
 {% endblock %}
 {% block body %}
-	<section id="breadcrumbs">
-		<a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">{{ collection.name }}</a>
-		>
-		<a href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
-	</section>
+	<ul class="breadcrumb">
+        <li>
+            <a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">
+            	{{ collection.name }}
+            </a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module_parent.name }) }}">
+            	{{ module_parent.name }}
+            </a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ module.name }}
+        </li>
+    </ul>
 	<div>
 		{# LEAFLET MAP #}
 		<div style="clear:both;"></div>

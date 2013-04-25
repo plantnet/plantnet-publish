@@ -3,29 +3,28 @@
 	{{ parent() }}
 {% endblock %}
 {% block form %}
-	<div id="title-form">Page Edit: {{ page.name|capitalize }}</div>
-		<form action="{{ path('page_update', { 'name': page.name }) }}" method="post" {{ form_enctype(edit_form) }}>
-			{{ form_errors(edit_form) }}
-			<div class="field-form">
-				{{ form_label(edit_form.content) }}
-				<br>
-				{{ form_errors(edit_form.content) }}
-				{{ form_widget(edit_form.content) }}
-			</div>
-			{{ form_rest(edit_form) }}
-			<p>
-				<button type="submit">Update</button>
-			</p>
-		</form>
+	<div id="title-form">
+		<h4 class="text-info">Page Edit: {{ page.name|capitalize }}</h4>
 	</div>
+	<form action="{{ path('page_update', { 'name': page.name }) }}" method="post" {{ form_enctype(edit_form) }}>
+		{{ form_errors(edit_form) }}
+		<div class="field-form">
+			{{ form_label(edit_form.content) }}
+			{{ form_errors(edit_form.content) }}
+			{{ form_widget(edit_form.content) }}
+		</div>
+		{{ form_rest(edit_form) }}
+		<br />
+		<button type="submit" class="btn">Update</button>
+	</form>
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
 	<script type="text/javascript">
 		$(document).ready(function() {
 			$("textarea").cleditor({
-				width: 500, // width not including margins, borders or padding
-				height: 200, // height not including margins, borders or padding
+				width: '100%', // width not including margins, borders or padding
+				height: 300, // height not including margins, borders or padding
 				controls: // controls to add to the toolbar
 					"bold italic underline strikethrough subscript superscript | font size " +
 					"style | color highlight removeformat | bullets numbering | outdent " +

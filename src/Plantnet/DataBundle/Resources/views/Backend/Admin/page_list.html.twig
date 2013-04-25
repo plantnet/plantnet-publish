@@ -1,14 +1,15 @@
-<li class="menu-list">
-    <a id="menu-pages" href="#">Pages</a>
-    <div class="arrow"></div>
-    <ul class="collections toggle">
-        {% for page in pages %}
-            <li>
-                <a  class="collection" href="#">{{ page.name|capitalize }}</a>
-                {% if is_granted('ROLE_USER') %}
-                    <a  class="edit" href="{{ path('page_edit', { 'name': page.name }) }}"></a>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-</li>
+{% for page in pages %}
+    {% if is_granted('ROLE_USER') %}
+        <li>
+            <a class="edit ajax" href="{{ path('page_edit', { 'name': page.name }) }}">
+                {{ page.name|capitalize }}
+            </a>
+        </li>
+    {% else %}
+        <li class="disabled">
+            <a href="#">
+                {{ page.name|capitalize }}
+            </a>
+        </li>
+    {% endif %}
+{% endfor %}

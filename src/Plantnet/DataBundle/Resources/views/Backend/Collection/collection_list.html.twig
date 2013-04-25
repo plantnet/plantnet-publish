@@ -1,3 +1,125 @@
+{% for collection in collections if (collection.deleting is not defined or collection.deleting != true) %}
+    <li class="dropdown collection">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <i class="icon-folder-open"></i>
+            {{ collection.name }}
+        </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <li>
+                <a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}" class="ajax">
+                    <i class="icon-eye-open"></i>
+                    View
+                </a>
+            </li>
+            {% if is_granted('ROLE_USER') %}
+                <li>
+                    <a href="{{ path('collection_edit', { 'id': collection.id }) }}" class="ajax">
+                        <i class="icon-pencil"></i>
+                        Edit
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </li>
+    {% for module in collection.modules if (module.deleting is not defined or module.deleting != true) %}
+        <li class="dropdown module">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="icon-list"></i>
+                {{ module.name }}
+                <span class="badge">{{ module.nbrows }}</span>
+            </a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <li>
+                    <a href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}" class="ajax">
+                        <i class="icon-eye-open"></i>
+                        View
+                    </a>
+                </li>
+                {% if is_granted('ROLE_USER') %}
+                    <li>
+                        <a href="{{ path('module_edit', { 'id': module.id }) }}">
+                            <i class="icon-pencil"></i>
+                            Edit
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('admin_module_export_idao', { 'collection': collection.name, 'module': module.name }) }}">
+                            <i class="icon-download"></i>
+                            Export [IDAO]
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </li>
+        {% if module.children|length > 0 %}
+            {% for child in module.children %}
+                <li class="dropdown submodule">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        {% if child.type == 'image' %}
+                            <i class="icon-camera"></i>
+                        {% elseif child.type == 'locality' %}
+                            <i class="icon-map-marker"></i>
+                        {% else %}
+                            <i class="icon-info-sign"></i>
+                        {% endif %}
+                        {{ child.name }}
+                        <span class="badge">{{ child.nbrows }}</span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <li>
+                            <a href="{{ path('admin_submodule_view', { 'collection': collection.name, 'module': module.name, 'submodule': child.name }) }}" class="ajax">
+                                <i class="icon-eye-open"></i>
+                                View
+                            </a>
+                        </li>
+                        {% if is_granted('ROLE_USER') %}
+                            <li>
+                                <a href="{{ path('module_edit', { 'id': child.id }) }}">
+                                    <i class="icon-pencil"></i>
+                                    Edit
+                                </a>
+                            </li>
+                            {% if child.type=='image' %}
+                                <li>
+                                    <a href="{{ path('plantnet_file_manager_homepage', {'name': child.uploaddir}) }}">
+                                        <i class="icon-upload"></i>
+                                        Images upload
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                </li>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+    {% if is_granted('ROLE_USER') %}
+        <li>
+            <a href="{{ path('module_new', { 'id': collection.id, 'type': 'module' }) }}" class="muted">
+                <i class="icon-plus"></i>
+                Add Module
+            </a>
+        </li>
+        {% if collection.modules|length > 0 %}
+            <li>
+                <a href="{{ path('module_new', { 'id': collection.id, 'type': 'submodule' }) }}" class="muted">
+                    <i class="icon-plus"></i>
+                    Add Sub-module
+                </a>
+            </li>
+        {% endif %}
+    {% endif %}
+    <li class="divider"></li>
+{% endfor %}
+{% if is_granted('ROLE_USER') %}
+    <li>
+        <a href="{{ path('collection_new') }}" class="muted ajax">
+            <i class="icon-plus-sign"></i>
+            New Collection
+        </a>
+    </li>
+{% endif %}
+{#
 <li class="menu-list current">
     <a id="menu-collection" href="#">Collections</a>
     <div class="arrow"></div>
@@ -57,3 +179,4 @@
         {% endif %}
     </ul>
 </li>
+#}

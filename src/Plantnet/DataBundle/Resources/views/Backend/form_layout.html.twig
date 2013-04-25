@@ -3,14 +3,14 @@
 	{{ parent() }}
 {% endblock %}
 {% block sidebar %}
-	{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
-	{% render controller("PlantnetDataBundle:Backend/Admin:page_list") %}
+	<div class="well wellnav">
+		<ul id="left-menu" class="nav nav-list">
+			{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
+		</ul>
+	</div>
 {% endblock %}
 {% block body %}
-	<div id="admin-form">
-		{% block form %}
-		{% endblock %}
-	</div>
+	{% block form %}{% endblock %}
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}

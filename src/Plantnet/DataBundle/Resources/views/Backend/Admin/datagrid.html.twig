@@ -4,19 +4,25 @@
     {{ parent() }}
 {% endblock %}
 {% block body %}
-    <section id="breadcrumbs">
-        <a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">{{ collection.name }}</a>
-        >
-        <a href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
-    </section>
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">
+                {{ collection.name }}
+            </a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ module.name }}
+        </li>
+    </ul>
     <div id="results">
         {% if paginator|length > 0 %}
             <div class="pagerfanta">
-                {{ pagerfanta(paginator, 'default') }}
+                {{ pagerfanta(paginator, 'twitter_bootstrap') }}
             </div>
-            <table align='center' cellpadding="3" class="tablesorter searchresults" id="simplesearch">
+            <table class="table table-striped table-bordered table-hover table-condensed">
                 <thead>
-                    <tr class="rowtop">
+                    <tr>
                         {% for property in module.properties if property.id in display %}
                             <th>{{ property.name|capitalize }}</th>
                         {% endfor %}
@@ -26,7 +32,7 @@
                 </thead>
                 <tbody>
                     {% for plantunit in paginator %}
-                        <tr class="">
+                        <tr>
                             {% for field in display %}
                                 <td>{{ plantunit.attributes[field] }}</td>
                             {% endfor %}
@@ -47,23 +53,23 @@
     {{ parent() }}
     <script type="text/javascript">
         $(document).ready(function() {
-            $("table").tablesorter({widthFixed: false, widgets: ['zebra'] });
+            // $("table").tablesorter({widthFixed: false, widgets: ['zebra'] });
             //  Adds "over" class to rows on mouseover
-            $("table tr").mouseover(function(){
-                $(this).addClass("over");
-            });
+            // $("table tr").mouseover(function(){
+            //     $(this).addClass("over");
+            // });
             //  Removes "over" class from rows on mouseout
-            $("table tr").mouseout(function(){
-                $(this).removeClass("over");
-            });
+            // $("table tr").mouseout(function(){
+            //     $(this).removeClass("over");
+            // });
         });
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('.pagerfanta a').click(function(e) {
                 e.preventDefault();
-                var $url = $(this).attr('href');
-                $(this).prev().append('<div class="page-loading"></div>');
+                var $url=$(this).attr('href');
+                $('#content').prepend('<div class="page-loading"></div>');
                 $.get($url, function(data) {
                     $('#content').html(data);
                 });
