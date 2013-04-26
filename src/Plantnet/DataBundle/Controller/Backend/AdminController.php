@@ -92,17 +92,12 @@ class AdminController extends Controller
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
-            ->findOneBy(array(
-                'name'=>$collection
-            ));
+            ->findOneByName($collection);
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findOneBy(array(
-                'name'=> $module,
-                'collection.id' => $collection->getId()
-            ));
+            ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
         if (!$module||$module->getType()!='text') {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
@@ -114,8 +109,7 @@ class AdminController extends Controller
             }
         }
         $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-            ->field('module')->references($module)
-            ->hydrate(true);
+            ->field('module')->references($module);
         $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
         $paginator->setMaxPerPage(50);
         $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
