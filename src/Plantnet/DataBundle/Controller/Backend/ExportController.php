@@ -170,10 +170,22 @@ class ExportController extends Controller
             'imgs_dir_name'=>$this->imgs_dir_name,
             'thumbs_dir_name'=>$this->thumbs_dir_name,
         ));
+        // Tidy
+        $config=array(
+            'indent'=>true,
+            'indent-spaces'=>4,
+            'output-html'=>true,
+            'wrap'=>0
+        );
+        $tidy=new \tidy;
+        $tidy->parseString($page,$config,'utf8');
+        $tidy->cleanRepair();
+        // /Tidy
         $new_page=fopen($this->dir_name.'/'.$plantunit->getIdentifier().'.html','w');
         if($new_page)
         {
-            fwrite($new_page,$page);
+            fwrite($new_page,$tidy);
+            // fwrite($new_page,$page);
             fclose($new_page);
         }
         $images=$plantunit->getImages();
