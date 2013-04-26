@@ -43,6 +43,7 @@ class ImportationCommand extends ContainerAwareCommand
         $usermail=$input->getArgument('usermail');
         if($id&&$idmodule&&$dbname&&$usermail)
         {
+            $orphans=array();
             $error='';
             $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
             $dm->getConfiguration()->setDefaultDB($dbname);
@@ -78,10 +79,10 @@ class ImportationCommand extends ContainerAwareCommand
                 //echo "Memory usage before: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
                 $s = microtime(true);
                 $batchSize = 500;
-                $rowCount = '';
+                $rowCount = 0;
+                $errorCount = 0;
                 while (($data = fgetcsv($handle, 0, ';')) !== FALSE) {
                     $num = count($data);
-                    $rowCount++;
                     if ($module->getType() == 'image'){
                         $image = new Image();
                         $attributes = array();
@@ -123,9 +124,13 @@ class ImportationCommand extends ContainerAwareCommand
                         {
                             $image->setPlantunit($parent);
                             $dm->persist($image);
+                            $rowCount++;
                         }
                         else
                         {
+                            $orphans[$image->getIdparent()]=$image->getIdparent();
+                            $errorCount++;
+                            /*
                             $plantunit=new Plantunit();
                             $plantunit->setModule($module);
                             $plantunit->setAttributes($attributes);
@@ -133,6 +138,7 @@ class ImportationCommand extends ContainerAwareCommand
                             $dm->persist($plantunit);
                             $image->setPlantunit($plantunit);
                             $dm->persist($image);
+                            */
                         }
                     }elseif ($module->getType() == 'locality'){
                         $location = new Location();
@@ -179,9 +185,13 @@ class ImportationCommand extends ContainerAwareCommand
                         {
                             $location->setPlantunit($parent);
                             $dm->persist($location);
+                            $rowCount++;
                         }
                         else
                         {
+                            $orphans[$location->getIdparent()]=$location->getIdparent();
+                            $errorCount++;
+                            /*
                             $plantunit=new Plantunit();
                             $plantunit->setModule($module);
                             $plantunit->setAttributes($attributes);
@@ -191,6 +201,7 @@ class ImportationCommand extends ContainerAwareCommand
                             $dm->persist($plantunit);
                             $location->setPlantunit($plantunit);
                             $dm->persist($location);
+                            */
                         }
                     }
                     elseif ($module->getType() == 'other'){
@@ -228,9 +239,13 @@ class ImportationCommand extends ContainerAwareCommand
                         {
                             $other->setPlantunit($parent);
                             $dm->persist($other);
+                            $rowCount++;
                         }
                         else
                         {
+                            $orphans[$other->getIdparent()]=$other->getIdparent();
+                            $errorCount++;
+                            /*
                             $plantunit=new Plantunit();
                             $plantunit->setModule($module);
                             $plantunit->setAttributes($attributes);
@@ -238,6 +253,7 @@ class ImportationCommand extends ContainerAwareCommand
                             $dm->persist($plantunit);
                             $other->setPlantunit($plantunit);
                             $dm->persist($other);
+                            */
                         }
                     }
                     if (($rowCount % $batchSize) == 0) {
@@ -260,6 +276,13 @@ class ImportationCommand extends ContainerAwareCommand
                     unlink($csvfile);
                 }
                 $message='Importation Success: '.$rowCount.' objects imported in '.($e-$s).' seconds';
+                $message.="\n";
+                $message.='Importation Error: '.$errorCount;
+                if(count($orphans))
+                {
+                    $message.="\n".'These "id parent" do not exist:'."\n";
+                    $message.=implode(', ',$orphans);
+                }
                 /*
                 // Récupération du mailer service.
                 $container=$this->getContainer();

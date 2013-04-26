@@ -52,7 +52,7 @@
             </ul>
         </li>
         {% if module.children|length > 0 %}
-            {% for child in module.children %}
+            {% for child in module.children if (child.deleting is not defined or child.deleting != true) %}
                 <li class="dropdown submodule">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         {% if child.type == 'image' %}
