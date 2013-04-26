@@ -545,17 +545,53 @@ class ModulesController extends Controller
         if (!$module) {
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
+        $collection=$module->getCollection();
+        $original_name=$module->getName();
         $editForm = $this->createForm(new ModulesType(), $module);
         $deleteForm = $this->createDeleteForm($id);
         $request = $this->getRequest();
         if ('POST' === $request->getMethod()) {
             $editForm->bindRequest($request);
-            if ($editForm->isValid()) {
-                $dm = $this->get('doctrine.odm.mongodb.document_manager');
-                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-                $dm->persist($module);
-                $dm->flush();
-                return $this->redirect($this->generateUrl('module_edit', array('id' => $id)));
+            $check_name=$module->getName();
+            if($module->getType()=='text')
+            {
+                $nb_mods=$dm->createQueryBuilder('PlantnetDataBundle:Module')
+                    ->field('collection')->references($collection)
+                    ->field('name')->equals($check_name)
+                    ->field('id')->notEqual($module->getId())
+                    ->hydrate(true)
+                    ->getQuery()
+                    ->execute()
+                    ->count();
+            }
+            else
+            {
+                $idsup=$request->request->get('modules');
+                $idsup=$idsup['parent'];
+                $nb_mods=$dm->createQueryBuilder('PlantnetDataBundle:Module')
+                    ->field('collection')->references($collection)
+                    ->field('parent.id')->equals($idsup)
+                    ->field('name')->equals($check_name)
+                    ->field('id')->notEqual($module->getId())
+                    ->hydrate(true)
+                    ->getQuery()
+                    ->execute()
+                    ->count();
+            }
+            if($nb_mods===0)
+            {
+                if ($editForm->isValid()) {
+                    $dm = $this->get('doctrine.odm.mongodb.document_manager');
+                    $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                    $dm->persist($module);
+                    $dm->flush();
+                    return $this->redirect($this->generateUrl('module_edit', array('id' => $id)));
+                }
+            }
+            else
+            {
+                $module->setName($original_name);
+                $editForm->get('name')->addError(new FormError('This value is already used at the same tree level.'));
             }
         }
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit.html.twig',array(

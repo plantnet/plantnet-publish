@@ -17,7 +17,9 @@
         </div >
         {% if app.session.hasFlash('error') %}
             <div id="flashmessage" class="flash-error">
-                {{ app.session.flash('error') }}
+                <p class="text-error">
+                    {{ app.session.flash('error') }}
+                </p>
             </div>
         {% endif %}
         <table id="table-form" class="table table-bordered table-condensed table-hover">
