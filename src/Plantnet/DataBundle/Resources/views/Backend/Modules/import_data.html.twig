@@ -3,32 +3,33 @@
     {{ parent() }}
 {% endblock %}
 {% block form %}
-	<div id="title-form"><em>Module: {{ module.name }}</em> > Import Data</div>
-		<form id="import_data" action="{{ path('import_data', { 'id': collection.id, 'idmodule': module.id }) }}" method="post" {{ form_enctype(form) }}>
-			<p>
-				<button id="import-button" type="submit">Import Data<div class="loading"></div></button>
-			</p>
-		</form>
-		<div id="data">
-			{% include 'PlantnetDataBundle:Backend\\Modules:import_moduledata.html.twig' with {'importCount' : importCount } %}
-		</div>
-		<table>
-			<thead>
-				<tr>
-					<td>Field</td>
-					<td>Type</td>
-				</tr>
-			</thead>
-			<tbody>
-				{% for property in module.properties %}
-					<tr>
-						<td>{{ property.name }}</td>
-						<td>{{ property.type }}</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+	<div id="title-form">
+		<h4 class="text-info">
+			<em>Module: {{ module.name }}</em> > Import data
+		</h4>
 	</div>
+	<form id="import_data" action="{{ path('import_data', { 'id': collection.id, 'idmodule': module.id }) }}" method="post" {{ form_enctype(form) }}>
+		<button id="import-button" type="submit" class="btn">Import data<div class="loading"></div></button>
+	</form>
+	<div id="data">
+		{% include 'PlantnetDataBundle:Backend\\Modules:import_moduledata.html.twig' with {'importCount' : importCount } %}
+	</div>
+	<table class="table table-bordered table-condensed table-hover">
+		<thead>
+			<tr>
+				<td>Field</td>
+				<td>Type</td>
+			</tr>
+		</thead>
+		<tbody>
+			{% for property in module.properties %}
+				<tr>
+					<td>{{ property.name }}</td>
+					<td>{{ property.type }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}

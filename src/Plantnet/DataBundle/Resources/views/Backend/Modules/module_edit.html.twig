@@ -3,43 +3,46 @@
     {{ parent() }}
 {% endblock %}
 {% block form %}
-    <div id="title-form"><em>Module: {{ entity.name }}</em> > Properties configuration</div>
+    <div id="title-form">
+        <h4 class="text-info">
+            <em>Module: {{ entity.name }}</em> > Properties configuration
+        </h4>
+    </div>
     <form action="{{ path('module_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
         {{ form_errors(edit_form) }}
         <div class="field-form">
             {{ form_label(edit_form.name) }}
-            <br>
             {{ form_errors(edit_form.name) }}
             {{ form_widget(edit_form.name) }}
         </div >
         {% if entity.type == 'text' %}
             <div class="field-form">
                 {{ form_label(edit_form.description) }}
-                <br>
                 {{ form_errors(edit_form.description) }}
                 {{ form_widget(edit_form.description) }}
             </div>
         {% endif %}
-        <table id="table-form">
+        <br />
+        <table id="table-form" class="table table-bordered table-condensed table-hover">
             <thead>
                 <tr>
-                    <td>Field</td>
-                    <td style="display:none;">Type</td>
+                    <th class="middle">Field</th>
+                    <th style="display:none;">Type</th>
                     {% if entity.type == 'text' %}
-                        <td colspan="3">Display</td>
+                        <th colspan="3" class="middle">Display</th>
                     {% elseif entity.type == 'other' or entity.type == 'image' %}
-                        <td colspan="1">Display</td>
+                        <th colspan="1" class="middle">Display</th>
                     {% endif %}
                 </tr>
                 <tr>
-                    <td></td>
-                    <td style="display:none;"></td>
+                    <th></th>
+                    <th style="display:none;"></th>
                     {% if entity.type == 'text' %}
-                        <td>Main-</td>
-                        <td>Details-</td>
-                        <td>Search</td>
+                        <th class="middle">Main</th>
+                        <th class="middle">Details</th>
+                        <th class="middle">Search</th>
                     {% elseif entity.type == 'other' or entity.type == 'image' %}
-                        <td>-</td>
+                        <th class="middle">-</th>
                     {% endif %}
                 <tr>
             </thead>
@@ -55,20 +58,20 @@
                             {{ form_widget(property.type) }}
                         </td>
                         {% if entity.type == 'text' %}
-                            <td>
+                            <td class="middle">
                                 {{ form_errors(property.main) }}
                                 {{ form_widget(property.main) }}
                             </td>
-                            <td>
+                            <td class="middle">
                                 {{ form_errors(property.details) }}
                                 {{ form_widget(property.details) }}
                             </td>
-                            <td>
+                            <td class="middle">
                                 {{ form_errors(property.search) }}
                                 {{ form_widget(property.search) }}
                             </td>
                         {% elseif entity.type == 'other' or entity.type == 'image' %}
-                            <td>
+                            <td class="middle">
                                 {{ form_errors(property.details) }}
                                 {{ form_widget(property.details) }}
                             </td>
@@ -78,9 +81,8 @@
             </tbody>
         </table>
         {{ form_rest(edit_form) }}
-        <p>
-            <button type="submit">Update</button>
-        </p>
+        <br />
+        <button type="submit" class="btn">Update</button>
     </form>
     {% set updating = false %}
     {% if entity.updating == true %}
@@ -92,17 +94,13 @@
         {% endif %}
     {% endfor %}
     {% if updating == false %}
-        <ul class="record_actions">
-            <li>
-                <form action="{{ path('module_delete', { 'id': entity.id }) }}" method="post">
-                    {{ form_widget(delete_form) }}
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-        </ul>
+        <form action="{{ path('module_delete', { 'id': entity.id }) }}" method="post">
+            {{ form_widget(delete_form) }}
+            <button type="submit" class="btn"><i class="icon-trash"></i> Delete</button>
+        </form>
     {% else %}
-        <p>
-            Des traitements sont en cours, suppression impossible pour le moment ...
+        <p class="text-warning">
+            There is a work in progress, delete action is disabled.
         </p>
     {% endif %}
 {% endblock %}
@@ -111,8 +109,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $("textarea").cleditor({
-                width: 500, // width not including margins, borders or padding
-                height: 200, // height not including margins, borders or padding
+                width: '100%', // width not including margins, borders or padding
+                height: 300, // height not including margins, borders or padding
                 controls: // controls to add to the toolbar
                     "bold italic underline strikethrough subscript superscript | font size " +
                     "style | color highlight removeformat | bullets numbering | outdent " +

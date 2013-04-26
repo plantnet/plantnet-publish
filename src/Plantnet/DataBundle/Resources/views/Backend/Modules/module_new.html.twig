@@ -3,19 +3,21 @@
     {{ parent() }}
 {% endblock %}
 {% block form %}
-    <div id="title-form"><em>Collection: {{ collection.name }}</em> > New Module</div>
+    <div id="title-form">
+        <h4 class="text-info">
+            <em>Collection: {{ collection.name }}</em> > New module
+        </h4>
+    </div>
     <form id="add_module" action="{{ path('module_create', { 'id': collection.id, 'type': type }) }}" method="post" {{ form_enctype(form) }}>
         {{ form_errors(form) }}
         <div class="field-form">
             {{ form_label(form.name) }}
-            <br>
             {{ form_errors(form.name) }}
             {{ form_widget(form.name) }}
         </div >
         {% if form.type.vars.value is defined and form.type.vars.value == 'text' %}
             <div class="field-form">
                 {{ form_label(form.description) }}
-                <br>
                 {{ form_errors(form.description) }}
                 {{ form_widget(form.description) }}
             </div>
@@ -23,21 +25,18 @@
         <div class="field-form">
             {% if form.type.vars.value is defined and form.type.vars.value!='text' %}
                 {{ form_label(form.type) }}
-                <br>
             {% endif %}
             {{ form_errors(form.type) }}
             {{ form_widget(form.type, { 'separator': '=====' }) }}
         </div>
         <div class="field-form">
             {{ form_label(form.file, 'CSV data') }}
-            <br>
             {{ form_errors(form.file) }}
             {{ form_widget(form.file) }}
         </div>
         {{ form_rest(form) }}
-        <p>
-            <button type="submit">Import Structure</button>
-        </p>
+        <br />
+        <button type="submit" class="btn">Import structure</button>
     </form>
 {% endblock %}
 {% block javascripts %}
@@ -45,8 +44,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $("textarea").cleditor({
-                width: 500, // width not including margins, borders or padding
-                height: 200, // height not including margins, borders or padding
+                width: '100%', // width not including margins, borders or padding
+                height: 300, // height not including margins, borders or padding
                 controls: // controls to add to the toolbar
                     "bold italic underline strikethrough subscript superscript | font size " +
                     "style | color highlight removeformat | bullets numbering | outdent " +

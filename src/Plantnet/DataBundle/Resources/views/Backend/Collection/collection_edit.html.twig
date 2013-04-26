@@ -4,7 +4,9 @@
 {% endblock %}
 {% block form %}
 	<div id="title-form">
-		<h4 class="text-info">Collection edit</h4>
+		<h4 class="text-info">
+			Collection edit
+		</h4>
 	</div>
 	<form action="{{ path('collection_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
 		{{ form_errors(edit_form) }}
@@ -50,7 +52,7 @@
 		$(document).ready(function() {
 			$("textarea").cleditor({
 				width: '100%', // width not including margins, borders or padding
-				height: 200, // height not including margins, borders or padding
+				height: 300, // height not including margins, borders or padding
 				controls: // controls to add to the toolbar
 					"bold italic underline strikethrough subscript superscript | font size " +
 					"style | color highlight removeformat | bullets numbering | outdent " +

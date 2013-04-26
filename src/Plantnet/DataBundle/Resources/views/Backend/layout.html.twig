@@ -16,7 +16,6 @@
 	<title>{% block title %}Plantnet{% endblock %}</title>
 	<link type="image/x-icon" rel="shortcut icon" href="{{ asset('bundles/plantnetdata/images/favicon.ico') }}" />
 	{% block stylesheets %}
-		{#<link rel="stylesheet" type="text/css" href="{{ asset('bundles/plantnetdata/css/admin.css') }}" media="screen" />#}
 		{% stylesheets
 			filter='less,cssrewrite,?yui_css'
 			output='css/admin.css'
@@ -173,7 +172,6 @@
 	{% block javascripts %}
 		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-1.7.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/bootstrap/js/bootstrap.min.js') }}"></script>
-		{#<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/hideshow.js') }}"></script>#}
 		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/CLEditor/jquery.cleditor.min.js') }}"></script>
 	    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.min.js') }}"></script>
 	    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/tablesorter/jquery.tablesorter.pager.js') }}"></script>
@@ -204,37 +202,6 @@
 						});
 					}
 				});
-				/*
-				(function () {
-					if (/Microsoft/.test(navigator.appName)) { return }
-					window.onload = function () {
-						var menu = document.getElementById('nav');
-						var init = menu.offsetTop;
-						var docked;
-						window.onscroll = function () {
-							if (!docked && (menu.offsetTop - scrollTop() < 0)) {
-								menu.style.top = 0;
-								menu.style.position = 'fixed';
-								menu.className = 'docked';
-								docked = true;
-							} else if (docked && scrollTop() <= init) {
-								menu.style.position = 'absolute';
-								menu.style.top = init + 'px';
-								menu.className = menu.className.replace('docked', 'topbar');
-								docked = false;
-							}
-						};
-						(function () {
-							var link = document.getElementById('guide-link'),
-							menu = document.getElementById('menu'),
-							dropdown = document.getElementById('dropdown');
-						})();
-					};
-					function scrollTop() {
-						return document.body.scrollTop || document.documentElement.scrollTop;
-					}
-				})();
-				*/
 			});
 		</script>
 	{% endblock %}

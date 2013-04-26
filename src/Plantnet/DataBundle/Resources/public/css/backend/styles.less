@@ -13,7 +13,7 @@ html{
 	overflow-y:scroll;
 }
 body{
-	background:url("../../images/tiny_grid.png") repeat transparent;
+	background:url("../../images/wood.png") repeat transparent;
 	
 }
 header a{
@@ -33,6 +33,30 @@ header h3 {
     height:17px;
     width:25px;
 }
+.wellcontent h4{
+	border-bottom:solid 1px #E5E5E5;
+	padding-bottom:5px;
+}
+th.middle,td.middle{
+	text-align:center;
+}
+td > input[type="text"]{
+	margin:0;
+}
+td > select{
+	width:auto;
+}
+.loading {
+    background:url("../../images/import-loader.gif") no-repeat top left;
+    height:17px;
+    width:19px;
+    float:right;
+    margin-left:6px;
+}
+
+
+// Bootstrap : Custom
+// --------------------------------------------------
 .wellnav{
 	padding:8px 0;
 	font-weight:bold;
@@ -40,15 +64,20 @@ header h3 {
 .wellnav .muted{
 	font-weight:normal;
 }
+li.collection > a{
+	background-color:#EEEEEE;
+	-webkit-box-shadow:0 3px 8px rgba(0,0,0,0.125) inset;
+	   -moz-box-shadow:0 3px 8px rgba(0,0,0,0.125) inset;
+	        box-shadow:0 3px 8px rgba(0,0,0,0.125) inset;
+}
+li.collection > a:hover{
+	background-color:#E5E5E5;
+}
 li.module{
 	padding-left:20px;
 }
 li.submodule{
 	padding-left:40px;
-}
-.wellcontent h4{
-	border-bottom:solid 1px #E5E5E5;
-	padding-bottom:5px;
 }
 label{
 	cursor:auto;

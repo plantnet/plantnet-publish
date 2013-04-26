@@ -4,10 +4,12 @@
 {% endblock %}
 {% block form %}
 	<div id="title-form">
-		<h4 class="text-info">Collection creation</h4>
+		<h4 class="text-info">
+			Collection creation
+		</h4>
 	</div>
 	<form action="{{ path('collection_create') }}" method="post" {{ form_enctype(form) }}>
-		{{ form_errors(form, {'attr': {'class': 'error'}}) }}
+		{{ form_errors(form) }}
 		<div class="field-form">
 			{{ form_label(form.name) }}
 			{{ form_errors(form.name) }}
@@ -29,7 +31,7 @@
 		$(document).ready(function() {
 			$("textarea").cleditor({
 				width: '100%', // width not including margins, borders or padding
-				height: 200, // height not including margins, borders or padding
+				height: 300, // height not including margins, borders or padding
 				controls: // controls to add to the toolbar
 					"bold italic underline strikethrough subscript superscript | font size " +
 					"style | color highlight removeformat | bullets numbering | outdent " +

@@ -3,12 +3,15 @@
     {{ parent() }}
 {% endblock %}
 {% block form %}
-    <div id="title-form"><em>Module: {{ module.name }}</em> > Properties configuration</div>
+    <div id="title-form">
+        <h4 class="text-info">
+            <em>Module: {{ module.name }}</em> > Properties configuration
+        </h4>
+    </div>
     <form action="{{ path('save_fields', { 'id': collection.id, 'idmodule': module.id }) }}" method="post" {{ form_enctype(form) }}>
         {{ form_errors(form) }}
         <div class="field-form">
             {{ form_label(form.name) }}
-            <br>
             {{ form_errors(form.name) }}
             {{ form_widget(form.name) }}
         </div >
@@ -17,26 +20,26 @@
                 {{ app.session.flash('error') }}
             </div>
         {% endif %}
-        <table id="table-form">
+        <table id="table-form" class="table table-bordered table-condensed table-hover">
             <thead>
                 <tr>
-                    <td>Field</td>
-                    <td>Type</td>
+                    <th class="middle">Field</th>
+                    <th class="middle">Type</th>
                     {% if module.type == 'text' %}
-                        <td colspan="3">Display</td>
+                        <th colspan="3" class="middle">Display</th>
                     {% elseif module.type == 'other' or module.type == 'image' %}
-                        <td colspan="1">Display</td>
+                        <th colspan="1" class="middle">Display</th>
                     {% endif %}
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
+                    <th></th>
+                    <th></th>
                     {% if module.type == 'text' %}
-                        <td>Main-</td>
-                        <td>Details-</td>
-                        <td>Search</td>
+                        <th class="middle">Main</th>
+                        <th class="middle">Details</th>
+                        <th class="middle">Search</th>
                     {% elseif module.type == 'other' or module.type == 'image' %}
-                        <td>-</td>
+                        <th class="middle">-</th>
                     {% endif %}
                 <tr>
             </thead>
@@ -47,25 +50,25 @@
                             {{ form_errors(property.name) }}
                             {{ form_widget(property.name) }}
                         </td>
-                        <td>
+                        <td class="middle">
                             {{ form_errors(property.type) }}
                             {{ form_widget(property.type) }}
                         </td>
                         {% if module.type == 'text' %}
-                            <td>
+                            <td class="middle">
                                 {{ form_errors(property.main) }}
                                 {{ form_widget(property.main) }}
                             </td>
-                            <td>
+                            <td class="middle">
                                 {{ form_errors(property.details) }}
                                 {{ form_widget(property.details) }}
                             </td>
-                            <td>
+                            <td class="middle">
                                 {{ form_errors(property.search) }}
                                 {{ form_widget(property.search) }}
                             </td>
                         {% elseif module.type == 'other' or module.type == 'image' %}
-                            <td>
+                            <td class="middle">
                                 {{ form_errors(property.details) }}
                                 {{ form_widget(property.details) }}
                             </td>
@@ -75,9 +78,8 @@
             </tbody>
         </table>
         {{ form_rest(form) }}
-        <p>
-            <button type="submit">Save</button>
-        </p>
+        <br />
+        <button type="submit" class="btn">Save</button>
     </form>
 {% endblock %}
 {% block javascripts %}
