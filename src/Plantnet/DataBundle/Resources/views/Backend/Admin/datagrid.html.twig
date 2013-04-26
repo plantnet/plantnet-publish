@@ -3,7 +3,7 @@
 {% block stylesheets %}
     {{ parent() }}
 {% endblock %}
-{% block body %}
+{% block content %}
     <ul class="breadcrumb">
         <li>
             <a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">

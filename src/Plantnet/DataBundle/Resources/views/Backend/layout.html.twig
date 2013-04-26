@@ -75,100 +75,102 @@
 {% endblock %}
 </head>
 <body>
-	<div class="container">
-		<div class="masthead">
-			{% block header %}
-				<header>
-					<a title="Back to Homepage" href="{{ path('admin_index') }}"></a>
-					<h3 class="muted">
-						[Publish - {% render controller("PlantnetDataBundle:Backend/Admin:displayTitle") %}]
-					</h3>
-				</header>
-			{% endblock %}
-			<div class="navbar">
-				<div class="navbar-inner">
-					<div class="container">
-						<ul id="menu" class="nav">
-							{% if current is not defined %}
-								{% set current = '#' %}
-							{% endif %}
-							<li{% if current == 'index' %} class="active"{% endif %}>
-								<a href="{{ path('admin_index') }}">
-									<i class="icon-home"></i>
-									Home
-								</a>
-							</li>
-							<li class="dropdown{% if current == 'pages' %} active{% endif %}">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-									<i class="icon-edit"></i>
-									Edit pages
-									<span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-									{% render controller("PlantnetDataBundle:Backend/Admin:page_list") %}
-								</ul>
-							</li>
-							<li>
-								<a title="Public Website" href="{{ path('_index') }}">
-									<i class="icon-globe"></i>
-									View website
-								</a>
-							</li>
-						</ul>
-						<ul class="nav pull-right">
-							<li class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-									<i class="icon-user"></i>
-									{{ app.user.username }}
-									<span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-									<li class="disabled">
-										<a tabindex="-1" href="#">
-											<em><strong>Administrator</strong></em>
-										</a>
-									</li>
-									{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-										{% block user_panel %}
-											<li>
-												<a title="Account Settings and Profile Page" href="#">
-													<i class="icon-wrench"></i>
-													Settings
-												</a>
-											</li>
-											<li class="divider"></li>
-											<li>
-												<a title="Logout" href="{{ path('fos_user_security_logout') }}">
-													<i class="icon-off"></i>
-													{{ 'layout.logout'|trans([], 'FOSUserBundle')|capitalize }}
-												</a>
-											</li>
-										{% endblock %}
-									{% endif %}
-								</ul>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="span4">
-				{% block sidebar %}
-					<div class="well wellnav">
-						<ul id="left-menu" class="nav nav-list">
-							{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
-						</ul>
-					</div>
+	{% block body %}
+		<div class="container">
+			<div class="masthead">
+				{% block header %}
+					<header>
+						<a title="Back to Homepage" href="{{ path('admin_index') }}"></a>
+						<h3 class="muted">
+							[Publish - {% render controller("PlantnetDataBundle:Backend/Admin:displayTitle") %}]
+						</h3>
+					</header>
 				{% endblock %}
+				<div class="navbar">
+					<div class="navbar-inner">
+						<div class="container">
+							<ul id="menu" class="nav">
+								{% if current is not defined %}
+									{% set current = '#' %}
+								{% endif %}
+								<li{% if current == 'index' %} class="active"{% endif %}>
+									<a href="{{ path('admin_index') }}">
+										<i class="icon-home"></i>
+										Home
+									</a>
+								</li>
+								<li class="dropdown{% if current == 'pages' %} active{% endif %}">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										<i class="icon-edit"></i>
+										Edit pages
+										<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+										{% render controller("PlantnetDataBundle:Backend/Admin:page_list") %}
+									</ul>
+								</li>
+								<li>
+									<a title="Public Website" href="{{ path('_index') }}">
+										<i class="icon-globe"></i>
+										View website
+									</a>
+								</li>
+							</ul>
+							<ul class="nav pull-right">
+								<li class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										<i class="icon-user"></i>
+										{{ app.user.username }}
+										<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+										<li class="disabled">
+											<a tabindex="-1" href="#">
+												<em><strong>Administrator</strong></em>
+											</a>
+										</li>
+										{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+											{% block user_panel %}
+												<li>
+													<a title="Account Settings and Profile Page" href="#">
+														<i class="icon-wrench"></i>
+														Settings
+													</a>
+												</li>
+												<li class="divider"></li>
+												<li>
+													<a title="Logout" href="{{ path('fos_user_security_logout') }}">
+														<i class="icon-off"></i>
+														{{ 'layout.logout'|trans([], 'FOSUserBundle')|capitalize }}
+													</a>
+												</li>
+											{% endblock %}
+										{% endif %}
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div class="span8">
-				<div id="content" class="well wellcontent">
-					{% block body %}{% endblock %}
+			<div class="row">
+				<div class="span4">
+					{% block sidebar %}
+						<div class="well wellnav">
+							<ul id="left-menu" class="nav nav-list">
+								{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
+							</ul>
+						</div>
+					{% endblock %}
+				</div>
+				<div class="span8">
+					<div id="content" class="well wellcontent">
+						{% block content %}{% endblock %}
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	{% endblock %}
 	{% block javascripts %}
 		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-1.7.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/bootstrap/js/bootstrap.min.js') }}"></script>

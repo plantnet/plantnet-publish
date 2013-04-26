@@ -1,0 +1,92 @@
+{% extends "PlantnetDataBundle:Backend:layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style type="text/css">
+        body{
+            padding-top:40px;
+            padding-bottom:40px;
+        }
+        div.form{
+            max-width:300px;
+            padding:19px 29px 29px;
+            margin:0 auto 20px;
+            background-color:#fff;
+            border:1px solid #e5e5e5;
+            -webkit-border-radius:5px;
+               -moz-border-radius:5px;
+                    border-radius:5px;
+            -webkit-box-shadow:0 1px 2px rgba(0,0,0,.05);
+               -moz-box-shadow:0 1px 2px rgba(0,0,0,.05);
+                    box-shadow:0 1px 2px rgba(0,0,0,.05);
+        }
+        div.form > div{
+            color:#B94A48;
+        }
+        label{
+            cursor:default;
+        }
+        input[type="text"],
+        input[type="password"]{
+            font-size:16px;
+            height:auto;
+            margin-bottom:15px;
+            padding:7px 9px;
+        }
+        input[type="checkbox"]{
+            margin-top:0;
+        }
+        div.links{
+            position:fixed;
+            top:0;
+            right:0;
+            text-align:right;
+            padding-top:19px;
+            padding-right:29px;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="links">
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+            {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+            <a href="{{ path('fos_user_security_logout') }}">
+                {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+            </a>
+        {% else %}
+            <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+        {% endif %}
+    </div>
+    {% for key, message in app.session.getFlashes() %}
+        <div class="{{ key }}">
+            {{ message|trans({}, 'FOSUserBundle') }}
+        </div>
+    {% endfor %}
+    <div class="form">
+        {% block fos_user_content %}
+        {% endblock fos_user_content %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-1.7.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            //title
+            $('form').prepend('<h2>Please sign in</h2>');
+            //username input
+            var username=$('#username').prev().html().replace(':','');
+            $('#username').prev().hide();
+            $('#username').attr('placeholder',username);
+            //password input
+            var password=$('#password').prev().html().replace(':','');
+            $('#password').prev().hide();
+            $('#password').attr('placeholder',password);
+            //remember checkbox
+            $('<br />').insertBefore('#remember_me');
+            $('#remember_me').next().css('display','inline-block');
+            //submit button
+            $('#_submit').addClass('btn btn-large btn-info');
+            $('<br />').insertBefore('#_submit');
+        });
+    </script>
+{% endblock %}
