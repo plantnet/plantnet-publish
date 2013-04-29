@@ -15,7 +15,7 @@
     <div class="results">
         {% if paginator|length > 0 %}
             <div class="pagerfanta">
-                {{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
+                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
             </div>
              <table class="table table-striped table-hover">
                 <thead>
@@ -48,7 +48,7 @@
                 </tbody>
             </table>
             <div class="pagerfanta">
-                {{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
+                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
             </div>
         {% endif %}
     </div>

@@ -10,7 +10,7 @@
 	<div class="results">
 		{% if paginator|length > 0 %}
 			<div class="pagerfanta">
-				{{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
+				{{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
 			</div>
 			<div class="gallery">
 				<ul class="thumbnails per3">
@@ -81,7 +81,7 @@
 				</ul>
 			</div>
 			<div class="pagerfanta">
-				{{ pagerfanta(paginator, 'twitter_bootstrap_translated') }}
+				{{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
 			</div>
 		{% endif %}
 	</div>
