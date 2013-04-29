@@ -192,6 +192,7 @@ class ModulesController extends Controller
                     {
                         $module->setUploaddir($collection->getAlias().'_'.$module->getName_fname());
                     }
+                    $module->setDeleting(false);
                     $dm->persist($module);
                     $dm->flush();
                     return $this->redirect($this->generateUrl('fields_type', array('id' => $collection->getId(), 'idmodule' => $module->getId())));

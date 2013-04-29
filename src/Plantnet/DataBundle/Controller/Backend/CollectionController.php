@@ -80,6 +80,7 @@ class CollectionController extends Controller
             if ($form->isValid()) {
                 // $document->setUser($user);
                 $document->setAlias($user->getUsername().'_'.$document->getName());
+                $document->setDeleting(false);
                 $dm->persist($document);
                 $dm->flush();
                 return $this->redirect($this->generateUrl('module_new', array(

@@ -81,7 +81,7 @@
                             </li>
                             {% if child.type=='image' %}
                                 <li>
-                                    <a href="{{ path('plantnet_file_manager_homepage', {'name': child.uploaddir}) }}">
+                                    <a href="{{ path('plantnet_file_manager_homepage', {'name': child.uploaddir}) }}" class="ajax">
                                         <i class="icon-upload"></i>
                                         Images upload
                                     </a>
