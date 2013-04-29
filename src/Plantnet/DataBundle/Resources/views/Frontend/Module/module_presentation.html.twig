@@ -75,9 +75,9 @@
                                         {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
                                         <div class="{% if loop.index0 == 0 %}active {% endif %}item">
                                             {% if item_size/2 == 3 %}
-                                                <img src="{{ asset(img) | imagine_filter('thumb_220_124') }}" alt="{{ image.copyright }}" />
+                                                <img src="{{ asset(img) | imagine_filter('thumb_270_150') }}" alt="{{ image.copyright }}" />
                                             {% elseif item_size/2 == 6 %}
-                                                <img src="{{ asset(img) | imagine_filter('thumb_460_259') }}" alt="{{ image.copyright }}" />
+                                                <img src="{{ asset(img) | imagine_filter('thumb_570_325') }}" alt="{{ image.copyright }}" />
                                             {% endif %}
                                             {% if image.copyright is not empty %}
                                                 <div class="carousel-caption">

@@ -236,15 +236,15 @@ liip_imagine:
         thumb_180_120:
             filters:
                 thumbnail: { size: [180, 120], mode: outbound }
-        thumb_280_158:
+        thumb_350_200:
             filters:
-                thumbnail: { size: [280, 158], mode: outbound }
-        thumb_220_124:
+                thumbnail: { size: [350, 200], mode: outbound }
+        thumb_270_150:
             filters:
-                thumbnail: { size: [220, 124], mode: outbound }
-        thumb_460_259:
+                thumbnail: { size: [270, 150], mode: outbound }
+        thumb_570_325:
             filters:
-                thumbnail: { size: [460, 259], mode: outbound }
+                thumbnail: { size: [570, 325], mode: outbound }
 
 #fos_elastica:
     #default_manager: mongodb
