@@ -13,10 +13,10 @@
 			<div class="content">
 				<div class="details">
 					<table>
-						{% for module in collection.modules %}
+						{% for module in collection.modules if module.deleting != true %}
 							{% set nbimg = 0 %}
 							{% set nbloc = 0 %}
-							{% for child in module.children %}
+							{% for child in module.children if child.deleting != true %}
 								{% if child.type == 'image' %}
 									{% set nbimg = nbimg+child.nbrows %}
 									{% if child.nbrows > 0 and imgs|length < nb_img %}

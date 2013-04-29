@@ -1,4 +1,4 @@
-{% for collection in collections %}
+{% for collection in collections if collection.deleting != true %}
 	<li>
 		<a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">
 			{{ collection.name|capitalize }}

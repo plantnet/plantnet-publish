@@ -7,7 +7,7 @@
 		</a>
 	</li>
 	{% if module.children|length > 0 %}
-		{% for child in module.children if child.type == 'image' %}
+		{% for child in module.children if (child.type == 'image' and child.deleting != true) %}
 			<li class="child">
 				<a href="{{ path('_submodule', { 'project': project, 'collection': collection.name, 'module': module.name, 'submodule': child.name }) }}">
 					<i class="icon-camera"></i>
@@ -16,7 +16,7 @@
 				</a>
 			</li>
 		{% endfor %}
-		{% for child in module.children if child.type == 'locality' %}
+		{% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
 			<li class="child">
 				<a href="{{ path('_submodule', { 'project': project, 'collection': collection.name, 'module': module.name, 'submodule': child.name }) }}">
 					<i class="icon-map-marker"></i>

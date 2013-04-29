@@ -1,4 +1,4 @@
-{% for collection in collections if (collection.deleting is not defined or collection.deleting != true) %}
+{% for collection in collections if collection.deleting != true %}
     <li class="dropdown collection">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
             <i class="icon-folder-open"></i>
@@ -21,7 +21,7 @@
             {% endif %}
         </ul>
     </li>
-    {% for module in collection.modules if (module.deleting is not defined or module.deleting != true) %}
+    {% for module in collection.modules if module.deleting != true %}
         <li class="dropdown module">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                 <i class="icon-list"></i>
@@ -52,7 +52,7 @@
             </ul>
         </li>
         {% if module.children|length > 0 %}
-            {% for child in module.children if (child.deleting is not defined or child.deleting != true) %}
+            {% for child in module.children if child.deleting != true %}
                 <li class="dropdown submodule">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         {% if child.type == 'image' %}

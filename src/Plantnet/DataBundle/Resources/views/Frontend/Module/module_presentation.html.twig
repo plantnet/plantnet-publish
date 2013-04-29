@@ -15,7 +15,7 @@
         {% if module.children|length > 0 %}
             <div class="details">
                 <table>
-                    {% for child in module.children if child.type == 'image' %}
+                    {% for child in module.children if (child.type == 'image' and child.deleting != true) %}
                         {% if child.nbrows > 0 and imgs|length < nb_img %}
                             {% for image in child.images if imgs|length < nb_img %}
                                 {% set imgs = imgs|merge([image]) %}
@@ -35,7 +35,7 @@
                             </td>
                         </tr>
                     {% endfor %}
-                    {% for child in module.children if child.type == 'locality' %}
+                    {% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
                         <tr>
                             <td>
                                 <i class="icon-map-marker"></i>
