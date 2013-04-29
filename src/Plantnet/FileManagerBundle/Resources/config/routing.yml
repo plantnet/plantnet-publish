@@ -2,11 +2,11 @@ plantnet_file_manager_homepage:
     pattern:  /{name}/file_manager/
     defaults: { _controller: PlantnetFileManagerBundle:Default:index }
     requirements:
-        name:   \w+
+        name:   "[._-\w]+"
 
 plantnet_file_manager_upload:
     pattern:  /{name}/file_upload/
     defaults: { _controller: PlantnetFileManagerBundle:Default:upload }
     methods:    [POST]
     requirements:
-        name:   \w+
+        name:   "[._-\w]+"

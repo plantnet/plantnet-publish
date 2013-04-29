@@ -57,23 +57,13 @@
                 <tbody>
                     {% for plantunit in paginator %}
                         <tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}'">
-                            {% set img = false %}
-                            {% set loc = false %}
-                            {% for child in plantunit.module.children if img == false or loc == false %}
-                                {% if child.type == 'image' and child.nbrows > 0 %}
-                                    {% set img = true %}
-                                {% endif %}
-                                {% if child.type == 'locality' and child.nbrows > 0 %}
-                                    {% set loc = true %}
-                                {% endif %}
-                            {% endfor %}
                             <td>
-                                {% if img %}
+                                {% if plantunit.images|length > 0 %}
                                     <i class="icon-camera"></i>
                                 {% endif %}
                             </td>
                             <td>
-                                {% if loc %}
+                                {% if plantunit.locations|length > 0 %}
                                     <i class="icon-map-marker"></i>
                                 {% endif %}
                             </td>
