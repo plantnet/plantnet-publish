@@ -15,7 +15,19 @@
     <div class="results">
         {% if paginator|length > 0 %}
             <div class="pagerfanta">
-                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
+                {{ pagerfanta(
+                    paginator,
+                    'twitter_bootstrap_translated',
+                    {
+                        'proximity': 2,
+                        'routeName': '_module_paginated',
+                        'routeParams': {
+                            'project':project,
+                            'collection': collection.name,
+                            'module': module.name
+                        }
+                    }
+                ) }}
             </div>
              <table class="table table-striped table-hover">
                 <thead>
@@ -48,7 +60,19 @@
                 </tbody>
             </table>
             <div class="pagerfanta">
-                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
+                {{ pagerfanta(
+                    paginator,
+                    'twitter_bootstrap_translated',
+                    {
+                        'proximity': 2,
+                        'routeName': '_module_paginated',
+                        'routeParams': {
+                            'project':project,
+                            'collection': collection.name,
+                            'module': module.name
+                        }
+                    }
+                ) }}
             </div>
         {% endif %}
     </div>

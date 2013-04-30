@@ -134,10 +134,11 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}", name="_module")
+     * @Route("/project/{project}/collection/{collection}/{module}/page1", defaults={"page"=1}, name="_module")
+     * @Route("/project/{project}/collection/{collection}/{module}/page{page}", requirements={"page"="\d+"}, name="_module_paginated")
      * @Template()
      */
-    public function moduleAction($project, $collection, $module)
+    public function moduleAction($project, $collection, $module, $page)
     {
         $projects=$this->database_list();
         if(!in_array($project,$projects))
@@ -166,8 +167,13 @@ class DataController extends Controller
         $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
             ->field('module')->references($module);
         $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
-        $paginator->setMaxPerPage(50);
-        $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+        try{
+            $paginator->setMaxPerPage(50);
+            $paginator->setCurrentPage($page);
+        }
+        catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
+            throw $this->createNotFoundException('Page not found.');
+        }
         return $this->render('PlantnetDataBundle:Frontend\Module:datagrid.html.twig', array(
             'project' => $project,
             'current' => 'collection',
@@ -180,10 +186,11 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}", name="_submodule")
+     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/page1", defaults={"page"=1}, name="_submodule")
+     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/page{page}", requirements={"page"="\d+"}, name="_submodule_paginated")
      * @Template()
      */
-    public function submoduleAction($project, $collection, $module, $submodule)
+    public function submoduleAction($project, $collection, $module, $submodule, $page)
     {
         $projects=$this->database_list();
         if(!in_array($project,$projects))
@@ -227,8 +234,13 @@ class DataController extends Controller
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($module);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
-                $paginator->setMaxPerPage(15);
-                $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+                try{
+                    $paginator->setMaxPerPage(15);
+                    $paginator->setCurrentPage($page);
+                }
+                catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
+                    throw $this->createNotFoundException('Page not found.');
+                }
                 return $this->render('PlantnetDataBundle:Frontend\Module:gallery.html.twig', array(
                     'project' => $project,
                     'current' => 'collection',
@@ -588,8 +600,13 @@ class DataController extends Controller
                     }
                 }
                 $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
-                $paginator->setMaxPerPage(50);
-                $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+                try{
+                    $paginator->setMaxPerPage(50);
+                    $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+                }
+                catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
+                    throw $this->createNotFoundException('Page not found.');
+                }
                 $nbResults=$paginator->getNbResults();
             }
             return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig', array(

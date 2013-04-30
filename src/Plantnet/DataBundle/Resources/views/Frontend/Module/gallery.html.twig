@@ -10,7 +10,20 @@
 	<div class="results">
 		{% if paginator|length > 0 %}
 			<div class="pagerfanta">
-				{{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
+				{{ pagerfanta(
+					paginator,
+					'twitter_bootstrap_translated',
+					{
+						'proximity': 2,
+						'routeName': '_submodule_paginated',
+                        'routeParams': {
+                            'project':project,
+                            'collection': collection.name,
+                            'module': module_parent.name,
+                            'submodule': module.name
+                        }
+					}
+				) }}
 			</div>
 			<div class="gallery">
 				<ul class="thumbnails per3">
@@ -81,7 +94,20 @@
 				</ul>
 			</div>
 			<div class="pagerfanta">
-				{{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
+				{{ pagerfanta(
+					paginator,
+					'twitter_bootstrap_translated',
+					{
+						'proximity': 2,
+						'routeName': '_submodule_paginated',
+                        'routeParams': {
+                            'project':project,
+                            'collection': collection.name,
+                            'module': module_parent.name,
+                            'submodule': module.name
+                        }
+					}
+				) }}
 			</div>
 		{% endif %}
 	</div>
