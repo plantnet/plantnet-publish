@@ -19,6 +19,11 @@ class ExportController extends Controller
     private $dir_name='';
     private $imgs_dir_name='images';
     private $thumbs_dir_name='thumbnails';
+    private $ui_dir_name='ui';
+    private $ui_img_dir_name='img';
+    private $ui_css_dir_name='css';
+    private $ui_js_dir_name='js';
+    private $ui_sources='/../../Resources/public';
 
     private function getDataBase($user=null,$dm=null)
     {
@@ -63,12 +68,34 @@ class ExportController extends Controller
         if($module->getType()!='text'){
             throw $this->createNotFoundException('Unable to load data.');
         }
+        //-------
         $mt=str_replace('.','',microtime(true));
         $this->dir_name='./uploads/_tmp';
         $this->dir_name.=$mt;
         mkdir($this->dir_name);
         mkdir($this->dir_name.'/'.$this->imgs_dir_name);
         mkdir($this->dir_name.'/'.$this->thumbs_dir_name);
+        mkdir($this->dir_name.'/'.$this->ui_dir_name);
+        mkdir($this->dir_name.'/'.$this->ui_dir_name.'/'.$this->ui_img_dir_name);
+        mkdir($this->dir_name.'/'.$this->ui_dir_name.'/'.$this->ui_css_dir_name);
+        mkdir($this->dir_name.'/'.$this->ui_dir_name.'/'.$this->ui_js_dir_name);
+        //-------
+        copy(
+            __dir__.$this->ui_sources.'/js/jquery-1.7.min.js',
+            $this->dir_name.'/'.$this->ui_dir_name.'/jquery-1.7.min.js'
+        );
+        copy(
+            __dir__.$this->ui_sources.'/bootstrap/img/glyphicons-halflings.png',
+            $this->dir_name.'/'.$this->ui_dir_name.'/'.$this->ui_img_dir_name.'/glyphicons-halflings.png'
+        );
+        copy(
+            __dir__.$this->ui_sources.'/bootstrap/css/bootstrap.min.css',
+            $this->dir_name.'/'.$this->ui_dir_name.'/'.$this->ui_css_dir_name.'/bootstrap.min.css'
+        );
+        copy(
+            __dir__.$this->ui_sources.'/bootstrap/js/bootstrap.min.js',
+            $this->dir_name.'/'.$this->ui_dir_name.'/'.$this->ui_js_dir_name.'/bootstrap.min.js'
+        );
         //-------
         $module_id=$module->getId();
         $module=null;
@@ -195,7 +222,7 @@ class ExportController extends Controller
             {
                 $img_name=$image->getPath();
                 $img_source_dir='./uploads/'.$image->getModule()->getUploaddir();
-                $thumb_size='thumb_180_120';
+                $thumb_size='thumb_idao';
                 $thumb_source_dir='./media/cache/'.$thumb_size.'/uploads/'.$image->getModule()->getUploaddir();
                 if(file_exists($img_source_dir.'/'.$img_name))
                 {

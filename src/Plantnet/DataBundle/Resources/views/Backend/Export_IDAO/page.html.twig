@@ -2,19 +2,61 @@
 {% block title %}{{ plantunit.title1 ~ ' - ' ~ plantunit.title2 }}{% endblock %}
 {% block stylesheets %}
 	{{ parent() }}
+    <style type="text/css">
+        body{
+            padding:20px;
+        }
+        .gallery > ul{
+            list-style-type:none;
+            margin:0;
+            padding:0;
+        }
+        .gallery > ul > li{
+            display:inline-block;
+            margin-right:10px;
+            margin-bottom:10px;
+        }
+    </style>
 {% endblock %}
 {% block body %}
-	<h1>{{ plantunit.title1 }}</h1>
-	<table>
-        {% for property in module.properties if property.id in display %}
-            <tr>
-                <td>{{ property.name|capitalize }}</td>
-                <td>{{ plantunit.attributes[property.id] }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+    {# Title #}
+	<h2>{{ plantunit.title1 }}</h2>
+    {# Gallery #}
+    {% if plantunit.images|length > 0 %}
+        <div class="gallery">
+            <ul>
+                {% for image in plantunit.images %}
+                    {% set imgspe = image.path|basename %}
+                    {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+                    {% set content = '' %}
+                    {% for property in image.module.properties if property.details == true %}
+                        {% set content = content ~ '<strong>' ~ property.name|capitalize ~ '</strong>' %}
+                        {% set content = content ~ ': ' ~ image.property[property.id] ~ '<br />' %}
+                    {% endfor %}
+                    <li data-title="<strong>© {{ image.copyright }}</strong>" data-content="{% autoescape false %}{{ content }}{% endautoescape %}">
+                        <a href="./{{ imgs_dir_name }}/{{ imgspe }}">
+                            <img src="./{{ thumbs_dir_name }}/{{ imgspe }}" class="img-polaroid" alt="{{ imgspe }}" />
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    {# Data #}
+    <div class="data">
+        <h4>Description</h4>
+    	<table class="table table-striped table-bordered table-hover table-condensed">
+            {% for property in module.properties if property.id in display %}
+                <tr>
+                    <td><strong>{{ property.name|capitalize }}</strong></td>
+                    <td>{{ plantunit.attributes[property.id] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {# Data plus #}
     {% if tab_others_groups|length > 0 %}
-        <div>
+        <div class="data-plus">
             {% for group in tab_others_groups %}
                 <div>
                     <div>
@@ -23,13 +65,13 @@
                         </h5>
                     </div>
                     <div>
-                        <table>
+                        <table class="table table-striped table-bordered table-hover table-condensed">
                             {% set not_display = [] %}
                             <tr>
                                 {% for property in group.0.properties %}
                                     {% if property.details == true %}
                                         <td>
-                                            {{ property.name }}
+                                            <strong>{{ property.name }}</strong>
                                         </td>
                                     {% else %}
                                         {% set hidden = loop.index %}
@@ -54,35 +96,16 @@
             {% endfor %}
         </div>
     {% endif %}
-    {% if plantunit.images|length > 0 %}
-        <div>
-            <ul>
-                {% for image in plantunit.images %}
-                    {% set imgspe = image.path|basename %}
-                    {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
-                    <li>
-                        {% set content = '' %}
-                        {% for property in image.module.properties if property.details == true %}
-                            {% set content = content ~ property.name|capitalize %}
-                            {% set content = content ~ ': ' ~ image.property[property.id] ~ '<br />' %}
-                        {% endfor %}
-                        <div>
-                            <a href="./{{ imgs_dir_name }}/{{ imgspe }}">
-                                <img src="./{{ thumbs_dir_name }}/{{ imgspe }}" alt="{{ imgspe }}" />
-                            </a>
-                            <p>
-	                            <strong>© {{ image.copyright }}</strong>
-	                        </p>
-	                        <p>
-                        		{% autoescape false %}{{ content }}{% endautoescape %}
-                        	</p>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.gallery ul li').popover({
+                html:true,
+                placement:'bottom',
+                trigger:'hover'
+            });
+        });
+    </script>
 {% endblock %}

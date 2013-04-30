@@ -4,11 +4,16 @@
 		{% block head %}
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 			<title>{% block title %}Pl@ntnet{% endblock %}</title>
-			{% block stylesheets %}{% endblock %}
+			{% block stylesheets %}
+				<link rel="stylesheet" href="./ui/css/bootstrap.min.css" media="screen">
+			{% endblock %}
 		{% endblock %}
 	</head>
 	<body>
 		{% block body %}{% endblock %}
-		{% block javascripts %}{% endblock %}
+		{% block javascripts %}
+			<script type="text/javascript" src="./ui/jquery-1.7.min.js"></script>
+			<script type="text/javascript" src="./ui/js/bootstrap.min.js"></script>
+		{% endblock %}
 	</body>
 </html>
