@@ -12,7 +12,7 @@ ini_set('memory_limit','-1');
 /**
  * Export controller.
  *
- * @Route("/export")
+ * @Route("/admin/export")
  */
 class ExportController extends Controller
 {
@@ -208,7 +208,7 @@ class ExportController extends Controller
         $tidy->parseString($page,$config,'utf8');
         $tidy->cleanRepair();
         // /Tidy
-        $new_page=fopen($this->dir_name.'/'.$plantunit->getIdentifier().'.html','w');
+        $new_page=fopen($this->dir_name.'/'.$plantunit->getIdentifier().'_en.html','w');
         if($new_page)
         {
             fwrite($new_page,$tidy);

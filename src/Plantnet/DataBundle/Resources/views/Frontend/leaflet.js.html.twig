@@ -206,4 +206,28 @@
 		var layer=legends[e.layer._url];
 		$('.legend_'+layer).hide();
 	});
+	{####### AJAX DATA LOAD #################################################}
+	function load_markers(page)
+	{
+		map.removeLayer(markers);
+		$.getJSON('/app_dev.php/project/test/collection/Climbers/Species/module/Locations/datamap/page'+page+'',function(data)
+		{
+			$('#map_bar .bar').css('width',data.data.done+'%');
+			$.each(data.data.locations,function(key,obj){
+				var marker=L.marker([obj.latitude,obj.longitude]);
+				marker.bindPopup('<b>'+obj.title1+'</b><br />'+obj.title2+'');
+				markers.addLayer(marker);
+			});
+			if(data.data.next!=-1)
+			{
+				load_markers(data.data.next)
+			}
+			else
+			{
+				$('#map_bar').remove();
+			}
+		});
+		map.addLayer(markers);
+	}
+	load_markers(0);
 </script>

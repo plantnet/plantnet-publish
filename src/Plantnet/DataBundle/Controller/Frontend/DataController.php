@@ -134,12 +134,23 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/page1", defaults={"page"=1}, name="_module")
+     * @Route("/project/{project}/collection/{collection}/{module}", defaults={"page"=1}, name="_module")
      * @Route("/project/{project}/collection/{collection}/{module}/page{page}", requirements={"page"="\d+"}, name="_module_paginated")
      * @Template()
      */
     public function moduleAction($project, $collection, $module, $page)
     {
+        if($this->container->get('request')->get('_route')=='_module_paginated'&&$page==1)
+        {
+            return $this->redirect($this->generateUrl(
+                '_module',
+                array(
+                    'project'=>$project,
+                    'collection'=>$collection,
+                    'module'=>$module
+                )
+            ),301);
+        }
         $projects=$this->database_list();
         if(!in_array($project,$projects))
         {
@@ -186,12 +197,24 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/page1", defaults={"page"=1}, name="_submodule")
+     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}", defaults={"page"=1}, name="_submodule")
      * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/page{page}", requirements={"page"="\d+"}, name="_submodule_paginated")
      * @Template()
      */
     public function submoduleAction($project, $collection, $module, $submodule, $page)
     {
+        if($this->container->get('request')->get('_route')=='_submodule_paginated'&&$page==1)
+        {
+            return $this->redirect($this->generateUrl(
+                '_submodule',
+                array(
+                    'project'=>$project,
+                    'collection'=>$collection,
+                    'module'=>$module,
+                    'submodule'=>$submodule
+                )
+            ),301);
+        }
         $projects=$this->database_list();
         if(!in_array($project,$projects))
         {
@@ -253,52 +276,52 @@ class DataController extends Controller
                 ));
                 break;
             case 'locality':
-                $db=$this->get_prefix().$project;
-                $m=new \Mongo();
-                $plantunits=array();
-                $c_plantunits=$m->$db->Plantunit->find(
-                    array('module.$id'=>new \MongoId($module_parent->getId())),
-                    array('_id'=>1,'title1'=>1,'title2'=>1)
-                );
-                foreach($c_plantunits as $id=>$p)
-                {
-                    $plant=array();
-                    $plant['title1']=$p['title1'];
-                    $plant['title2']=$p['title2'];
-                    $plantunits[$id]=$plant;
-                }
-                unset($c_plantunits);
+                // $db=$this->get_prefix().$project;
+                // $m=new \Mongo();
+                // $plantunits=array();
+                // $c_plantunits=$m->$db->Plantunit->find(
+                //     array('module.$id'=>new \MongoId($module_parent->getId())),
+                //     array('_id'=>1,'title1'=>1,'title2'=>1)
+                // );
+                // foreach($c_plantunits as $id=>$p)
+                // {
+                //     $plant=array();
+                //     $plant['title1']=$p['title1'];
+                //     $plant['title2']=$p['title2'];
+                //     $plantunits[$id]=$plant;
+                // }
+                // unset($c_plantunits);
                 $locations=array();
-                $c_locations=$m->$db->Location->find(
-                    array(
-                        'module.$id'=>new \MongoId($module->getId())
-                    ),
-                    array('_id'=>1,'latitude'=>1,'longitude'=>1,'plantunit.$id'=>1)
-                );
-                foreach($c_locations as $id=>$l)
-                {
-                    $loc=array();
-                    $loc['id']=$id;
-                    $loc['latitude']=$l['latitude'];
-                    $loc['longitude']=$l['longitude'];
-                    $loc['title1']='';
-                    $loc['title2']='';
-                    if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
-                    {
-                        if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))
-                        {
-                            $loc['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];
-                        }
-                        if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title2']))
-                        {
-                            $loc['title2']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title2'];
-                        }
-                    }
-                    $locations[]=$loc;
-                }
-                unset($plantunits);
-                unset($c_locations);
-                unset($m);
+                // $c_locations=$m->$db->Location->find(
+                //     array(
+                //         'module.$id'=>new \MongoId($module->getId())
+                //     ),
+                //     array('_id'=>1,'latitude'=>1,'longitude'=>1,'plantunit.$id'=>1)
+                // );
+                // foreach($c_locations as $id=>$l)
+                // {
+                //     $loc=array();
+                //     $loc['id']=$id;
+                //     $loc['latitude']=$l['latitude'];
+                //     $loc['longitude']=$l['longitude'];
+                //     $loc['title1']='';
+                //     $loc['title2']='';
+                //     if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
+                //     {
+                //         if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))
+                //         {
+                //             $loc['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];
+                //         }
+                //         if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title2']))
+                //         {
+                //             $loc['title2']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title2'];
+                //         }
+                //     }
+                //     $locations[]=$loc;
+                // }
+                // unset($plantunits);
+                // unset($c_locations);
+                // unset($m);
                 $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
                 return $this->render('PlantnetDataBundle:Frontend\Module:map.html.twig',array(
@@ -313,6 +336,112 @@ class DataController extends Controller
                 ));
                 break;
         }
+    }
+
+    /**
+     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/datamap/page{page}", requirements={"page"="\d+"}, name="_datamap_paginated")
+     * @Template()
+     */
+    public function datamapAction($project, $collection, $module, $submodule, $page)
+    {
+        $max_per_page=50;
+        $start=$page*$max_per_page;
+        $projects=$this->database_list();
+        if(!in_array($project,$projects))
+        {
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $module_parent = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=> $module,
+                'collection.id' => $collection->getId()
+            ));
+        if(!$module_parent){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=> $submodule,
+                'parent.id'=>$module_parent->getId(),
+                'collection.id' => $collection->getId()
+            ));
+        if(!$module||$module->getType()!='locality'){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        //data extract
+        $db=$this->get_prefix().$project;
+        $m=new \Mongo();
+        $plantunits=array();
+        $c_plantunits=$m->$db->Plantunit->find(
+            array('module.$id'=>new \MongoId($module_parent->getId())),
+            array('_id'=>1,'title1'=>1,'title2'=>1)
+        );
+        foreach($c_plantunits as $id=>$p)
+        {
+            $plant=array();
+            $plant['title1']=$p['title1'];
+            $plant['title2']=$p['title2'];
+            $plantunits[$id]=$plant;
+        }
+        unset($c_plantunits);
+        $locations=array();
+        $c_locations=$m->$db->Location->find(
+            array(
+                'module.$id'=>new \MongoId($module->getId())
+            ),
+            array('_id'=>1,'latitude'=>1,'longitude'=>1,'plantunit.$id'=>1)
+        );
+        foreach($c_locations as $id=>$l)
+        {
+            $loc=array();
+            $loc['id']=$id;
+            $loc['latitude']=$l['latitude'];
+            $loc['longitude']=$l['longitude'];
+            $loc['title1']='';
+            $loc['title2']='';
+            if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
+            {
+                if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))
+                {
+                    $loc['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];
+                }
+                if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title2']))
+                {
+                    $loc['title2']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title2'];
+                }
+            }
+            $locations[]=$loc;
+        }
+        unset($plantunits);
+        unset($c_locations);
+        unset($m);
+        $next=$page+1;
+        if($start+$max_per_page>=count($locations))
+        {
+            $next=-1;
+        }
+        $done=round(($start+$max_per_page)*100/count($locations));
+        if($done>100)
+        {
+            $done=100;
+        }
+        $locations=array_splice($locations,$start,$max_per_page);
+        $return=array(
+            'next'=>$next,
+            'done'=>$done,
+            'locations'=>$locations
+        );
+        $response=new Response(json_encode(array('data'=>$return)));
+        $response->headers->set('Content-Type','application/json');
+        return $response;
+        exit;
     }
 
     /**
