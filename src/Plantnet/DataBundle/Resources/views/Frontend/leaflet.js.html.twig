@@ -207,27 +207,31 @@
 		$('.legend_'+layer).hide();
 	});
 	{####### AJAX DATA LOAD #################################################}
+	{% if module_parent is defined %}
 	function load_markers(page)
 	{
 		map.removeLayer(markers);
-		$.getJSON('/app_dev.php/project/test/collection/Climbers/Species/module/Locations/datamap/page'+page+'',function(data)
+		$.getJSON('{{ path('_datamap', { 'project': project, 'collection': collection.name, 'module': module_parent.name, 'submodule': module.name }) }}/page'+page+'',function(data)
 		{
-			$('#map_bar .bar').css('width',data.data.done+'%');
-			$.each(data.data.locations,function(key,obj){
-				var marker=L.marker([obj.latitude,obj.longitude]);
-				marker.bindPopup('<b>'+obj.title1+'</b><br />'+obj.title2+'');
-				markers.addLayer(marker);
+			var geoJsonLayer=L.geoJson(data,{
+				onEachFeature:function(feature,layer)
+				{
+					layer.bindPopup('<b>'+feature.properties.title1+'</b><br />'+feature.properties.title2);
+				}
 			});
-			if(data.data.next!=-1)
+			if(data.next!=-1)
 			{
-				load_markers(data.data.next)
+				$('#map_bar .bar').css('width',data.done+'%');
+				load_markers(data.next)
 			}
 			else
 			{
 				$('#map_bar').remove();
 			}
+			markers.addLayer(geoJsonLayer);
 		});
 		map.addLayer(markers);
 	}
 	load_markers(0);
+	{% endif %}
 </script>

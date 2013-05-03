@@ -339,12 +339,13 @@ class DataController extends Controller
     }
 
     /**
+     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/datamap", defaults={"page"=0}, name="_datamap")
      * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/datamap/page{page}", requirements={"page"="\d+"}, name="_datamap_paginated")
      * @Template()
      */
     public function datamapAction($project, $collection, $module, $submodule, $page)
     {
-        $max_per_page=50;
+        $max_per_page=5000;
         $start=$page*$max_per_page;
         $projects=$this->database_list();
         if(!in_array($project,$projects))
@@ -397,48 +398,61 @@ class DataController extends Controller
                 'module.$id'=>new \MongoId($module->getId())
             ),
             array('_id'=>1,'latitude'=>1,'longitude'=>1,'plantunit.$id'=>1)
-        );
+        )->sort(array('_id'=>1))->limit($max_per_page)->skip($start);
         foreach($c_locations as $id=>$l)
         {
             $loc=array();
+            $loc['type']='Feature';
             $loc['id']=$id;
-            $loc['latitude']=$l['latitude'];
-            $loc['longitude']=$l['longitude'];
-            $loc['title1']='';
-            $loc['title2']='';
+            $loc['geometry']=array(
+                'type'=>'Point',
+                'coordinates'=>array(
+                    $l['longitude'],
+                    $l['latitude']
+                )
+            );
+            $loc['properties']=array(
+                'title1'=>'',
+                'title2'=>''
+            );
             if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
             {
                 if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))
                 {
-                    $loc['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];
+                    $loc['properties']['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];
                 }
                 if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title2']))
                 {
-                    $loc['title2']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title2'];
+                    $loc['properties']['title2']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title2'];
                 }
             }
             $locations[]=$loc;
         }
         unset($plantunits);
         unset($c_locations);
+        $total=$m->$db->Location->find(
+            array(
+                'module.$id'=>new \MongoId($module->getId())
+            )
+        )->count();
         unset($m);
         $next=$page+1;
-        if($start+$max_per_page>=count($locations))
+        if($start+$max_per_page>=$total)
         {
             $next=-1;
         }
-        $done=round(($start+$max_per_page)*100/count($locations));
+        $done=round(($start+$max_per_page)*100/$total);
         if($done>100)
         {
             $done=100;
         }
-        $locations=array_splice($locations,$start,$max_per_page);
         $return=array(
+            'type'=>'FeatureCollection',
+            'features'=>$locations,
             'next'=>$next,
-            'done'=>$done,
-            'locations'=>$locations
+            'done'=>$done
         );
-        $response=new Response(json_encode(array('data'=>$return)));
+        $response=new Response(json_encode($return));
         $response->headers->set('Content-Type','application/json');
         return $response;
         exit;
