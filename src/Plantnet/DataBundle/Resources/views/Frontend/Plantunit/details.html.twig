@@ -121,7 +121,7 @@
         }
         $(document).ready(function(){
             $(window).scroll(function(){
-                if(isOnScreen($('#end_of_gallery')))
+                if($('#end_of_gallery').length>0&&isOnScreen($('#end_of_gallery')))
                 {
                     var data_url=$('#end_of_gallery').attr('href');
                     $('#end_of_gallery').parents('li').remove();
