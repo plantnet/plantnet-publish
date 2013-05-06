@@ -524,6 +524,66 @@ class DataController extends Controller
         ));
     }
 
+    /**
+     * @Route("/project/{project}/collection/{collection}/{module}/details_gallery/{id}", defaults={"page"=0}, name="_details_gallery")
+     * @Route("/project/{project}/collection/{collection}/{module}/details_gallery/{id}/page{page}", requirements={"page"="\d+"}, name="_details_gallery_paginated")
+     * @Template()
+     */
+    public function details_galleryAction($project, $collection, $module, $id, $page)
+    {
+        $max_per_page=9;
+        $start=$page*$max_per_page;
+        $projects=$this->database_list();
+        if(!in_array($project,$projects))
+        {
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array('name'=>$module,'collection.id'=>$collection->getId()));
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $display=array();
+        $field=$module->getProperties();
+        foreach($field as $row){
+            if($row->getDetails()==true){
+                $display[]=$row->getId();
+            }
+        }
+        $plantunit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+            ->findOneBy(array('module.id'=>$module->getId(),'id'=>$id));
+        if(!$plantunit){
+            throw $this->createNotFoundException('Unable to find Plantunit entity.');
+        }
+        $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+            ->field('plantunit.id')->equals($plantunit->getId())
+            ->sort('id','asc')
+            ->limit($max_per_page)
+            ->skip($start)
+            ->getQuery()
+            ->execute();
+        $next=$page+1;
+        if($start+$max_per_page>=count($images))
+        {
+            $next=-1;
+        }
+        return $this->render('PlantnetDataBundle:Frontend\Plantunit:details_gallery.html.twig',array(
+            'project'=>$project,
+            'collection'=>$collection,
+            'module'=>$module,
+            'plantunit'=>$plantunit,
+            'images'=>$images,
+            'next'=>$next
+        ));
+    }
+
     private function createModuleSearchForm($fields,$module)
     {
         $properties=$module->getProperties();

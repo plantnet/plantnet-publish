@@ -88,64 +88,12 @@
         {% endif %}
         {% if plantunit.images|length > 0 %}
             <div class="gallery">
-                <ul class="thumbnails per3">
-                    {% for image in plantunit.images %}
-                        {% set imgspe = image.path|basename %}
-                        {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
-                        <li class="span3">
-                            {% set content = '' %}
-                            {% for property in image.module.properties if property.details == true %}
-                                {% set content = content ~ '<u>' ~ property.name|capitalize ~ '</u>' %}
-                                {% set content = content ~ ': ' ~ image.property[property.id] ~ '<br />' %}
-                            {% endfor %}
-                            <div class="thumbnail" data-content="{{ content }}">
-                                <a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
-                                    <img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid" alt="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}</strong><br />{{ image.copyright }}" />
-                                </a>
-                                <h5>
-                                    {{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}
-                                </h5>
-                                {% if image.copyright is not empty %}
-                                    <p>
-                                        {{ image.copyright }}
-                                    </p>
-                                {% endif %}
-                                <div class="access">
-                                    <a class="html-box" href="#data_{{ image.id }}">
-                                        <i class="icon-eye-open"></i>
-                                    </a>
-                                    <div style="display:none">
-                                        <div id="data_{{ image.id }}" data-src="{{ asset(img) }}">
-                                            <div id="v_data_{{ image.id }}" class="viewer"></div>
-                                            <div class="control-panel">
-                                                <div class="btn-group">
-                                                    <a id="v_data_{{ image.id }}_in" href="#" class="btn">
-                                                        <i class="icon-plus-sign"></i>
-                                                    </a>
-                                                    <a id="v_data_{{ image.id }}_out" href="#" class="btn">
-                                                        <i class="icon-minus-sign"></i>
-                                                    </a>
-                                                    <a id="v_data_{{ image.id }}_orig" href="#" class="btn">
-                                                        <i class="icon-fullscreen"></i>
-                                                    </a>
-                                                    <a id="v_data_{{ image.id }}_fit" href="#" class="btn">
-                                                        <i class="icon-screenshot"></i>
-                                                    </a>
-                                                    <a id="v_data_{{ image.id }}_right" href="#" class="btn">
-                                                        <i class="icon-retweet"></i>
-                                                    </a>
-                                                </div>
-                                                <div class="input-append">
-                                                    <input type="text" id="v_data_{{ image.id }}_percent" value="100" class="input-mini uneditable-input" readonly="readonly" />
-                                                    <span class="add-on"><strong>%</strong></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    {% endfor %}
+                <ul id="list_gallery" class="thumbnails per3">
+                    <li>
+                        <a href="{{ path('_details_gallery', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}/page0" id="end_of_gallery">
+                            Gallery
+                        </a>
+                    </li>
                 </ul>
             </div>
         {% endif %}
@@ -164,76 +112,98 @@
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-ui-1.9.2.custom.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.min.js') }}"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-            /* Apply fancybox to multiple items */
-            $('a.grouped_elements').fancybox({
-                'transitionIn':'elastic',
-                'transitionOut':'elastic',
-                'speedIn':200,
-                'speedOut':200,
-                'enableEscapeButton':true,
-                'hideOnContentClick':true,
-                'titlePosition':'inside',
-                'overlayShow':true,
-                'titleFromAlt':true
-            });
-            $('a.html-box').fancybox({
-                onStart:function(){
-                    var width=$(window).width();
-                    var height=$(window).height();
-                    $('.viewer').width(Math.round(width*85/100));
-                    $('.viewer').height(Math.round(height*75/100));
-                },
-                onComplete:function(){
-                    var id=$(this).attr('href');
-                    var img_src=$(id).attr('data-src');
-                    id=id.replace('#','v_');
-                    var iv=$('#'+id).iviewer({
-                        src:img_src,
-                        ui_disabled:true,
-                        zoom:'fit',
-                        zoom_min:25,
-                        zoom_max:1000,
-                        onAfterZoom:function(ev,new_zoom){
-                            $('#'+id+'_percent').val(Math.round(new_zoom));
-                        }
-                    });
-                    $('#'+id+'_in').click(function(event){
-                        event.preventDefault();
-                        iv.iviewer('zoom_by',1);
-                    });
-                    $('#'+id+'_out').click(function(event){
-                        event.preventDefault();
-                        iv.iviewer('zoom_by',-1);
-                    });
-                    $('#'+id+'_orig').click(function(event){
-                        event.preventDefault();
-                        iv.iviewer('set_zoom',100);
-                    });
-                    $('#'+id+'_fit').click(function(event){
-                        event.preventDefault();
-                        iv.iviewer('fit');
-                    });
-                    $('#'+id+'_right').click(function(event){
-                        event.preventDefault();
-                        iv.iviewer('angle',90,false);
-                    });
-                }
-            });
-            $('.gallery img').addClass('blind');
-            $('.gallery img').one('load',function(){
-                var img=$(this);
-                img.fadeTo(200,1);
-            }).each(function(){
-                if(this.complete)
+        function isOnScreen(elem)
+        {
+            var docViewTop=$(window).scrollTop();
+            var docViewBottom=docViewTop+$(window).height();
+            var elemTop=$(elem).offset().top;
+            return ((elemTop<=docViewBottom)&&(elemTop>=docViewTop));
+        }
+        $(document).ready(function(){
+            $(window).scroll(function(){
+                if(isOnScreen($('#end_of_gallery')))
                 {
-                    $(this).load();
+                    var data_url=$('#end_of_gallery').attr('href');
+                    $('#end_of_gallery').parents('li').remove();
+                    $.ajax({
+                        url:data_url
+                    }).done(function(data){
+                        $('#list_gallery').append(data);
+                        /* Apply fancybox to multiple items */
+                        $('a.grouped_elements').fancybox({
+                            'transitionIn':'elastic',
+                            'transitionOut':'elastic',
+                            'speedIn':200,
+                            'speedOut':200,
+                            'enableEscapeButton':true,
+                            'hideOnContentClick':true,
+                            'titlePosition':'inside',
+                            'overlayShow':true,
+                            'titleFromAlt':true
+                        });
+                        $('a.grouped_elements').removeClass('grouped_elements');
+                        $('a.html-box').fancybox({
+                            onStart:function(){
+                                var width=$(window).width();
+                                var height=$(window).height();
+                                $('.viewer').width(Math.round(width*85/100));
+                                $('.viewer').height(Math.round(height*75/100));
+                            },
+                            onComplete:function(){
+                                var id=$(this).attr('href');
+                                var img_src=$(id).attr('data-src');
+                                id=id.replace('#','v_');
+                                var iv=$('#'+id).iviewer({
+                                    src:img_src,
+                                    ui_disabled:true,
+                                    zoom:'fit',
+                                    zoom_min:25,
+                                    zoom_max:1000,
+                                    onAfterZoom:function(ev,new_zoom){
+                                        $('#'+id+'_percent').val(Math.round(new_zoom));
+                                    }
+                                });
+                                $('#'+id+'_in').click(function(event){
+                                    event.preventDefault();
+                                    iv.iviewer('zoom_by',1);
+                                });
+                                $('#'+id+'_out').click(function(event){
+                                    event.preventDefault();
+                                    iv.iviewer('zoom_by',-1);
+                                });
+                                $('#'+id+'_orig').click(function(event){
+                                    event.preventDefault();
+                                    iv.iviewer('set_zoom',100);
+                                });
+                                $('#'+id+'_fit').click(function(event){
+                                    event.preventDefault();
+                                    iv.iviewer('fit');
+                                });
+                                $('#'+id+'_right').click(function(event){
+                                    event.preventDefault();
+                                    iv.iviewer('angle',90,false);
+                                });
+                            }
+                        });
+                        $('.gallery img.new').addClass('blind');
+                        $('.gallery img.new').one('load',function(){
+                            var img=$(this);
+                            img.fadeTo(200,1);
+                        }).each(function(){
+                            if(this.complete)
+                            {
+                                $(this).load();
+                            }
+                        });
+                         $('.gallery img.new').removeClass('new');
+                        $('a.html-box').removeClass('html-box');
+                        $('div.thumbnail').popover({
+                            html:true,
+                            placement:'left',
+                            trigger:'hover'
+                        });
+                    });
                 }
-            });
-            $('div.thumbnail').popover({
-                html:true,
-                placement:'left',
-                trigger:'hover'
             });
         });
     </script>
