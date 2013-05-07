@@ -15,6 +15,11 @@
     <div class="results">
         {% if paginator|length > 0 %}
             <div class="pagerfanta">
+                {% if paginator.haveToPaginate() %}
+                    <form method="get" action="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
+                        <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
+                    </form>
+                {% endif %}
                 {{ pagerfanta(
                     paginator,
                     'twitter_bootstrap_translated',

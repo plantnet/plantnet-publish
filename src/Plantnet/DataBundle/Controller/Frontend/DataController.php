@@ -136,10 +136,16 @@ class DataController extends Controller
     /**
      * @Route("/project/{project}/collection/{collection}/{module}", defaults={"page"=1}, name="_module")
      * @Route("/project/{project}/collection/{collection}/{module}/page{page}", requirements={"page"="\d+"}, name="_module_paginated")
+     * @Method("get")
      * @Template()
      */
-    public function moduleAction($project, $collection, $module, $page)
+    public function moduleAction($project, $collection, $module, $page, Request $request)
     {
+        $form_page=$request->query->get('form_page');
+        if(!empty($form_page))
+        {
+            $page=$form_page;
+        }
         if($this->container->get('request')->get('_route')=='_module_paginated'&&$page==1)
         {
             return $this->redirect($this->generateUrl(
@@ -199,10 +205,16 @@ class DataController extends Controller
     /**
      * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}", defaults={"page"=1}, name="_submodule")
      * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/page{page}", requirements={"page"="\d+"}, name="_submodule_paginated")
+     * @Method("get")
      * @Template()
      */
-    public function submoduleAction($project, $collection, $module, $submodule, $page)
+    public function submoduleAction($project, $collection, $module, $submodule, $page, Request $request)
     {
+        $form_page=$request->query->get('form_page');
+        if(!empty($form_page))
+        {
+            $page=$form_page;
+        }
         if($this->container->get('request')->get('_route')=='_submodule_paginated'&&$page==1)
         {
             return $this->redirect($this->generateUrl(
