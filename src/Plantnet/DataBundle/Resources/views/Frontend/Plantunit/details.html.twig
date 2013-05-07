@@ -129,6 +129,7 @@
                         url:data_url
                     }).done(function(data){
                         $('#list_gallery').append(data);
+                        $('.pop-tooltip').tooltip();
                         /* Apply fancybox to multiple items */
                         $('a.grouped_elements').fancybox({
                             'transitionIn':'elastic',

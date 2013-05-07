@@ -216,7 +216,9 @@
 			var geoJsonLayer=L.geoJson(data,{
 				onEachFeature:function(feature,layer)
 				{
-					layer.bindPopup('<b>'+feature.properties.title1+'</b><br />'+feature.properties.title2);
+					layer.bindPopup('<b>'+feature.properties.title1+'</b><br />'
+						+feature.properties.title2+'<br />'
+						+'<a href="'+feature.properties.punit+'">{{ "line-details"|trans|capitalize }}</a>');
 				}
 			});
 			if(data.next!=-1)

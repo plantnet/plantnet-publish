@@ -412,11 +412,18 @@ class DataController extends Controller
                 )
             );
             $loc['properties']=array(
+                'punit'=>'',
                 'title1'=>'',
                 'title2'=>''
             );
             if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
             {
+                $loc['properties']['punit']=$this->get('router')->generate('_details',array(
+                    'project'=>$project,
+                    'collection'=>$collection->getName(),
+                    'module'=>$module_parent->getName(),
+                    'id'=>$l['plantunit']['$id']->{'$id'}
+                ));
                 if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))
                 {
                     $loc['properties']['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];

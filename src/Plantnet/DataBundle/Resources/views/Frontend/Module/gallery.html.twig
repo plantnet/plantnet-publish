@@ -54,10 +54,10 @@
 								{% endif %}
 								<div class="access">
 									<a href="{{ path('_details', { 'project': project, 'collection': collection.name, 'module': image.plantunit.module.name, 'id': image.plantunit.id }) }}">
-										<i class="icon-list"></i>
+										<i class="icon-list pop-tooltip" data-toggle="tooltip" title="{{ "line-details"|trans|capitalize }}"></i>
 									</a>
 									<a class="html-box" href="#data_{{ image.id }}">
-										<i class="icon-eye-open"></i>
+										<i class="icon-eye-open pop-tooltip" data-toggle="tooltip" title="Zoom"></i>
 									</a>
 									<div style="display:none">
 										<div id="data_{{ image.id }}" data-src="{{ asset(img) }}">
@@ -116,6 +116,7 @@
 	{{ parent() }}
 	<script type="text/javascript">
 		$(document).ready(function() {
+			$('.pop-tooltip').tooltip();
 			/* Apply fancybox to multiple items */
 			$('a.grouped_elements').fancybox({
 				'transitionIn':'elastic',

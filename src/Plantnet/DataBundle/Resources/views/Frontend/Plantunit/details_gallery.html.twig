@@ -21,7 +21,7 @@
             {% endif %}
             <div class="access">
                 <a class="html-box" href="#data_{{ image.id }}">
-                    <i class="icon-eye-open"></i>
+                    <i class="icon-eye-open pop-tooltip" data-toggle="tooltip" title="Zoom"></i>
                 </a>
                 <div style="display:none">
                     <div id="data_{{ image.id }}" data-src="{{ asset(img) }}">
