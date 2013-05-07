@@ -93,6 +93,10 @@
         <source>line-or</source>
         <target state="new">ou</target>
       </trans-unit>
+      <trans-unit id="21" resname="line-grid">
+        <source>line-grid</source>
+        <target state="new">grille</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
