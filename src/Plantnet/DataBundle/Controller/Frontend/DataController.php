@@ -55,9 +55,9 @@ class DataController extends Controller
     public function indexAction()
     {
         $projects=$this->database_list();
-        return $this->render('PlantnetDataBundle:Frontend:index.html.twig', array(
-            'projects' => $projects,
-            'current' => 'index'
+        return $this->render('PlantnetDataBundle:Frontend:index.html.twig',array(
+            'projects'=>$projects,
+            'current'=>'index'
         ));
     }
 
@@ -68,43 +68,41 @@ class DataController extends Controller
     public function projectAction($project)
     {
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $collections = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collections=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
-        $page = $dm->getRepository('PlantnetDataBundle:Page')
+        $page=$dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
                 'name'=>'home'
             ));
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        return $this->render('PlantnetDataBundle:Frontend:project.html.twig', array(
-            'project' => $project,
-            'page' => $page,
-            'collections' => $collections,
-            'current' => 'project'
+        return $this->render('PlantnetDataBundle:Frontend:project.html.twig',array(
+            'project'=>$project,
+            'page'=>$page,
+            'collections'=>$collections,
+            'current'=>'project'
         ));
     }
 
-    public function Collection_listAction($project)
+    public function collection_listAction($project)
     {
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $collections = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collections=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
-        return $this->render('PlantnetDataBundle:Frontend\Collection:collection_list.html.twig', array(
-            'project' => $project,
-            'collections' => $collections
+        return $this->render('PlantnetDataBundle:Frontend\Collection:collection_list.html.twig',array(
+            'project'=>$project,
+            'collections'=>$collections
         ));
     }
 
@@ -112,24 +110,23 @@ class DataController extends Controller
      * @Route("/project/{project}/collection/{collection}", name="_collection")
      * @Template()
      */
-    public function collectionAction($project, $collection)
+    public function collectionAction($project,$collection)
     {
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        return $this->render('PlantnetDataBundle:Frontend\Collection:collection.html.twig', array(
-            'project' => $project,
-            'collection' => $collection,
-            'current' => 'collection'
+        return $this->render('PlantnetDataBundle:Frontend\Collection:collection.html.twig',array(
+            'project'=>$project,
+            'collection'=>$collection,
+            'current'=>'collection'
         ));
     }
 
@@ -139,51 +136,49 @@ class DataController extends Controller
      * @Method("get")
      * @Template()
      */
-    public function moduleAction($project, $collection, $module, $page, Request $request)
+    public function moduleAction($project,$collection,$module,$page,Request $request)
     {
         $form_page=$request->query->get('form_page');
-        if(!empty($form_page))
-        {
+        if(!empty($form_page)){
             $page=$form_page;
         }
-        if($this->container->get('request')->get('_route')=='_module_paginated'&&$page==1)
-        {
-            return $this->redirect($this->generateUrl(
-                '_module',
-                array(
-                    'project'=>$project,
-                    'collection'=>$collection,
-                    'module'=>$module
+        if($this->container->get('request')->get('_route')=='_module_paginated'&&$page==1){
+            return $this->redirect($this->generateUrl('_module',array(
+                'project'=>$project,
+                'collection'=>$collection,
+                'module'=>$module
                 )
             ),301);
         }
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
         if(!$module||$module->getType()!='text'){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $display = array();
-        $field = $module->getProperties();
+        $display=array();
+        $field=$module->getProperties();
         foreach($field as $row){
-            if($row->getMain() == true){
-                $display[] = $row->getId();
+            if($row->getMain()==true){
+                $display[]=$row->getId();
             }
         }
-        $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+        $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
             ->field('module')->references($module);
-        $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+        $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
         try{
             $paginator->setMaxPerPage(50);
             $paginator->setCurrentPage($page);
@@ -191,14 +186,13 @@ class DataController extends Controller
         catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
             throw $this->createNotFoundException('Page not found.');
         }
-        return $this->render('PlantnetDataBundle:Frontend\Module:datagrid.html.twig', array(
-            'project' => $project,
-            'current' => 'collection',
-            'paginator' => $paginator,
-            'collection' => $collection,
-            'module' => $module,
-            'type' => 'table',
-            'display' => $display
+        return $this->render('PlantnetDataBundle:Frontend\Module:datagrid.html.twig',array(
+            'project'=>$project,
+            'collection'=>$collection,
+            'module'=>$module,
+            'paginator'=>$paginator,
+            'display'=>$display,
+            'current'=>'collection'
         ));
     }
 
@@ -208,18 +202,14 @@ class DataController extends Controller
      * @Method("get")
      * @Template()
      */
-    public function submoduleAction($project, $collection, $module, $submodule, $page, Request $request)
+    public function submoduleAction($project,$collection,$module,$submodule,$page,Request $request)
     {
         $form_page=$request->query->get('form_page');
-        if(!empty($form_page))
-        {
+        if(!empty($form_page)){
             $page=$form_page;
         }
-        if($this->container->get('request')->get('_route')=='_submodule_paginated'&&$page==1)
-        {
-            return $this->redirect($this->generateUrl(
-                '_submodule',
-                array(
+        if($this->container->get('request')->get('_route')=='_submodule_paginated'&&$page==1){
+            return $this->redirect($this->generateUrl('_submodule',array(
                     'project'=>$project,
                     'collection'=>$collection,
                     'module'=>$module,
@@ -228,47 +218,46 @@ class DataController extends Controller
             ),301);
         }
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $module_parent = $dm->getRepository('PlantnetDataBundle:Module')
+        $module_parent=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=> $module,
-                'collection.id' => $collection->getId()
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
             ));
         if(!$module_parent){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=> $submodule,
+                'name'=>$submodule,
                 'parent.id'=>$module_parent->getId(),
-                'collection.id' => $collection->getId()
+                'collection.id'=>$collection->getId()
             ));
         if(!$module||$module->getType()=='text'){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $display = array();
-        $field = $module_parent->getProperties();
+        $display=array();
+        $field=$module_parent->getProperties();
         foreach($field as $row){
-            if($row->getMain() == true){
-                $display[] = $row->getId();
+            if($row->getMain()==true){
+                $display[]=$row->getId();
             }
         }
-        switch ($module->getType())
+        switch($module->getType())
         {
             case 'image':
-                $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Image')
+                $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($module);
-                $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+                $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 try{
                     $paginator->setMaxPerPage(15);
                     $paginator->setCurrentPage($page);
@@ -276,15 +265,14 @@ class DataController extends Controller
                 catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
                     throw $this->createNotFoundException('Page not found.');
                 }
-                return $this->render('PlantnetDataBundle:Frontend\Module:gallery.html.twig', array(
-                    'project' => $project,
-                    'current' => 'collection',
-                    'paginator' => $paginator,
-                    'display' => $display,
-                    'collection' => $collection,
-                    'module_parent' => $module_parent,
-                    'module' => $module,
-                    'type' => 'images'
+                return $this->render('PlantnetDataBundle:Frontend\Module:gallery.html.twig',array(
+                    'project'=>$project,
+                    'collection'=>$collection,
+                    'module_parent'=>$module_parent,
+                    'module'=>$module,
+                    'paginator'=>$paginator,
+                    'display'=>$display,
+                    'current'=>'collection',
                 ));
                 break;
             case 'locality':
@@ -337,14 +325,13 @@ class DataController extends Controller
                 $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
                 return $this->render('PlantnetDataBundle:Frontend\Module:map.html.twig',array(
-                    'project' => $project,
-                    'current' => 'collection',
-                    'collection' => $collection,
-                    'module_parent' => $module_parent,
-                    'module' => $module,
-                    'type' => 'localisation',
-                    'locations' => $locations,
-                    'layers' => $layers
+                    'project'=>$project,
+                    'collection'=>$collection,
+                    'module'=>$module,
+                    'module_parent'=>$module_parent,
+                    'layers'=>$layers,
+                    'locations'=>$locations,
+                    'current'=>'collection'
                 ));
                 break;
         }
@@ -355,35 +342,34 @@ class DataController extends Controller
      * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/datamap/page{page}", requirements={"page"="\d+"}, name="_datamap_paginated")
      * @Template()
      */
-    public function datamapAction($project, $collection, $module, $submodule, $page)
+    public function datamapAction($project,$collection,$module,$submodule,$page)
     {
         $max_per_page=5000;
         $start=$page*$max_per_page;
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $module_parent = $dm->getRepository('PlantnetDataBundle:Module')
+        $module_parent=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=> $module,
-                'collection.id' => $collection->getId()
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
             ));
         if(!$module_parent){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=> $submodule,
+                'name'=>$submodule,
                 'parent.id'=>$module_parent->getId(),
-                'collection.id' => $collection->getId()
+                'collection.id'=>$collection->getId()
             ));
         if(!$module||$module->getType()!='locality'){
             throw $this->createNotFoundException('Unable to find Module entity.');
@@ -456,13 +442,11 @@ class DataController extends Controller
         )->count();
         unset($m);
         $next=$page+1;
-        if($start+$max_per_page>=$total)
-        {
+        if($start+$max_per_page>=$total){
             $next=-1;
         }
         $done=round(($start+$max_per_page)*100/$total);
-        if($done>100)
-        {
+        if($done>100){
             $done=100;
         }
         $return=array(
@@ -481,34 +465,39 @@ class DataController extends Controller
      * @Route("/project/{project}/collection/{collection}/{module}/details/{id}", name="_details")
      * @Template()
      */
-    public function detailsAction($project, $collection, $module, $id)
+    public function detailsAction($project,$collection,$module,$id)
     {
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findOneBy(array('name' => $module, 'collection.id' => $collection->getId()));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $display = array();
-        $field = $module->getProperties();
+        $display=array();
+        $field=$module->getProperties();
         foreach($field as $row){
-            if($row->getDetails() == true){
-                $display[] = $row->getId();
+            if($row->getDetails()==true){
+                $display[]=$row->getId();
             }
         }
-        $plantunit = $dm->getRepository('PlantnetDataBundle:Plantunit')
-            ->findOneBy(array('module.id' => $module->getId(), 'id' => $id));
+        $plantunit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+            ->findOneBy(array(
+                'module.id'=>$module->getId(),
+                'id'=>$id
+            ));
         if(!$plantunit){
             throw $this->createNotFoundException('Unable to find Plantunit entity.');
         }
@@ -530,16 +519,15 @@ class DataController extends Controller
         }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
-        return $this->render('PlantnetDataBundle:Frontend\Plantunit:details.html.twig', array(
-            'idplantunit' => $plantunit->getId(),
-            'project' => $project,
-            'current' => 'collection',
-            'display' => $display,
-            'layers' => $layers,
-            'collection' => $collection,
-            'module' => $module,
-            'plantunit' => $plantunit,
-            'tab_others_groups' => $tab_others_groups
+        return $this->render('PlantnetDataBundle:Frontend\Plantunit:details.html.twig',array(
+            'project'=>$project,
+            'collection'=>$collection,
+            'module'=>$module,
+            'plantunit'=>$plantunit,
+            'display'=>$display,
+            'layers'=>$layers,
+            'tab_others_groups'=>$tab_others_groups,
+            'current'=>'collection'
         ));
     }
 
@@ -548,13 +536,12 @@ class DataController extends Controller
      * @Route("/project/{project}/collection/{collection}/{module}/details_gallery/{id}/page{page}", requirements={"page"="\d+"}, name="_details_gallery_paginated")
      * @Template()
      */
-    public function details_galleryAction($project, $collection, $module, $id, $page)
+    public function details_galleryAction($project,$collection,$module,$id,$page)
     {
         $max_per_page=9;
         $start=$page*$max_per_page;
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -564,7 +551,7 @@ class DataController extends Controller
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array('name'=>$module,'collection.id'=>$collection->getId()));
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
@@ -577,7 +564,10 @@ class DataController extends Controller
             }
         }
         $plantunit=$dm->getRepository('PlantnetDataBundle:Plantunit')
-            ->findOneBy(array('module.id'=>$module->getId(),'id'=>$id));
+            ->findOneBy(array(
+                'module.id'=>$module->getId(),
+                'id'=>$id
+            ));
         if(!$plantunit){
             throw $this->createNotFoundException('Unable to find Plantunit entity.');
         }
@@ -589,8 +579,7 @@ class DataController extends Controller
             ->getQuery()
             ->execute();
         $next=$page+1;
-        if($start+$max_per_page>=count($images))
-        {
+        if($start+$max_per_page>=count($images)){
             $next=-1;
         }
         return $this->render('PlantnetDataBundle:Frontend\Plantunit:details_gallery.html.twig',array(
@@ -619,7 +608,10 @@ class DataController extends Controller
             'y_lat_2_top_right'=>new TypeConstraint('float'),
             'x_lng_2_top_right'=>new TypeConstraint('float'),
         );
-        $form=$this->createFormBuilder($defaults,array('constraints'=>$constraints))
+        $form=$this->createFormBuilder($defaults,array(
+                'csrf_protection'=>false,
+                'constraints'=>$constraints
+            ))
             ->add('y_lat_1_bottom_left','hidden',array('required'=>false))
             ->add('x_lng_1_bottom_left','hidden',array('required'=>false))
             ->add('y_lat_2_top_right','hidden',array('required'=>false))
@@ -656,92 +648,97 @@ class DataController extends Controller
      * @Route("/project/{project}/collection/{collection}/{module}/search", name="_module_search")
      * @Template()
      */
-    public function module_searchAction($project, $collection, $module)
+    public function module_searchAction($project,$collection,$module)
     {
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         if($module->getParent()){
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
+            $module=$dm->getRepository('PlantnetDataBundle:Module')
                 ->find($module->getParent()->getId());
         }
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $fields = array();
-        $field = $module->getProperties();
+        $fields=array();
+        $field=$module->getProperties();
         foreach($field as $row){
-            if($row->getSearch() == true){
-                $fields[] = $row->getId();
+            if($row->getSearch()==true){
+                $fields[]=$row->getId();
             }
         }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers_search.xml',0,true);
         $form=$this->createModuleSearchForm($fields,$module);
-        return $this->render('PlantnetDataBundle:Frontend\Module:module_search.html.twig', array(
-            'project' => $project,
-            'collection' => $collection,
-            'module' => $module,
-            'layers' => $layers,
-            'form' => $form->createView(),
-            'current' => 'collection'
+        return $this->render('PlantnetDataBundle:Frontend\Module:module_search.html.twig',array(
+            'project'=>$project,
+            'collection'=>$collection,
+            'module'=>$module,
+            'layers'=>$layers,
+            'form'=>$form->createView(),
+            'current'=>'collection'
         ));
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/result", name="_module_result")
+     * @Route("/project/{project}/collection/{collection}/{module}/result", defaults={"mode"="grid"}, name="_module_result")
+     * @Route("/project/{project}/collection/{collection}/{module}/result/{mode}", requirements={"mode"="\w+"}, name="_module_result_mode")
      * @Method("get")
      * @Template()
      */
-    public function module_resultAction($project, $collection, $module, Request $request)
+    public function module_resultAction($project,$collection,$module,$mode,Request $request)
     {
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         if($module->getParent()){
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
+            $module=$dm->getRepository('PlantnetDataBundle:Module')
                 ->find($module->getParent()->getId());
+            if(!$module){
+                throw $this->createNotFoundException('Unable to find Module entity.');
+            }
         }
-        if(!$module){
-            throw $this->createNotFoundException('Unable to find Module entity.');
-        }
-        $fields = array();
-        $display = array();
-        $field = $module->getProperties();
+        $fields=array();
+        $display=array();
+        $field=$module->getProperties();
         foreach($field as $row){
-            if($row->getSearch() == true){
+            if($row->getSearch()==true){
                 $fields[] = $row->getId();
             }
-            if($row->getMain() == true){
-                $display[] = $row->getId();
+            if($row->getMain()==true){
+                $display[]=$row->getId();
             }
         }
         $form=$this->createModuleSearchForm($fields,$module);
@@ -749,10 +746,10 @@ class DataController extends Controller
         {
             $form->bind($request);
             $data=$form->getData();
-            $dm = $this->get('doctrine.odm.mongodb.document_manager');
+            $dm=$this->get('doctrine.odm.mongodb.document_manager');
             $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
             $ids_punit=array();
-            // Locations
+            // Location Filters
             if(isset($data['x_lng_1_bottom_left'])&&!empty($data['x_lng_1_bottom_left']))
             {
                 $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
@@ -770,7 +767,7 @@ class DataController extends Controller
                 }
                 unset($locations);
             }
-            // Fields
+            // Field Filters
             $fields=array();
             foreach($data as $key=>$val)
             {
@@ -786,73 +783,163 @@ class DataController extends Controller
                     }
                 }
             }
-            // Search
-            $paginator=null;
-            $nbResults=0;
-            if(count($ids_punit)||count($fields))
+            // Filters to URL
+            $url='';
+            $data_url=$form->getData();
+            foreach($data_url as $key=>$val)
             {
-                $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                    ->field('module.id')->equals($module->getId());
-                if(count($ids_punit))
-                {
-                    $plantunits->field('_id')->in($ids_punit);
+                if($url!=''){
+                    $url.='&';
                 }
-                if(count($fields))
-                {
-                    foreach($fields as $key=>$value)
-                    {
-                        if(is_array($value))
-                        {
-                            for($i=0;$i<count($value);$i++)
-                            {
-                                $value[$i]=new \MongoRegex('/.*'.$value[$i].'.*/i');
-                            }
-                            $plantunits->field('attributes.'.$key)->in(
-                                $value
-                            );
-                        }
-                        else
-                        {
-                            $plantunits->field('attributes.'.$key)->in(
-                                array(
-                                    new \MongoRegex('/.*'.$value.'.*/i')
-                                )
-                            );
-                        }
-                    }
-                }
-                $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
-                try{
-                    $paginator->setMaxPerPage(50);
-                    $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-                }
-                catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
-                    throw $this->createNotFoundException('Page not found.');
-                }
-                $nbResults=$paginator->getNbResults();
+                $url.=$form->getName().'['.$key.']='.$val;
             }
-            return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig', array(
-                'project' => $project,
-                'collection' => $collection,
-                'module' => $module,
-                'current' => 'collection',
-                'paginator' => $paginator,
-                'display' => $display,
-                'nbResults' => $nbResults
-            ));
+            // Search
+            switch($mode)
+            {
+                case 'grid':
+                    $paginator=null;
+                    $nbResults=0;
+                    if(count($ids_punit)||count($fields))
+                    {
+                        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                            ->field('module.id')->equals($module->getId());
+                        if(count($ids_punit))
+                        {
+                            $plantunits->field('_id')->in($ids_punit);
+                        }
+                        if(count($fields))
+                        {
+                            foreach($fields as $key=>$value)
+                            {
+                                if(is_array($value))
+                                {
+                                    for($i=0;$i<count($value);$i++)
+                                    {
+                                        $value[$i]=new \MongoRegex('/.*'.$value[$i].'.*/i');
+                                    }
+                                    $plantunits->field('attributes.'.$key)->in(
+                                        $value
+                                    );
+                                }
+                                else
+                                {
+                                    $plantunits->field('attributes.'.$key)->in(
+                                        array(
+                                            new \MongoRegex('/.*'.$value.'.*/i')
+                                        )
+                                    );
+                                }
+                            }
+                        }
+                        $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
+                        try{
+                            $paginator->setMaxPerPage(50);
+                            $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+                        }
+                        catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
+                            throw $this->createNotFoundException('Page not found.');
+                        }
+                        $nbResults=$paginator->getNbResults();
+                    }
+                    return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig',array(
+                        'project'=>$project,
+                        'collection'=>$collection,
+                        'module'=>$module,
+                        'paginator'=>$paginator,
+                        'display'=>$display,
+                        'nbResults'=>$nbResults,
+                        'url'=>$url,
+                        'current'=>'collection',
+                        'current_display'=>'grid'
+                    ));
+                    break;
+                case 'images':
+                    $paginator=null;
+                    $nbResults=0;
+                    if(count($ids_punit)||count($fields))
+                    {
+                        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                            ->hydrate(false)
+                            ->select('_id')
+                            ->field('module.id')->equals($module->getId());
+                        if(count($ids_punit))
+                        {
+                            $plantunits->field('_id')->in($ids_punit);
+                        }
+                        if(count($fields))
+                        {
+                            foreach($fields as $key=>$value)
+                            {
+                                if(is_array($value))
+                                {
+                                    for($i=0;$i<count($value);$i++)
+                                    {
+                                        $value[$i]=new \MongoRegex('/.*'.$value[$i].'.*/i');
+                                    }
+                                    $plantunits->field('attributes.'.$key)->in(
+                                        $value
+                                    );
+                                }
+                                else
+                                {
+                                    $plantunits->field('attributes.'.$key)->in(
+                                        array(
+                                            new \MongoRegex('/.*'.$value.'.*/i')
+                                        )
+                                    );
+                                }
+                            }
+                        }
+                        $ids_c=$plantunits
+                            ->getQuery()
+                            ->execute();
+                        $ids_tab=array();
+                        foreach($ids_c as $id)
+                        {
+                            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+                        }
+                        unset($ids_c);
+                        $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+                            ->field('plantunit.id')->in($ids_tab);
+                        $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($images));
+                        try{
+                            $paginator->setMaxPerPage(15);
+                            $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+                        }
+                        catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
+                            throw $this->createNotFoundException('Page not found.');
+                        }
+                        $nbResults=$paginator->getNbResults();
+                    }
+                    return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig',array(
+                        'project'=>$project,
+                        'collection'=>$collection,
+                        'module_parent'=>$module,
+                        'module'=>$module,
+                        'paginator'=>$paginator,
+                        'display'=>$display,
+                        'nbResults'=>$nbResults,
+                        'url'=>$url,
+                        'current'=>'collection',
+                        'current_display'=>'images'
+                    ));
+                    break;
+            }
         }
         else
         {
-            return $this->redirect($this->generateUrl(
-                '_search',
-                array(
-                    'project' => $project
-                )
-            ));
+            return $this->redirect($this->generateUrl('_module_search',array(
+                'project'=>$project,
+                'collection'=>$collection,
+                'module'=>$module,
+            )));
         }
-        return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig', array(
-            'project' => $project,
-            'current' => 'search'
+        return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig',array(
+            'project'=>$project,
+            'collection'=>$collection,
+            'module'=>$module,
+            'nbResults'=>0,
+            'current'=>'collection'
         ));
     }
 
@@ -863,23 +950,22 @@ class DataController extends Controller
     public function creditsAction($project)
     {
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $page = $dm->getRepository('PlantnetDataBundle:Page')
+        $page=$dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
                 'name'=>'credits'
             ));
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        return $this->render('PlantnetDataBundle:Frontend\Pages:credits.html.twig', array(
-            'page' => $page,
-            'project' => $project,
-            'current' => 'credits'
+        return $this->render('PlantnetDataBundle:Frontend\Pages:credits.html.twig',array(
+            'project'=>$project,
+            'page'=>$page,
+            'current'=>'credits'
         ));
     }
 
@@ -890,11 +976,10 @@ class DataController extends Controller
     public function mentionsAction($project)
     {
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $page = $dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
@@ -903,10 +988,10 @@ class DataController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        return $this->render('PlantnetDataBundle:Frontend\Pages:mentions.html.twig', array(
-            'page' => $page,
-            'project' => $project,
-            'current' => 'mentions'
+        return $this->render('PlantnetDataBundle:Frontend\Pages:mentions.html.twig',array(
+            'project'=>$project,
+            'page'=>$page,
+            'current'=>'mentions'
         ));
     }
 
@@ -917,11 +1002,10 @@ class DataController extends Controller
     public function contactsAction($project)
     {
         $projects=$this->database_list();
-        if(!in_array($project,$projects))
-        {
+        if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
-        $dm = $this->get('doctrine.odm.mongodb.document_manager');
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $page = $dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
@@ -930,10 +1014,10 @@ class DataController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        return $this->render('PlantnetDataBundle:Frontend\Pages:contacts.html.twig', array(
-            'page' => $page,
-            'project' => $project,
-            'current' => 'contacts'
+        return $this->render('PlantnetDataBundle:Frontend\Pages:contacts.html.twig',array(
+            'project'=>$project,
+            'page'=>$page,
+            'current'=>'contacts'
         ));
     }
 

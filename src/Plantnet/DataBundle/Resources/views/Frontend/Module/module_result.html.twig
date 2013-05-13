@@ -40,83 +40,114 @@
 {% endblock %}
 {% block main %}
     <div class="results">
-        <ul class="nav nav-tabs">
-            <li class="active">
-                <a href="#grid-tab" data-toggle="tab">
+        <ul class="">
+            <li{% if current_display == 'grid' %} class="active"{% endif %}>
+                <a href="{{ path('_module_result', {'project': project, 'collection': collection.name, 'module': module.name}) }}?{{ url }}">
                     <i class="icon-list"></i>
                     {{ "line-grid"|trans|capitalize }}
                 </a>
             </li>
-            <li>
-                <a href="#images-tab" data-toggle="tab">
+            <li{% if current_display == 'images' %} class="active"{% endif %}>
+                <a href="{{ path('_module_result_mode', {'project': project, 'collection': collection.name, 'module': module.name, 'mode': 'images'}) }}?{{ url }}">
                     <i class="icon-camera"></i>
                     {{ "line-images"|trans|capitalize }}
                 </a>
             </li>
-            <li>
-                <a href="#map-tab" data-toggle="tab">
+            <li{% if current_display == 'locations' %} class="active"{% endif %}>
+                <a href="#map-tab">
                     <i class="icon-map-marker"></i>
                     {{ "line-locations"|trans|capitalize }}
                 </a>
             </li>
         </ul>
-        <div class="tab-content">
-            <div class="tab-pane active" id="grid-tab">
-                {% if paginator|length > 0 %}
-                    <div class="pagerfanta">
-                        {% if paginator.haveToPaginate() %}
-                            <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
-                                {% set array_form = app.request.query.all() %}
-                                {% for form,values in array_form if values is iterable %}
-                                    {% for k,v in values if (k != '_token' and k != 'page') %}
-                                        <input type="hidden" name="{{ form }}[{{ k }}]" value="{{ v }}" />
+        <div class="">
+            <div class="tab-pane{% if current_display == 'grid' %} active{% endif %}" id="grid-tab">
+                {% if current_display == 'grid' %}
+                    {% if paginator|length > 0 %}
+                        <div class="pagerfanta">
+                            {% if paginator.haveToPaginate() %}
+                                <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
+                                    {% set array_form = app.request.query.all() %}
+                                    {% for form,values in array_form if values is iterable %}
+                                        {% for k,v in values if (k != '_token' and k != 'page') %}
+                                            <input type="hidden" name="{{ form }}[{{ k }}]" value="{{ v }}" />
+                                        {% endfor %}
                                     {% endfor %}
-                                {% endfor %}
-                                <input type="number" name="page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
-                            </form>
-                        {% endif %}
-                        {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
-                    </div>
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                                {% for property in module.properties if property.id in display %}
-                                    <th>{{ property.name|capitalize }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for plantunit in paginator %}
-                                <tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}'">
-                                    <td>
-                                        {% if plantunit.images|length > 0 %}
-                                            <i class="icon-camera"></i>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if plantunit.locations|length > 0 %}
-                                            <i class="icon-map-marker"></i>
-                                        {% endif %}
-                                    </td>
-                                    {% for field in display %}
-                                        <td>{{ plantunit.attributes[field] }}</td>
+                                    <input type="number" name="page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
+                                </form>
+                            {% endif %}
+                            {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
+                        </div>
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    {% for property in module.properties if property.id in display %}
+                                        <th>{{ property.name }}</th>
                                     {% endfor %}
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                    <div class="pagerfanta">
-                        {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
-                    </div>
+                            </thead>
+                            <tbody>
+                                {% for plantunit in paginator %}
+                                    <tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}'">
+                                        <td>
+                                            {% if plantunit.images|length > 0 %}
+                                                <i class="icon-camera"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if plantunit.locations|length > 0 %}
+                                                <i class="icon-map-marker"></i>
+                                            {% endif %}
+                                        </td>
+                                        {% for field in display %}
+                                            <td>{{ plantunit.attributes[field] }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="pagerfanta">
+                            {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
+                        </div>
+                    {% endif %}
                 {% endif %}
             </div>
-            <div class="tab-pane" id="images-tab">
-                2
+            <div class="tab-pane{% if current_display == 'images' %} active{% endif %}" id="images-tab">
+                {% if current_display == 'images' %}
+                    {% if paginator|length > 0 %}
+                        <div class="pagerfanta">
+                            {% if paginator.haveToPaginate() %}
+                                <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
+                                    {% set array_form = app.request.query.all() %}
+                                    {% for form,values in array_form if values is iterable %}
+                                        {% for k,v in values if (k != '_token' and k != 'page') %}
+                                            <input type="hidden" name="{{ form }}[{{ k }}]" value="{{ v }}" />
+                                        {% endfor %}
+                                    {% endfor %}
+                                    <input type="number" name="page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
+                                </form>
+                            {% endif %}
+                            {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
+                        </div>
+                        <div class="gallery">
+                            <ul class="thumbnails per3">
+                                {% for image in paginator %}
+                                    {% include "PlantnetDataBundle:Frontend\\Image:item.html.twig" with { image: image } %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="pagerfanta">
+                            {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
+                        </div>
+                    {% endif %}
+                {% endif %}
             </div>
-            <div class="tab-pane" id="map-tab">
-                3
+            <div class="tab-pane{% if current_display == 'locations' %} active{% endif %}" id="map-tab">
+                {% if current_display == 'locations' %}
+
+                {% endif %}
             </div>
         </div>
     </div>
@@ -125,10 +156,10 @@
     {{ parent() }}
     <script type="text/javascript">
         $(document).ready(function(){
-            $('a[data-toggle="tab"]').on('show',function(e){
-                var new_tab=e.target;
-                var old_tab=e.relatedTarget;
-            })
+            // $('a[data-toggle="tab"]').on('show',function(e){
+            //     var new_tab=e.target;
+            //     var old_tab=e.relatedTarget;
+            // });
         });
     </script>
 {% endblock %}

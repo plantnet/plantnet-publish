@@ -64,7 +64,7 @@
 								<li class="dropdown{% if current == 'collection' %} active {% endif %}">
 									<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans|capitalize }} <span class="caret"></span></a>
 									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-										{% render controller("PlantnetDataBundle:Frontend\\Data:Collection_list", {'project': project}) %}
+										{% render controller("PlantnetDataBundle:Frontend\\Data:collection_list", {'project': project}) %}
 									</ul>
 								</li>
 							{% endif %}

@@ -38,7 +38,7 @@
         <table class="table table-striped table-bordered table-hover table-condensed">
             {% for property in module.properties if property.id in display %}
                 <tr>
-                    <td class="field-name">{{ property.name|capitalize }}</td>
+                    <td class="field-name">{{ property.name }}</td>
                     <td class="field-name">{{ plantunit.attributes[property.id] }}</td>
                 </tr>
             {% endfor %}
