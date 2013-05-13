@@ -924,6 +924,73 @@ class DataController extends Controller
                         'current_display'=>'images'
                     ));
                     break;
+                case 'locations':
+                    $nbResults=0;
+                    if(count($ids_punit)||count($fields))
+                    {
+                        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                            ->hydrate(false)
+                            ->select('_id')
+                            ->field('module.id')->equals($module->getId());
+                        if(count($ids_punit))
+                        {
+                            $plantunits->field('_id')->in($ids_punit);
+                        }
+                        if(count($fields))
+                        {
+                            foreach($fields as $key=>$value)
+                            {
+                                if(is_array($value))
+                                {
+                                    for($i=0;$i<count($value);$i++)
+                                    {
+                                        $value[$i]=new \MongoRegex('/.*'.$value[$i].'.*/i');
+                                    }
+                                    $plantunits->field('attributes.'.$key)->in(
+                                        $value
+                                    );
+                                }
+                                else
+                                {
+                                    $plantunits->field('attributes.'.$key)->in(
+                                        array(
+                                            new \MongoRegex('/.*'.$value.'.*/i')
+                                        )
+                                    );
+                                }
+                            }
+                        }
+                        $ids_c=$plantunits
+                            ->getQuery()
+                            ->execute();
+                        $ids_tab=array();
+                        foreach($ids_c as $id)
+                        {
+                            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+                        }
+                        unset($ids_c);
+                        $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+                            ->field('plantunit.id')->in($ids_tab)
+                            ->getQuery()
+                            ->execute();
+                        $nbResults=count($locations);
+                    }
+                    $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
+                    $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
+                    return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig',array(
+                        'project'=>$project,
+                        'collection'=>$collection,
+                        'module_parent'=>$module,
+                        'module'=>$module,
+                        'display'=>$display,
+                        'layers'=>$layers,
+                        'locations'=>$locations,
+                        'nbResults'=>$nbResults,
+                        'url'=>$url,
+                        'current'=>'collection',
+                        'current_display'=>'locations'
+                    ));
+                    break;
             }
         }
         else

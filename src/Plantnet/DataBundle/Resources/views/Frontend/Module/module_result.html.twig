@@ -2,6 +2,9 @@
 {% block title collection.name|capitalize ~ ' - ' ~ module.name|capitalize ~ ' - ' ~ "tab-result"|trans|capitalize %}
 {% block stylesheets %}
     {{ parent() }}
+    {% if current_display == 'locations' %}
+        {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
+    {% endif %}
 {% endblock %}
 {% block header %}<h1>{{ module.name|capitalize }} - {{ "tab-result"|trans|capitalize }}</h1>{% endblock %}
 {% block breadcrumb %}
@@ -54,7 +57,7 @@
                 </a>
             </li>
             <li{% if current_display == 'locations' %} class="active"{% endif %}>
-                <a href="#map-tab">
+                <a href="{{ path('_module_result_mode', {'project': project, 'collection': collection.name, 'module': module.name, 'mode': 'locations'}) }}?{{ url }}">
                     <i class="icon-map-marker"></i>
                     {{ "line-locations"|trans|capitalize }}
                 </a>
@@ -146,7 +149,10 @@
             </div>
             <div class="tab-pane{% if current_display == 'locations' %} active{% endif %}" id="map-tab">
                 {% if current_display == 'locations' %}
-
+                    <div>
+                        {# LEAFLET MAP #}
+                        <div id="map"></div>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -154,6 +160,9 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
+    {% if current_display == 'locations' %}
+        {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
+    {% endif %}
     <script type="text/javascript">
         $(document).ready(function(){
             $('.pop-tooltip').tooltip();
