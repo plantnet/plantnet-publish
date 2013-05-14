@@ -4,5 +4,5 @@ Plantnet\FileManagerBundle\Entity\ZipData:
         zipFile:
             - NotBlank: ~
             - File:
-                maxSize: 500M
+                maxSize: 1000M
                 mimeTypes: [application/zip,application/x-zip]

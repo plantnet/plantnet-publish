@@ -9,7 +9,7 @@ class ZipForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder,array $options)
     {
-        $builder->add('zipFile','file',array('label'=>'fichier .zip'));
+        $builder->add('zipFile','file',array('label'=>'Zip file (.zip)'));
     }
     public function getName()
     {

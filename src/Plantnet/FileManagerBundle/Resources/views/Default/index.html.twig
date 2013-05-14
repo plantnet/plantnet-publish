@@ -4,7 +4,7 @@
 {% block content %}
 	<form id="formProgress" action="{{ path('plantnet_file_manager_upload',{'name':name}) }}" method="post" {{ form_enctype(form) }}>
 	    {{ form_widget(form) }}
-		<input type="submit" value="Envoyer" />
+		<input type="submit" value="Submit" />
 	</form>
 	<div id="progress">
 		<div class="bar"></div >
@@ -32,7 +32,7 @@
 						percent.html(percentVal);
 						if(percentComplete==100)
 						{
-							status.html('<div class="loader"></div><p>Décompression du fichier zip</p>');
+							status.html('<div class="loader"></div><p>Unzip the file</p>');
 						}
 					},
 					complete:function(xhr){

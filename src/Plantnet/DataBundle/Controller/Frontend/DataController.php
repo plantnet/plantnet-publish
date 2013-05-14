@@ -257,6 +257,25 @@ class DataController extends Controller
             case 'image':
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($module);
+                /*
+                // pour trouver les images manquantes avant export IDAO
+                $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+                    ->field('module')->references($module)
+                    ->getQuery()
+                    ->execute();
+                $nb=0;
+                foreach($queryBuilder as $img)
+                {
+                    $file=$img->getModule()->getUploaddir().'/'.$img->getPath();
+                    if(!file_exists(__dir__.'/../../../../../web/uploads/'.$file))
+                    {
+                        $nb++;
+                        echo $img->getPlantunit()->getTitle2().' - '.$img->getPlantunit()->getTitle1().' - '.$img->getPath().'<br />';
+                    }
+                }
+                echo $nb;
+                exit;
+                */
                 $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 try{
                     $paginator->setMaxPerPage(15);
