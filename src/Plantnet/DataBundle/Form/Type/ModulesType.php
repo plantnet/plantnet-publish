@@ -16,6 +16,9 @@ class ModulesType extends AbstractType
         if($module->getType()=='text')
         {
             $builder
+                ->add('taxonomy', 'checkbox', array(
+                    'required'=>false
+                ))
                 ->add('description', 'textarea', array(
                     'required'=>false
                 ))

@@ -90,9 +90,10 @@
             <div class="gallery">
                 <ul id="list_gallery" class="thumbnails per3">
                     <li>
-                        <a href="{{ path('_details_gallery', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}/page0" id="end_of_gallery">
-                            Gallery
-                        </a>
+                        <a href="#" class="end_of_gallery_load"></a>
+                    </li>
+                    <li>
+                        <a href="{{ path('_details_gallery', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}/page0" id="end_of_gallery"></a>
                     </li>
                 </ul>
             </div>
@@ -128,6 +129,7 @@
                     $.ajax({
                         url:data_url
                     }).done(function(data){
+                        $('.end_of_gallery_load').parents('li').remove();
                         $('#list_gallery').append(data);
                         $('.pop-tooltip').tooltip();
                         /* Apply fancybox to multiple items */

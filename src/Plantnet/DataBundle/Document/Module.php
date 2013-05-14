@@ -110,6 +110,11 @@ class Module
     private $nbrows;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $taxonomy;
+
+    /**
      * To String
      *
      * @return string
@@ -578,5 +583,25 @@ class Module
     public function removeLocation(\Plantnet\DataBundle\Document\Location $locations)
     {
         $this->locations->removeElement($locations);
+    }
+
+    /**
+     * Set taxonomy
+     *
+     * @param boolean $taxonomy
+     */
+    public function setTaxonomy($taxonomy)
+    {
+        $this->taxonomy = $taxonomy;
+    }
+
+    /**
+     * Get taxonomy
+     *
+     * @return boolean $taxonomy
+     */
+    public function getTaxonomy()
+    {
+        return $this->taxonomy;
     }
 }

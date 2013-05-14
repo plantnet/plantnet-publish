@@ -16,6 +16,9 @@
             margin-right:10px;
             margin-bottom:10px;
         }
+        .table td.td_content{
+            text-align:justify;
+        }
     </style>
 {% endblock %}
 {% block body %}
@@ -30,8 +33,8 @@
                     {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
                     {% set content = '' %}
                     {% for property in image.module.properties if property.details == true %}
-                        {% set content = content ~ '<strong>' ~ property.name|capitalize ~ '</strong>' %}
-                        {% set content = content ~ ': ' ~ image.property[property.id] ~ '<br />' %}
+                        {% set content = content ~ '<strong>' ~ property.name ~ '</strong>' %}
+                        {% set content = content ~ ': ' ~ image.property[property.id]|nl2br ~ '<br />' %}
                     {% endfor %}
                     <li data-title="<strong>© {{ image.copyright }}</strong>" data-content="{% autoescape false %}{{ content }}{% endautoescape %}">
                         <a href="./{{ imgs_dir_name }}/{{ imgspe }}">
@@ -48,8 +51,8 @@
     	<table class="table table-striped table-bordered table-hover table-condensed">
             {% for property in module.properties if property.id in display %}
                 <tr>
-                    <td><strong>{{ property.name|capitalize }}</strong></td>
-                    <td>{{ plantunit.attributes[property.id] }}</td>
+                    <td><strong>{{ property.name }}</strong></td>
+                    <td class="td_content">{{ plantunit.attributes[property.id]|nl2br }}</td>
                 </tr>
             {% endfor %}
         </table>
@@ -84,7 +87,7 @@
                                     {% for prop in other.property %}
                                         {% if loop.index not in not_display %}
                                             <td>
-                                                {{ prop }}
+                                                {{ prop|nl2br }}
                                             </td>
                                         {% endif %}
                                     {% endfor %}

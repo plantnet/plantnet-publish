@@ -39,6 +39,9 @@ class ModuleFormType extends AbstractType
         {
             $builder
                 ->add('name')
+                ->add('taxonomy', 'checkbox', array(
+                    'required'=>false
+                ))
                 ->add('description', 'textarea', array(
                     'required'=>false
                 ))

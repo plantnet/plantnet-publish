@@ -57,8 +57,9 @@
 {% endfor %}
 {% if next > 0 %}
     <li>
-        <a href="{{ path('_details_gallery', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}/page{{ next }}" id="end_of_gallery">
-            Gallery
-        </a>
+        <a href="#" class="end_of_gallery_load"></a>
+    </li>
+    <li>
+        <a href="{{ path('_details_gallery', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}/page{{ next }}" id="end_of_gallery"></a>
     </li>
 {% endif %}
