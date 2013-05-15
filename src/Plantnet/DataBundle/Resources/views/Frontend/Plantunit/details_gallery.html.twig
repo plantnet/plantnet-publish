@@ -5,7 +5,7 @@
         {% set content = '' %}
         {% for property in image.module.properties if property.details == true %}
             {% set content = content ~ '<u>' ~ property.name ~ '</u>' %}
-            {% set content = content ~ ': ' ~ image.property[property.id] ~ '<br />' %}
+            {% set content = content ~ ': ' ~ image.property[property.id]|replace(',',', ') ~ '<br />' %}
         {% endfor %}
         <div class="thumbnail" data-content="{{ content }}">
             <a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">

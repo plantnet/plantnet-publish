@@ -16,11 +16,11 @@
             <span class="divider">/</span>
         </li>
         <li>
-            <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name|capitalize }}</a>
+            <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
             <span class="divider">/</span>
         </li>
         <li>
-            <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name|capitalize }}</a>
+            <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
             <span class="divider">/</span>
         </li>
         <li class="active">
@@ -39,7 +39,7 @@
             {% for property in module.properties if property.id in display %}
                 <tr>
                     <td class="field-name">{{ property.name }}</td>
-                    <td class="field-name">{{ plantunit.attributes[property.id] }}</td>
+                    <td class="field-name">{{ plantunit.attributes[property.id]|nl2br }}</td>
                 </tr>
             {% endfor %}
         </table>

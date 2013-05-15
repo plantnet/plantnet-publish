@@ -24,7 +24,7 @@
                 <thead>
                     <tr>
                         {% for property in module.properties if property.id in display %}
-                            <th>{{ property.name|capitalize }}</th>
+                            <th>{{ property.name }}</th>
                         {% endfor %}
                         <th>Images</th>
                         <th>Locations</th>

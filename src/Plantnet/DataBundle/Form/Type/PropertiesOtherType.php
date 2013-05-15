@@ -21,6 +21,9 @@ class PropertiesOtherType extends AbstractType
 			->add('details', 'checkbox', array(
 				'required' => false
 			))
+			->add('sortorder', 'integer', array(
+				'required' => false
+			))
 		;
 	}
 

@@ -4,7 +4,7 @@
 	<div class="head well well-small">
 		<h4>
 			<a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">
-				{{ collection.name|capitalize }}
+				{{ collection.name }}
 			</a>
 		</h4>
 	</div>
@@ -32,7 +32,7 @@
 								<td>
 									<h5>
 										<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
-											{{ module.name|capitalize }}
+											{{ module.name }}
 										</a>
 									</h5>
 								</td>

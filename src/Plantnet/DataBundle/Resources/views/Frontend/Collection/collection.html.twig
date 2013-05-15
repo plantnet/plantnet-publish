@@ -1,9 +1,9 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title collection.name|capitalize %}
+{% block title collection.name %}
 {% block stylesheets %}
 	{{ parent() }}
 {% endblock %}
-{% block header %}<h1>{{ collection.name|capitalize }}</h1>{% endblock %}
+{% block header %}<h1>{{ collection.name }}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
@@ -11,7 +11,7 @@
             <span class="divider">/</span>
         </li>
         <li class="active">
-            {{ collection.name|capitalize }}
+            {{ collection.name }}
         </li>
     </ul>
 {% endblock %}

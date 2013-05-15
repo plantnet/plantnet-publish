@@ -38,6 +38,7 @@
                     {% elseif entity.type == 'other' or entity.type == 'image' %}
                         <th colspan="1" class="middle">Display</th>
                     {% endif %}
+                    <th class="middle">Sort order</th>
                 </tr>
                 <tr>
                     <th></th>
@@ -49,6 +50,7 @@
                     {% elseif entity.type == 'other' or entity.type == 'image' %}
                         <th class="middle">-</th>
                     {% endif %}
+                    <th></th>
                 <tr>
             </thead>
             <tbody>
@@ -81,6 +83,10 @@
                                 {{ form_widget(property.details) }}
                             </td>
                         {% endif %}
+                        <td class="middle">
+                            {{ form_errors(property.sortorder) }}
+                            {{ form_widget(property.sortorder, {'attr': {'class': 'span1'}}) }}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

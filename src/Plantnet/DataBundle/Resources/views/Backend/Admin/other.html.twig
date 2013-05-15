@@ -28,7 +28,7 @@
             </div>
             <table class="table table-striped table-bordered table-hover table-condensed">
             	{% for property in module.properties %}
-					<th>{{ property.name|capitalize }}</th>
+					<th>{{ property.name }}</th>
             	{% endfor %}
 				{% for row in paginator %}
 					<tr>

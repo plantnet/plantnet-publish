@@ -1,10 +1,10 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title collection.name|capitalize ~ ' - ' ~ module.name|capitalize ~ ' - ' ~ "tab-search"|trans|capitalize %}
+{% block title collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-search"|trans|capitalize %}
 {% block stylesheets %}
 	{{ parent() }}
     {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
 {% endblock %}
-{% block header %}<h1>{{ module.name|capitalize }} - {{ "tab-search"|trans|capitalize }}</h1>{% endblock %}
+{% block header %}<h1>{{ module.name }} - {{ "tab-search"|trans|capitalize }}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
@@ -12,11 +12,11 @@
             <span class="divider">/</span>
         </li>
         <li>
-            <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name|capitalize }}</a>
+            <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
             <span class="divider">/</span>
         </li>
         <li>
-            <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name|capitalize }}</a>
+            <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
             <span class="divider">/</span>
         </li>
         <li class="active">

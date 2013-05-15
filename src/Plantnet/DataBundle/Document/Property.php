@@ -40,6 +40,11 @@ class Property
     private $search;
 
     /**
+     * @MongoDB\Int
+     */
+    private $sortorder;
+
+    /**
      * Get id
      *
      * @return id $id
@@ -157,5 +162,25 @@ class Property
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Set sortorder
+     *
+     * @param int $sortorder
+     */
+    public function setSortorder($sortorder)
+    {
+        $this->sortorder = $sortorder;
+    }
+
+    /**
+     * Get sortorder
+     *
+     * @return int $sortorder
+     */
+    public function getSortorder()
+    {
+        return $this->sortorder;
     }
 }

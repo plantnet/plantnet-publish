@@ -180,12 +180,28 @@ class ExportController extends Controller
             {
                 if(!in_array($other->getModule()->getId(),array_keys($tab_others_groups)))
                 {
+                    $order=array();
+                    $field=$other->getModule()->getProperties();
+                    foreach($field as $row){
+                        if($row->getSortorder()){
+                            $order[$row->getSortorder()]=$row->getId();
+                        }
+                    }
+                    ksort($order);
+                    $others_sorted=$dm->createQueryBuilder('PlantnetDataBundle:Other')
+                        ->field('plantunit')->references($plantunit)
+                        ->field('module')->references($other->getModule());
+                    if(count($order)){
+                        foreach($order as $num=>$prop){
+                            $others_sorted->sort('property.'.$prop,'asc');
+                        }
+                    }
+                    $others_sorted=$others_sorted->getQuery()->execute();
                     $tab_others_groups[$other->getModule()->getId()]=array(
                         $other->getModule(),
-                        array()
+                        $others_sorted
                     );
                 }
-                $tab_others_groups[$other->getModule()->getId()][1][]=$other;
             }
         }
         $template=$this->container->get('twig')->loadTemplate('PlantnetDataBundle:Backend\Export_IDAO:page.html.twig');
