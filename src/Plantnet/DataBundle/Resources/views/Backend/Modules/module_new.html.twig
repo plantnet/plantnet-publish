@@ -17,7 +17,7 @@
         </div >
         {% if form.type.vars.value is defined and form.type.vars.value == 'text' %}
             <div class="field-form">
-                {{ form_label(form.taxonomy, null, {'label_attr': {'class': 'inline'}}) }}
+                {{ form_label(form.taxonomy, 'Enable taxonomic browser', {'label_attr': {'class': 'inline'}}) }}
                 {{ form_errors(form.taxonomy) }}
                 {{ form_widget(form.taxonomy) }}
             </div >

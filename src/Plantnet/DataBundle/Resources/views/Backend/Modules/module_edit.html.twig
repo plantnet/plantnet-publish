@@ -17,7 +17,7 @@
         </div >
         {% if entity.type == 'text' %}
             <div class="field-form">
-                {{ form_label(edit_form.taxonomy, null, {'label_attr': {'class': 'inline'}}) }}
+                {{ form_label(edit_form.taxonomy, 'Enable taxonomic browser', {'label_attr': {'class': 'inline'}}) }}
                 {{ form_errors(edit_form.taxonomy) }}
                 {{ form_widget(edit_form.taxonomy) }}
             </div >
