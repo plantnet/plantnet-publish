@@ -34,7 +34,7 @@
                     {% set content = '' %}
                     {% for property in image.module.properties if property.details == true %}
                         {% set content = content ~ '<strong>' ~ property.name ~ '</strong>' %}
-                        {% set content = content ~ ': ' ~ image.property[property.id]|nl2br ~ '<br />' %}
+                        {% set content = content ~ ': ' ~ image.property[property.id]|replace(',',', ')|nl2br ~ '<br />' %}
                     {% endfor %}
                     <li data-title="<strong>© {{ image.copyright }}</strong>" data-content="{% autoescape false %}{{ content }}{% endautoescape %}">
                         <a href="./{{ imgs_dir_name }}/{{ imgspe }}">

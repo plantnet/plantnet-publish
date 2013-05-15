@@ -9,6 +9,7 @@ class TwigPregExtension extends \Twig_Extension {
             'highlight' => new \Twig_Filter_Method($this, 'highlight'),
             'basename' => new \Twig_Filter_Method($this, 'basename'),
             'round' => new \Twig_Filter_Method($this, 'round'),
+            'replace' => new \Twig_Filter_Method($this, 'replace'),
             
         );
     }
@@ -28,6 +29,10 @@ class TwigPregExtension extends \Twig_Extension {
 
     public function round($var) {
         return round($var, 2);
+    }
+
+    public function replace($var,$search,$replace) {
+        return str_replace($search,$replace,$var);
     }
 
 
