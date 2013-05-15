@@ -265,8 +265,21 @@ class DataController extends Controller
         switch($module->getType())
         {
             case 'image':
+                $order=array();
+                $field=$module->getProperties();
+                foreach($field as $row){
+                    if($row->getSortorder()){
+                        $order[$row->getSortorder()]=$row->getId();
+                    }
+                }
+                ksort($order);
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($module);
+                if(count($order)){
+                    foreach($order as $num=>$prop){
+                        $queryBuilder->sort('property.'.$prop,'asc');
+                    }
+                }
                 /*
                 // pour trouver les images manquantes avant export IDAO
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
@@ -970,6 +983,7 @@ class DataController extends Controller
                     ));
                     break;
                 case 'locations':
+                    $locations=null;
                     $nbResults=0;
                     if(count($ids_punit)||count($fields))
                     {
