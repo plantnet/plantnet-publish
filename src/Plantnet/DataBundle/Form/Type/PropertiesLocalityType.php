@@ -20,9 +20,6 @@ class PropertiesLocalityType extends AbstractType
 				'multiple' => false,
 				'required' => false
 			))
-			->add('sortorder', 'integer', array(
-				'required' => false
-			))
 		;
 	}
 

@@ -38,7 +38,9 @@
                     {% elseif entity.type == 'other' or entity.type == 'image' %}
                         <th colspan="1" class="middle">Display</th>
                     {% endif %}
-                    <th class="middle">Sort order</th>
+                    {% if entity.type != 'locality' %}
+                        <th class="middle">Sort order</th>
+                    {% endif %}
                 </tr>
                 <tr>
                     <th></th>
@@ -50,7 +52,9 @@
                     {% elseif entity.type == 'other' or entity.type == 'image' %}
                         <th class="middle">-</th>
                     {% endif %}
-                    <th></th>
+                    {% if entity.type != 'locality' %}
+                        <th></th>
+                    {% endif %}
                 <tr>
             </thead>
             <tbody>
@@ -83,10 +87,12 @@
                                 {{ form_widget(property.details) }}
                             </td>
                         {% endif %}
-                        <td class="middle">
-                            {{ form_errors(property.sortorder) }}
-                            {{ form_widget(property.sortorder, {'attr': {'class': 'span1'}}) }}
-                        </td>
+                        {% if entity.type != 'locality' %}
+                            <td class="middle">
+                                {{ form_errors(property.sortorder) }}
+                                {{ form_widget(property.sortorder, {'attr': {'class': 'span1'}}) }}
+                            </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>
