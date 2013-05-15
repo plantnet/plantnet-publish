@@ -32,6 +32,9 @@
                     {% elseif module.type == 'other' or module.type == 'image' %}
                         <th colspan="1" class="middle">Display</th>
                     {% endif %}
+                    {% if module.type != 'locality' %}
+                        <th class="middle">Sort order</th>
+                    {% endif %}
                 </tr>
                 <tr>
                     <th></th>
@@ -42,6 +45,9 @@
                         <th class="middle">Search</th>
                     {% elseif module.type == 'other' or module.type == 'image' %}
                         <th class="middle">-</th>
+                    {% endif %}
+                    {% if module.type != 'locality' %}
+                        <th></th>
                     {% endif %}
                 <tr>
             </thead>
@@ -73,6 +79,12 @@
                             <td class="middle">
                                 {{ form_errors(property.details) }}
                                 {{ form_widget(property.details) }}
+                            </td>
+                        {% endif %}
+                        {% if module.type != 'locality' %}
+                            <td class="middle">
+                                {{ form_errors(property.sortorder) }}
+                                {{ form_widget(property.sortorder, {'attr': {'class': 'span1'}}) }}
                             </td>
                         {% endif %}
                     </tr>
