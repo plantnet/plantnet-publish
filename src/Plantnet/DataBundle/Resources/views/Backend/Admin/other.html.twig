@@ -27,14 +27,14 @@
                 {{ pagerfanta(paginator, 'twitter_bootstrap') }}
             </div>
             <table class="table table-striped table-bordered table-hover table-condensed">
-            	{% for property in module.properties %}
+            	{% for property in module.properties if property.id in display %}
 					<th>{{ property.name }}</th>
             	{% endfor %}
 				{% for row in paginator %}
 					<tr>
-						{% for prop in row.property %}
-							<td>{{ prop }}</td>
-						{% endfor %}
+                        {% for field in display %}
+                            <td>{{ row.property[field] }}</td>
+                        {% endfor %}
 					</tr>
 				{% endfor %}
 			</table>

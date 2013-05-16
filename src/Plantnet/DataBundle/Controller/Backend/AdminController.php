@@ -102,14 +102,24 @@ class AdminController extends Controller
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $display = array();
+        $order=array();
         $field = $module->getProperties();
         foreach($field as $row){
             if($row->getMain() == true){
                 $display[] = $row->getId();
             }
+            if($row->getSortorder()){
+                $order[$row->getSortorder()]=$row->getId();
+            }
         }
+        ksort($order);
         $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
             ->field('module')->references($module);
+        if(count($order)){
+            foreach($order as $num=>$prop){
+                $queryBuilder->sort('attributes.'.$prop,'asc');
+            }
+        }
         $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
         $paginator->setMaxPerPage(50);
         $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
@@ -166,6 +176,8 @@ class AdminController extends Controller
             case 'image':
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($mod)
+                    ->sort('title1','asc')
+                    ->sort('title2','asc')
                     ->hydrate(false);
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(20);
@@ -180,33 +192,40 @@ class AdminController extends Controller
             case 'locality':
                 $db=$this->getDataBase($user);
                 $m=new \Mongo();
-                $plantunits=array();
-                $c_plantunits=$m->$db->Plantunit->find(
-                    array('module.$id'=>new \MongoId($module->getId())),
-                    array('_id'=>1,'title1'=>1,'title2'=>1)
-                );
-                foreach($c_plantunits as $id=>$p)
-                {
-                    $plant=array();
-                    $plant['title1']='';
-                    $plant['title2']='';
-                    if(isset($p['title1']))
-                    {
-                        $plant['title1']=$p['title1'];
-                    }
-                    if(isset($p['title2']))
-                    {
-                        $plant['title2']=$p['title2'];
-                    }
-                    $plantunits[$id]=$plant;
-                }
-                unset($c_plantunits);
+                // $plantunits=array();
+                // $c_plantunits=$m->$db->Plantunit->find(
+                //     array('module.$id'=>new \MongoId($module->getId())),
+                //     array('_id'=>1,'title1'=>1,'title2'=>1)
+                // );
+                // foreach($c_plantunits as $id=>$p)
+                // {
+                //     $plant=array();
+                //     $plant['title1']='';
+                //     $plant['title2']='';
+                //     if(isset($p['title1']))
+                //     {
+                //         $plant['title1']=$p['title1'];
+                //     }
+                //     if(isset($p['title2']))
+                //     {
+                //         $plant['title2']=$p['title2'];
+                //     }
+                //     $plantunits[$id]=$plant;
+                // }
+                // unset($c_plantunits);
                 $locations=array();
                 $c_locations=$m->$db->Location->find(
                     array(
                         'module.$id'=>new \MongoId($mod->getId())
                     ),
-                    array('_id'=>1,'latitude'=>1,'longitude'=>1,'plantunit.$id'=>1)
+                    array(
+                        '_id'=>1,
+                        'latitude'=>1,
+                        'longitude'=>1,
+                        'plantunit.$id'=>1,
+                        'title1'=>1,
+                        'title2'=>1
+                    )
                 );
                 foreach($c_locations as $id=>$l)
                 {
@@ -214,22 +233,22 @@ class AdminController extends Controller
                     $loc['id']=$id;
                     $loc['latitude']=$l['latitude'];
                     $loc['longitude']=$l['longitude'];
-                    $loc['title1']='';
-                    $loc['title2']='';
-                    if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
-                    {
-                        if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))
-                        {
-                            $loc['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];
-                        }
-                        if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title2']))
-                        {
-                            $loc['title2']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title2'];
-                        }
-                    }
+                    $loc['title1']=$l['title1'];
+                    $loc['title2']=$l['title2'];
+                    // if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
+                    // {
+                    //     if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))
+                    //     {
+                    //         $loc['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];
+                    //     }
+                    //     if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title2']))
+                    //     {
+                    //         $loc['title2']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title2'];
+                    //     }
+                    // }
                     $locations[]=$loc;
                 }
-                unset($plantunits);
+                // unset($plantunits);
                 unset($c_locations);
                 unset($m);
                 $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
@@ -243,9 +262,26 @@ class AdminController extends Controller
                 ));
                 break;
             case 'other':
+                $display = array();
+                $order=array();
+                $field=$mod->getProperties();
+                foreach($field as $row){
+                    if($row->getDetails() == true){
+                        $display[] = $row->getId();
+                    }
+                    if($row->getSortorder()){
+                        $order[$row->getSortorder()]=$row->getId();
+                    }
+                }
+                ksort($order);
                 $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Other')
                     ->field('module')->references($mod)
                     ->hydrate(false);
+                if(count($order)){
+                    foreach($order as $num=>$prop){
+                        $queryBuilder->sort('property.'.$prop,'asc');
+                    }
+                }
                 $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(50);
                 $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
@@ -254,6 +290,7 @@ class AdminController extends Controller
                     'collection' => $collection,
                     'module' => $mod,
                     'module_parent' => $module,
+                    'display' => $display,
                 ));
                 break;
         }
