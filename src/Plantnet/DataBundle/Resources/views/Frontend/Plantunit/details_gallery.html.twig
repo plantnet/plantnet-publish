@@ -9,10 +9,10 @@
         {% endfor %}
         <div class="thumbnail" data-content="{{ content }}">
             <a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
-                <img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid new" alt="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}</strong><br />{{ image.copyright }}" />
+                <img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid new" alt="<strong>{{ image.title1 }} - {{ image.title2 }}</strong><br />{{ image.copyright }}" />
             </a>
             <h5>
-                {{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}
+                {{ image.title1 }} - {{ image.title2 }}
             </h5>
             {% if image.copyright is not empty %}
                 <p>

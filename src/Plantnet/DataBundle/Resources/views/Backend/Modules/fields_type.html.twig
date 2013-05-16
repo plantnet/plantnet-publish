@@ -29,10 +29,10 @@
                     <th class="middle">Type</th>
                     {% if module.type == 'text' %}
                         <th colspan="3" class="middle">Display</th>
-                    {% elseif module.type == 'other' or module.type == 'image' %}
+                    {% else %}
                         <th colspan="1" class="middle">Display</th>
                     {% endif %}
-                    {% if module.type != 'locality' %}
+                    {% if module.type != 'locality' and module.type != 'image' %}
                         <th class="middle">Sort order</th>
                     {% endif %}
                 </tr>
@@ -43,10 +43,10 @@
                         <th class="middle">Main</th>
                         <th class="middle">Details</th>
                         <th class="middle">Search</th>
-                    {% elseif module.type == 'other' or module.type == 'image' %}
+                    {% else %}
                         <th class="middle">-</th>
                     {% endif %}
-                    {% if module.type != 'locality' %}
+                    {% if module.type != 'locality' and module.type != 'image' %}
                         <th></th>
                     {% endif %}
                 <tr>
@@ -75,13 +75,13 @@
                                 {{ form_errors(property.search) }}
                                 {{ form_widget(property.search) }}
                             </td>
-                        {% elseif module.type == 'other' or module.type == 'image' %}
+                        {% else %}
                             <td class="middle">
                                 {{ form_errors(property.details) }}
                                 {{ form_widget(property.details) }}
                             </td>
                         {% endif %}
-                        {% if module.type != 'locality' %}
+                        {% if module.type != 'locality' and module.type != 'image' %}
                             <td class="middle">
                                 {{ form_errors(property.sortorder) }}
                                 {{ form_widget(property.sortorder, {'attr': {'class': 'span1'}}) }}

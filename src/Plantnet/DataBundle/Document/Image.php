@@ -20,6 +20,16 @@ class Image
     protected $identifier;
 
     /**
+     * @MongoDB\String
+     */
+    protected $title1;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $title2;
+
+    /**
      * @MongoDB\Hash
      */
     protected $property;
@@ -77,6 +87,46 @@ class Image
     public function getIdentifier()
     {
         return $this->identifier;
+    }
+
+    /**
+     * Set title1
+     *
+     * @param string $title1
+     */
+    public function setTitle1($title1)
+    {
+        $this->title1 = $title1;
+    }
+
+    /**
+     * Get title1
+     *
+     * @return string $title1
+     */
+    public function getTitle1()
+    {
+        return $this->title1;
+    }
+
+    /**
+     * Set title2
+     *
+     * @param string $title2
+     */
+    public function setTitle2($title2)
+    {
+        $this->title2 = $title2;
+    }
+
+    /**
+     * Get title2
+     *
+     * @return string $title2
+     */
+    public function getTitle2()
+    {
+        return $this->title2;
     }
 
     /**

@@ -265,21 +265,10 @@ class DataController extends Controller
         switch($module->getType())
         {
             case 'image':
-                $order=array();
-                $field=$module->getProperties();
-                foreach($field as $row){
-                    if($row->getSortorder()){
-                        $order[$row->getSortorder()]=$row->getId();
-                    }
-                }
-                ksort($order);
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-                    ->field('module')->references($module);
-                if(count($order)){
-                    foreach($order as $num=>$prop){
-                        $queryBuilder->sort('property.'.$prop,'asc');
-                    }
-                }
+                    ->field('module')->references($module)
+                    ->sort('title1','asc')
+                    ->sort('title2','asc');
                 /*
                 // pour trouver les images manquantes avant export IDAO
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
@@ -416,28 +405,40 @@ class DataController extends Controller
         if(!$module||$module->getType()!='locality'){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
+        $display=array();
+        $field=$module->getProperties();
+        foreach($field as $row){
+            if($row->getDetails()==true){
+                $display[$row->getId()]=$row->getName();
+            }
+        }
         //data extract
         $db=$this->get_prefix().$project;
         $m=new \Mongo();
-        $plantunits=array();
-        $c_plantunits=$m->$db->Plantunit->find(
-            array('module.$id'=>new \MongoId($module_parent->getId())),
-            array('_id'=>1,'title1'=>1,'title2'=>1)
-        );
-        foreach($c_plantunits as $id=>$p)
-        {
-            $plant=array();
-            $plant['title1']=$p['title1'];
-            $plant['title2']=$p['title2'];
-            $plantunits[$id]=$plant;
-        }
-        unset($c_plantunits);
+        // $plantunits=array();
+        // $c_plantunits=$m->$db->Plantunit->find(
+        //     array('module.$id'=>new \MongoId($module_parent->getId())),
+        //     array('_id'=>1)
+        // );
+        // foreach($c_plantunits as $id=>$p)
+        // {
+        //     $plantunits[$id]=$id;
+        // }
+        // unset($c_plantunits);
         $locations=array();
         $c_locations=$m->$db->Location->find(
             array(
                 'module.$id'=>new \MongoId($module->getId())
             ),
-            array('_id'=>1,'latitude'=>1,'longitude'=>1,'plantunit.$id'=>1)
+            array(
+                '_id'=>1,
+                'latitude'=>1,
+                'longitude'=>1,
+                'plantunit.$id'=>1,
+                'property'=>1,
+                'title1'=>1,
+                'title2'=>1
+            )
         )->sort(array('_id'=>1))->limit($max_per_page)->skip($start);
         foreach($c_locations as $id=>$l)
         {
@@ -453,29 +454,35 @@ class DataController extends Controller
             );
             $loc['properties']=array(
                 'punit'=>'',
-                'title1'=>'',
-                'title2'=>''
+                'title1'=>$l['title1'],
+                'title2'=>$l['title2'],
+                'loc_data'=>''
             );
-            if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
+            $loc['properties']['punit']=$this->get('router')->generate('_details',array(
+                'project'=>$project,
+                'collection'=>$collection->getName(),
+                'module'=>$module_parent->getName(),
+                'id'=>$l['plantunit']['$id']->{'$id'}
+            ));
+            foreach($l['property'] as $key=>$val)
             {
-                $loc['properties']['punit']=$this->get('router')->generate('_details',array(
-                    'project'=>$project,
-                    'collection'=>$collection->getName(),
-                    'module'=>$module_parent->getName(),
-                    'id'=>$l['plantunit']['$id']->{'$id'}
-                ));
-                if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))
+                if(array_key_exists($key,$display))
                 {
-                    $loc['properties']['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];
-                }
-                if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title2']))
-                {
-                    $loc['properties']['title2']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title2'];
+                    $loc['properties']['loc_data']=$loc['properties']['loc_data'].$display[$key].': '.$val."\n";
                 }
             }
+            // if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
+            // {
+            //     $loc['properties']['punit']=$this->get('router')->generate('_details',array(
+            //         'project'=>$project,
+            //         'collection'=>$collection->getName(),
+            //         'module'=>$module_parent->getName(),
+            //         'id'=>$l['plantunit']['$id']->{'$id'}
+            //     ));
+            // }
             $locations[]=$loc;
         }
-        unset($plantunits);
+        // unset($plantunits);
         unset($c_locations);
         $total=$m->$db->Location->find(
             array(
@@ -631,7 +638,7 @@ class DataController extends Controller
         }
         $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
             ->field('plantunit.id')->equals($plantunit->getId())
-            ->sort('id','asc')
+            ->sort('module.id','asc')
             ->limit($max_per_page)
             ->skip($start)
             ->getQuery()
@@ -889,6 +896,19 @@ class DataController extends Controller
                                 }
                             }
                         }
+                        $order=array();
+                        $field=$module->getProperties();
+                        foreach($field as $row){
+                            if($row->getSortorder()){
+                                $order[$row->getSortorder()]=$row->getId();
+                            }
+                        }
+                        ksort($order);
+                        if(count($order)){
+                            foreach($order as $num=>$prop){
+                                $plantunits->sort('attributes.'.$prop,'asc');
+                            }
+                        }
                         $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
                         try{
                             $paginator->setMaxPerPage(50);
@@ -958,7 +978,9 @@ class DataController extends Controller
                         }
                         unset($ids_c);
                         $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-                            ->field('plantunit.id')->in($ids_tab);
+                            ->field('plantunit.id')->in($ids_tab)
+                            ->sort('title1','asc')
+                            ->sort('title2','asc');
                         $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($images));
                         try{
                             $paginator->setMaxPerPage(15);

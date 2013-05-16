@@ -9,13 +9,13 @@
 		{% set content = content ~ '<br />' ~ '<u>' ~ property.name ~ '</u>' %}
 		{% set content = content ~ ': ' ~ image.property[property.id]|replace(',',', ') %}
 	{% endfor %}
-	<div class="thumbnail" data-title="<strong>{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}</strong>" data-content="{{ content }}">
+	<div class="thumbnail" data-title="<strong>{{ image.title1 }} - {{ image.title2 }}</strong>" data-content="{{ content }}">
 		<a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
-			{% set img_data = '<strong>' ~ image.plantunit.title1 ~ ' - ' ~ image.plantunit.title2 ~ '</strong><br />' ~ image.copyright %}
+			{% set img_data = '<strong>' ~ image.title1 ~ ' - ' ~ image.title2 ~ '</strong><br />' ~ image.copyright %}
 			<img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid" alt="{{ img_data }}" />
 		</a>
 		<h5>
-			{{ image.plantunit.title1 }} - {{ image.plantunit.title2 }}
+			{{ image.title1 }}<br />{{ image.title2 }}
 		</h5>
 		{% if image.copyright is not empty %}
 			<p>

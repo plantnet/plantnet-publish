@@ -34,7 +34,7 @@
                     }
                 ) }}
             </div>
-             <table class="table table-striped table-hover">
+             <table class="table table-striped table-hover tr-link">
                 <thead>
                     <tr>
                         <th></th>
@@ -46,19 +46,27 @@
                 </thead>
                 <tbody>
                     {% for plantunit in paginator %}
-                        <tr class="" onmouseover="this.style.cursor='pointer'" onclick="document.location='{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}'">
+                        <tr>
                             <td>
-                                {% if plantunit.images|length > 0 %}
-                                    <i class="icon-camera"></i>
-                                {% endif %}
+                                <a href="{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}">
+                                    {% if plantunit.images|length > 0 %}
+                                        <i class="icon-camera"></i>
+                                    {% endif %}
+                                </a>
                             </td>
                             <td>
-                                {% if plantunit.locations|length > 0 %}
-                                    <i class="icon-map-marker"></i>
-                                {% endif %}
+                                <a href="{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}">
+                                    {% if plantunit.locations|length > 0 %}
+                                        <i class="icon-map-marker"></i>
+                                    {% endif %}
+                                </a>
                             </td>
                             {% for field in display %}
-                                <td>{{ plantunit.attributes[field] }}</td>
+                                <td>
+                                    <a href="{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}">
+                                        {{ plantunit.attributes[field] }}
+                                    </a>
+                                </td>
                             {% endfor %}
                         </tr>
                     {% endfor %}

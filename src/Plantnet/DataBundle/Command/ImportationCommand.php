@@ -123,6 +123,8 @@ class ImportationCommand extends ContainerAwareCommand
                         if($parent)
                         {
                             $image->setPlantunit($parent);
+                            $image->setTitle1($parent->getTitle1());
+                            $image->setTitle2($parent->getTitle2());
                             $dm->persist($image);
                             $rowCount++;
                         }
@@ -184,6 +186,8 @@ class ImportationCommand extends ContainerAwareCommand
                         if($parent)
                         {
                             $location->setPlantunit($parent);
+                            $location->setTitle1($parent->getTitle1());
+                            $location->setTitle2($parent->getTitle2());
                             $dm->persist($location);
                             $rowCount++;
                         }

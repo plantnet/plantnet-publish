@@ -44,11 +44,11 @@
             {% endfor %}
         </table>
         {% if tab_others_groups|length > 0 %}
-            <div class="accordion other" id="accordion">
-                {% for group in tab_others_groups %}
+            {% for group in tab_others_groups %}
+                <div class="accordion other" id="accordion{{ group.0.id }}">
                     <div class="accordion-group">
                         <div class="accordion-heading">
-                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ group.0.id }}">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion{{ group.0.id }}" href="#collapse{{ group.0.id }}">
                                 {{ group.0.name }}
                             </a>
                         </div>
@@ -83,8 +83,8 @@
                             </div>
                         </div>
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
         {% endif %}
         {% if plantunit.images|length > 0 %}
             <div class="gallery">
