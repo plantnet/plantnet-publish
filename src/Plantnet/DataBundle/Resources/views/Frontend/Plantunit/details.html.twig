@@ -86,7 +86,7 @@
                 </div>
             {% endfor %}
         {% endif %}
-        {% if plantunit.images|length > 0 %}
+        {% if plantunit.hasimages > 0 %}
             <div class="gallery">
                 <ul id="list_gallery" class="thumbnails per3">
                     <li>
@@ -98,7 +98,7 @@
                 </ul>
             </div>
         {% endif %}
-        {% if plantunit.locations|length > 0 %}
+        {% if plantunit.haslocations > 0 %}
             <div>
                 {# LEAFLET MAP #}
                 <div id="map"></div>
