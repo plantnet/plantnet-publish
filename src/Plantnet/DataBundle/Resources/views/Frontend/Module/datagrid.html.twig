@@ -49,14 +49,14 @@
                         <tr>
                             <td>
                                 <a href="{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}">
-                                    {% if plantunit.images|length > 0 %}
+                                    {% if plantunit.hasimages > 0 %}
                                         <i class="icon-camera"></i>
                                     {% endif %}
                                 </a>
                             </td>
                             <td>
                                 <a href="{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}">
-                                    {% if plantunit.locations|length > 0 %}
+                                    {% if plantunit.haslocations > 0 %}
                                         <i class="icon-map-marker"></i>
                                     {% endif %}
                                 </a>
