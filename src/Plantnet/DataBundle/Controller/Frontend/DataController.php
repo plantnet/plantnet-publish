@@ -874,6 +874,11 @@ class DataController extends Controller
                 case 'grid':
                     $paginator=null;
                     $nbResults=0;
+                    $sortby=$this->get('request')->query->get('sort','null');
+                    $sortorder=$this->get('request')->query->get('order','null');
+                    if(!in_array($sortorder,array('null','asc','desc'))){
+                        $sortorder='null';
+                    }
                     if(count($ids_punit)||count($fields))
                     {
                         $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
@@ -914,6 +919,12 @@ class DataController extends Controller
                             }
                         }
                         ksort($order);
+                        if($sortby!='null'&&$sortorder!='null'){
+                            if(in_array($sortby,$order)){
+                                unset($order[array_search($sortby,$order)]);
+                            }
+                            $plantunits->sort('attributes.'.$sortby,$sortorder);
+                        }
                         if(count($order)){
                             foreach($order as $num=>$prop){
                                 $plantunits->sort('attributes.'.$prop,'asc');
@@ -935,6 +946,8 @@ class DataController extends Controller
                         'module'=>$module,
                         'paginator'=>$paginator,
                         'display'=>$display,
+                        'sortby'=>$sortby,
+                        'sortorder'=>$sortorder,
                         'nbResults'=>$nbResults,
                         'url'=>$url,
                         'current'=>'collection',

@@ -76,6 +76,10 @@
                                             <input type="hidden" name="{{ form }}[{{ k }}]" value="{{ v }}" />
                                         {% endfor %}
                                     {% endfor %}
+                                    {% if sortby != 'null' and sortorder != 'null' %}
+                                        <input type="hidden" name="sort" value="{{ sortby }}" />
+                                        <input type="hidden" name="order" value="{{ sortorder }}" />
+                                    {% endif %}
                                     <input type="number" name="page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
                                 </form>
                             {% endif %}
@@ -86,8 +90,15 @@
                                 <tr>
                                     <th></th>
                                     <th></th>
+                                    {% set array_form = app.request.query.all() %}
                                     {% for property in module.properties if property.id in display %}
-                                        <th>{{ property.name }}</th>
+                                        <th>
+                                            {{ property.name }}
+                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}{% for form,values in array_form if values is iterable %}{% for k,v in values if (k != '_token' and k != 'page' and k != 'sort' and k != 'order') %}&{{ form }}[{{ k }}]={{ v }}{% endfor %}{% endfor %}&sort={{ property.id }}&order=asc">
+                                                <i class="icon-circle-arrow-up"></i></a></a>
+                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}{% for form,values in array_form if values is iterable %}{% for k,v in values if (k != '_token' and k != 'page' and k != 'sort' and k != 'order') %}&{{ form }}[{{ k }}]={{ v }}{% endfor %}{% endfor %}&sort={{ property.id }}&order=desc">
+                                                <i class="icon-circle-arrow-down"></i></a></a>
+                                        </th>
                                     {% endfor %}
                                 </tr>
                             </thead>
