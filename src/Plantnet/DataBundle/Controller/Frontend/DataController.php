@@ -138,6 +138,8 @@ class DataController extends Controller
      */
     public function moduleAction($project,$collection,$module,$page,Request $request)
     {
+        // $sort=$request->query->get('sort');
+        // $order=$request->query->get('order');
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;

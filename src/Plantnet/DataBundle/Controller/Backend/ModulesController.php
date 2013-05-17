@@ -451,6 +451,8 @@ class ModulesController extends Controller
                             }
                         }
                         $plantunit->setAttributes($attributes);
+                        $plantunit->setHasimages(false);
+                        $plantunit->setHaslocations(false);
                         $dm->persist($plantunit);
                     }
                     if (($rowCount % $batchSize) == 0) {

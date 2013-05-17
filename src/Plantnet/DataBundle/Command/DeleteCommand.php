@@ -107,10 +107,85 @@ class DeleteCommand extends ContainerAwareCommand
             }
         }
         /*
+        * Check for punits update
+        */
+        $parent_to_update=null;
+        if($module->getType()=='image'||$module->getType()=='locality')
+        {
+            if($module->getParent()&&$module->getParent()->getDeleting()===false)
+            {
+                $parent_to_update=$module->getParent();
+            }
+        }
+        /*
         * Remove Module + Cascade
         */
         $dm->remove($module);
         $dm->flush();
+        /*
+        * Check for punits update
+        */
+        if($parent_to_update)
+        {
+            //images
+            $ids_img=array();
+            $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                ->hydrate(false)
+                ->select('_id')
+                ->field('module')->references($parent_to_update)
+                ->field('hasimages')->equals(true)
+                ->getQuery()
+                ->execute();
+            foreach($punits as $id)
+            {
+                $ids_img[]=$id['_id']->{'$id'};
+            }
+            unset($punits);
+            foreach($ids_img as $id)
+            {
+                $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+                    ->findOneBy(array(
+                        'id'=>$id
+                    ));
+                $images=$punit->getImages();
+                if(!count($images))
+                {
+                    $punit->setHasimages(false);
+                    $dm->persist($punit);
+                    $dm->flush();
+                    $dm->clear();
+                }
+            }
+            //locations
+            $ids_loc=array();
+            $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                ->hydrate(false)
+                ->select('_id')
+                ->field('module')->references($parent_to_update)
+                ->field('haslocations')->equals(true)
+                ->getQuery()
+                ->execute();
+            foreach($punits as $id)
+            {
+                $ids_loc[]=$id['_id']->{'$id'};
+            }
+            unset($punits);
+            foreach($ids_loc as $id)
+            {
+                $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+                    ->findOneBy(array(
+                        'id'=>$id
+                    ));
+                $locations=$punit->getLocations();
+                if(!count($locations))
+                {
+                    $punit->setHaslocations(false);
+                    $dm->persist($punit);
+                    $dm->flush();
+                    $dm->clear();
+                }
+            }
+        }
     }
 
     private function delete_collection($dbname,$id)

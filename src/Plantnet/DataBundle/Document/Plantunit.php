@@ -61,6 +61,16 @@ class Plantunit
      */
     private $others = array();
 
+    /**
+     * @MongoDB\Boolean
+     */
+    private $hasimages;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    private $haslocations;
+
     public function __construct()
     {
         $this->files = new \Doctrine\Common\Collections\ArrayCollection();
@@ -367,5 +377,45 @@ class Plantunit
     public function removeOther(\Plantnet\DataBundle\Document\Other $others)
     {
         $this->others->removeElement($others);
+    }
+
+    /**
+     * Set hasimages
+     *
+     * @param boolean $hasimages
+     */
+    public function setHasimages($hasimages)
+    {
+        $this->hasimages = $hasimages;
+    }
+
+    /**
+     * Get hasimages
+     *
+     * @return boolean $hasimages
+     */
+    public function getHasimages()
+    {
+        return $this->hasimages;
+    }
+
+    /**
+     * Set haslocations
+     *
+     * @param boolean $haslocations
+     */
+    public function setHaslocations($haslocations)
+    {
+        $this->haslocations = $haslocations;
+    }
+
+    /**
+     * Get haslocations
+     *
+     * @return boolean $haslocations
+     */
+    public function getHaslocations()
+    {
+        return $this->haslocations;
     }
 }
