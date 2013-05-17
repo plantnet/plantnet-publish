@@ -108,10 +108,12 @@
                                     {% for property in module.properties if property.id in display %}
                                         <th>
                                             {{ property.name }}
-                                            <a href="{{ path('_module_result', {'project': project, 'collection': collection.name, 'module': module.name}) }}?{{ url }}&sort={{ property.id }}&order=asc">
-                                                <i class="icon-circle-arrow-up"></i></a></a>
-                                            <a href="{{ path('_module_result', {'project': project, 'collection': collection.name, 'module': module.name}) }}?{{ url }}&sort={{ property.id }}&order=desc">
-                                                <i class="icon-circle-arrow-down"></i></a></a>
+                                            <span class="nowrap">
+                                                <a href="{{ path('_module_result', {'project': project, 'collection': collection.name, 'module': module.name}) }}?{{ url }}&sort={{ property.id }}&order=asc">
+                                                    <i class="icon-circle-arrow-up"></i></a></a>
+                                                <a href="{{ path('_module_result', {'project': project, 'collection': collection.name, 'module': module.name}) }}?{{ url }}&sort={{ property.id }}&order=desc">
+                                                    <i class="icon-circle-arrow-down"></i></a></a>
+                                            </span>
                                         </th>
                                     {% endfor %}
                                 </tr>

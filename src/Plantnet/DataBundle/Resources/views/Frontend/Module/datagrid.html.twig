@@ -66,10 +66,12 @@
                         {% for property in module.properties if property.id in display %}
                             <th>
                                 {{ property.name }}
-                                <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}/page1/sort-{{ property.id }}/order-asc">
-                                    <i class="icon-circle-arrow-up"></i></a>
-                                <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}/page1/sort-{{ property.id }}/order-desc">
-                                    <i class="icon-circle-arrow-down"></i></a>
+                                <span class="nowrap">
+                                    <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}/page1/sort-{{ property.id }}/order-asc">
+                                        <i class="icon-circle-arrow-up"></i></a>
+                                    <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}/page1/sort-{{ property.id }}/order-desc">
+                                        <i class="icon-circle-arrow-down"></i></a>
+                                </span>
                             </th>
                         {% endfor %}
                     </tr>
