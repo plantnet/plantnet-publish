@@ -51,16 +51,30 @@
                 </a>
             </li>
             <li{% if current_display == 'images' %} class="active"{% endif %}>
-                <a href="{{ path('_module_result_mode', {'project': project, 'collection': collection.name, 'module': module.name, 'mode': 'images'}) }}?{{ url }}">
-                    <i class="icon-camera"></i>
-                    {{ "line-images"|trans|capitalize }}
-                </a>
+                {% if nb_images > 0 %}
+                    <a href="{{ path('_module_result_mode', {'project': project, 'collection': collection.name, 'module': module.name, 'mode': 'images'}) }}?{{ url }}">
+                        <i class="icon-camera"></i>
+                        {{ "line-images"|trans|capitalize }}
+                    </a>
+                {% else %}
+                    <a href="#" class="muted">
+                        <i class="icon-camera"></i>
+                        {{ "line-images"|trans|capitalize }}
+                    </a>
+                {% endif %}
             </li>
             <li{% if current_display == 'locations' %} class="active"{% endif %}>
-                <a href="{{ path('_module_result_mode', {'project': project, 'collection': collection.name, 'module': module.name, 'mode': 'locations'}) }}?{{ url }}">
-                    <i class="icon-map-marker"></i>
-                    {{ "line-locations"|trans|capitalize }}
-                </a>
+                {% if nb_locations > 0 %}
+                    <a href="{{ path('_module_result_mode', {'project': project, 'collection': collection.name, 'module': module.name, 'mode': 'locations'}) }}?{{ url }}">
+                        <i class="icon-map-marker"></i>
+                        {{ "line-locations"|trans|capitalize }}
+                    </a>
+                {% else %}
+                    <a href="#" class="muted">
+                        <i class="icon-map-marker"></i>
+                        {{ "line-locations"|trans|capitalize }}
+                    </a>
+                {% endif %}
             </li>
         </ul>
         <div>
@@ -94,9 +108,9 @@
                                     {% for property in module.properties if property.id in display %}
                                         <th>
                                             {{ property.name }}
-                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}{% for form,values in array_form if values is iterable %}{% for k,v in values if (k != '_token' and k != 'page' and k != 'sort' and k != 'order') %}&{{ form }}[{{ k }}]={{ v }}{% endfor %}{% endfor %}&sort={{ property.id }}&order=asc">
+                                            <a href="{{ path('_module_result', {'project': project, 'collection': collection.name, 'module': module.name}) }}?{{ url }}&sort={{ property.id }}&order=asc">
                                                 <i class="icon-circle-arrow-up"></i></a></a>
-                                            <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}{% for form,values in array_form if values is iterable %}{% for k,v in values if (k != '_token' and k != 'page' and k != 'sort' and k != 'order') %}&{{ form }}[{{ k }}]={{ v }}{% endfor %}{% endfor %}&sort={{ property.id }}&order=desc">
+                                            <a href="{{ path('_module_result', {'project': project, 'collection': collection.name, 'module': module.name}) }}?{{ url }}&sort={{ property.id }}&order=desc">
                                                 <i class="icon-circle-arrow-down"></i></a></a>
                                         </th>
                                     {% endfor %}

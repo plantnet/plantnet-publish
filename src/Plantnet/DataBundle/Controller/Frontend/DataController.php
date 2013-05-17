@@ -874,6 +874,8 @@ class DataController extends Controller
                 case 'grid':
                     $paginator=null;
                     $nbResults=0;
+                    $nb_images=0;
+                    $nb_locations=0;
                     $sortby=$this->get('request')->query->get('sort','null');
                     $sortorder=$this->get('request')->query->get('order','null');
                     if(!in_array($sortorder,array('null','asc','desc'))){
@@ -939,6 +941,32 @@ class DataController extends Controller
                             throw $this->createNotFoundException('Page not found.');
                         }
                         $nbResults=$paginator->getNbResults();
+                        //count to display
+                        $clone_plantunits=clone $plantunits;
+                        $ids_c=$clone_plantunits->hydrate(false)
+                            ->select('_id')
+                            ->getQuery()
+                            ->execute();
+                        $ids_tab=array();
+                        foreach($ids_c as $id)
+                        {
+                            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+                        }
+                        unset($ids_c);
+                        $nb_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+                            ->hydrate(false)
+                            ->select('_id')
+                            ->field('plantunit.id')->in($ids_tab)
+                            ->getQuery()
+                            ->execute()
+                            ->count();
+                        $nb_locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+                            ->hydrate(false)
+                            ->select('_id')
+                            ->field('plantunit.id')->in($ids_tab)
+                            ->getQuery()
+                            ->execute()
+                            ->count();
                     }
                     return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig',array(
                         'project'=>$project,
@@ -949,6 +977,8 @@ class DataController extends Controller
                         'sortby'=>$sortby,
                         'sortorder'=>$sortorder,
                         'nbResults'=>$nbResults,
+                        'nb_images'=>$nb_images,
+                        'nb_locations'=>$nb_locations,
                         'url'=>$url,
                         'current'=>'collection',
                         'current_display'=>'grid'
@@ -957,6 +987,8 @@ class DataController extends Controller
                 case 'images':
                     $paginator=null;
                     $nbResults=0;
+                    $nb_images=0;
+                    $nb_locations=0;
                     if(count($ids_punit)||count($fields))
                     {
                         $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
@@ -1013,6 +1045,15 @@ class DataController extends Controller
                             throw $this->createNotFoundException('Page not found.');
                         }
                         $nbResults=$paginator->getNbResults();
+                        //count to display
+                        $nb_images=$nbResults;
+                        $nb_locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+                            ->hydrate(false)
+                            ->select('_id')
+                            ->field('plantunit.id')->in($ids_tab)
+                            ->getQuery()
+                            ->execute()
+                            ->count();
                     }
                     return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig',array(
                         'project'=>$project,
@@ -1022,6 +1063,8 @@ class DataController extends Controller
                         'paginator'=>$paginator,
                         'display'=>$display,
                         'nbResults'=>$nbResults,
+                        'nb_images'=>$nb_images,
+                        'nb_locations'=>$nb_locations,
                         'url'=>$url,
                         'current'=>'collection',
                         'current_display'=>'images'
@@ -1078,6 +1121,15 @@ class DataController extends Controller
                             ->getQuery()
                             ->execute();
                         $nbResults=count($locations);
+                        //count to display
+                        $nb_locations=$nbResults;
+                        $nb_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+                            ->hydrate(false)
+                            ->select('_id')
+                            ->field('plantunit.id')->in($ids_tab)
+                            ->getQuery()
+                            ->execute()
+                            ->count();
                     }
                     $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                     $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
@@ -1090,6 +1142,8 @@ class DataController extends Controller
                         'layers'=>$layers,
                         'locations'=>$locations,
                         'nbResults'=>$nbResults,
+                        'nb_images'=>$nb_images,
+                        'nb_locations'=>$nb_locations,
                         'url'=>$url,
                         'current'=>'collection',
                         'current_display'=>'locations'
