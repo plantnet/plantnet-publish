@@ -131,15 +131,14 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}", defaults={"page"=1}, name="_module")
-     * @Route("/project/{project}/collection/{collection}/{module}/page{page}", requirements={"page"="\d+"}, name="_module_paginated")
+     * @Route("/project/{project}/collection/{collection}/{module}", defaults={"page"=1, "sortby"="null", "sortorder"="null"}, name="_module")
+     * @Route("/project/{project}/collection/{collection}/{module}/page{page}", requirements={"page"="\d+"}, defaults={"sortby"="null", "sortorder"="null"}, name="_module_paginated")
+     * @Route("/project/{project}/collection/{collection}/{module}/page{page}/sort-{sortby}/order-{sortorder}", requirements={"page"="\d+", "sortby"="\w+", "sortorder"="null|asc|desc"}, name="_module_paginated_sorted")
      * @Method("get")
      * @Template()
      */
-    public function moduleAction($project,$collection,$module,$page,Request $request)
+    public function moduleAction($project,$collection,$module,$page,$sortby,$sortorder,Request $request)
     {
-        // $sort=$request->query->get('sort');
-        // $order=$request->query->get('order');
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;
@@ -185,6 +184,12 @@ class DataController extends Controller
         ksort($order);
         $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
             ->field('module')->references($module);
+        if($sortby!='null'&&$sortorder!='null'){
+            if(in_array($sortby,$order)){
+                unset($order[array_search($sortby,$order)]);
+            }
+            $queryBuilder->sort('attributes.'.$sortby,$sortorder);
+        }
         if(count($order)){
             foreach($order as $num=>$prop){
                 $queryBuilder->sort('attributes.'.$prop,'asc');
@@ -204,6 +209,9 @@ class DataController extends Controller
             'module'=>$module,
             'paginator'=>$paginator,
             'display'=>$display,
+            'page'=>$page,
+            'sortby'=>$sortby,
+            'sortorder'=>$sortorder,
             'current'=>'collection'
         ));
     }
