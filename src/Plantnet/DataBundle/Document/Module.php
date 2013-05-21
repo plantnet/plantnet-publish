@@ -54,12 +54,19 @@ class Module
     protected $file;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Collection", inversedBy="modules")
+     * @MongoDB\ReferenceOne(
+     *      targetDocument="Collection",
+     *      inversedBy="modules"
+     *  )
      */
     private $collection;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Module", nullable="true", inversedBy="children")
+     * @MongoDB\ReferenceOne(
+     *      targetDocument="Module",
+     *      nullable="true",
+     *      inversedBy="children"
+     *  )
      */
     private $parent;
 
@@ -85,22 +92,38 @@ class Module
     private $deleting;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Plantunit", mappedBy="module", cascade={"remove"})
+     * @MongoDB\ReferenceMany(
+     *      targetDocument="Plantunit",
+     *      mappedBy="module",
+     *      cascade={"remove"}
+     *  )
      */
     private $plantunits = array();
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Image", mappedBy="module", cascade={"remove"})
+     * @MongoDB\ReferenceMany(
+     *      targetDocument="Image",
+     *      mappedBy="module",
+     *      cascade={"remove"}
+     *  )
      */
     private $images = array();
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Location", mappedBy="module", cascade={"remove"})
+     * @MongoDB\ReferenceMany(
+     *      targetDocument="Location",
+     *      mappedBy="module",
+     *      cascade={"remove"}
+     *  )
      */
     private $locations = array();
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Other", mappedBy="module", cascade={"remove"})
+     * @MongoDB\ReferenceMany(
+     *      targetDocument="Other",
+     *      mappedBy="module",
+     *      cascade={"remove"}
+     *  )
      */
     private $others = array();
 
@@ -113,6 +136,15 @@ class Module
      * @MongoDB\Boolean
      */
     private $taxonomy;
+
+    /**
+     * @MongoDB\ReferenceMany(
+     *      targetDocument="Taxon",
+     *      mappedBy="module",
+     *      cascade={"remove"}
+     *  )
+     */
+    private $taxons = array();
 
     /**
      * To String
@@ -129,7 +161,10 @@ class Module
         $this->properties = new \Doctrine\Common\Collections\ArrayCollection();
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->plantunits = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->images = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->locations = new \Doctrine\Common\Collections\ArrayCollection();
         $this->others = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->taxons = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -260,6 +295,26 @@ class Module
      *
      * @param Plantnet\DataBundle\Document\Property $properties
      */
+    public function addPropertie(\Plantnet\DataBundle\Document\Property $properties)
+    {
+        $this->properties[] = $properties;
+    }
+
+    /**
+    * Remove properties
+    *
+    * @param <variableType$properties
+    */
+    public function removePropertie(\Plantnet\DataBundle\Document\Property $properties)
+    {
+        $this->properties->removeElement($properties);
+    }
+
+    /**
+     * Add properties
+     *
+     * @param Plantnet\DataBundle\Document\Property $properties
+     */
     public function addProperties(\Plantnet\DataBundle\Document\Property $properties)
     {
         $this->properties[] = $properties;
@@ -346,6 +401,16 @@ class Module
     }
 
     /**
+    * Remove children
+    *
+    * @param <variableType$children
+    */
+    public function removeChildren(\Plantnet\DataBundle\Document\Module $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
      * Get children
      *
      * @return Doctrine\Common\Collections\Collection $children
@@ -400,6 +465,26 @@ class Module
      *
      * @param Plantnet\DataBundle\Document\Plantunit $plantunits
      */
+    public function addPlantunit(\Plantnet\DataBundle\Document\Plantunit $plantunits)
+    {
+        $this->plantunits[] = $plantunits;
+    }
+
+    /**
+    * Remove plantunits
+    *
+    * @param <variableType$plantunits
+    */
+    public function removePlantunit(\Plantnet\DataBundle\Document\Plantunit $plantunits)
+    {
+        $this->plantunits->removeElement($plantunits);
+    }
+
+    /**
+     * Add plantunits
+     *
+     * @param Plantnet\DataBundle\Document\Plantunit $plantunits
+     */
     public function addPlantunits(\Plantnet\DataBundle\Document\Plantunit $plantunits)
     {
         $this->plantunits[] = $plantunits;
@@ -413,6 +498,26 @@ class Module
     public function getPlantunits()
     {
         return $this->plantunits;
+    }
+
+    /**
+     * Add images
+     *
+     * @param Plantnet\DataBundle\Document\Image $images
+     */
+    public function addImage(\Plantnet\DataBundle\Document\Image $images)
+    {
+        $this->images[] = $images;
+    }
+
+    /**
+    * Remove images
+    *
+    * @param <variableType$images
+    */
+    public function removeImage(\Plantnet\DataBundle\Document\Image $images)
+    {
+        $this->images->removeElement($images);
     }
 
     /**
@@ -440,6 +545,26 @@ class Module
      *
      * @param Plantnet\DataBundle\Document\Location $locations
      */
+    public function addLocation(\Plantnet\DataBundle\Document\Location $locations)
+    {
+        $this->locations[] = $locations;
+    }
+
+    /**
+    * Remove locations
+    *
+    * @param <variableType$locations
+    */
+    public function removeLocation(\Plantnet\DataBundle\Document\Location $locations)
+    {
+        $this->locations->removeElement($locations);
+    }
+
+    /**
+     * Add locations
+     *
+     * @param Plantnet\DataBundle\Document\Location $locations
+     */
     public function addLocations(\Plantnet\DataBundle\Document\Location $locations)
     {
         $this->locations[] = $locations;
@@ -453,6 +578,26 @@ class Module
     public function getLocations()
     {
         return $this->locations;
+    }
+
+    /**
+     * Add others
+     *
+     * @param Plantnet\DataBundle\Document\Other $others
+     */
+    public function addOther(\Plantnet\DataBundle\Document\Other $others)
+    {
+        $this->others[] = $others;
+    }
+
+    /**
+    * Remove others
+    *
+    * @param <variableType$others
+    */
+    public function removeOther(\Plantnet\DataBundle\Document\Other $others)
+    {
+        $this->others->removeElement($others);
     }
 
     /**
@@ -496,96 +641,6 @@ class Module
     }
 
     /**
-     * Add properties
-     *
-     * @param Plantnet\DataBundle\Document\Property $properties
-     */
-    public function addPropertie(\Plantnet\DataBundle\Document\Property $properties)
-    {
-        $this->properties[] = $properties;
-    }
-
-    /**
-    * Remove properties
-    *
-    * @param <variableType$properties
-    */
-    public function removePropertie(\Plantnet\DataBundle\Document\Property $properties)
-    {
-        $this->properties->removeElement($properties);
-    }
-
-    /**
-    * Remove children
-    *
-    * @param <variableType$children
-    */
-    public function removeChildren(\Plantnet\DataBundle\Document\Module $children)
-    {
-        $this->children->removeElement($children);
-    }
-
-    /**
-     * Add plantunits
-     *
-     * @param Plantnet\DataBundle\Document\Plantunit $plantunits
-     */
-    public function addPlantunit(\Plantnet\DataBundle\Document\Plantunit $plantunits)
-    {
-        $this->plantunits[] = $plantunits;
-    }
-
-    /**
-    * Remove plantunits
-    *
-    * @param <variableType$plantunits
-    */
-    public function removePlantunit(\Plantnet\DataBundle\Document\Plantunit $plantunits)
-    {
-        $this->plantunits->removeElement($plantunits);
-    }
-
-    /**
-     * Add images
-     *
-     * @param Plantnet\DataBundle\Document\Image $images
-     */
-    public function addImage(\Plantnet\DataBundle\Document\Image $images)
-    {
-        $this->images[] = $images;
-    }
-
-    /**
-    * Remove images
-    *
-    * @param <variableType$images
-    */
-    public function removeImage(\Plantnet\DataBundle\Document\Image $images)
-    {
-        $this->images->removeElement($images);
-    }
-
-    /**
-     * Add locations
-     *
-     * @param Plantnet\DataBundle\Document\Location $locations
-     */
-    public function addLocation(\Plantnet\DataBundle\Document\Location $locations)
-    {
-        $this->locations[] = $locations;
-    }
-
-    /**
-    * Remove locations
-    *
-    * @param <variableType$locations
-    */
-    public function removeLocation(\Plantnet\DataBundle\Document\Location $locations)
-    {
-        $this->locations->removeElement($locations);
-    }
-
-    /**
      * Set taxonomy
      *
      * @param boolean $taxonomy
@@ -603,5 +658,45 @@ class Module
     public function getTaxonomy()
     {
         return $this->taxonomy;
+    }
+
+    /**
+     * Add taxons
+     *
+     * @param Plantnet\DataBundle\Document\Taxon $taxons
+     */
+    public function addTaxon(\Plantnet\DataBundle\Document\Taxon $taxons)
+    {
+        $this->taxons[] = $taxons;
+    }
+
+    /**
+    * Remove taxons
+    *
+    * @param <variableType$taxons
+    */
+    public function removeTaxon(\Plantnet\DataBundle\Document\Taxon $taxons)
+    {
+        $this->taxons->removeElement($taxons);
+    }
+
+    /**
+     * Add taxons
+     *
+     * @param Plantnet\DataBundle\Document\Taxon $taxons
+     */
+    public function addTaxons(\Plantnet\DataBundle\Document\Taxon $taxons)
+    {
+        $this->taxons[] = $taxons;
+    }
+
+    /**
+     * Get taxons
+     *
+     * @return Doctrine\Common\Collections\Collection $taxons
+     */
+    public function getTaxons()
+    {
+        return $this->taxons;
     }
 }

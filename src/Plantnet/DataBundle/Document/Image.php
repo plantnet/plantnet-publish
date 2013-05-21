@@ -2,7 +2,6 @@
 namespace Plantnet\DataBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\ImageRepository")
@@ -50,12 +49,18 @@ class Image
     protected $idparent;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Plantunit", inversedBy="images")
+     * @MongoDB\ReferenceOne(
+     *      targetDocument="Plantunit",
+     *      inversedBy="images"
+     *  )
      */
     private $plantunit;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Module", inversedBy="images")
+     * @MongoDB\ReferenceOne(
+     *      targetDocument="Module",
+     *      inversedBy="images"
+     *  )
      */
     private $module;
 

@@ -2,7 +2,6 @@
 namespace Plantnet\DataBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\TaxonRepository")
@@ -40,6 +39,22 @@ class Taxon
     private $children;
 
     /**
+     * @MongoDB\ReferenceOne(
+     *      targetDocument="Module",
+     *      inversedBy="taxons"
+     *  )
+     */
+    private $module;
+
+    /**
+     * @MongoDB\ReferenceMany(
+     *      targetDocument="Plantunit",
+     *      mappedBy="taxon"
+     *  )
+     */
+    private $plantunits = array();
+
+    /**
      * To String
      *
      * @return string
@@ -52,6 +67,7 @@ class Taxon
     public function __construct()
     {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->plantunits = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -115,6 +131,16 @@ class Taxon
     }
 
     /**
+    * Remove children
+    *
+    * @param <variableType$children
+    */
+    public function removeChildren(\Plantnet\DataBundle\Document\Taxon $children)
+    {
+        $this->children->removeElement($children);
+    }
+
+    /**
      * Get children
      *
      * @return Doctrine\Common\Collections\Collection $children
@@ -125,12 +151,62 @@ class Taxon
     }
 
     /**
-    * Remove children
-    *
-    * @param <variableType$children
-    */
-    public function removeChildren(\Plantnet\DataBundle\Document\Taxon $children)
+     * Set module
+     *
+     * @param Plantnet\DataBundle\Document\Module $module
+     */
+    public function setModule(\Plantnet\DataBundle\Document\Module $module)
     {
-        $this->children->removeElement($children);
+        $this->module = $module;
+    }
+
+    /**
+     * Get module
+     *
+     * @return Plantnet\DataBundle\Document\Module $module
+     */
+    public function getModule()
+    {
+        return $this->module;
+    }
+
+    /**
+     * Add plantunits
+     *
+     * @param Plantnet\DataBundle\Document\Plantunit $plantunits
+     */
+    public function addPlantunit(\Plantnet\DataBundle\Document\Plantunit $plantunits)
+    {
+        $this->plantunits[] = $plantunits;
+    }
+
+    /**
+    * Remove plantunits
+    *
+    * @param <variableType$plantunits
+    */
+    public function removePlantunit(\Plantnet\DataBundle\Document\Plantunit $plantunits)
+    {
+        $this->plantunits->removeElement($plantunits);
+    }
+
+    /**
+     * Add plantunits
+     *
+     * @param Plantnet\DataBundle\Document\Plantunit $plantunits
+     */
+    public function addPlantunits(\Plantnet\DataBundle\Document\Plantunit $plantunits)
+    {
+        $this->plantunits[] = $plantunits;
+    }
+
+    /**
+     * Get plantunits
+     *
+     * @return Doctrine\Common\Collections\Collection $plantunits
+     */
+    public function getPlantunits()
+    {
+        return $this->plantunits;
     }
 }

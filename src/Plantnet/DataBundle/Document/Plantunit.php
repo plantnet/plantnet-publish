@@ -71,6 +71,11 @@ class Plantunit
      */
     private $haslocations;
 
+    /**
+     * @MongoDB\ReferenceOne(targetDocument="Taxon", inversedBy="plantunits")
+     */
+    private $taxon;
+
     public function __construct()
     {
         $this->files = new \Doctrine\Common\Collections\ArrayCollection();
@@ -204,6 +209,26 @@ class Plantunit
      *
      * @param Plantnet\DataBundle\Document\File $files
      */
+    public function addFile(\Plantnet\DataBundle\Document\File $files)
+    {
+        $this->files[] = $files;
+    }
+
+    /**
+    * Remove files
+    *
+    * @param <variableType$files
+    */
+    public function removeFile(\Plantnet\DataBundle\Document\File $files)
+    {
+        $this->files->removeElement($files);
+    }
+
+    /**
+     * Add files
+     *
+     * @param Plantnet\DataBundle\Document\File $files
+     */
     public function addFiles(\Plantnet\DataBundle\Document\File $files)
     {
         $this->files[] = $files;
@@ -244,6 +269,26 @@ class Plantunit
      *
      * @param Plantnet\DataBundle\Document\Image $images
      */
+    public function addImage(\Plantnet\DataBundle\Document\Image $images)
+    {
+        $this->images[] = $images;
+    }
+
+    /**
+    * Remove images
+    *
+    * @param <variableType$images
+    */
+    public function removeImage(\Plantnet\DataBundle\Document\Image $images)
+    {
+        $this->images->removeElement($images);
+    }
+
+    /**
+     * Add images
+     *
+     * @param Plantnet\DataBundle\Document\Image $images
+     */
     public function addImages(\Plantnet\DataBundle\Document\Image $images)
     {
         $this->images[] = $images;
@@ -257,6 +302,26 @@ class Plantunit
     public function getImages()
     {
         return $this->images;
+    }
+
+    /**
+     * Add locations
+     *
+     * @param Plantnet\DataBundle\Document\Location $locations
+     */
+    public function addLocation(\Plantnet\DataBundle\Document\Location $locations)
+    {
+        $this->locations[] = $locations;
+    }
+
+    /**
+    * Remove locations
+    *
+    * @param <variableType$locations
+    */
+    public function removeLocation(\Plantnet\DataBundle\Document\Location $locations)
+    {
+        $this->locations->removeElement($locations);
     }
 
     /**
@@ -284,86 +349,6 @@ class Plantunit
      *
      * @param Plantnet\DataBundle\Document\Other $others
      */
-    public function addOthers(\Plantnet\DataBundle\Document\Other $others)
-    {
-        $this->others[] = $others;
-    }
-
-    /**
-     * Get others
-     *
-     * @return Doctrine\Common\Collections\Collection $others
-     */
-    public function getOthers()
-    {
-        return $this->others;
-    }
-
-    /**
-     * Add files
-     *
-     * @param Plantnet\DataBundle\Document\File $files
-     */
-    public function addFile(\Plantnet\DataBundle\Document\File $files)
-    {
-        $this->files[] = $files;
-    }
-
-    /**
-    * Remove files
-    *
-    * @param <variableType$files
-    */
-    public function removeFile(\Plantnet\DataBundle\Document\File $files)
-    {
-        $this->files->removeElement($files);
-    }
-
-    /**
-     * Add images
-     *
-     * @param Plantnet\DataBundle\Document\Image $images
-     */
-    public function addImage(\Plantnet\DataBundle\Document\Image $images)
-    {
-        $this->images[] = $images;
-    }
-
-    /**
-    * Remove images
-    *
-    * @param <variableType$images
-    */
-    public function removeImage(\Plantnet\DataBundle\Document\Image $images)
-    {
-        $this->images->removeElement($images);
-    }
-
-    /**
-     * Add locations
-     *
-     * @param Plantnet\DataBundle\Document\Location $locations
-     */
-    public function addLocation(\Plantnet\DataBundle\Document\Location $locations)
-    {
-        $this->locations[] = $locations;
-    }
-
-    /**
-    * Remove locations
-    *
-    * @param <variableType$locations
-    */
-    public function removeLocation(\Plantnet\DataBundle\Document\Location $locations)
-    {
-        $this->locations->removeElement($locations);
-    }
-
-    /**
-     * Add others
-     *
-     * @param Plantnet\DataBundle\Document\Other $others
-     */
     public function addOther(\Plantnet\DataBundle\Document\Other $others)
     {
         $this->others[] = $others;
@@ -377,6 +362,26 @@ class Plantunit
     public function removeOther(\Plantnet\DataBundle\Document\Other $others)
     {
         $this->others->removeElement($others);
+    }
+
+    /**
+     * Add others
+     *
+     * @param Plantnet\DataBundle\Document\Other $others
+     */
+    public function addOthers(\Plantnet\DataBundle\Document\Other $others)
+    {
+        $this->others[] = $others;
+    }
+
+    /**
+     * Get others
+     *
+     * @return Doctrine\Common\Collections\Collection $others
+     */
+    public function getOthers()
+    {
+        return $this->others;
     }
 
     /**
@@ -417,5 +422,25 @@ class Plantunit
     public function getHaslocations()
     {
         return $this->haslocations;
+    }
+
+    /**
+     * Set taxon
+     *
+     * @param Plantnet\DataBundle\Document\Taxon $taxon
+     */
+    public function setTaxon(\Plantnet\DataBundle\Document\Taxon $taxon)
+    {
+        $this->taxon = $taxon;
+    }
+
+    /**
+     * Get taxon
+     *
+     * @return Plantnet\DataBundle\Document\Taxon $taxon
+     */
+    public function getTaxon()
+    {
+        return $this->taxon;
     }
 }

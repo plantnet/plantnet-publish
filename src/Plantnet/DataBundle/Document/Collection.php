@@ -133,26 +133,6 @@ class Collection
     {
         return $this->description;
     }
-    
-    /**
-     * Add modules
-     *
-     * @param Plantnet\DataBundle\Document\Module $modules
-     */
-    public function addModules(\Plantnet\DataBundle\Document\Module $modules)
-    {
-        $this->modules[] = $modules;
-    }
-
-    /**
-     * Get modules
-     *
-     * @return Doctrine\Common\Collections\Collection $modules
-     */
-    public function getModules()
-    {
-        return $this->modules;
-    }
 
     /**
      * Add modules
@@ -172,6 +152,16 @@ class Collection
     public function removeModule(\Plantnet\DataBundle\Document\Module $modules)
     {
         $this->modules->removeElement($modules);
+    }
+
+    /**
+     * Get modules
+     *
+     * @return Doctrine\Common\Collections\Collection $modules
+     */
+    public function getModules()
+    {
+        return $this->modules;
     }
 
     /**

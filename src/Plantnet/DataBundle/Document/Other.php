@@ -2,7 +2,6 @@
 namespace Plantnet\DataBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\OtherRepository")
@@ -30,12 +29,18 @@ class Other
     protected $idparent;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Plantunit", inversedBy="others")
+     * @MongoDB\ReferenceOne(
+     *      targetDocument="Plantunit",
+     *      inversedBy="others"
+     *  )
      */
     private $plantunit;
 
     /**
-     * @MongoDB\ReferenceOne(targetDocument="Module", inversedBy="others")
+     * @MongoDB\ReferenceOne(
+     *      targetDocument="Module",
+     *      inversedBy="others"
+     *  )
      */
     private $module;
 
