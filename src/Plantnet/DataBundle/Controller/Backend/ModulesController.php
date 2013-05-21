@@ -190,7 +190,7 @@ class ModulesController extends Controller
                     }
                     if($module->getType()=='image')
                     {
-                        $module->setUploaddir($collection->getAlias().'_'.$module->getName_fname());
+                        $module->setUploaddir($collection->getAlias().'_'.$module->getParent()->getName_fname().'_'.$module->getName_fname());
                     }
                     $module->setDeleting(false);
                     $dm->persist($module);

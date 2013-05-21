@@ -15,6 +15,8 @@ use Symfony\Component\Validator\Constraints\Type as TypeConstraint;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
 
+use Plantnet\DataBundle\Utils\StringSearch;
+
 
 /**
  * Default  controller.
@@ -897,7 +899,7 @@ class DataController extends Controller
                                 {
                                     for($i=0;$i<count($value);$i++)
                                     {
-                                        $value[$i]=new \MongoRegex('/.*'.$value[$i].'.*/i');
+                                        $value[$i]=new \MongoRegex('/.*'.StringSearch::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
                                         $value
@@ -907,7 +909,7 @@ class DataController extends Controller
                                 {
                                     $plantunits->field('attributes.'.$key)->in(
                                         array(
-                                            new \MongoRegex('/.*'.$value.'.*/i')
+                                            new \MongoRegex('/.*'.StringSearch::accentToRegex($value).'.*/i')
                                         )
                                     );
                                 }
@@ -1007,7 +1009,7 @@ class DataController extends Controller
                                 {
                                     for($i=0;$i<count($value);$i++)
                                     {
-                                        $value[$i]=new \MongoRegex('/.*'.$value[$i].'.*/i');
+                                        $value[$i]=new \MongoRegex('/.*'.StringSearch::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
                                         $value
@@ -1017,7 +1019,7 @@ class DataController extends Controller
                                 {
                                     $plantunits->field('attributes.'.$key)->in(
                                         array(
-                                            new \MongoRegex('/.*'.$value.'.*/i')
+                                            new \MongoRegex('/.*'.StringSearch::accentToRegex($value).'.*/i')
                                         )
                                     );
                                 }
@@ -1091,7 +1093,7 @@ class DataController extends Controller
                                 {
                                     for($i=0;$i<count($value);$i++)
                                     {
-                                        $value[$i]=new \MongoRegex('/.*'.$value[$i].'.*/i');
+                                        $value[$i]=new \MongoRegex('/.*'.StringSearch::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
                                         $value
@@ -1101,7 +1103,7 @@ class DataController extends Controller
                                 {
                                     $plantunits->field('attributes.'.$key)->in(
                                         array(
-                                            new \MongoRegex('/.*'.$value.'.*/i')
+                                            new \MongoRegex('/.*'.StringSearch::accentToRegex($value).'.*/i')
                                         )
                                     );
                                 }
