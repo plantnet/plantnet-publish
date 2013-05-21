@@ -21,6 +21,7 @@ use Plantnet\DataBundle\Document\Module,
 
 use Plantnet\DataBundle\Form\ImportFormType,
     Plantnet\DataBundle\Form\Type\ModulesType,
+    Plantnet\DataBundle\Form\Type\ModulesTaxoType,
     Plantnet\DataBundle\Form\ModuleFormType;
 
 use Symfony\Component\Form\FormError;
@@ -604,6 +605,65 @@ class ModulesController extends Controller
         ));
     }
 
+    /**
+     * Displays a form to edit an existing Module entity.
+     *
+     * @Route("/{id}/edit_taxo", name="module_edit_taxo")
+     * @Template()
+     */
+    public function module_edit_taxoAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if (!$module) {
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $editForm = $this->get('form.factory')->create(new ModulesTaxoType(), $module);
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_taxo.html.twig',array(
+            'entity' => $module,
+            'edit_form' => $editForm->createView(),
+        ));
+    }
+
+    /**
+     * Edits an existing Module entity.
+     *
+     * @Route("/{id}/update_taxo", name="module_update_taxo")
+     * @Method("post")
+     * @Template()
+     */
+    public function module_update_taxoAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module = $dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if (!$module) {
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $collection=$module->getCollection();
+        $editForm = $this->createForm(new ModulesTaxoType(), $module);
+        $request = $this->getRequest();
+        if ('POST' === $request->getMethod()) {
+            $editForm->bindRequest($request);
+            if ($editForm->isValid()) {
+                $dm = $this->get('doctrine.odm.mongodb.document_manager');
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                $dm->persist($module);
+                $dm->flush();
+                return $this->redirect($this->generateUrl('module_edit_taxo', array('id' => $id)));
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_taxo.html.twig',array(
+            'entity' => $module,
+            'edit_form' => $editForm->createView(),
+        ));
+    }
+    
     /**
      * Deletes a Module entity.
      *

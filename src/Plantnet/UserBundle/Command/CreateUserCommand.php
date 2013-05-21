@@ -84,6 +84,7 @@ class CreateUserCommand extends BaseCommand
 	        $db->createCollection('Other');
 	        $db->createCollection('Module');
 	        $db->createCollection('Plantunit');
+	        $db->createCollection('Taxon');
 	        $db->createCollection('Page');
 	        $db->Plantunit->ensureIndex(array("attributes"=>"text"));
 	        $db->Location->ensureIndex(array("coordinates"=>"2d"));

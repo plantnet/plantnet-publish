@@ -1,0 +1,52 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block form %}
+    <div id="title-form">
+        <h4 class="text-info">
+            <em>Module: {{ entity.name }}</em> > Taxonomy configuration
+        </h4>
+    </div>
+    <form action="{{ path('module_update_taxo', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+        {{ form_errors(edit_form) }}
+        {% if entity.type == 'text' %}
+            <table id="table-form" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th class="middle">Field</th>
+                        <th class="middle">Taxon level</th>
+                        <th class="middle">Taxon label</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for property in edit_form.properties %}
+                        <tr>
+                            <td>
+                                {{ property.get('value').name }}
+                            </td>
+                            <td class="middle">
+                                {{ form_errors(property.taxolevel) }}
+                                {{ form_widget(property.taxolevel, {'attr': {'class': 'span1'}}) }}
+                            </td>
+                            <td class="middle">
+                                {{ form_errors(property.taxolabel) }}
+                                {{ form_widget(property.taxolabel) }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        {{ form_rest(edit_form) }}
+        <br />
+        <button type="submit" class="btn">Update</button>
+    </form>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+        });
+    </script>
+{% endblock %}

@@ -44,6 +44,16 @@ class Property
     private $sortorder;
 
     /**
+     * @MongoDB\Int
+     */
+    private $taxolevel;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $taxolabel;
+
+    /**
      * Get id
      *
      * @return id $id
@@ -181,5 +191,45 @@ class Property
     public function getSortorder()
     {
         return $this->sortorder;
+    }
+
+    /**
+     * Set taxolevel
+     *
+     * @param int $taxolevel
+     */
+    public function setTaxolevel($taxolevel)
+    {
+        $this->taxolevel = $taxolevel;
+    }
+
+    /**
+     * Get taxolevel
+     *
+     * @return int $taxolevel
+     */
+    public function getTaxolevel()
+    {
+        return $this->taxolevel;
+    }
+
+    /**
+     * Set taxolabel
+     *
+     * @param string $taxolabel
+     */
+    public function setTaxolabel($taxolabel)
+    {
+        $this->taxolabel = $taxolabel;
+    }
+
+    /**
+     * Get taxolabel
+     *
+     * @return string $taxolabel
+     */
+    public function getTaxolabel()
+    {
+        return $this->taxolabel;
     }
 }

@@ -42,6 +42,14 @@
                             Edit
                         </a>
                     </li>
+                    {% if module.taxonomy == true %}
+                        <li>
+                            <a href="{{ path('module_edit_taxo', { 'id': module.id }) }}" class="ajax">
+                                <i class="icon-tasks"></i>
+                                Taxonomy
+                            </a>
+                        </li>
+                    {% endif %}
                     <li>
                         <a href="{{ path('admin_module_export_idao', { 'collection': collection.name, 'module': module.name }) }}">
                             <i class="icon-download"></i>
