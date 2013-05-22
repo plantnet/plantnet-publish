@@ -1,0 +1,99 @@
+{% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
+{% block title collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
+{% block stylesheets %}
+	{{ parent() }}
+{% endblock %}
+{% block header %}<h1>{{ module.name }} - {{ "line-taxonomy"|trans|capitalize }}</h1>{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ url('_project', {'project': project}) }}">{{ project|capitalize }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ "line-taxonomy"|trans|capitalize }}
+        </li>
+    </ul>
+{% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
+{% endblock %}
+{% block main %}
+    <div>
+        <table class="table table-striped table-bordered table-hover table-condensed">
+            <tr>
+                <th>Taxon</th>
+                <th class="middle">Specimens</th>
+                <th class="middle">Views</th>
+            </tr>
+            {% macro tr_taxon(taxons,padding,class) %}
+                {% for taxon in taxons %}
+                    <tr class="{{ class }} {% if taxon.parent|length == 1 %} taxo-sub tr{{ taxon.parent.id }}{% endif %}">
+                        <td>
+                            <span class="pad-left{{ padding }}">
+                                {% if taxon.children|length > 0 %}
+                                    <a href="#tr{{ taxon.id }}" class="display-sub">{{ taxon.name }}</a>
+                                {% else %}
+                                    {{ taxon.name }}
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td class="span2 middle">
+                            <span class="badge">
+                                {{ taxon.nbpunits }}
+                                <i class="icon-leaf"></i>
+                            </span>
+                        </td>
+                        <td class="span2 middle">
+                            <i class="icon-list"></i>
+                            {% if taxon.hasimages %}
+                                <i class="icon-camera"></i>
+                            {% endif %}
+                            {% if taxon.haslocations %}
+                                <i class="icon-map-marker"></i>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% if taxon.children|length > 0 %}
+                        {% set pad = padding %}
+                        {% if pad < 5 %}
+                            {% set pad = pad + 1 %}
+                        {% endif %}
+                        {% set newclass = class %}
+                        {% if newclass == '' %}
+                            {% set newclass='success' %}
+                        {% elseif newclass == 'success' %}
+                            {% set newclass='warning' %}
+                        {% else %}
+                            {% set newclass='' %}
+                        {% endif %}
+                        {{ _self.tr_taxon(taxon.children,pad,newclass) }}
+                    {% endif %}
+                {% endfor %}
+            {% endmacro %}
+            {% import _self as macros %}
+            {{ macros.tr_taxon(taxons,0,'') }}
+        </table>
+    </div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.taxo-sub').hide();
+            $('.display-sub').click(function(event){
+                event.preventDefault();
+                $('.'+$(this).attr('href').substring(1)).toggle();
+                return false;
+            });
+        });
+    </script>
+{% endblock %}

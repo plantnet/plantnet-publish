@@ -17,7 +17,8 @@ use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Image,
     Plantnet\DataBundle\Document\Location,
     Plantnet\DataBundle\Document\Coordinates,
-    Plantnet\DataBundle\Document\Other;
+    Plantnet\DataBundle\Document\Other,
+    Plantnet\DataBundle\Document\Taxon;
 
 use Plantnet\DataBundle\Form\ImportFormType,
     Plantnet\DataBundle\Form\Type\ModulesType,
@@ -655,6 +656,11 @@ class ModulesController extends Controller
                 $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                 $dm->persist($module);
                 $dm->flush();
+                //command
+                $kernel=$this->get('kernel');
+                $command='php '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' > /dev/null';
+                $process=new \Symfony\Component\Process\Process($command);
+                $process->start();
                 return $this->redirect($this->generateUrl('module_edit_taxo', array('id' => $id)));
             }
         }

@@ -97,6 +97,10 @@
         <source>line-grid</source>
         <target state="new">grille</target>
       </trans-unit>
+      <trans-unit id="22" resname="line-taxonomy">
+        <source>line-taxonomy</source>
+        <target state="new">taxonomie</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

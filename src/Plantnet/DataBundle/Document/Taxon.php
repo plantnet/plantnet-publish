@@ -19,6 +19,11 @@ class Taxon
     protected $name;
 
     /**
+     * @MongoDB\Int
+     */
+    private $level;
+
+    /**
      * @MongoDB\ReferenceOne(
      *      targetDocument="Taxon",
      *      nullable="true",
@@ -53,6 +58,21 @@ class Taxon
      *  )
      */
     private $plantunits = array();
+
+    /**
+     * @MongoDB\Int
+     */
+    private $nbpunits;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    private $hasimages;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    private $haslocations;
 
     /**
      * To String
@@ -98,6 +118,26 @@ class Taxon
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set level
+     *
+     * @param int $level
+     */
+    public function setLevel($level)
+    {
+        $this->level = $level;
+    }
+
+    /**
+     * Get level
+     *
+     * @return int $level
+     */
+    public function getLevel()
+    {
+        return $this->level;
     }
 
     /**
@@ -208,5 +248,65 @@ class Taxon
     public function getPlantunits()
     {
         return $this->plantunits;
+    }
+
+    /**
+     * Set nbpunits
+     *
+     * @param int $nbpunits
+     */
+    public function setNbpunits($nbpunits)
+    {
+        $this->nbpunits = $nbpunits;
+    }
+
+    /**
+     * Get nbpunits
+     *
+     * @return int $nbpunits
+     */
+    public function getNbpunits()
+    {
+        return $this->nbpunits;
+    }
+
+    /**
+     * Set hasimages
+     *
+     * @param boolean $hasimages
+     */
+    public function setHasimages($hasimages)
+    {
+        $this->hasimages = $hasimages;
+    }
+
+    /**
+     * Get hasimages
+     *
+     * @return boolean $hasimages
+     */
+    public function getHasimages()
+    {
+        return $this->hasimages;
+    }
+
+    /**
+     * Set haslocations
+     *
+     * @param boolean $haslocations
+     */
+    public function setHaslocations($haslocations)
+    {
+        $this->haslocations = $haslocations;
+    }
+
+    /**
+     * Get haslocations
+     *
+     * @return boolean $haslocations
+     */
+    public function getHaslocations()
+    {
+        return $this->haslocations;
     }
 }

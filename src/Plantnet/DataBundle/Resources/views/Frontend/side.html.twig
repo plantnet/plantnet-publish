@@ -26,6 +26,14 @@
 			</li>
 		{% endfor %}
 	{% endif %}
+	{% if module.taxonomy == true %}
+		<li class="child">
+			<a href="{{ path('_module_taxo', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
+				<i class="icon-tasks"></i>
+				{{ "line-taxonomy"|trans|capitalize }}
+			</a>
+		</li>
+	{% endif %}
 	<li>
 		<a href="{{ path('_module_search', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
 			<i class="icon-search zz"></i>
