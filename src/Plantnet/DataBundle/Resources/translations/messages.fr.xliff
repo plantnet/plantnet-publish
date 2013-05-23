@@ -101,6 +101,26 @@
         <source>line-taxonomy</source>
         <target state="new">taxonomie</target>
       </trans-unit>
+      <trans-unit id="23" resname="line-map">
+        <source>line-map</source>
+        <target state="new">carte</target>
+      </trans-unit>
+      <trans-unit id="24" resname="line-gallery">
+        <source>line-gallery</source>
+        <target state="new">gallerie</target>
+      </trans-unit>
+      <trans-unit id="25" resname="line-taxon">
+        <source>line-taxon</source>
+        <target state="new">taxon</target>
+      </trans-unit>
+      <trans-unit id="26" resname="line-specimens">
+        <source>line-specimens</source>
+        <target state="new">spécimens</target>
+      </trans-unit>
+      <trans-unit id="27" resname="line-views">
+        <source>line-views</source>
+        <target state="new">Affichage</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

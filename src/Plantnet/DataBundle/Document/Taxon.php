@@ -19,6 +19,11 @@ class Taxon
     protected $name;
 
     /**
+     * @MongoDB\String
+     */
+    protected $label;
+
+    /**
      * @MongoDB\Int
      */
     private $level;
@@ -118,6 +123,26 @@ class Taxon
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set label
+     *
+     * @param string $label
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
+    }
+
+    /**
+     * Get label
+     *
+     * @return string $label
+     */
+    public function getLabel()
+    {
+        return $this->label;
     }
 
     /**

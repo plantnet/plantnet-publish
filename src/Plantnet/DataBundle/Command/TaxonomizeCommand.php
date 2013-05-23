@@ -69,7 +69,10 @@ class TaxonomizeCommand extends ContainerAwareCommand
         $fields=$module->getProperties();
         foreach($fields as $field){
             if($field->getTaxolevel()){
-                $taxo[$field->getTaxolevel()]=$field->getId();
+                $taxo[$field->getTaxolevel()]=array(
+                    $field->getId(),
+                    $field->getTaxolabel()
+                );
             }
         }
         ksort($taxo);
@@ -102,11 +105,13 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 end($taxo);
                 $last_level=key($taxo);
                 reset($taxo);
-                foreach($taxo as $level=>$attr_id)
+                foreach($taxo as $level=>$tab)
                 {
+                    $attr_id=$tab[0];
+                    $attr_lbl=$tab[1];
                     foreach($attributes as $id_attr=>$attr)
                     {
-                        if($id_attr==$attr_id)
+                        if($id_attr==$attr_id&&!empty($attr))
                         {
                             $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
                                 ->findOneBy(array(
@@ -118,21 +123,23 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             {
                                 $taxon->setNbpunits($taxon->getNbpunits()+1);
                                 if($level==$last_level){
-                                    $taxon->addPlantunit($punit);
+                                    $punit->setTaxon($taxon);
+                                    $dm->persist($punit);
                                 }
                             }
                             else
                             {
                                 $taxon=new Taxon();
                                 $taxon->setName($attr);
+                                $taxon->setLabel($attr_lbl);
                                 $taxon->setLevel($level);
                                 $taxon->setModule($module);
                                 $taxon->setNbpunits(1);
                                 if($level==$last_level){
-                                    $taxon->addPlantunit($punit);
+                                    $punit->setTaxon($taxon);
+                                    $dm->persist($punit);
                                 }
-                                if($last_taxon)
-                                {
+                                if($last_taxon){
                                     $taxon->setParent($last_taxon);
                                 }
                             }

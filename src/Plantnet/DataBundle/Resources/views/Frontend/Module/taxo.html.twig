@@ -30,9 +30,9 @@
     <div>
         <table class="table table-striped table-bordered table-hover table-condensed">
             <tr>
-                <th>Taxon</th>
-                <th class="middle">Specimens</th>
-                <th class="middle">Views</th>
+                <th>{{ "line-taxon"|trans|capitalize }}</th>
+                <th class="middle">{{ "line-specimens"|trans|capitalize }}</th>
+                <th class="middle">{{ "line-views"|trans|capitalize }}</th>
             </tr>
             {% macro tr_taxon(taxons,padding,class) %}
                 {% for taxon in taxons %}
