@@ -120,6 +120,43 @@ class DeleteCommand extends ContainerAwareCommand
         /*
         * Remove Module + Cascade
         */
+        if($module->getType()=='image')
+        {
+            $dm->createQueryBuilder('PlantnetDataBundle:Image')
+                ->remove()
+                ->field('module')->references($module)
+                ->getQuery()
+                ->execute();
+        }
+        elseif($module->getType()=='locality')
+        {
+            $dm->createQueryBuilder('PlantnetDataBundle:Location')
+                ->remove()
+                ->field('module')->references($module)
+                ->getQuery()
+                ->execute();
+        }
+        elseif($module->getType()=='other')
+        {
+            $dm->createQueryBuilder('PlantnetDataBundle:Other')
+                ->remove()
+                ->field('module')->references($module)
+                ->getQuery()
+                ->execute();
+        }
+        elseif($module->getType()=='text')
+        {
+            $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                ->remove()
+                ->field('module')->references($module)
+                ->getQuery()
+                ->execute();
+            $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                ->remove()
+                ->field('module')->references($module)
+                ->getQuery()
+                ->execute();
+        }
         $dm->remove($module);
         $dm->flush();
         /*
