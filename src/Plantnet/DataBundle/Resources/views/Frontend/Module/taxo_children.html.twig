@@ -1,0 +1,36 @@
+<table class="table table-hover table-condensed embedded">
+    {% for taxon in taxons %}
+        <tr>
+            <td>
+               <span class="taxo-{{ taxon.level }}">
+                    {% if taxon.children|length > 0 %}
+                        <a href="#{{ taxon.id }}" class="display-sub">
+                            <i class="arrow icon-chevron-right"></i>
+                            {{ taxon.name }}
+                        </a>
+                    {% else %}
+                        {{ taxon.name }}
+                    {% endif %}
+                </span>
+            </td>
+            <td class="span2 middle">
+                <span class="badge">
+                    {{ taxon.nbpunits }}
+                    <i class="icon-leaf"></i>
+                </span>
+            </td>
+            <td class="span2 middle">
+                <i class="icon-list"></i>
+                {% if taxon.hasimages %}
+                    <i class="icon-camera"></i>
+                {% endif %}
+                {% if taxon.haslocations %}
+                    <i class="icon-map-marker"></i>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td id="sub-{{ taxon.id }}" colspan="3" class="sub-content"></td>
+        </tr>
+    {% endfor %}
+</table>

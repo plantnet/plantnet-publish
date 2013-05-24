@@ -27,67 +27,27 @@
     {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
-    <div>
-        <table class="table table-striped table-bordered table-hover table-condensed">
+    <div id="taxo">
+        <table class="table table-hover table-condensed">
             <tr>
-                <th>{{ "line-taxon"|trans|capitalize }}</th>
-                <th class="middle">{{ "line-specimens"|trans|capitalize }}</th>
-                <th class="middle">{{ "line-views"|trans|capitalize }}</th>
+                <th>
+                    {{ "line-taxon"|trans|capitalize }}
+                </th>
+                <th class="span2 middle">
+                    {{ "line-specimens"|trans|capitalize }}
+                </th>
+                <th class="span2 middle">
+                    {{ "line-views"|trans|capitalize }}
+                </th>
             </tr>
-            {#
-            {% macro tr_taxon(taxons,padding,class) %}
-                {% for taxon in taxons %}
-                    <tr class="{{ class }} {% if taxon.parent|length == 1 %} taxo-sub tr{{ taxon.parent.id }}{% endif %}">
-                        <td>
-                            <span class="pad-left{{ padding }}">
-                                {% if taxon.children|length > 0 %}
-                                    <a href="#tr{{ taxon.id }}" class="display-sub">{{ taxon.name }}</a>
-                                {% else %}
-                                    {{ taxon.name }}
-                                {% endif %}
-                            </span>
-                        </td>
-                        <td class="span2 middle">
-                            <span class="badge">
-                                {{ taxon.nbpunits }}
-                                <i class="icon-leaf"></i>
-                            </span>
-                        </td>
-                        <td class="span2 middle">
-                            <i class="icon-list"></i>
-                            {% if taxon.hasimages %}
-                                <i class="icon-camera"></i>
-                            {% endif %}
-                            {% if taxon.haslocations %}
-                                <i class="icon-map-marker"></i>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% if taxon.children|length > 0 %}
-                        {% set pad = padding %}
-                        {% if pad < 5 %}
-                            {% set pad = pad + 1 %}
-                        {% endif %}
-                        {% set newclass = class %}
-                        {% if newclass == '' %}
-                            {% set newclass='success' %}
-                        {% elseif newclass == 'success' %}
-                            {% set newclass='warning' %}
-                        {% else %}
-                            {% set newclass='' %}
-                        {% endif %}
-                        {{ _self.tr_taxon(taxon.children,pad,newclass) }}
-                    {% endif %}
-                {% endfor %}
-            {% endmacro %}
-            {% import _self as macros %}
-            {{ macros.tr_taxon(taxons,0,'') }}
-            #}
             {% for taxon in taxons %}
                 <tr>
                     <td>
                         <span>
-                            <a href="#tr{{ taxon.id }}" class="display-sub">{{ taxon.name }}</a>
+                            <a href="#{{ taxon.id }}" class="display-sub">
+                                <i class="arrow icon-chevron-right"></i>
+                                {{ taxon.name }}
+                            </a>
                         </span>
                     </td>
                     <td class="span2 middle">
@@ -106,6 +66,9 @@
                         {% endif %}
                     </td>
                 </tr>
+                <tr>
+                    <td id="sub-{{ taxon.id }}" colspan="3" class="sub-content"></td>
+                </tr>
             {% endfor %}
         </table>
     </div>
@@ -114,14 +77,50 @@
 	{{ parent() }}
     <script type="text/javascript">
         $(document).ready(function(){
-            /*
-            $('.taxo-sub').hide();
-            $('.display-sub').click(function(event){
+            $(document).on('click','.display-sub',function(event){
                 event.preventDefault();
-                $('.'+$(this).attr('href').substring(1)).toggle();
+                var parent=$(this);
+                var loaded=parent.hasClass('loaded');
+                if(!loaded){
+                    parent.addClass('loaded');
+                }
+                var id=parent.attr('href').substring(1);
+                if(!loaded){
+                    parent.parent('span').append('<span class="taxo_load"></span>');
+                    $.ajax({
+                        url:'{{ path('_module_taxo_children', { 'project': project, 'collection': collection.name, 'module': module.name }) }}/'+id
+                    }).done(function(data){
+                        $('#sub-'+id).html(data);
+                        parent.parent('span').children('.taxo_load').remove();
+
+                        if(parent.children('.arrow').hasClass('icon-chevron-right')){
+                            parent.children('.arrow').removeClass('icon-chevron-right');
+                        }
+                        if(parent.children('.arrow').hasClass('icon-chevron-down')){
+                            parent.children('.arrow').removeClass('icon-chevron-down');
+                        }
+                        parent.children('.arrow').addClass('icon-chevron-down');
+                        $('#sub-'+id).show();
+                        });
+                }
+                else{
+                    $('#sub-'+id).toggle(0,function(){
+                        if(parent.children('.arrow').hasClass('icon-chevron-right')){
+                            parent.children('.arrow').removeClass('icon-chevron-right');
+                        }
+                        if(parent.children('.arrow').hasClass('icon-chevron-down')){
+                            parent.children('.arrow').removeClass('icon-chevron-down');
+                        }
+                        if($(this).is(':visible')){
+                            parent.children('.arrow').addClass('icon-chevron-down');
+                        }
+                        else{
+                            parent.children('.arrow').addClass('icon-chevron-right');
+                        }
+                    });
+                }
                 return false;
             });
-            */
         });
     </script>
 {% endblock %}

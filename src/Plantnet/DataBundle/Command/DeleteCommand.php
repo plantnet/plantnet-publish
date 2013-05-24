@@ -276,34 +276,6 @@ class DeleteCommand extends ContainerAwareCommand
                         $parent_taxon=$parent_taxon->getParent();
                     }
                 }
-                /*
-                if($punit->getHasimages()){
-                    $taxon=$punit->getTaxon();
-                    if($taxon){
-                        $taxon->setHasimages(true);
-                        $dm->persist($taxon);
-                        $parent_taxon=$taxon->getParent();
-                        while($parent_taxon){
-                            $parent_taxon->setHasimages(true);
-                            $dm->persist($parent_taxon);
-                            $parent_taxon=$parent_taxon->getParent();
-                        }
-                    }
-                }
-                if($punit->getHaslocations()){
-                    $taxon=$punit->getTaxon();
-                    if($taxon){
-                        $taxon->setHaslocations(true);
-                        $dm->persist($taxon);
-                        $parent_taxon=$taxon->getParent();
-                        while($parent_taxon){
-                            $parent_taxon->setHaslocations(true);
-                            $dm->persist($parent_taxon);
-                            $parent_taxon=$parent_taxon->getParent();
-                        }
-                    }
-                }
-                */
                 $dm->flush();
             }
             $dm->clear();

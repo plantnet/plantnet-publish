@@ -259,6 +259,43 @@ class DataController extends Controller
     }
 
     /**
+     * @Route("/project/{project}/collection/{collection}/{module}/taxo_children", defaults={"parent"=0}, name="_module_taxo_children")
+     * @Route("/project/{project}/collection/{collection}/{module}/taxo_children/{parent}", requirements={"parent"="\w+"}, name="_module_taxo_children_parent")
+     * @Template()
+     */
+    public function module_taxo_childrenAction($project,$collection,$module,$parent)
+    {
+        $projects=$this->database_list();
+        if(!in_array($project,$projects)){
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
+        if(!$module||$module->getType()!='text'){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+            ->field('module')->references($module)
+            ->field('parent.id')->equals($parent)
+            ->sort('name','asc')
+            ->getQuery()
+            ->execute();
+        return $this->render('PlantnetDataBundle:Frontend\Module:taxo_children.html.twig',array(
+            'taxons'=>$taxons
+        ));
+    }
+
+    /**
      * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}", defaults={"page"=1}, name="_submodule")
      * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/page{page}", requirements={"page"="\d+"}, name="_submodule_paginated")
      * @Method("get")

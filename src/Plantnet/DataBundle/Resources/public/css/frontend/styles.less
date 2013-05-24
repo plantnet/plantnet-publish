@@ -23,6 +23,9 @@ html,body{
 body{
 	padding-top:@top_bar_height; // @top_bar_height to make the container go all the way to the bottom of the topbar
 }
+div.clear{
+	clear:both;
+}
 .navbar-inverse .navbar-inner, .navbar-inverse .nav .active > a, .navbar-inverse .nav .active > a:hover, .navbar-inverse .nav .active > a:focus, .navbar-inverse .nav li.dropdown.open > .dropdown-toggle, .navbar-inverse .nav li.dropdown.active > .dropdown-toggle, .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle{
 	background-image:url(../../images/overlay.png);
 }
@@ -65,27 +68,6 @@ div.description{
 }
 span.nowrap{
 	white-space:nowrap;
-}
-td.middle,th.middle{
-	text-align:center;
-}
-span.pad-left0{
-	padding-left:0px;
-}
-span.pad-left1{
-	padding-left:20px;
-}
-span.pad-left2{
-	padding-left:40px;
-}
-span.pad-left3{
-	padding-left:60px;
-}
-span.pad-left4{
-	padding-left:80px;
-}
-span.pad-left5{
-	padding-left:100px;
 }
 #details h5{
 	margin-top:0px;
@@ -357,6 +339,42 @@ div.thumbnail:hover .access{
 	float:right;
 	margin-top:3px;
 	line-height:10px;
+}
+
+
+// Taxonomy
+// --------------------------------------------------
+#taxo table.embedded{
+	margin:0px;
+}
+#taxo td.sub-content{
+	padding:0px;
+	border:none;
+}
+#taxo td.middle,#taxo th.middle{
+	text-align:center;
+}
+span.taxo-2{
+	margin-left:20px;
+}
+span.taxo-3{
+	margin-left:40px;
+}
+span.taxo-4{
+	margin-left:60px;
+}
+span.taxo-5{
+	margin-left:80px;
+}
+span.taxo-6{
+	margin-left:100px;
+}
+.taxo_load{
+	display:inline-block;
+	width:16px;
+	height:11px;
+	margin-left:10px;
+	background:url(../../images/page-loader.gif);
 }
 
 
