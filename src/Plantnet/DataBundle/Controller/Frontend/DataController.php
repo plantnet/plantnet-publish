@@ -244,7 +244,6 @@ class DataController extends Controller
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
-            ->field('children')->prime(true)
             ->field('module')->references($module)
             ->field('parent')->equals(null)
             ->sort('name','asc')

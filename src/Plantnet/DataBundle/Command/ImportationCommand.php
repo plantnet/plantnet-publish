@@ -78,7 +78,7 @@ class ImportationCommand extends ContainerAwareCommand
                  */
                 //echo "Memory usage before: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
                 $s = microtime(true);
-                $batchSize = 500;
+                $batchSize = 200;
                 $rowCount = 0;
                 $errorCount = 0;
                 while (($data = fgetcsv($handle, 0, ';')) !== FALSE) {

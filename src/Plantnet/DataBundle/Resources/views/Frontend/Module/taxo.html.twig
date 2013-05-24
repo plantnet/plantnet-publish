@@ -34,6 +34,7 @@
                 <th class="middle">{{ "line-specimens"|trans|capitalize }}</th>
                 <th class="middle">{{ "line-views"|trans|capitalize }}</th>
             </tr>
+            {#
             {% macro tr_taxon(taxons,padding,class) %}
                 {% for taxon in taxons %}
                     <tr class="{{ class }} {% if taxon.parent|length == 1 %} taxo-sub tr{{ taxon.parent.id }}{% endif %}">
@@ -81,19 +82,49 @@
             {% endmacro %}
             {% import _self as macros %}
             {{ macros.tr_taxon(taxons,0,'') }}
+            #}
+            {% set nbt = 0 %}
+            {% for taxon in taxons %}
+                {% set nbt = nbt + 1 %}
+                <tr>
+                    <td>
+                        <span>
+                            <a href="#tr{{ taxon.id }}" class="display-sub">{{ taxon.name }}</a>
+                        </span>
+                    </td>
+                    <td class="span2 middle">
+                        <span class="badge">
+                            {{ taxon.nbpunits }}
+                            <i class="icon-leaf"></i>
+                        </span>
+                    </td>
+                    <td class="span2 middle">
+                        <i class="icon-list"></i>
+                        {% if taxon.hasimages %}
+                            <i class="icon-camera"></i>
+                        {% endif %}
+                        {% if taxon.haslocations %}
+                            <i class="icon-map-marker"></i>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
         </table>
+        {{ nbt }}
     </div>
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
     <script type="text/javascript">
         $(document).ready(function(){
+            /*
             $('.taxo-sub').hide();
             $('.display-sub').click(function(event){
                 event.preventDefault();
                 $('.'+$(this).attr('href').substring(1)).toggle();
                 return false;
             });
+            */
         });
     </script>
 {% endblock %}
