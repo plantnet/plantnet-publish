@@ -92,7 +92,6 @@
                     }).done(function(data){
                         $('#sub-'+id).html(data);
                         parent.parent('span').children('.taxo_load').remove();
-
                         if(parent.children('.arrow').hasClass('icon-chevron-right')){
                             parent.children('.arrow').removeClass('icon-chevron-right');
                         }
@@ -101,7 +100,7 @@
                         }
                         parent.children('.arrow').addClass('icon-chevron-down');
                         $('#sub-'+id).show();
-                        });
+                    });
                 }
                 else{
                     $('#sub-'+id).toggle(0,function(){
