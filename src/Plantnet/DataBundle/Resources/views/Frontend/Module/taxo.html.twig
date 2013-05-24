@@ -83,9 +83,7 @@
             {% import _self as macros %}
             {{ macros.tr_taxon(taxons,0,'') }}
             #}
-            {% set nbt = 0 %}
             {% for taxon in taxons %}
-                {% set nbt = nbt + 1 %}
                 <tr>
                     <td>
                         <span>
@@ -110,7 +108,6 @@
                 </tr>
             {% endfor %}
         </table>
-        {{ nbt }}
     </div>
 {% endblock %}
 {% block javascripts %}
