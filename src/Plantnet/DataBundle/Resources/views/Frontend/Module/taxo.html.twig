@@ -23,9 +23,9 @@
                 <a href="{{ path('_module_taxo', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ "line-taxonomy"|trans|capitalize }}</a>
                 <span class="divider">/</span>
             </li>
-            {% macro bc_taxon(taxon) %}
+            {% macro bc_taxon(taxon,project,collection,module) %}
                 {% if taxon.parent %}
-                    {{ _self.bc_taxon(taxon.parent) }}
+                    {{ _self.bc_taxon(taxon.parent,project,collection,module) }}
                     <li>
                         <a href="{{ path('_module_taxo_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.parent.level, 'taxon': taxon.parent.name }) }}">{{ taxon.parent.name }}</a>
                         <span class="divider">/</span>
@@ -33,7 +33,7 @@
                 {% endif %}
             {% endmacro %}
             {% import _self as macros %}
-            {{ macros.bc_taxon(taxon) }}
+            {{ macros.bc_taxon(taxon,project,collection,module) }}
             <li class="active">
                 {{ taxon.name }}
             </li>
@@ -72,7 +72,11 @@
                     <td>
                         <span>
                             {% if taxon.haschildren == true %}
-                                <a href="#{{ taxon.id }}" class="display-sub">
+                                {#<a href="#{{ taxon.id }}" class="display-sub">
+                                    <i class="arrow icon-chevron-right"></i>
+                                    {{ taxon.name }}
+                                </a>#}
+                                <a href="{{ path('_module_taxo_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.level, 'taxon': taxon.name }) }}" id="t{{ taxon.id }}" class="display-sub">
                                     <i class="arrow icon-chevron-right"></i>
                                     {{ taxon.name }}
                                 </a>
@@ -123,7 +127,7 @@
                 if(!loaded){
                     parent.addClass('loaded');
                 }
-                var id=parent.attr('href').substring(1);
+                var id=parent.attr('id').substring(1);
                 if(!loaded){
                     parent.parent('span').append('<span class="taxo_load"></span>');
                     $.ajax({

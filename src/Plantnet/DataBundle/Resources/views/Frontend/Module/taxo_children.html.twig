@@ -4,7 +4,11 @@
             <td>
                <span class="taxo-{{ taxon.level }}">
                     {% if taxon.haschildren == true %}
-                        <a href="#{{ taxon.id }}" class="display-sub">
+                        {#<a href="#{{ taxon.id }}" class="display-sub">
+                            <i class="arrow icon-chevron-right"></i>
+                            {{ taxon.name }}
+                        </a>#}
+                        <a href="{{ path('_module_taxo_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.level, 'taxon': taxon.name }) }}" id="t{{ taxon.id }}" class="display-sub">
                             <i class="arrow icon-chevron-right"></i>
                             {{ taxon.name }}
                         </a>

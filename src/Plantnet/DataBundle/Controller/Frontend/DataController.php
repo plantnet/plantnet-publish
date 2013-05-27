@@ -239,7 +239,7 @@ class DataController extends Controller
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo/{level}-{taxon}",
-     *      requirements={"level"="\d+", "taxon"="\w+"},
+     *      requirements={"level"="\d+"},
      *      name="_module_taxo_details"
      *  )
      * @Template()
@@ -341,7 +341,11 @@ class DataController extends Controller
             ->getQuery()
             ->execute();
         return $this->render('PlantnetDataBundle:Frontend\Module:taxo_children.html.twig',array(
-            'taxons'=>$taxons
+            'project'=>$project,
+            'collection'=>$collection,
+            'module'=>$module,
+            'taxons'=>$taxons,
+            'current'=>'collection'
         ));
     }
 
