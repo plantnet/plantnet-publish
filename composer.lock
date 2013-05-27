@@ -210,12 +210,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/collections.git",
-                "reference": "df2138bcb467533bfe6b3a01301d480aec008b93"
+                "reference": "3db3ab843ff76774bee4679d4cb3a10cffb0a935"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/collections/zipball/df2138bcb467533bfe6b3a01301d480aec008b93",
-                "reference": "df2138bcb467533bfe6b3a01301d480aec008b93",
+                "url": "https://api.github.com/repos/doctrine/collections/zipball/3db3ab843ff76774bee4679d4cb3a10cffb0a935",
+                "reference": "3db3ab843ff76774bee4679d4cb3a10cffb0a935",
                 "shasum": ""
             },
             "require": {
@@ -224,7 +224,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "1.2.x-dev"
                 }
             },
             "autoload": {
@@ -258,7 +258,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -269,7 +269,7 @@
                 "collections",
                 "iterator"
             ],
-            "time": "2013-03-17 14:01:33"
+            "time": "2013-05-26 05:21:22"
         },
         {
             "name": "doctrine/common",
@@ -351,12 +351,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "d3456743629fae7a560ce741b680a0998f6f8c06"
+                "reference": "b139fc51d36dda53261f30e9159a942346b65aa3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/d3456743629fae7a560ce741b680a0998f6f8c06",
-                "reference": "d3456743629fae7a560ce741b680a0998f6f8c06",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/b139fc51d36dda53261f30e9159a942346b65aa3",
+                "reference": "b139fc51d36dda53261f30e9159a942346b65aa3",
                 "shasum": ""
             },
             "require": {
@@ -413,7 +413,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2013-05-21 05:52:08"
+            "time": "2013-05-26 05:58:25"
         },
         {
             "name": "doctrine/doctrine-bundle",
@@ -819,12 +819,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/doctrine2.git",
-                "reference": "c9d9b68fa9937218aad05dfca4b3f96b409cfc8e"
+                "reference": "e5de0dad7ef502037a6f45eded0e02e8b5ebdf47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/c9d9b68fa9937218aad05dfca4b3f96b409cfc8e",
-                "reference": "c9d9b68fa9937218aad05dfca4b3f96b409cfc8e",
+                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/e5de0dad7ef502037a6f45eded0e02e8b5ebdf47",
+                "reference": "e5de0dad7ef502037a6f45eded0e02e8b5ebdf47",
                 "shasum": ""
             },
             "require": {
@@ -885,7 +885,7 @@
                 "database",
                 "orm"
             ],
-            "time": "2013-05-17 16:34:00"
+            "time": "2013-05-26 07:10:18"
         },
         {
             "name": "escapestudios/wsse-authentication-bundle",
@@ -1188,12 +1188,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/l3pp4rd/DoctrineExtensions.git",
-                "reference": "845e69090a1ff293c906db986b86bd48b2e6b494"
+                "reference": "5916b3ab254f2e52404fd76311c38e4219f548bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/l3pp4rd/DoctrineExtensions/zipball/845e69090a1ff293c906db986b86bd48b2e6b494",
-                "reference": "845e69090a1ff293c906db986b86bd48b2e6b494",
+                "url": "https://api.github.com/repos/l3pp4rd/DoctrineExtensions/zipball/5916b3ab254f2e52404fd76311c38e4219f548bc",
+                "reference": "5916b3ab254f2e52404fd76311c38e4219f548bc",
                 "shasum": ""
             },
             "require": {
@@ -1260,7 +1260,7 @@
                 "tree",
                 "uploadable"
             ],
-            "time": "2013-05-22 21:24:21"
+            "time": "2013-05-26 16:54:03"
         },
         {
             "name": "guzzle/guzzle",
@@ -2058,12 +2058,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/LiipImagineBundle.git",
-                "reference": "ec523f6b7bf4ca6427ce1cbc95a427d432f4b24c"
+                "reference": "6459655af6ee55e0f0ab616a24896e4738b10796"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/ec523f6b7bf4ca6427ce1cbc95a427d432f4b24c",
-                "reference": "ec523f6b7bf4ca6427ce1cbc95a427d432f4b24c",
+                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/6459655af6ee55e0f0ab616a24896e4738b10796",
+                "reference": "6459655af6ee55e0f0ab616a24896e4738b10796",
                 "shasum": ""
             },
             "require": {
@@ -2103,7 +2103,7 @@
                 "image",
                 "imagine"
             ],
-            "time": "2013-05-23 09:09:30"
+            "time": "2013-05-25 12:07:08"
         },
         {
             "name": "monolog/monolog",
@@ -3143,12 +3143,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Twig.git",
-                "reference": "ba88c755579c06e7ccb5ee73c6e27e88a1fed114"
+                "reference": "f6c00587f8b2d6e680d09fd6015fa521f9c72327"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig/zipball/ba88c755579c06e7ccb5ee73c6e27e88a1fed114",
-                "reference": "ba88c755579c06e7ccb5ee73c6e27e88a1fed114",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/f6c00587f8b2d6e680d09fd6015fa521f9c72327",
+                "reference": "f6c00587f8b2d6e680d09fd6015fa521f9c72327",
                 "shasum": ""
             },
             "require": {
@@ -3184,7 +3184,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2013-05-17 10:06:31"
+            "time": "2013-05-27 06:08:37"
         },
         {
             "name": "white-october/pagerfanta-bundle",

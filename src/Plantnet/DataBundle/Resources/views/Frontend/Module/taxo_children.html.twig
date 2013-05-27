@@ -3,7 +3,7 @@
         <tr>
             <td>
                <span class="taxo-{{ taxon.level }}">
-                    {% if taxon.children|length > 0 %}
+                    {% if taxon.haschildren == true %}
                         <a href="#{{ taxon.id }}" class="display-sub">
                             <i class="arrow icon-chevron-right"></i>
                             {{ taxon.name }}

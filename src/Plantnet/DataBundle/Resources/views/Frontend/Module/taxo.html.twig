@@ -18,9 +18,30 @@
             <a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
             <span class="divider">/</span>
         </li>
-        <li class="active">
-            {{ "line-taxonomy"|trans|capitalize }}
-        </li>
+        {% if taxon != 'null' %}
+            <li>
+                <a href="{{ path('_module_taxo', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ "line-taxonomy"|trans|capitalize }}</a>
+                <span class="divider">/</span>
+            </li>
+            {% macro bc_taxon(taxon) %}
+                {% if taxon.parent %}
+                    {{ _self.bc_taxon(taxon.parent) }}
+                    <li>
+                        <a href="{{ path('_module_taxo_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.parent.level, 'taxon': taxon.parent.name }) }}">{{ taxon.parent.name }}</a>
+                        <span class="divider">/</span>
+                    </li>
+                {% endif %}
+            {% endmacro %}
+            {% import _self as macros %}
+            {{ macros.bc_taxon(taxon) }}
+            <li class="active">
+                {{ taxon.name }}
+            </li>
+        {% else %}
+            <li class="active">
+                {{ "line-taxonomy"|trans|capitalize }}
+            </li>
+        {% endif %}
     </ul>
 {% endblock %}
 {% block side %}
@@ -28,6 +49,12 @@
 {% endblock %}
 {% block main %}
     <div id="taxo">
+        <form method="get" action="#">
+            <div class="input-append">
+                <input type="text" name="taxon" id="typeahead" class="span4" placeholder="{{ "line-taxon"|trans|capitalize }}" autocomplete="off" data-provide="typeahead">
+                <button class="btn" type="submit">Search</button>
+            </div>
+        </form>
         <table class="table table-hover table-condensed">
             <tr>
                 <th>
@@ -44,10 +71,14 @@
                 <tr>
                     <td>
                         <span>
-                            <a href="#{{ taxon.id }}" class="display-sub">
-                                <i class="arrow icon-chevron-right"></i>
+                            {% if taxon.haschildren == true %}
+                                <a href="#{{ taxon.id }}" class="display-sub">
+                                    <i class="arrow icon-chevron-right"></i>
+                                    {{ taxon.name }}
+                                </a>
+                            {% else %}
                                 {{ taxon.name }}
-                            </a>
+                            {% endif %}
                         </span>
                     </td>
                     <td class="span2 middle">
@@ -77,6 +108,14 @@
 	{{ parent() }}
     <script type="text/javascript">
         $(document).ready(function(){
+            $('#typeahead').typeahead({
+                source:function(query,process){
+                    return $.get('{{ path('_module_taxo_query_path', { 'project': project, 'collection': collection.name, 'module': module.name }) }}/'+query,function(data){
+                        return process(data);
+                    });
+                },
+                items:10
+            });
             $(document).on('click','.display-sub',function(event){
                 event.preventDefault();
                 var parent=$(this);

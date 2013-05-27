@@ -133,9 +133,22 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}", defaults={"page"=1, "sortby"="null", "sortorder"="null"}, name="_module")
-     * @Route("/project/{project}/collection/{collection}/{module}/page{page}", requirements={"page"="\d+"}, defaults={"sortby"="null", "sortorder"="null"}, name="_module_paginated")
-     * @Route("/project/{project}/collection/{collection}/{module}/page{page}/sort-{sortby}/order-{sortorder}", requirements={"page"="\d+", "sortby"="\w+", "sortorder"="null|asc|desc"}, name="_module_paginated_sorted")
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}",
+     *      defaults={"page"=1, "sortby"="null", "sortorder"="null"},
+     *      name="_module"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/page{page}",
+     *      requirements={"page"="\d+"},
+     *      defaults={"sortby"="null", "sortorder"="null"},
+     *      name="_module_paginated"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/page{page}/sort-{sortby}/order-{sortorder}",
+     *      requirements={"page"="\d+", "sortby"="\w+", "sortorder"="null|asc|desc"},
+     *      name="_module_paginated_sorted"
+     *  )
      * @Method("get")
      * @Template()
      */
@@ -219,10 +232,19 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/taxo", name="_module_taxo")
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo",
+     *      defaults={"level"=0, "taxon"="null"},
+     *      name="_module_taxo"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo/{level}-{taxon}",
+     *      requirements={"level"="\d+", "taxon"="\w+"},
+     *      name="_module_taxo_details"
+     *  )
      * @Template()
      */
-    public function module_taxoAction($project,$collection,$module)
+    public function module_taxoAction($project,$collection,$module,$level,$taxon)
     {
         $projects=$this->database_list();
         if(!in_array($project,$projects)){
@@ -243,24 +265,52 @@ class DataController extends Controller
         if(!$module||$module->getType()!='text'){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
-            ->field('module')->references($module)
-            ->field('parent')->equals(null)
-            ->sort('name','asc')
-            ->getQuery()
-            ->execute();
+        if($taxon=='null'){
+            $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                ->field('module')->references($module)
+                ->field('parent')->equals(null)
+                ->sort('name','asc')
+                ->getQuery()
+                ->execute();
+        }
+        else{
+            $taxon=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                ->field('module')->references($module)
+                ->field('name')->equals($taxon)
+                ->field('level')->equals(intval($level))
+                ->getQuery()
+                ->getSingleResult();
+            if(!$taxon){
+                throw $this->createNotFoundException('Unable to find Taxon entity.');
+            }
+            $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                ->field('module')->references($module)
+                ->field('parent')->references($taxon)
+                ->sort('name','asc')
+                ->getQuery()
+                ->execute();
+        }
         return $this->render('PlantnetDataBundle:Frontend\Module:taxo.html.twig',array(
             'project'=>$project,
             'collection'=>$collection,
             'module'=>$module,
+            'taxon'=>$taxon,
             'taxons'=>$taxons,
             'current'=>'collection'
         ));
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/taxo_children", defaults={"parent"=0}, name="_module_taxo_children")
-     * @Route("/project/{project}/collection/{collection}/{module}/taxo_children/{parent}", requirements={"parent"="\w+"}, name="_module_taxo_children_parent")
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo_children",
+     *      defaults={"parent"=0},
+     *      name="_module_taxo_children"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo_children/{parent}",
+     *      requirements={"parent"="\w+"},
+     *      name="_module_taxo_children_parent"
+     *  )
      * @Template()
      */
     public function module_taxo_childrenAction($project,$collection,$module,$parent)
@@ -296,8 +346,76 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}", defaults={"page"=1}, name="_submodule")
-     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/page{page}", requirements={"page"="\d+"}, name="_submodule_paginated")
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo_query",
+     *      defaults={"query"="null"},
+     *      name="_module_taxo_query_path"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo_query/{query}",
+     *      name="_module_taxo_query"
+     *  )
+     * @Template()
+     */
+    public function module_taxo_queryAction($project,$collection,$module,$query)
+    {
+        if($query=='null'){
+            $response=new Response(json_encode(array()));
+            $response->headers->set('Content-Type','application/json');
+            return $response;
+            exit;
+        }
+        $projects=$this->database_list();
+        if(!in_array($project,$projects)){
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
+        if(!$module||$module->getType()!='text'){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+            ->hydrate(false)
+            ->select('name','label')
+            ->field('module')->references($module)
+            ->field('name')->in(array(
+                new \MongoRegex('/.*'.StringSearch::accentToRegex($query).'.*/i')
+            ))
+            ->sort('name','asc')
+            ->limit(10)
+            ->getQuery()
+            ->execute();
+        $results=array();
+        foreach($taxons as $tax){
+            $results[]=$tax['name'].' ['.$tax['label'].']';
+        }
+        $response=new Response(json_encode($results));
+        $response->headers->set('Content-Type','application/json');
+        return $response;
+        exit;
+    }
+
+    /**
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/module/{submodule}",
+     *      defaults={"page"=1},
+     *      name="_submodule"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/module/{submodule}/page{page}",
+     *      requirements={"page"="\d+"},
+     *      name="_submodule_paginated"
+     *  )
      * @Method("get")
      * @Template()
      */
@@ -458,8 +576,16 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/datamap", defaults={"page"=0}, name="_datamap")
-     * @Route("/project/{project}/collection/{collection}/{module}/module/{submodule}/datamap/page{page}", requirements={"page"="\d+"}, name="_datamap_paginated")
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/module/{submodule}/datamap",
+     *      defaults={"page"=0},
+     *      name="_datamap"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/module/{submodule}/datamap/page{page}",
+     *      requirements={"page"="\d+"},
+     *      name="_datamap_paginated"
+     *  )
      * @Template()
      */
     public function datamapAction($project,$collection,$module,$submodule,$page)
@@ -686,8 +812,16 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/details_gallery/{id}", defaults={"page"=0}, name="_details_gallery")
-     * @Route("/project/{project}/collection/{collection}/{module}/details_gallery/{id}/page{page}", requirements={"page"="\d+"}, name="_details_gallery_paginated")
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/details_gallery/{id}",
+     *      defaults={"page"=0},
+     *      name="_details_gallery"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/details_gallery/{id}/page{page}",
+     *      requirements={"page"="\d+"},
+     *      name="_details_gallery_paginated"
+     *  )
      * @Template()
      */
     public function details_galleryAction($project,$collection,$module,$id,$page)
@@ -851,8 +985,16 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/result", defaults={"mode"="grid"}, name="_module_result")
-     * @Route("/project/{project}/collection/{collection}/{module}/result/{mode}", requirements={"mode"="\w+"}, name="_module_result_mode")
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/result",
+     *      defaults={"mode"="grid"},
+     *      name="_module_result"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/result/{mode}",
+     *      requirements={"mode"="\w+"},
+     *      name="_module_result_mode"
+     *  )
      * @Method("get")
      * @Template()
      */
@@ -1324,15 +1466,4 @@ class DataController extends Controller
             'current'=>'contacts'
         ));
     }
-
-    /**
-     * @Route("/taxa", name="_taxa")
-     * @Template()
-     */
-    /*
-    public function taxonomyAction()
-    {
-        return $this->render('PlantnetDataBundle:Default:taxonomy.html.twig', array('current' => 'taxonomy'));
-    }
-    */
 }

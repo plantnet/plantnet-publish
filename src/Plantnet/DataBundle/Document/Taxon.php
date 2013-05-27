@@ -80,6 +80,11 @@ class Taxon
     private $haslocations;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $haschildren;
+
+    /**
      * To String
      *
      * @return string
@@ -333,5 +338,25 @@ class Taxon
     public function getHaslocations()
     {
         return $this->haslocations;
+    }
+
+    /**
+     * Set haschildren
+     *
+     * @param boolean $haschildren
+     */
+    public function setHaschildren($haschildren)
+    {
+        $this->haschildren = $haschildren;
+    }
+
+    /**
+     * Get haschildren
+     *
+     * @return boolean $haschildren
+     */
+    public function getHaschildren()
+    {
+        return $this->haschildren;
     }
 }

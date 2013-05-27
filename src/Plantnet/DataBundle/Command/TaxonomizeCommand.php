@@ -141,7 +141,12 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 }
                                 if($last_taxon){
                                     $taxon->setParent($last_taxon);
+                                    if($last_taxon->getHaschildren()!=true){
+                                        $last_taxon->setHaschildren(true);
+                                        $dm->persist($last_taxon);
+                                    }
                                 }
+                                echo $taxon->getName()."\n";
                             }
                             if($punit->getHasimages()===true){
                                 $taxon->setHasimages(true);
