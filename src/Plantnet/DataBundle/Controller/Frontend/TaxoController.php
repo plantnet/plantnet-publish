@@ -61,10 +61,23 @@ class TaxoController extends Controller
      *      requirements={"level"="\d+"},
      *      name="_module_taxo_details"
      *  )
+     * @Method("get")
      * @Template()
      */
-    public function module_taxoAction($project,$collection,$module,$level,$taxon)
+    public function module_taxoAction($project,$collection,$module,$level,$taxon,Request $request)
     {
+        $form_level=$request->query->get('form_level');
+        $form_name=$request->query->get('form_name');
+        if($this->container->get('request')->get('_route')=='_module_taxo'&&!empty($form_level)&&!empty($form_name)){
+            return $this->redirect($this->generateUrl('_module_taxo_view',array(
+                'project'=>$project,
+                'collection'=>$collection,
+                'module'=>$module,
+                'level'=>$form_level,
+                'taxon'=>$form_name
+                )
+            ),301);
+        }
         $projects=$this->database_list();
         if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
@@ -101,6 +114,16 @@ class TaxoController extends Controller
                 ->getSingleResult();
             if(!$taxon){
                 throw $this->createNotFoundException('Unable to find Taxon entity.');
+            }
+            if(count($taxon->getChildren())==0){
+                return $this->redirect($this->generateUrl('_module_taxo_view',array(
+                    'project'=>$project,
+                    'collection'=>$collection,
+                    'module'=>$module,
+                    'level'=>$level,
+                    'taxon'=>$taxon
+                    )
+                ),301);
             }
             $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
                 ->field('module')->references($module)
@@ -209,7 +232,7 @@ class TaxoController extends Controller
         }
         $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
             ->hydrate(false)
-            ->select('name','label')
+            ->select('name','level','label')
             ->field('module')->references($module)
             ->field('name')->in(array(
                 new \MongoRegex('/.*'.StringSearch::accentToRegex($query).'.*/i')
@@ -220,7 +243,11 @@ class TaxoController extends Controller
             ->execute();
         $results=array();
         foreach($taxons as $tax){
-            $results[]=$tax['name'].' ['.$tax['label'].']';
+            $results[]=array(
+                'level'=>$tax['level'],
+                'name'=>$tax['name'],
+                'label'=>$tax['label']
+            );
         }
         $response=new Response(json_encode($results));
         $response->headers->set('Content-Type','application/json');
@@ -327,6 +354,34 @@ class TaxoController extends Controller
         catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
             throw $this->createNotFoundException('Page not found.');
         }
+        //count to display
+        $nb_images=0;
+        $nb_locations=0;
+        $clone_plantunits=clone $plantunits;
+        $ids_c=$clone_plantunits->hydrate(false)
+            ->select('_id')
+            ->getQuery()
+            ->execute();
+        $ids_tab=array();
+        foreach($ids_c as $id)
+        {
+            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+        }
+        unset($ids_c);
+        $nb_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+            ->hydrate(false)
+            ->select('_id')
+            ->field('plantunit.id')->in($ids_tab)
+            ->getQuery()
+            ->execute()
+            ->count();
+        $nb_locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+            ->hydrate(false)
+            ->select('_id')
+            ->field('plantunit.id')->in($ids_tab)
+            ->getQuery()
+            ->execute()
+            ->count();
         return $this->render('PlantnetDataBundle:Frontend\Module:taxo_view.html.twig',array(
             'project'=>$project,
             'collection'=>$collection,
@@ -334,11 +389,223 @@ class TaxoController extends Controller
             'taxon'=>$taxon,
             'paginator'=>$paginator,
             'nbResults'=>$paginator->getNbResults(),
+            'nb_images'=>$nb_images,
+            'nb_locations'=>$nb_locations,
             'display'=>$display,
             'page'=>$page,
             'sortby'=>$sortby,
             'sortorder'=>$sortorder,
-            'current'=>'collection'
+            'current'=>'collection',
+            'current_display'=>'grid'
+        ));
+    }
+
+    /**
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view_gallery/{level}-{taxon}",
+     *      defaults={"page"=1},
+     *      requirements={"level"="\d+"},
+     *      name="_module_taxo_view_gallery"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view_gallery/{level}-{taxon}/page{page}",
+     *      requirements={"level"="\d+", "page"="\d+"},
+     *      name="_module_taxo_view_gallery_paginated"
+     *  )
+     * @Method("get")
+     * @Template()
+     */
+    public function module_taxo_view_galleryAction($project,$collection,$module,$level,$taxon,$page,Request $request)
+    {
+        $form_page=$request->query->get('form_page');
+        if(!empty($form_page)){
+            $page=$form_page;
+        }
+        if($this->container->get('request')->get('_route')=='_module_taxo_view_gallery_paginated'&&$page==1){
+            return $this->redirect($this->generateUrl('_module_taxo_view_gallery',array(
+                'project'=>$project,
+                'collection'=>$collection,
+                'module'=>$module,
+                'level'=>$level,
+                'taxon'=>$taxon
+                )
+            ),301);
+        }
+        $projects=$this->database_list();
+        if(!in_array($project,$projects)){
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
+        if(!$module||$module->getType()!='text'){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $taxon=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+            ->field('module')->references($module)
+            ->field('name')->equals($taxon)
+            ->field('level')->equals(intval($level))
+            ->getQuery()
+            ->getSingleResult();
+        if(!$taxon){
+            throw $this->createNotFoundException('Unable to find Taxon entity.');
+        }
+        $display=array();
+        $field=$module->getProperties();
+        foreach($field as $row){
+            if($row->getMain()==true){
+                $display[]=$row->getId();
+            }
+        }
+        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            ->hydrate(false)
+            ->select('_id')
+            ->field('module')->references($module)
+            ->field('taxonsrefs')->references($taxon);
+        $ids_c=$plantunits
+            ->getQuery()
+            ->execute();
+        $ids_tab=array();
+        foreach($ids_c as $id)
+        {
+            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+        }
+        unset($ids_c);
+        $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+            ->field('plantunit.id')->in($ids_tab)
+            ->sort('title1','asc')
+            ->sort('title2','asc');
+        $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($images));
+        try{
+            $paginator->setMaxPerPage(15);
+            $paginator->setCurrentPage($page);
+        }
+        catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
+            throw $this->createNotFoundException('Page not found.');
+        }
+        //count to display
+        $nb_images=$paginator->getNbResults();
+        $nb_locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+            ->hydrate(false)
+            ->select('_id')
+            ->field('plantunit.id')->in($ids_tab)
+            ->getQuery()
+            ->execute()
+            ->count();
+        return $this->render('PlantnetDataBundle:Frontend\Module:taxo_view.html.twig',array(
+            'project'=>$project,
+            'collection'=>$collection,
+            'module_parent'=>$module,
+            'module'=>$module,
+            'taxon'=>$taxon,
+            'paginator'=>$paginator,
+            'nbResults'=>$paginator->getNbResults(),
+            'nb_images'=>$nb_images,
+            'nb_locations'=>$nb_locations,
+            'display'=>$display,
+            'page'=>$page,
+            'current'=>'collection',
+            'current_display'=>'images'
+        ));
+    }
+
+    /**
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view_map/{level}-{taxon}",
+     *      requirements={"level"="\d+"},
+     *      name="_module_taxo_view_map"
+     *  )
+     * @Template()
+     */
+    public function module_taxo_view_mapAction($project,$collection,$module,$level,$taxon)
+    {
+        $projects=$this->database_list();
+        if(!in_array($project,$projects)){
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
+        if(!$module||$module->getType()!='text'){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $taxon=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+            ->field('module')->references($module)
+            ->field('name')->equals($taxon)
+            ->field('level')->equals(intval($level))
+            ->getQuery()
+            ->getSingleResult();
+        if(!$taxon){
+            throw $this->createNotFoundException('Unable to find Taxon entity.');
+        }
+        $display=array();
+        $field=$module->getProperties();
+        foreach($field as $row){
+            if($row->getMain()==true){
+                $display[]=$row->getId();
+            }
+        }
+        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            ->hydrate(false)
+            ->select('_id')
+            ->field('module')->references($module)
+            ->field('taxonsrefs')->references($taxon);
+        $ids_c=$plantunits
+            ->getQuery()
+            ->execute();
+        $ids_tab=array();
+        foreach($ids_c as $id)
+        {
+            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+        }
+        unset($ids_c);
+        $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+            ->field('plantunit.id')->in($ids_tab)
+            ->getQuery()
+            ->execute();
+        //count to display
+        $nb_locations=count($locations);
+        $nb_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+            ->hydrate(false)
+            ->select('_id')
+            ->field('plantunit.id')->in($ids_tab)
+            ->getQuery()
+            ->execute()
+            ->count();
+        $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
+        $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
+        return $this->render('PlantnetDataBundle:Frontend\Module:taxo_view.html.twig',array(
+            'project'=>$project,
+            'collection'=>$collection,
+            'module_parent'=>$module,
+            'module'=>$module,
+            'taxon'=>$taxon,
+            'layers'=>$layers,
+            'locations'=>$locations,
+            'nbResults'=>count($locations),
+            'nb_images'=>$nb_images,
+            'nb_locations'=>$nb_locations,
+            'display'=>$display,
+            'current'=>'collection',
+            'current_display'=>'locations'
         ));
     }
 }

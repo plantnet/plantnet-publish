@@ -435,7 +435,7 @@ class ModulesController extends Controller
                         $plantunit->setModule($module);
                         $attributes = array();
                         for ($c=0; $c < $num; $c++) {
-                            $value = $this->data_encode($data[$c]);
+                            $value = trim($this->data_encode($data[$c]));
                             $attributes[$fields[$c]->getId()] = $value;
                             switch($fields[$c]->getType()){
                                 case 'idmodule':
