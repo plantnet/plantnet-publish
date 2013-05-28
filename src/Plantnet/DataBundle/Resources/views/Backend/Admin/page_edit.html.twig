@@ -13,7 +13,7 @@
 		<div class="field-form">
 			{{ form_label(edit_form.content) }}
 			{{ form_errors(edit_form.content) }}
-			{{ form_widget(edit_form.content) }}
+			{{ form_widget(edit_form.content, { 'attr': {'class': 'textarea'} }) }}
 		</div>
 		{{ form_rest(edit_form) }}
 		<br />
@@ -24,7 +24,7 @@
 	{{ parent() }}
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("textarea").cleditor({
+			$(".textarea").cleditor({
 				width: '100%', // width not including margins, borders or padding
 				height: 300, // height not including margins, borders or padding
 				controls: // controls to add to the toolbar

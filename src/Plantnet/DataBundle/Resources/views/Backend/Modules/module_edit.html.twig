@@ -24,7 +24,7 @@
             <div class="field-form">
                 {{ form_label(edit_form.description) }}
                 {{ form_errors(edit_form.description) }}
-                {{ form_widget(edit_form.description) }}
+                {{ form_widget(edit_form.description, { 'attr': {'class': 'textarea'} }) }}
             </div>
         {% endif %}
         <br />
@@ -150,7 +150,7 @@
             $('#btn-delete-2').click(function(){
                 $('#form-delete').submit();
             });
-            $("textarea").cleditor({
+            $(".textarea").cleditor({
                 width: '100%', // width not including margins, borders or padding
                 height: 300, // height not including margins, borders or padding
                 controls: // controls to add to the toolbar

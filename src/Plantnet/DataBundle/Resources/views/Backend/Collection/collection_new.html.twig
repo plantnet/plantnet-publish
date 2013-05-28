@@ -18,7 +18,7 @@
 		<div class="field-form">
 			{{ form_label(form.description) }}
 			{{ form_errors(form.description) }}
-			{{ form_widget(form.description) }}
+			{{ form_widget(form.description, { 'attr': {'class': 'textarea'} }) }}
 		</div>
 		{{ form_rest(form) }}
 		<br />
@@ -29,7 +29,7 @@
 	{{ parent() }}
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("textarea").cleditor({
+			$(".textarea").cleditor({
 				width: '100%', // width not including margins, borders or padding
 				height: 300, // height not including margins, borders or padding
 				controls: // controls to add to the toolbar
