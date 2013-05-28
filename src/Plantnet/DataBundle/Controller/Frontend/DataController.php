@@ -411,6 +411,120 @@ class DataController extends Controller
 
     /**
      * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view/{level}-{taxon}",
+     *      defaults={"page"=1, "sortby"="null", "sortorder"="null"},
+     *      requirements={"level"="\d+"},
+     *      name="_module_taxo_view"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view/{level}-{taxon}/page{page}",
+     *      defaults={"sortby"="null", "sortorder"="null"},
+     *      requirements={"level"="\d+", "page"="\d+"},
+     *      name="_module_taxo_view_paginated"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view/{level}-{taxon}/page{page}/sort-{sortby}/order-{sortorder}",
+     *      requirements={"level"="\d+", "page"="\d+", "sortby"="\w+", "sortorder"="null|asc|desc"},
+     *      name="_module_taxo_view_paginated_sorted"
+     *  )
+     * @Method("get")
+     * @Template()
+     */
+    public function module_taxo_viewAction($project,$collection,$module,$level,$taxon,$page,$sortby,$sortorder,Request $request)
+    {
+        $form_page=$request->query->get('form_page');
+        if(!empty($form_page)){
+            $page=$form_page;
+        }
+        if($this->container->get('request')->get('_route')=='_module_taxo_view_paginated'&&$page==1){
+            return $this->redirect($this->generateUrl('_module_taxo_view',array(
+                'project'=>$project,
+                'collection'=>$collection,
+                'module'=>$module,
+                'level'=>$level,
+                'taxon'=>$taxon
+                )
+            ),301);
+        }
+        $projects=$this->database_list();
+        if(!in_array($project,$projects)){
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
+        if(!$module||$module->getType()!='text'){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $taxon=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+            ->field('module')->references($module)
+            ->field('name')->equals($taxon)
+            ->field('level')->equals(intval($level))
+            ->getQuery()
+            ->getSingleResult();
+        if(!$taxon){
+            throw $this->createNotFoundException('Unable to find Taxon entity.');
+        }
+        $display=array();
+        $order=array();
+        $field=$module->getProperties();
+        foreach($field as $row){
+            if($row->getMain()==true){
+                $display[]=$row->getId();
+            }
+            if($row->getSortorder()){
+                $order[$row->getSortorder()]=$row->getId();
+            }
+        }
+        ksort($order);
+        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            ->field('module')->references($module)
+            ->field('taxonsrefs')->references($taxon);
+        if($sortby!='null'&&$sortorder!='null'){
+            if(in_array($sortby,$order)){
+                unset($order[array_search($sortby,$order)]);
+            }
+            $plantunits->sort('attributes.'.$sortby,$sortorder);
+        }
+        if(count($order)){
+            foreach($order as $num=>$prop){
+                $plantunits->sort('attributes.'.$prop,'asc');
+            }
+        }
+        $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($plantunits));
+        try{
+            $paginator->setMaxPerPage(50);
+            $paginator->setCurrentPage($page);
+        }
+        catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
+            throw $this->createNotFoundException('Page not found.');
+        }
+        return $this->render('PlantnetDataBundle:Frontend\Module:taxo_view.html.twig',array(
+            'project'=>$project,
+            'collection'=>$collection,
+            'module'=>$module,
+            'taxon'=>$taxon,
+            'paginator'=>$paginator,
+            'nbResults'=>$paginator->getNbResults(),
+            'display'=>$display,
+            'page'=>$page,
+            'sortby'=>$sortby,
+            'sortorder'=>$sortorder,
+            'current'=>'collection'
+        ));
+    }
+
+    /**
+     * @Route(
      *      "/project/{project}/collection/{collection}/{module}/module/{submodule}",
      *      defaults={"page"=1},
      *      name="_submodule"

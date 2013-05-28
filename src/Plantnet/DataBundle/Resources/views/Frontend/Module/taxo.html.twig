@@ -72,10 +72,6 @@
                     <td>
                         <span>
                             {% if taxon.haschildren == true %}
-                                {#<a href="#{{ taxon.id }}" class="display-sub">
-                                    <i class="arrow icon-chevron-right"></i>
-                                    {{ taxon.name }}
-                                </a>#}
                                 <a href="{{ path('_module_taxo_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.level, 'taxon': taxon.name }) }}" id="t{{ taxon.id }}" class="display-sub">
                                     <i class="arrow icon-chevron-right"></i>
                                     {{ taxon.name }}
@@ -92,7 +88,9 @@
                         </span>
                     </td>
                     <td class="span2 middle">
-                        <i class="icon-list"></i>
+                        <a href="{{ path('_module_taxo_view', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.level, 'taxon': taxon.name }) }}" id="t{{ taxon.id }}">
+                            <i class="icon-list"></i>
+                        </a>
                         {% if taxon.hasimages %}
                             <i class="icon-camera"></i>
                         {% endif %}

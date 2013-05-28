@@ -64,6 +64,15 @@ class TaxonomizeCommand extends ContainerAwareCommand
             ->field('module')->references($module)
             ->getQuery()
             ->execute();
+        // suppression des références des anciens taxons
+        $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            ->update()
+            ->multiple(true)
+            ->field('module')->references($module)
+            ->field('taxon')->unsetField()
+            ->field('taxonsrefs')->unsetField()
+            ->getQuery()
+            ->execute();
         // chargement des données taxo
         $taxo=array();
         $fields=$module->getProperties();
@@ -124,7 +133,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 $taxon->setNbpunits($taxon->getNbpunits()+1);
                                 if($level==$last_level){
                                     $punit->setTaxon($taxon);
-                                    $dm->persist($punit);
                                 }
                             }
                             else
@@ -137,7 +145,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 $taxon->setNbpunits(1);
                                 if($level==$last_level){
                                     $punit->setTaxon($taxon);
-                                    $dm->persist($punit);
                                 }
                                 if($last_taxon){
                                     $taxon->setParent($last_taxon);
@@ -148,6 +155,8 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 }
                                 echo $taxon->getName()."\n";
                             }
+                            $punit->addTaxonsref($taxon);
+                            $dm->persist($punit);
                             if($punit->getHasimages()===true){
                                 $taxon->setHasimages(true);
                             }

@@ -76,12 +76,18 @@ class Plantunit
      */
     private $taxon;
 
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Taxon")
+     */
+    private $taxonsrefs;
+
     public function __construct()
     {
         $this->files = new \Doctrine\Common\Collections\ArrayCollection();
         $this->images = new \Doctrine\Common\Collections\ArrayCollection();
         $this->locations = new \Doctrine\Common\Collections\ArrayCollection();
         $this->others = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->taxonsrefs = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -442,5 +448,45 @@ class Plantunit
     public function getTaxon()
     {
         return $this->taxon;
+    }
+    
+    /**
+     * Add taxonsrefs
+     *
+     * @param Plantnet\DataBundle\Document\Taxon $taxonsrefs
+     */
+    public function addTaxonsref(\Plantnet\DataBundle\Document\Taxon $taxonsrefs)
+    {
+        $this->taxonsrefs[] = $taxonsrefs;
+    }
+
+    /**
+    * Remove taxonsrefs
+    *
+    * @param <variableType$taxonsrefs
+    */
+    public function removeTaxonsref(\Plantnet\DataBundle\Document\Taxon $taxonsrefs)
+    {
+        $this->taxonsrefs->removeElement($taxonsrefs);
+    }
+
+    /**
+     * Add taxonsrefs
+     *
+     * @param Plantnet\DataBundle\Document\Taxon $taxonsrefs
+     */
+    public function addTaxonsrefs(\Plantnet\DataBundle\Document\Taxon $taxonsrefs)
+    {
+        $this->taxonsrefs[] = $taxonsrefs;
+    }
+
+    /**
+     * Get taxonsrefs
+     *
+     * @return Doctrine\Common\Collections\Collection $taxonsrefs
+     */
+    public function getTaxonsrefs()
+    {
+        return $this->taxonsrefs;
     }
 }
