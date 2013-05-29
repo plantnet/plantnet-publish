@@ -353,32 +353,8 @@ class TaxoController extends Controller
             throw $this->createNotFoundException('Page not found.');
         }
         //count to display
-        $nb_images=0;
-        $nb_locations=0;
-        $clone_plantunits=clone $plantunits;
-        $ids_c=$clone_plantunits->hydrate(false)
-            ->select('_id')
-            ->getQuery()
-            ->execute();
-        $ids_tab=array();
-        foreach($ids_c as $id){
-            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
-        }
-        unset($ids_c);
-        $nb_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-            ->hydrate(false)
-            ->select('_id')
-            ->field('plantunit.id')->in($ids_tab)
-            ->getQuery()
-            ->execute()
-            ->count();
-        $nb_locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
-            ->hydrate(false)
-            ->select('_id')
-            ->field('plantunit.id')->in($ids_tab)
-            ->getQuery()
-            ->execute()
-            ->count();
+        $nb_images=($taxon->getHasimages())?1:0;
+        $nb_locations=($taxon->getHaslocations())?1:0;
         return $this->render('PlantnetDataBundle:Frontend\Module:taxo_view.html.twig',array(
             'project'=>$project,
             'collection'=>$collection,
@@ -489,14 +465,8 @@ class TaxoController extends Controller
             throw $this->createNotFoundException('Page not found.');
         }
         //count to display
-        $nb_images=$paginator->getNbResults();
-        $nb_locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
-            ->hydrate(false)
-            ->select('_id')
-            ->field('plantunit.id')->in($ids_tab)
-            ->getQuery()
-            ->execute()
-            ->count();
+        $nb_images=1;
+        $nb_locations=($taxon->getHaslocations())?1:0;
         return $this->render('PlantnetDataBundle:Frontend\Module:taxo_view.html.twig',array(
             'project'=>$project,
             'collection'=>$collection,
@@ -577,14 +547,8 @@ class TaxoController extends Controller
             ->getQuery()
             ->execute();
         //count to display
-        $nb_locations=count($locations);
-        $nb_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-            ->hydrate(false)
-            ->select('_id')
-            ->field('plantunit.id')->in($ids_tab)
-            ->getQuery()
-            ->execute()
-            ->count();
+        $nb_images=($taxon->getHasimages())?1:0;
+        $nb_locations=1;
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
         return $this->render('PlantnetDataBundle:Frontend\Module:taxo_view.html.twig',array(
