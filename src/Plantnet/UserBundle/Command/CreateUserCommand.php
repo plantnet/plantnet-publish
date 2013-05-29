@@ -78,6 +78,7 @@ class CreateUserCommand extends BaseCommand
 			$connection=new \Mongo();
 	        $db=$connection->$dbName;
 	        $db->listCollections();
+	        //collections
 	        $db->createCollection('Collection');
 	        $db->createCollection('Image');
 	        $db->createCollection('Location');
@@ -86,8 +87,12 @@ class CreateUserCommand extends BaseCommand
 	        $db->createCollection('Plantunit');
 	        $db->createCollection('Taxon');
 	        $db->createCollection('Page');
-	        $db->Plantunit->ensureIndex(array("attributes"=>"text"));
+	        //indexes
+	        $db->Image->ensureIndex(array("title1"=>1,"title2"=>1));
 	        $db->Location->ensureIndex(array("coordinates"=>"2d"));
+	        $db->Plantunit->ensureIndex(array("attributes"=>"text"));
+	        $db->Taxon->ensureIndex(array("name"=>1));
+	        //pages data
 	        $db->Page->insert(array('name'=>'home','order'=>1));
 	        $db->Page->insert(array('name'=>'mentions','order'=>2));
 	        $db->Page->insert(array('name'=>'credits','order'=>3));
