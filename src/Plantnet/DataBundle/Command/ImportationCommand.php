@@ -128,12 +128,19 @@ class ImportationCommand extends ContainerAwareCommand
                             if($taxon){
                                 $taxon->setHasimages(true);
                                 $dm->persist($taxon);
+
+                                $image->addTaxonsref($taxon);
+
                                 $parent_taxon=$taxon->getParent();
                                 while($parent_taxon){
                                     $parent_taxon->setHasimages(true);
                                     $dm->persist($parent_taxon);
+
+                                    $image->addTaxonsref($parent_taxon);
+
                                     $parent_taxon=$parent_taxon->getParent();
                                 }
+                                $dm->persist($image);
                             }
                         }
                         else{
@@ -201,12 +208,19 @@ class ImportationCommand extends ContainerAwareCommand
                             if($taxon){
                                 $taxon->setHaslocations(true);
                                 $dm->persist($taxon);
+
+                                $location->addTaxonsref($taxon);
+
                                 $parent_taxon=$taxon->getParent();
                                 while($parent_taxon){
                                     $parent_taxon->setHaslocations(true);
                                     $dm->persist($parent_taxon);
+
+                                    $location->addTaxonsref($parent_taxon);
+
                                     $parent_taxon=$parent_taxon->getParent();
                                 }
+                                $dm->persist($location);
                             }
                         }
                         else{

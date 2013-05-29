@@ -72,6 +72,27 @@ class TaxonomizeCommand extends ContainerAwareCommand
             ->field('taxonsrefs')->unsetField()
             ->getQuery()
             ->execute();
+        $sub_modules=$module->getChildren();
+        foreach($sub_modules as $sub){
+            if($sub->getType()=='image'){
+                $dm->createQueryBuilder('PlantnetDataBundle:Image')
+                    ->update()
+                    ->multiple(true)
+                    ->field('module')->references($sub)
+                    ->field('taxonsrefs')->unsetField()
+                    ->getQuery()
+                    ->execute();
+            }
+            elseif($sub->getType()=='locality'){
+                $dm->createQueryBuilder('PlantnetDataBundle:Location')
+                    ->update()
+                    ->multiple(true)
+                    ->field('module')->references($sub)
+                    ->field('taxonsrefs')->unsetField()
+                    ->getQuery()
+                    ->execute();
+            }
+        }
         // chargement des données taxo
         $taxo=array();
         $fields=$module->getProperties();
@@ -150,9 +171,19 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             $dm->persist($punit);
                             if($punit->getHasimages()===true){
                                 $taxon->setHasimages(true);
+                                $images=$punit->getImages();
+                                foreach($images as $img){
+                                    $img->addTaxonsref($taxon);
+                                    $dm->persist($img);
+                                }
                             }
                             if($punit->getHaslocations()===true){
                                 $taxon->setHaslocations(true);
+                                $locations=$punit->getLocations();
+                                foreach($locations as $loc){
+                                    $loc->addTaxonsref($taxon);
+                                    $dm->persist($loc);
+                                }
                             }
                             $dm->persist($taxon);
                             //flush pour avoir un ID ...

@@ -65,6 +65,16 @@ class Image
     private $module;
 
     /**
+     * @MongoDB\ReferenceMany(targetDocument="Taxon")
+     */
+    private $taxonsrefs;
+
+    public function __construct()
+    {
+        $this->taxonsrefs = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
      * Get id
      *
      * @return id $id
@@ -252,5 +262,45 @@ class Image
     public function getModule()
     {
         return $this->module;
+    }
+
+    /**
+     * Add taxonsrefs
+     *
+     * @param Plantnet\DataBundle\Document\Taxon $taxonsrefs
+     */
+    public function addTaxonsref(\Plantnet\DataBundle\Document\Taxon $taxonsrefs)
+    {
+        $this->taxonsrefs[] = $taxonsrefs;
+    }
+
+    /**
+    * Remove taxonsrefs
+    *
+    * @param <variableType$taxonsrefs
+    */
+    public function removeTaxonsref(\Plantnet\DataBundle\Document\Taxon $taxonsrefs)
+    {
+        $this->taxonsrefs->removeElement($taxonsrefs);
+    }
+
+    /**
+     * Add taxonsrefs
+     *
+     * @param Plantnet\DataBundle\Document\Taxon $taxonsrefs
+     */
+    public function addTaxonsrefs(\Plantnet\DataBundle\Document\Taxon $taxonsrefs)
+    {
+        $this->taxonsrefs[] = $taxonsrefs;
+    }
+
+    /**
+     * Get taxonsrefs
+     *
+     * @return Doctrine\Common\Collections\Collection $taxonsrefs
+     */
+    public function getTaxonsrefs()
+    {
+        return $this->taxonsrefs;
     }
 }
