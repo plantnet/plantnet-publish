@@ -19,7 +19,7 @@ use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Coordinates,
     Plantnet\DataBundle\Document\Other;
 
-ini_set('memory_limit', '-1');
+ini_set('memory_limit','-1');
 
 class DeleteCommand extends ContainerAwareCommand
 {
@@ -34,19 +34,16 @@ class DeleteCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input,OutputInterface $output)
     {
         $type=$input->getArgument('type');
         $id=$input->getArgument('id');
         $dbname=$input->getArgument('dbname');
-        if($type&&$id&&($type=='collection'||$type=='module')&&$dbname)
-        {
-            if($type=='module')
-            {
+        if($type&&$id&&($type=='collection'||$type=='module')&&$dbname){
+            if($type=='module'){
                 $this->delete_module($dbname,$id);
             }
-            elseif($type=='collection')
-            {
+            elseif($type=='collection'){
                 $this->delete_collection($dbname,$id);
             }
         }
@@ -71,10 +68,8 @@ class DeleteCommand extends ContainerAwareCommand
         $dm->persist($module);
         $dm->flush();
         $children=$module->getChildren();
-        if(count($children))
-        {
-            foreach($children as $child)
-            {
+        if(count($children)){
+            foreach($children as $child){
                 $this->delete_module($dbname,$child->getId());
             }
         }
@@ -82,24 +77,19 @@ class DeleteCommand extends ContainerAwareCommand
         * Remove csv file
         */
         $csvfile=__DIR__.'/../Resources/uploads/'.$collection->getAlias().'/'.$module->getName_fname().'.csv';
-        if(file_exists($csvfile))
-        {
+        if(file_exists($csvfile)){
             unlink($csvfile);
         }
         /*
         * Remove upload directory
         */
         $dir=$module->getUploaddir();
-        if($dir)
-        {
+        if($dir){
             $dir=__DIR__.'/../../../../web/uploads/'.$dir;
-            if(file_exists($dir)&&is_dir($dir))
-            {
+            if(file_exists($dir)&&is_dir($dir)){
                 $files=scandir($dir);
-                foreach($files as $file)
-                {
-                    if($file!='.'&&$file!='..')
-                    {
+                foreach($files as $file){
+                    if($file!='.'&&$file!='..'){
                         unlink($dir.'/'.$file);
                     }
                 }
@@ -110,42 +100,36 @@ class DeleteCommand extends ContainerAwareCommand
         * Check for punits update
         */
         $parent_to_update=null;
-        if($module->getType()=='image'||$module->getType()=='locality')
-        {
-            if($module->getParent()&&$module->getParent()->getDeleting()===false)
-            {
+        if($module->getType()=='image'||$module->getType()=='locality'){
+            if($module->getParent()&&$module->getParent()->getDeleting()===false){
                 $parent_to_update=$module->getParent()->getId();
             }
         }
         /*
         * Remove Module + Cascade
         */
-        if($module->getType()=='image')
-        {
+        if($module->getType()=='image'){
             $dm->createQueryBuilder('PlantnetDataBundle:Image')
                 ->remove()
                 ->field('module')->references($module)
                 ->getQuery()
                 ->execute();
         }
-        elseif($module->getType()=='locality')
-        {
+        elseif($module->getType()=='locality'){
             $dm->createQueryBuilder('PlantnetDataBundle:Location')
                 ->remove()
                 ->field('module')->references($module)
                 ->getQuery()
                 ->execute();
         }
-        elseif($module->getType()=='other')
-        {
+        elseif($module->getType()=='other'){
             $dm->createQueryBuilder('PlantnetDataBundle:Other')
                 ->remove()
                 ->field('module')->references($module)
                 ->getQuery()
                 ->execute();
         }
-        elseif($module->getType()=='text')
-        {
+        elseif($module->getType()=='text'){
             $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
                 ->remove()
                 ->field('module')->references($module)
@@ -162,8 +146,7 @@ class DeleteCommand extends ContainerAwareCommand
         /*
         * Check for punits update
         */
-        if($parent_to_update)
-        {
+        if($parent_to_update){
             $module_parent=$dm->getRepository('PlantnetDataBundle:Module')->find($parent_to_update);
             //images
             $ids_img=array();
@@ -174,20 +157,17 @@ class DeleteCommand extends ContainerAwareCommand
                 ->field('hasimages')->equals(true)
                 ->getQuery()
                 ->execute();
-            foreach($punits as $id)
-            {
+            foreach($punits as $id){
                 $ids_img[]=$id['_id']->{'$id'};
             }
             unset($punits);
-            foreach($ids_img as $id)
-            {
+            foreach($ids_img as $id){
                 $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
                     ->findOneBy(array(
                         'id'=>$id
                     ));
                 $images=$punit->getImages();
-                if(!count($images))
-                {
+                if(!count($images)){
                     $punit->setHasimages(false);
                     $dm->persist($punit);
                     $dm->flush();
@@ -204,20 +184,17 @@ class DeleteCommand extends ContainerAwareCommand
                 ->field('haslocations')->equals(true)
                 ->getQuery()
                 ->execute();
-            foreach($punits as $id)
-            {
+            foreach($punits as $id){
                 $ids_loc[]=$id['_id']->{'$id'};
             }
             unset($punits);
-            foreach($ids_loc as $id)
-            {
+            foreach($ids_loc as $id){
                 $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
                     ->findOneBy(array(
                         'id'=>$id
                     ));
                 $locations=$punit->getLocations();
-                if(!count($locations))
-                {
+                if(!count($locations)){
                     $punit->setHaslocations(false);
                     $dm->persist($punit);
                     $dm->flush();
@@ -242,13 +219,11 @@ class DeleteCommand extends ContainerAwareCommand
                 ->field('taxon')->notEqual(null)
                 ->getQuery()
                 ->execute();
-            foreach($punits as $id)
-            {
+            foreach($punits as $id){
                 $ids_tax[]=$id['_id']->{'$id'};
             }
             unset($punits);
-            foreach($ids_tax as $id)
-            {
+            foreach($ids_tax as $id){
                 $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
                     ->findOneBy(array(
                         'id'=>$id
@@ -304,10 +279,8 @@ class DeleteCommand extends ContainerAwareCommand
         * Remove Modules
         */
         $modules=$collection->getModules();
-        if(count($modules))
-        {
-            foreach($modules as $module)
-            {
+        if(count($modules)){
+            foreach($modules as $module){
                 $this->delete_module($dbname,$module->getId());
             }
         }
@@ -315,13 +288,10 @@ class DeleteCommand extends ContainerAwareCommand
         * Remove csv directory (and files)
         */
         $dir=__DIR__.'/../Resources/uploads/'.$collection->getAlias();
-        if(file_exists($dir)&&is_dir($dir))
-        {
+        if(file_exists($dir)&&is_dir($dir)){
             $files=scandir($dir);
-            foreach($files as $file)
-            {
-                if($file!='.'&&$file!='..')
-                {
+            foreach($files as $file){
+                if($file!='.'&&$file!='..'){
                     unlink($dir.'/'.$file);
                 }
             }

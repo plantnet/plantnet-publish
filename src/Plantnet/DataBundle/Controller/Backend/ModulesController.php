@@ -36,12 +36,10 @@ class ModulesController extends Controller
 {
     private function getDataBase($user=null,$dm=null)
     {
-        if($user)
-        {
+        if($user){
             return $user->getDbName();
         }
-        elseif($dm)
-        {
+        elseif($dm){
             return $dm->getConfiguration()->getDefaultDB();
         }
         return $this->container->getParameter('mdb_base');
@@ -58,34 +56,33 @@ class ModulesController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
                 'id'=>$id
             ));
-        if (!$collection) {
+        if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $module = new Module();
+        $module=new Module();
         $module->setType($type);
-        $idparent = array();
-        if($type=='submodule')
-        {
-            $parents_module = $dm->getRepository('PlantnetDataBundle:Module')
+        $idparent=array();
+        if($type=='submodule'){
+            $parents_module=$dm->getRepository('PlantnetDataBundle:Module')
                 ->findBy(array(
-                    'collection.id' => $collection->getId(),
-                    'type' => 'text'
+                    'collection.id'=>$collection->getId(),
+                    'type'=>'text'
                 ));
             foreach($parents_module as $mod){
-                $idparent[$mod->getId()] = $mod->getName();
+                $idparent[$mod->getId()]=$mod->getName();
             }
         }
-        $form = $this->createForm(new ModuleFormType(), $module, array('idparent' => $idparent));
+        $form=$this->createForm(new ModuleFormType(),$module,array('idparent'=>$idparent));
         return $this->render('PlantnetDataBundle:Backend\Modules:module_new.html.twig',array(
-            'idparent' => $idparent,
-            'collection' => $collection,
-            'module' => $module,
-            'form' => $form->createView(),
-            'type' => $type
+            'idparent'=>$idparent,
+            'collection'=>$collection,
+            'module'=>$module,
+            'form'=>$form->createView(),
+            'type'=>$type
         ));
     }
 
@@ -545,21 +542,20 @@ class ModulesController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->find($id);
-        if (!$module) {
+        if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $collection=$module->getCollection();
         $original_name=$module->getName();
-        $editForm = $this->createForm(new ModulesType(), $module);
-        $deleteForm = $this->createDeleteForm($id);
+        $editForm=$this->createForm(new ModulesType(),$module);
+        $deleteForm=$this->createDeleteForm($id);
         $request = $this->getRequest();
-        if ('POST' === $request->getMethod()) {
+        if('POST'===$request->getMethod()){
             $editForm->bindRequest($request);
             $check_name=$module->getName();
-            if($module->getType()=='text')
-            {
+            if($module->getType()=='text'){
                 $nb_mods=$dm->createQueryBuilder('PlantnetDataBundle:Module')
                     ->field('collection')->references($collection)
                     ->field('name')->equals($check_name)
@@ -569,8 +565,7 @@ class ModulesController extends Controller
                     ->execute()
                     ->count();
             }
-            else
-            {
+            else{
                 $idsup=$request->request->get('modules');
                 $idsup=$idsup['parent'];
                 $nb_mods=$dm->createQueryBuilder('PlantnetDataBundle:Module')
@@ -583,26 +578,25 @@ class ModulesController extends Controller
                     ->execute()
                     ->count();
             }
-            if($nb_mods===0)
-            {
-                if ($editForm->isValid()) {
-                    $dm = $this->get('doctrine.odm.mongodb.document_manager');
+            if($nb_mods===0){
+                if($editForm->isValid()){
+                    $dm=$this->get('doctrine.odm.mongodb.document_manager');
                     $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                     $dm->persist($module);
                     $dm->flush();
-                    return $this->redirect($this->generateUrl('module_edit', array('id' => $id)));
+                    $this->update_indexes($module);
+                    return $this->redirect($this->generateUrl('module_edit',array('id'=>$id)));
                 }
             }
-            else
-            {
+            else{
                 $module->setName($original_name);
                 $editForm->get('name')->addError(new FormError('This value is already used at the same tree level.'));
             }
         }
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit.html.twig',array(
-            'entity' => $module,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            'entity'=>$module,
+            'edit_form'=>$editForm->createView(),
+            'delete_form'=>$deleteForm->createView(),
         ));
     }
 
@@ -617,15 +611,15 @@ class ModulesController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->find($id);
-        if (!$module) {
+        if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $editForm = $this->get('form.factory')->create(new ModulesTaxoType(), $module);
+        $editForm=$this->get('form.factory')->create(new ModulesTaxoType(),$module);
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_taxo.html.twig',array(
-            'entity' => $module,
-            'edit_form' => $editForm->createView(),
+            'entity'=>$module,
+            'edit_form'=>$editForm->createView(),
         ));
     }
 
@@ -641,18 +635,18 @@ class ModulesController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->find($id);
-        if (!$module) {
+        if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $collection=$module->getCollection();
-        $editForm = $this->createForm(new ModulesTaxoType(), $module);
-        $request = $this->getRequest();
-        if ('POST' === $request->getMethod()) {
+        $editForm=$this->createForm(new ModulesTaxoType(),$module);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
             $editForm->bindRequest($request);
-            if ($editForm->isValid()) {
-                $dm = $this->get('doctrine.odm.mongodb.document_manager');
+            if($editForm->isValid()){
+                $dm=$this->get('doctrine.odm.mongodb.document_manager');
                 $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                 $dm->persist($module);
                 $dm->flush();
@@ -661,12 +655,12 @@ class ModulesController extends Controller
                 $command='php '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' > /dev/null';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
-                return $this->redirect($this->generateUrl('module_edit_taxo', array('id' => $id)));
+                return $this->redirect($this->generateUrl('module_edit_taxo',array('id'=>$id)));
             }
         }
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_taxo.html.twig',array(
-            'entity' => $module,
-            'edit_form' => $editForm->createView(),
+            'entity'=>$module,
+            'edit_form'=>$editForm->createView(),
         ));
     }
     
@@ -678,11 +672,11 @@ class ModulesController extends Controller
      */
     public function module_deleteAction($id)
     {
-        $form = $this->createDeleteForm($id);
-        $request = $this->getRequest();
-        if ('POST' === $request->getMethod()) {
+        $form=$this->createDeleteForm($id);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
             $form->bindRequest($request);
-            if ($form->isValid()) {
+            if($form->isValid()){
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 // $dm=$this->get('doctrine.odm.mongodb.document_manager');
                 // $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -769,8 +763,75 @@ class ModulesController extends Controller
 
     private function createDeleteForm($id)
     {
-        return $this->createFormBuilder(array('id' => $id))
-            ->add('id', 'hidden')
+        return $this->createFormBuilder(array('id'=>$id))
+            ->add('id','hidden')
             ->getForm();
+    }
+
+    private function update_indexes($module)
+    {
+        if($module){
+            $user=$this->container->get('security.context')->getToken()->getUser();
+            $dm=$this->get('doctrine.odm.mongodb.document_manager');
+            $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+            $db=$this->getDataBase($user);
+            $m=new \Mongo();
+            //old indexes
+            $old_indexes=$module->getIndexes();
+            if(count($old_indexes)){
+                foreach($old_indexes as $old){
+                    //delete old indexes
+                    $m->$db->command(array('deleteIndexes'=>'Plantunit','index'=>$old));
+                }
+                // $module->setIndexes(array());
+                // $dm->persist($module);
+                // $dm->flush();
+            }
+            //get sort order
+            $order=array();
+            $field=$module->getProperties();
+            foreach($field as $row){
+                if($row->getSortorder()){
+                    $order[$row->getSortorder()]=$row->getId();
+                }
+            }
+            ksort($order);
+            //init indexes tab
+            $indexes_tab=array();
+            //indexes [asc]
+            foreach($order as $o=>$id){
+                $index=array();
+                $index['attributes.'.$id]=1;
+                foreach($order as $sub_o=>$sub_id){
+                    if($id!=$sub_id){
+                        $index['attributes.'.$sub_id]=1;
+                    }
+                }
+                $indexes_tab[]=$index;
+            }
+            //indexes [desc]
+            foreach($order as $o=>$id){
+                $index=array();
+                $index['attributes.'.$id]=-1;
+                foreach($order as $sub_o=>$sub_id){
+                    if($id!=$sub_id){
+                        $index['attributes.'.$sub_id]=1;
+                    }
+                }
+                $indexes_tab[]=$index;
+            }
+            //format indexes
+            $indexes=array();
+            $index_name=1;
+            foreach($indexes_tab as $index){
+                $name=$module->getId().'_punit_sort_'.$index_name++;
+                $indexes[]=$name;
+                //new indexes
+                $m->$db->Plantunit->ensureIndex($index,array('name'=>$name));
+            }
+            $module->setIndexes($indexes);
+            $dm->persist($module);
+            $dm->flush();
+        }
     }
 }

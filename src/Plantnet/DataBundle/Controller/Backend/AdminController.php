@@ -31,12 +31,10 @@ class AdminController extends Controller
 {
     private function getDataBase($user=null,$dm=null)
     {
-        if($user)
-        {
+        if($user){
             return $user->getDbName();
         }
-        elseif($dm)
-        {
+        elseif($dm){
             return $dm->getConfiguration()->getDefaultDB();
         }
         return $this->container->getParameter('mdb_base');
@@ -57,7 +55,7 @@ class AdminController extends Controller
     public function indexAction()
     {
         return $this->render('PlantnetDataBundle:Backend:index.html.twig',array(
-            'current' => 'index'
+            'current'=>'index'
         ));
     }
 
@@ -74,7 +72,7 @@ class AdminController extends Controller
             ->findOneBy(array(
                 'name'=>$collection
             ));
-        if (!$collection) {
+        if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         return $this->render('PlantnetDataBundle:Backend\Admin:collection.html.twig', array(
@@ -86,48 +84,48 @@ class AdminController extends Controller
      * @Route("/collection/{collection}/module/{module}", name="admin_module_view")
      * @Template()
      */
-    public function moduleAction($collection, $module)
+    public function moduleAction($collection,$module)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneByName($collection);
-        if (!$collection) {
+        if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
-            ->findOneBy(array('name'=> $module, 'collection.id' => $collection->getId()));
-        if (!$module||$module->getType()!='text') {
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array('name'=>$module,'collection.id'=>$collection->getId()));
+        if(!$module||$module->getType()!='text'){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $display = array();
+        $display=array();
         $order=array();
-        $field = $module->getProperties();
+        $field=$module->getProperties();
         foreach($field as $row){
-            if($row->getMain() == true){
-                $display[] = $row->getId();
+            if($row->getMain()==true){
+                $display[]=$row->getId();
             }
             if($row->getSortorder()){
                 $order[$row->getSortorder()]=$row->getId();
             }
         }
         ksort($order);
-        $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+        $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
             ->field('module')->references($module);
         if(count($order)){
             foreach($order as $num=>$prop){
                 $queryBuilder->sort('attributes.'.$prop,'asc');
             }
         }
-        $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+        $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
         $paginator->setMaxPerPage(50);
-        $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-        return $this->render('PlantnetDataBundle:Backend\Admin:datagrid.html.twig', array(
-            'paginator' => $paginator,
-            'collection' => $collection,
-            'module' => $module,
-            'display' => $display
+        $paginator->setCurrentPage($this->get('request')->query->get('page',1));
+        return $this->render('PlantnetDataBundle:Backend\Admin:datagrid.html.twig',array(
+            'paginator'=>$paginator,
+            'collection'=>$collection,
+            'module'=>$module,
+            'display'=>$display
         ));
     }
 
@@ -135,58 +133,57 @@ class AdminController extends Controller
      * @Route("/collection/{collection}/module/{module}/module/{submodule}", name="admin_submodule_view")
      * @Template()
      */
-    public function submoduleAction($collection, $module, $submodule)
+    public function submoduleAction($collection,$module,$submodule)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
                 'name'=>$collection
             ));
-        if (!$collection) {
+        if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $module = $dm->getRepository('PlantnetDataBundle:Module')
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=> $module,
-                'collection.id' => $collection->getId()
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
             ));
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $mod = $dm->getRepository('PlantnetDataBundle:Module')
+        $mod=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=> $submodule,
+                'name'=>$submodule,
                 'parent.id'=>$module->getId(),
-                'collection.id' => $collection->getId()
+                'collection.id'=>$collection->getId()
             ));
-        if (!$mod||$mod->getType()=='text') {
+        if(!$mod||$mod->getType()=='text'){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $display = array();
-        $field = $module->getProperties();
+        $display=array();
+        $field=$module->getProperties();
         foreach($field as $row){
-            if($row->getMain() == true){
-                $display[] = $row->getId();
+            if($row->getMain()==true){
+                $display[]=$row->getId();
             }
         }
-        switch ($mod->getType())
-        {
+        switch($mod->getType()){
             case 'image':
-                $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Image')
+                $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($mod)
                     ->sort('title1','asc')
                     ->sort('title2','asc')
                     ->hydrate(false);
-                $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+                $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(20);
-                $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-                return $this->render('PlantnetDataBundle:Backend\Admin:gallery.html.twig', array(
-                    'paginator' => $paginator,
-                    'collection' => $collection,
-                    'module' => $mod,
-                    'module_parent' => $module,
+                $paginator->setCurrentPage($this->get('request')->query->get('page',1));
+                return $this->render('PlantnetDataBundle:Backend\Admin:gallery.html.twig',array(
+                    'paginator'=>$paginator,
+                    'collection'=>$collection,
+                    'module'=>$mod,
+                    'module_parent'=>$module,
                 ));
                 break;
             case 'locality':
@@ -227,8 +224,7 @@ class AdminController extends Controller
                         'title2'=>1
                     )
                 );
-                foreach($c_locations as $id=>$l)
-                {
+                foreach($c_locations as $id=>$l){
                     $loc=array();
                     $loc['id']=$id;
                     $loc['latitude']=$l['latitude'];
@@ -254,27 +250,27 @@ class AdminController extends Controller
                 $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
                 return $this->render('PlantnetDataBundle:Backend\Admin:map.html.twig',array(
-                    'collection' => $collection,
-                    'module' => $mod,
-                    'module_parent' => $module,
-                    'locations' => $locations,
-                    'layers' => $layers
+                    'collection'=>$collection,
+                    'module'=>$mod,
+                    'module_parent'=>$module,
+                    'locations'=>$locations,
+                    'layers'=>$layers
                 ));
                 break;
             case 'other':
-                $display = array();
+                $display=array();
                 $order=array();
                 $field=$mod->getProperties();
                 foreach($field as $row){
-                    if($row->getDetails() == true){
-                        $display[] = $row->getId();
+                    if($row->getDetails()==true){
+                        $display[]=$row->getId();
                     }
                     if($row->getSortorder()){
                         $order[$row->getSortorder()]=$row->getId();
                     }
                 }
                 ksort($order);
-                $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Other')
+                $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Other')
                     ->field('module')->references($mod)
                     ->hydrate(false);
                 if(count($order)){
@@ -282,15 +278,15 @@ class AdminController extends Controller
                         $queryBuilder->sort('property.'.$prop,'asc');
                     }
                 }
-                $paginator = new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+                $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
                 $paginator->setMaxPerPage(50);
-                $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
-                return $this->render('PlantnetDataBundle:Backend\Admin:other.html.twig', array(
-                    'paginator' => $paginator,
-                    'collection' => $collection,
-                    'module' => $mod,
-                    'module_parent' => $module,
-                    'display' => $display,
+                $paginator->setCurrentPage($this->get('request')->query->get('page',1));
+                return $this->render('PlantnetDataBundle:Backend\Admin:other.html.twig',array(
+                    'paginator'=>$paginator,
+                    'collection'=>$collection,
+                    'module'=>$mod,
+                    'module_parent'=>$module,
+                    'display'=>$display,
                 ));
                 break;
         }
@@ -301,13 +297,13 @@ class AdminController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $pages = $dm->createQueryBuilder('PlantnetDataBundle:Page')
+        $pages=$dm->createQueryBuilder('PlantnetDataBundle:Page')
             ->sort('order','ASC')
             ->getQuery()
             ->execute();
         return $this->render('PlantnetDataBundle:Backend\Admin:page_list.html.twig',array(
-            'pages' => $pages,
-            'current' => 'administration'
+            'pages'=>$pages,
+            'current'=>'administration'
         ));
     }
 
@@ -322,18 +318,18 @@ class AdminController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $page = $dm->getRepository('PlantnetDataBundle:Page')
+        $page=$dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
                 'name'=>$name
             ));
-        if (!$page) {
+        if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        $editForm = $this->createForm(new PageType(), $page);
+        $editForm=$this->createForm(new PageType(),$page);
         return $this->render('PlantnetDataBundle:Backend\Admin:page_edit.html.twig',array(
-            'page' => $page,
-            'edit_form' => $editForm->createView(),
-            'current' => 'pages'
+            'page'=>$page,
+            'edit_form'=>$editForm->createView(),
+            'current'=>'pages'
         ));
     }
 
@@ -349,27 +345,27 @@ class AdminController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $page = $dm->getRepository('PlantnetDataBundle:Page')
+        $page=$dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
                 'name'=>$name
             ));
-        if (!$page) {
+        if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        $editForm = $this->createForm(new PageType(), $page);
-        $request = $this->getRequest();
-        if ('POST' === $request->getMethod()) {
+        $editForm=$this->createForm(new PageType(),$page);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
             $editForm->bindRequest($request);
-            if ($editForm->isValid()) {
+            if($editForm->isValid()){
                 $dm->persist($page);
                 $dm->flush();
-                return $this->redirect($this->generateUrl('page_edit', array('name' => $name)));
+                return $this->redirect($this->generateUrl('page_edit',array('name'=>$name)));
             }
         }
         return $this->render('PlantnetDataBundle:Backend\Admin:page_edit.html.twig',array(
-            'page' => $page,
-            'edit_form' => $editForm->createView(),
-            'current' => 'pages'
+            'page'=>$page,
+            'edit_form'=>$editForm->createView(),
+            'current'=>'pages'
         ));
     }
 }

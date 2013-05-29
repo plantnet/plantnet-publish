@@ -21,8 +21,7 @@ class ZipData
 	public function extractTo($path)
 	{
 		$zip=new \ZipArchive;
-        if($zip->open($this->zipPath)===true)
-        {
+        if($zip->open($this->zipPath)===true){
             $zip->extractTo($path);
             $zip->close();
             $this->clean($path,$path);
@@ -33,29 +32,23 @@ class ZipData
 	{
 		$dels=array();
 		$dir=opendir($path);
-		while($entry=@readdir($dir))
-		{
-			if(is_dir($path.'/'.$entry)&&$entry!='.'&&$entry!='..')
-			{
+		while($entry=@readdir($dir)){
+			if(is_dir($path.'/'.$entry)&&$entry!='.'&&$entry!='..'){
 				$dels[]=$path.'/'.$entry;
 				$this->clean($root,$path.'/'.$entry);
 			}
-			elseif($entry!='.'&&$entry!='..')
-			{
+			elseif($entry!='.'&&$entry!='..'){
 				$file=new File($path.'/'.$entry);
-				if(in_array($file->getMimeType(),$this->mimeTypes))
-				{
+				if(in_array($file->getMimeType(),$this->mimeTypes)){
 					$file->move($root,$entry);
 				}
-				else
-				{
+				else{
 					$this->remove($path.'/'.$entry);
 				}
 			}
 		}
 		closedir($dir);
-		foreach($dels as $del)
-		{
+		foreach($dels as $del){
 			$this->remove($del);
 		}
 	}
@@ -65,14 +58,11 @@ class ZipData
 	}
 	private function remove($path)
 	{
-		if(file_exists($path))
-		{
-			if(is_dir($path))
-			{
+		if(file_exists($path)){
+			if(is_dir($path)){
 				rmdir($path);
 			}
-			else
-			{
+			else{
 				unlink($path);
 			}
 		}

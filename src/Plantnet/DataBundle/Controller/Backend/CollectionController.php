@@ -20,12 +20,10 @@ class CollectionController extends Controller
 {
     private function getDataBase($user=null,$dm=null)
     {
-        if($user)
-        {
+        if($user){
             return $user->getDbName();
         }
-        elseif($dm)
-        {
+        elseif($dm){
             return $dm->getConfiguration()->getDefaultDB();
         }
         return $this->container->getParameter('mdb_base');

@@ -27,12 +27,10 @@ class ExportController extends Controller
 
     private function getDataBase($user=null,$dm=null)
     {
-        if($user)
-        {
+        if($user){
             return $user->getDbName();
         }
-        elseif($dm)
-        {
+        elseif($dm){
             return $dm->getConfiguration()->getDefaultDB();
         }
         return $this->container->getParameter('mdb_base');
@@ -103,21 +101,18 @@ class ExportController extends Controller
         $dm->clear();
         $this->load_plantunits($module_id);
         //-------
-        if(!file_exists('./_tmp'))
-        {
+        if(!file_exists('./_tmp')){
             mkdir('./_tmp');
         }
         $zip=$this->folder_to_zip($this->dir_name.'/','./_tmp/Publish_to_IDAO_'.$mt.'.zip');
-        if($zip)
-        {
+        if($zip){
             header('Content-Transfer-Encoding: binary');
             header('Content-Disposition: attachment; filename="Publish_to_IDAO.zip"');
             header('Content-Length: '.filesize('./_tmp/Publish_to_IDAO_'.$mt.'.zip'));
             readfile('./_tmp/Publish_to_IDAO_'.$mt.'.zip');
             unlink('./_tmp/Publish_to_IDAO_'.$mt.'.zip');
         }
-        if(file_exists($this->dir_name)&&is_dir($this->dir_name))
-        {
+        if(file_exists($this->dir_name)&&is_dir($this->dir_name)){
             $this->remove_directory($this->dir_name);
         }
         echo 'zip';
@@ -154,8 +149,7 @@ class ExportController extends Controller
                 $display[]=$row->getId();
             }
         }
-        foreach($plantunits as $plantunit)
-        {
+        foreach($plantunits as $plantunit){
             $dm->clear();
             $this->load_plantunit_data($plantunit['_id'],$module_id,$display);
         }
@@ -174,12 +168,9 @@ class ExportController extends Controller
             ));
         $others=$plantunit->getOthers();
         $tab_others_groups=array();
-        if(count($others))
-        {
-            foreach($others as $other)
-            {
-                if(!in_array($other->getModule()->getId(),array_keys($tab_others_groups)))
-                {
+        if(count($others)){
+            foreach($others as $other){
+                if(!in_array($other->getModule()->getId(),array_keys($tab_others_groups))){
                     $order=array();
                     $field=$other->getModule()->getProperties();
                     foreach($field as $row){
@@ -225,28 +216,23 @@ class ExportController extends Controller
         $tidy->cleanRepair();
         // /Tidy
         $new_page=fopen($this->dir_name.'/'.$plantunit->getIdentifier().'_en.html','w');
-        if($new_page)
-        {
+        if($new_page){
             fwrite($new_page,$tidy);
             // fwrite($new_page,$page);
             fclose($new_page);
         }
         $images=$plantunit->getImages();
-        if(count($images))
-        {
-            foreach($images as $image)
-            {
+        if(count($images)){
+            foreach($images as $image){
                 $img_name=$image->getPath();
                 $img_source_dir='./uploads/'.$image->getModule()->getUploaddir();
                 $thumb_size='thumb_idao';
                 $thumb_source_dir='./media/cache/'.$thumb_size.'/uploads/'.$image->getModule()->getUploaddir();
-                if(file_exists($img_source_dir.'/'.$img_name))
-                {
+                if(file_exists($img_source_dir.'/'.$img_name)){
                     $this->container->get('liip_imagine.controller')->filterAction($this->getRequest(),$img_source_dir.'/'.$img_name,$thumb_size);
                     copy($img_source_dir.'/'.$img_name,$this->dir_name.'/'.$this->imgs_dir_name.'/'.$img_name);
                 }
-                if(file_exists($thumb_source_dir.'/'.$img_name))
-                {
+                if(file_exists($thumb_source_dir.'/'.$img_name)){
                     copy($thumb_source_dir.'/'.$img_name,$this->dir_name.'/'.$this->thumbs_dir_name.'/'.$img_name);
                 }
             }
@@ -263,14 +249,11 @@ class ExportController extends Controller
     private function remove_directory($dir_name)
     {
         $files=array_diff(scandir($dir_name),array('.','..'));
-        foreach($files as $file)
-        {
-            if(is_dir($dir_name.'/'.$file))
-            {
+        foreach($files as $file){
+            if(is_dir($dir_name.'/'.$file)){
                 $this->remove_directory($dir_name.'/'.$file);
             }
-            else
-            {
+            else{
                 unlink($dir_name.'/'.$file);
             }
         }
@@ -279,37 +262,30 @@ class ExportController extends Controller
 
     function folder_to_zip($source,$destination)
     {
-        if(!extension_loaded('zip')||!file_exists($source))
-        {
+        if(!extension_loaded('zip')||!file_exists($source)){
             return false;
         }
         $zip=new \ZipArchive();
-        if(!$zip->open($destination,\ZIPARCHIVE::CREATE))
-        {
+        if(!$zip->open($destination,\ZIPARCHIVE::CREATE)){
             return false;
         }
         $source=str_replace('\\','/',realpath($source));
-        if(is_dir($source)===true)
-        {
+        if(is_dir($source)===true){
             $files=new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source),\RecursiveIteratorIterator::SELF_FIRST);
-            foreach($files as $file)
-            {
+            foreach($files as $file){
                 $file=str_replace('\\','/',$file);
                 if(in_array(substr($file,strrpos($file,'/')+1),array('.','..')))
                     continue;
                 $file=realpath($file);
-                if(is_dir($file)===true)
-                {
+                if(is_dir($file)===true){
                     $zip->addEmptyDir(str_replace($source.'/','',$file.'/'));
                 }
-                elseif(is_file($file) === true)
-                {
+                elseif(is_file($file) === true){
                     $zip->addFromString(str_replace($source.'/','',$file),file_get_contents($file));
                 }
             }
         }
-        elseif(is_file($source)===true)
-        {
+        elseif(is_file($source)===true){
             $zip->addFromString(basename($source),file_get_contents($source));
         }
         $zip->close();

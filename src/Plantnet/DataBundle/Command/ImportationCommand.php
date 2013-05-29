@@ -19,7 +19,7 @@ use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Coordinates,
     Plantnet\DataBundle\Document\Other;
 
-ini_set('memory_limit', '-1');
+ini_set('memory_limit','-1');
 
 class ImportationCommand extends ContainerAwareCommand
 {
@@ -35,14 +35,13 @@ class ImportationCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input,OutputInterface $output)
     {
         $id=$input->getArgument('collection');
         $idmodule=$input->getArgument('module');
         $dbname=$input->getArgument('dbname');
         $usermail=$input->getArgument('usermail');
-        if($id&&$idmodule&&$dbname&&$usermail)
-        {
+        if($id&&$idmodule&&$dbname&&$usermail){
             $orphans=array();
             $error='';
             $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
@@ -51,45 +50,43 @@ class ImportationCommand extends ContainerAwareCommand
             $configuration->setLoggerCallable(null);
             $module = $dm->getRepository('PlantnetDataBundle:Module')
                 ->find($idmodule);
-            if (!$module) {
+            if(!$module){
                 $error='Unable to find Module entity.';
             }
-            if ($module->getType()=='text') {
+            if($module->getType()=='text'){
                 $error='Module entity: Wrong type.';
             }
-            if(empty($error))
-            {
+            if(empty($error)){
                 /*
                  * Open the uploaded csv
                  */
-                $csvfile = __DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
-                $handle = fopen($csvfile, "r");
+                $csvfile=__DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
+                $handle=fopen($csvfile, "r");
                 /*
                  * Get the module properties
                  */
                 $columns=fgetcsv($handle,0,";");
-                $fields = array();
-                $attributes = $module->getProperties();
+                $fields=array();
+                $attributes=$module->getProperties();
                 foreach($attributes as $field){
-                    $fields[] = $field;
+                    $fields[]=$field;
                 }
                 /*
                  * Initialise the metrics
                  */
                 //echo "Memory usage before: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
-                $s = microtime(true);
-                $batchSize = 200;
-                $rowCount = 0;
-                $errorCount = 0;
-                while (($data = fgetcsv($handle, 0, ';')) !== FALSE) {
-                    $num = count($data);
-                    if ($module->getType() == 'image'){
-                        $image = new Image();
-                        $attributes = array();
-                        for($c=0; $c < $num; $c++)
-                        {
-                            $value = trim($this->data_encode($data[$c]));
-                            $attributes[$fields[$c]->getId()] = $value;
+                $s=microtime(true);
+                $batchSize=200;
+                $rowCount=0;
+                $errorCount=0;
+                while(($data = fgetcsv($handle, 0, ';'))!==FALSE){
+                    $num=count($data);
+                    if($module->getType()=='image'){
+                        $image=new Image();
+                        $attributes=array();
+                        for($c=0;$c<$num;$c++){
+                            $value=trim($this->data_encode($data[$c]));
+                            $attributes[$fields[$c]->getId()]=$value;
                             switch($fields[$c]->getType()){
                                 case 'file':
                                     $image->setPath($value);
@@ -108,20 +105,17 @@ class ImportationCommand extends ContainerAwareCommand
                         $image->setProperty($attributes);
                         $image->setModule($module);
                         $parent=null;
-                        if($module->getParent())
-                        {
+                        if($module->getParent()){
                             $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                                 ->field('module.id')->equals($module->getParent()->getId())
                                 ->field('identifier')->equals($image->getIdparent())
                                 ->getQuery()
                                 ->execute();
-                            foreach($parent_q as $p)
-                            {
+                            foreach($parent_q as $p){
                                 $parent=$p;
                             }
                         }
-                        if($parent)
-                        {
+                        if($parent){
                             $image->setPlantunit($parent);
                             $image->setTitle1($parent->getTitle1());
                             $image->setTitle2($parent->getTitle2());
@@ -142,8 +136,7 @@ class ImportationCommand extends ContainerAwareCommand
                                 }
                             }
                         }
-                        else
-                        {
+                        else{
                             $orphans[$image->getIdparent()]=$image->getIdparent();
                             $errorCount++;
                             /*
@@ -156,14 +149,14 @@ class ImportationCommand extends ContainerAwareCommand
                             $dm->persist($image);
                             */
                         }
-                    }elseif ($module->getType() == 'locality'){
-                        $location = new Location();
+                    }
+                    elseif($module->getType()=='locality'){
+                        $location=new Location();
                         $coordinates=new Coordinates();
-                        $attributes = array();
-                        for($c=0; $c < $num; $c++)
-                        {
-                            $value = trim($this->data_encode($data[$c]));
-                            $attributes[$fields[$c]->getId()] = $value;
+                        $attributes=array();
+                        for($c=0;$c<$num;$c++){
+                            $value=trim($this->data_encode($data[$c]));
+                            $attributes[$fields[$c]->getId()]=$value;
                             switch($fields[$c]->getType()){
                                 case 'lon':
                                     $location->setLongitude(str_replace(',','.',$value));
@@ -185,20 +178,17 @@ class ImportationCommand extends ContainerAwareCommand
                         $location->setProperty($attributes);
                         $location->setModule($module);
                         $parent=null;
-                        if($module->getParent())
-                        {
+                        if($module->getParent()){
                             $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                                 ->field('module.id')->equals($module->getParent()->getId())
                                 ->field('identifier')->equals($location->getIdparent())
                                 ->getQuery()
                                 ->execute();
-                            foreach($parent_q as $p)
-                            {
+                            foreach($parent_q as $p){
                                 $parent=$p;
                             }
                         }
-                        if($parent)
-                        {
+                        if($parent){
                             $location->setPlantunit($parent);
                             $location->setTitle1($parent->getTitle1());
                             $location->setTitle2($parent->getTitle2());
@@ -219,8 +209,7 @@ class ImportationCommand extends ContainerAwareCommand
                                 }
                             }
                         }
-                        else
-                        {
+                        else{
                             $orphans[$location->getIdparent()]=$location->getIdparent();
                             $errorCount++;
                             /*
@@ -236,13 +225,12 @@ class ImportationCommand extends ContainerAwareCommand
                             */
                         }
                     }
-                    elseif ($module->getType() == 'other'){
-                        $other = new Other();
-                        $attributes = array();
-                        for($c=0; $c < $num; $c++)
-                        {
-                            $value = $this->data_encode($data[$c]);
-                            $attributes[$fields[$c]->getId()] = $value;
+                    elseif($module->getType()=='other'){
+                        $other=new Other();
+                        $attributes=array();
+                        for($c=0;$c<$num;$c++){
+                            $value=trim($this->data_encode($data[$c]));
+                            $attributes[$fields[$c]->getId()]=$value;
                             switch($fields[$c]->getType()){
                                 case 'idparent':
                                     $other->setIdparent($value);
@@ -255,26 +243,22 @@ class ImportationCommand extends ContainerAwareCommand
                         $other->setProperty($attributes);
                         $other->setModule($module);
                         $parent=null;
-                        if($module->getParent())
-                        {
+                        if($module->getParent()){
                             $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                                 ->field('module.id')->equals($module->getParent()->getId())
                                 ->field('identifier')->equals($other->getIdparent())
                                 ->getQuery()
                                 ->execute();
-                            foreach($parent_q as $p)
-                            {
+                            foreach($parent_q as $p){
                                 $parent=$p;
                             }
                         }
-                        if($parent)
-                        {
+                        if($parent){
                             $other->setPlantunit($parent);
                             $dm->persist($other);
                             $rowCount++;
                         }
-                        else
-                        {
+                        else{
                             $orphans[$other->getIdparent()]=$other->getIdparent();
                             $errorCount++;
                             /*
@@ -288,10 +272,10 @@ class ImportationCommand extends ContainerAwareCommand
                             */
                         }
                     }
-                    if (($rowCount % $batchSize) == 0) {
+                    if(($rowCount % $batchSize)==0){
                         $dm->flush();
                         $dm->clear();
-                        $module = $dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                        $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
                     }
                 }
                 $module->setNbrows($rowCount);
@@ -300,18 +284,16 @@ class ImportationCommand extends ContainerAwareCommand
                 $dm->flush();
                 $dm->clear();
                 //echo "Memory usage after: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
-                $e = microtime(true);
+                $e=microtime(true);
                 echo ' Inserted '.$rowCount.' objects in ' . ($e - $s) . ' seconds' . PHP_EOL;
                 fclose($handle);
-                if(file_exists($csvfile))
-                {
+                if(file_exists($csvfile)){
                     unlink($csvfile);
                 }
                 $message='Importation Success: '.$rowCount.' objects imported in '.($e-$s).' seconds';
                 $message.="\n";
                 $message.='Importation Error: '.$errorCount;
-                if(count($orphans))
-                {
+                if(count($orphans)){
                     $message.="\n".'These "id parent" do not exist:'."\n";
                     $message.=implode(', ',$orphans);
                 }
@@ -329,8 +311,7 @@ class ImportationCommand extends ContainerAwareCommand
                 $mailer->send($message);
                 */
             }
-            else
-            {
+            else{
                 $message=$error;
             }
             mail($usermail,'Pl@ntnet - Publish',$message);
@@ -339,11 +320,12 @@ class ImportationCommand extends ContainerAwareCommand
 
     protected function data_encode($data)
     {
-        $data_encoding = mb_detect_encoding($data) ;
-        if($data_encoding == "UTF-8" && mb_check_encoding($data,"UTF-8")){
-            $format = $data;
-        }else {
-            $format = utf8_encode($data);
+        $data_encoding=mb_detect_encoding($data) ;
+        if($data_encoding=="UTF-8"&&mb_check_encoding($data,"UTF-8")){
+            $format=$data;
+        }
+        else{
+            $format=utf8_encode($data);
         }
         return $format;
     }

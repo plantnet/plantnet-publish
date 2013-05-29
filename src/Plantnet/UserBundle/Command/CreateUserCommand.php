@@ -20,34 +20,29 @@ class CreateUserCommand extends BaseCommand
 		$this
 			->setName('publish:user:create')
 			->getDefinition()->addArguments(array(
-			new InputArgument('dbName', InputArgument::REQUIRED, 'database name')
+			new InputArgument('dbName',InputArgument::REQUIRED,'database name')
 		));
 	}
 
 	/**
 	 * @see Command
 	 */
-	protected function interact(InputInterface $input, OutputInterface $output)
+	protected function interact(InputInterface $input,OutputInterface $output)
 	{
 		//list available databases without prefix
 		$dbs_list='Available databases:'."\n";
 		$dbs_array=$this->database_list();
-        foreach($dbs_array as $db)
-        {
+        foreach($dbs_array as $db){
             $dbs_list.='- '.$db."\n";
         }
-
 		parent::interact($input, $output);
-
 		//display help
-		if(!$input->getArgument('dbName'))
-		{
+		if(!$input->getArgument('dbName')){
 			$dbName=$this->getHelper('dialog')->askAndValidate(
 				$output,
 				$dbs_list.'Please choose a database name in the list (otherwise, new database will be created):',
 				function($dbName){
-					if(empty($dbName))
-					{
+					if(empty($dbName)){
 						throw new \Exception('Database name can not be empty');
 					}
 					return $dbName;
@@ -60,7 +55,7 @@ class CreateUserCommand extends BaseCommand
 	/**
 	 * @see Command
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input,OutputInterface $output)
 	{
 		//get values
 		$username=$input->getArgument('username');
@@ -69,11 +64,9 @@ class CreateUserCommand extends BaseCommand
 		$dbName=$input->getArgument('dbName');
 		$inactive=$input->getOption('inactive');
 		$superadmin=$input->getOption('super-admin');
-
 		//check if database exists
 		$dbs_array=$this->database_list();
-		if(!in_array($dbName,$dbs_array))
-		{
+		if(!in_array($dbName,$dbs_array)){
 			$dbName=$this->get_prefix().$dbName;
 			$connection=new \Mongo();
 	        $db=$connection->$dbName;
@@ -98,8 +91,7 @@ class CreateUserCommand extends BaseCommand
 	        $db->Page->insert(array('name'=>'credits','order'=>3));
 	        $db->Page->insert(array('name'=>'contacts','order'=>4));
 		}
-		else
-		{
+		else{
 			$dbName=$this->get_prefix().$dbName;
 		}
 
@@ -113,7 +105,6 @@ class CreateUserCommand extends BaseCommand
 		$user->setSuperAdmin((Boolean) $superadmin);
 		$user->setDbName($dbName);
 		$user_manager->updateUser($user);
-
 		//display message
 		$output->writeln(sprintf('Created user <comment>%s</comment>',$username));
 	}
@@ -127,11 +118,9 @@ class CreateUserCommand extends BaseCommand
         $dbs=$connection->admin->command(array(
             'listDatabases'=>1
         ));
-        foreach($dbs['databases'] as $db)
-        {
+        foreach($dbs['databases'] as $db){
             $db_name=$db['name'];
-            if(substr_count($db_name,$prefix))
-            {
+            if(substr_count($db_name,$prefix)){
             	$dbs_array[]=str_replace($prefix,'',$db_name);
             }
         }

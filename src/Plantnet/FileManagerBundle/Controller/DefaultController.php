@@ -33,11 +33,9 @@ class DefaultController extends Controller
     {
         $zipData=new ZipData();
         $form=$this->createForm(new ZipForm(),$zipData);
-        if($request->getMethod()=='POST')
-        {
+        if($request->getMethod()=='POST'){
             $form->bindRequest($request);
-            if($form->isValid())
-            {
+            if($form->isValid()){
                 $dir=$this->get('kernel')->getRootDir().'/../web/uploads/'.$name.'/';
                 $data='data.zip';
                 $form->get('zipFile')->getData()->move($dir,$data);

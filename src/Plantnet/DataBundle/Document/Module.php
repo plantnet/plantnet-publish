@@ -147,6 +147,11 @@ class Module
     private $taxons = array();
 
     /**
+     * @MongoDB\Hash
+     */
+    protected $indexes;
+
+    /**
      * To String
      *
      * @return string
@@ -698,5 +703,25 @@ class Module
     public function getTaxons()
     {
         return $this->taxons;
+    }
+
+    /**
+     * Set indexes
+     *
+     * @param hash $indexes
+     */
+    public function setIndexes($indexes)
+    {
+        $this->indexes = $indexes;
+    }
+
+    /**
+     * Get indexes
+     *
+     * @return hash $indexes
+     */
+    public function getIndexes()
+    {
+        return $this->indexes;
     }
 }

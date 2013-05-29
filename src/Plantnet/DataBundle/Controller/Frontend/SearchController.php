@@ -34,11 +34,9 @@ class SearchController extends Controller
         $dbs=$connection->admin->command(array(
             'listDatabases'=>1
         ));
-        foreach($dbs['databases'] as $db)
-        {
+        foreach($dbs['databases'] as $db){
             $db_name=$db['name'];
-            if(substr_count($db_name,$prefix))
-            {
+            if(substr_count($db_name,$prefix)){
                 $dbs_array[]=str_replace($prefix,'',$db_name);
             }
         }
@@ -54,8 +52,7 @@ class SearchController extends Controller
     {
         $properties=$module->getProperties();
         $tab_prop=array();
-        foreach($properties as $prop)
-        {
+        foreach($properties as $prop){
             $tab_prop[$prop->getId()]=$prop;
         }
         unset($properties);
@@ -75,8 +72,7 @@ class SearchController extends Controller
             ->add('y_lat_2_top_right','hidden',array('required'=>false))
             ->add('x_lng_2_top_right','hidden',array('required'=>false));
         $field_num=0;
-        foreach($fields as $field)
-        {
+        foreach($fields as $field){
             $prop=$tab_prop[$field];
             $form->add('field_'.$field_num,'text',array(
                 'required'=>false,
@@ -208,16 +204,14 @@ class SearchController extends Controller
             }
         }
         $form=$this->createModuleSearchForm($fields,$module);
-        if($request->isMethod('GET'))
-        {
+        if($request->isMethod('GET')){
             $form->bind($request);
             $data=$form->getData();
             $dm=$this->get('doctrine.odm.mongodb.document_manager');
             $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
             $ids_punit=array();
             // Location Filters
-            if(isset($data['x_lng_1_bottom_left'])&&!empty($data['x_lng_1_bottom_left']))
-            {
+            if(isset($data['x_lng_1_bottom_left'])&&!empty($data['x_lng_1_bottom_left'])){
                 $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
                     ->field('coordinates')->withinBox(
                         floatval($data['x_lng_1_bottom_left']),
@@ -227,24 +221,19 @@ class SearchController extends Controller
                     ->hydrate(false)
                     ->getQuery()
                     ->execute();
-                foreach($locations as $location)
-                {
+                foreach($locations as $location){
                     $ids_punit[]=$location['plantunit']['$id']->{'$id'};
                 }
                 unset($locations);
             }
             // Field Filters
             $fields=array();
-            foreach($data as $key=>$val)
-            {
-                if(substr_count($key,'name_field_'))
-                {
-                    if(isset($data[str_replace('name_','',$key).'_string'])&&!empty($data[str_replace('name_','',$key).'_string']))
-                    {
+            foreach($data as $key=>$val){
+                if(substr_count($key,'name_field_')){
+                    if(isset($data[str_replace('name_','',$key).'_string'])&&!empty($data[str_replace('name_','',$key).'_string'])){
                         $fields[$val]=explode('~|~',$data[str_replace('name_','',$key).'_string']);
                     }
-                    elseif(isset($data[str_replace('name_','',$key)])&&!empty($data[str_replace('name_','',$key)]))
-                    {
+                    elseif(isset($data[str_replace('name_','',$key)])&&!empty($data[str_replace('name_','',$key)])){
                         $fields[$val]=$data[str_replace('name_','',$key)];
                     }
                 }
@@ -252,16 +241,14 @@ class SearchController extends Controller
             // Filters to URL
             $url='';
             $data_url=$form->getData();
-            foreach($data_url as $key=>$val)
-            {
+            foreach($data_url as $key=>$val){
                 if($url!=''){
                     $url.='&';
                 }
                 $url.=$form->getName().'['.$key.']='.$val;
             }
             // Search
-            switch($mode)
-            {
+            switch($mode){
                 case 'grid':
                     $paginator=null;
                     $nbResults=0;
@@ -272,30 +259,23 @@ class SearchController extends Controller
                     if(!in_array($sortorder,array('null','asc','desc'))){
                         $sortorder='null';
                     }
-                    if(count($ids_punit)||count($fields))
-                    {
+                    if(count($ids_punit)||count($fields)){
                         $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                             ->field('module.id')->equals($module->getId());
-                        if(count($ids_punit))
-                        {
+                        if(count($ids_punit)){
                             $plantunits->field('_id')->in($ids_punit);
                         }
-                        if(count($fields))
-                        {
-                            foreach($fields as $key=>$value)
-                            {
-                                if(is_array($value))
-                                {
-                                    for($i=0;$i<count($value);$i++)
-                                    {
+                        if(count($fields)){
+                            foreach($fields as $key=>$value){
+                                if(is_array($value)){
+                                    for($i=0;$i<count($value);$i++){
                                         $value[$i]=new \MongoRegex('/.*'.StringSearch::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
                                         $value
                                     );
                                 }
-                                else
-                                {
+                                else{
                                     $plantunits->field('attributes.'.$key)->in(
                                         array(
                                             new \MongoRegex('/.*'.StringSearch::accentToRegex($value).'.*/i')
@@ -339,8 +319,7 @@ class SearchController extends Controller
                             ->getQuery()
                             ->execute();
                         $ids_tab=array();
-                        foreach($ids_c as $id)
-                        {
+                        foreach($ids_c as $id){
                             $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
                         }
                         unset($ids_c);
@@ -380,32 +359,25 @@ class SearchController extends Controller
                     $nbResults=0;
                     $nb_images=0;
                     $nb_locations=0;
-                    if(count($ids_punit)||count($fields))
-                    {
+                    if(count($ids_punit)||count($fields)){
                         $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                             ->hydrate(false)
                             ->select('_id')
                             ->field('module.id')->equals($module->getId());
-                        if(count($ids_punit))
-                        {
+                        if(count($ids_punit)){
                             $plantunits->field('_id')->in($ids_punit);
                         }
-                        if(count($fields))
-                        {
-                            foreach($fields as $key=>$value)
-                            {
-                                if(is_array($value))
-                                {
-                                    for($i=0;$i<count($value);$i++)
-                                    {
+                        if(count($fields)){
+                            foreach($fields as $key=>$value){
+                                if(is_array($value)){
+                                    for($i=0;$i<count($value);$i++){
                                         $value[$i]=new \MongoRegex('/.*'.StringSearch::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
                                         $value
                                     );
                                 }
-                                else
-                                {
+                                else{
                                     $plantunits->field('attributes.'.$key)->in(
                                         array(
                                             new \MongoRegex('/.*'.StringSearch::accentToRegex($value).'.*/i')
@@ -418,8 +390,7 @@ class SearchController extends Controller
                             ->getQuery()
                             ->execute();
                         $ids_tab=array();
-                        foreach($ids_c as $id)
-                        {
+                        foreach($ids_c as $id){
                             $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
                         }
                         unset($ids_c);
@@ -464,32 +435,25 @@ class SearchController extends Controller
                 case 'locations':
                     $locations=null;
                     $nbResults=0;
-                    if(count($ids_punit)||count($fields))
-                    {
+                    if(count($ids_punit)||count($fields)){
                         $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                             ->hydrate(false)
                             ->select('_id')
                             ->field('module.id')->equals($module->getId());
-                        if(count($ids_punit))
-                        {
+                        if(count($ids_punit)){
                             $plantunits->field('_id')->in($ids_punit);
                         }
-                        if(count($fields))
-                        {
-                            foreach($fields as $key=>$value)
-                            {
-                                if(is_array($value))
-                                {
-                                    for($i=0;$i<count($value);$i++)
-                                    {
+                        if(count($fields)){
+                            foreach($fields as $key=>$value){
+                                if(is_array($value)){
+                                    for($i=0;$i<count($value);$i++){
                                         $value[$i]=new \MongoRegex('/.*'.StringSearch::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
                                         $value
                                     );
                                 }
-                                else
-                                {
+                                else{
                                     $plantunits->field('attributes.'.$key)->in(
                                         array(
                                             new \MongoRegex('/.*'.StringSearch::accentToRegex($value).'.*/i')
@@ -502,8 +466,7 @@ class SearchController extends Controller
                             ->getQuery()
                             ->execute();
                         $ids_tab=array();
-                        foreach($ids_c as $id)
-                        {
+                        foreach($ids_c as $id){
                             $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
                         }
                         unset($ids_c);
@@ -542,8 +505,7 @@ class SearchController extends Controller
                     break;
             }
         }
-        else
-        {
+        else{
             return $this->redirect($this->generateUrl('_module_search',array(
                 'project'=>$project,
                 'collection'=>$collection,

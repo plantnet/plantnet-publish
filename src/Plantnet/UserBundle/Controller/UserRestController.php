@@ -1,15 +1,5 @@
 <?php
 
-/**
- * This file is part of the Identify package.
- *
- * (c) Julien Barbe <julien.barbe@me.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- */
-
 namespace Plantnet\UserBundle\Controller;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;                  // @ApiDoc(resource=true, description="Filter",filters={{"name"="a-filter", "dataType"="string", "pattern"="(foo|bar) ASC|DESC"}})
@@ -28,7 +18,6 @@ use FOS\RestBundle\Controller\Annotations\RequestParam;
  * Controller that provides Restful sercies over the resource Users.
  *
  * @NamePrefix("plantnet_userrest_")
- * @author Julien Barbe <julien.barbe@me.com>
  */
 class UserRestController extends Controller
 {

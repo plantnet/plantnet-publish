@@ -34,12 +34,11 @@ class TaxonomizeCommand extends ContainerAwareCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input,OutputInterface $output)
     {
         $id=$input->getArgument('id');
         $dbname=$input->getArgument('dbname');
-        if($id&&$dbname)
-        {
+        if($id&&$dbname){
             $this->taxonomize($dbname,$id);
         }
     }
@@ -93,50 +92,42 @@ class TaxonomizeCommand extends ContainerAwareCommand
             ->field('module')->references($module)
             ->getQuery()
             ->execute();
-        foreach($punits as $id)
-        {
+        foreach($punits as $id){
             $ids_punit[]=$id['_id']->{'$id'};
         }
         unset($punits);
         $batch_size=100;
         $size=0;
-        foreach($ids_punit as $id_punit)
-        {
+        foreach($ids_punit as $id_punit){
             $size++;
             $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
                 ->findOneBy(array(
                     'id'=>$id_punit
                 ));
-            if($punit)
-            {
+            if($punit){
                 $last_taxon=null;
                 $attributes=$punit->getAttributes();
                 end($taxo);
                 $last_level=key($taxo);
                 reset($taxo);
-                foreach($taxo as $level=>$tab)
-                {
+                foreach($taxo as $level=>$tab){
                     $attr_id=$tab[0];
                     $attr_lbl=$tab[1];
-                    foreach($attributes as $id_attr=>$attr)
-                    {
-                        if($id_attr==$attr_id&&!empty($attr))
-                        {
+                    foreach($attributes as $id_attr=>$attr){
+                        if($id_attr==$attr_id&&!empty($attr)){
                             $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
                                 ->findOneBy(array(
                                     'module.id'=>$module->getId(),
                                     'name'=>$attr,
                                     'level'=>$level
                                 ));
-                            if($taxon)
-                            {
+                            if($taxon){
                                 $taxon->setNbpunits($taxon->getNbpunits()+1);
                                 if($level==$last_level){
                                     $punit->setTaxon($taxon);
                                 }
                             }
-                            else
-                            {
+                            else{
                                 $taxon=new Taxon();
                                 $taxon->setName($attr);
                                 $taxon->setLabel($attr_lbl);

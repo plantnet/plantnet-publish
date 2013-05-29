@@ -1,15 +1,5 @@
 <?php
 
-/**
- * This file is part of the Identify package.
- *
- * (c) Julien Barbe <julien.barbe@cirad.fr>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- */
-
 namespace Plantnet\UserBundle\Controller;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -23,7 +13,6 @@ use JMS\SecurityExtraBundle\Annotation\Secure;
  * Controller that provides Restful services over the resource Users Roles using user_manager container.
  *
  * @NamePrefix("plantnet_userrolrest_")
- * @author Julien Barbe <julien.barbe@me.com>
  */
 class UserRoleRestController extends Controller
 {

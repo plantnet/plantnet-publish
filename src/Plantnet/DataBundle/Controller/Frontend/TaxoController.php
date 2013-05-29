@@ -34,11 +34,9 @@ class TaxoController extends Controller
         $dbs=$connection->admin->command(array(
             'listDatabases'=>1
         ));
-        foreach($dbs['databases'] as $db)
-        {
+        foreach($dbs['databases'] as $db){
             $db_name=$db['name'];
-            if(substr_count($db_name,$prefix))
-            {
+            if(substr_count($db_name,$prefix)){
                 $dbs_array[]=str_replace($prefix,'',$db_name);
             }
         }
@@ -363,8 +361,7 @@ class TaxoController extends Controller
             ->getQuery()
             ->execute();
         $ids_tab=array();
-        foreach($ids_c as $id)
-        {
+        foreach($ids_c as $id){
             $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
         }
         unset($ids_c);
@@ -475,8 +472,7 @@ class TaxoController extends Controller
             ->getQuery()
             ->execute();
         $ids_tab=array();
-        foreach($ids_c as $id)
-        {
+        foreach($ids_c as $id){
             $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
         }
         unset($ids_c);
@@ -572,8 +568,7 @@ class TaxoController extends Controller
             ->getQuery()
             ->execute();
         $ids_tab=array();
-        foreach($ids_c as $id)
-        {
+        foreach($ids_c as $id){
             $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
         }
         unset($ids_c);

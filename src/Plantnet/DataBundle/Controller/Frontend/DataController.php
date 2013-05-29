@@ -34,11 +34,9 @@ class DataController extends Controller
         $dbs=$connection->admin->command(array(
             'listDatabases'=>1
         ));
-        foreach($dbs['databases'] as $db)
-        {
+        foreach($dbs['databases'] as $db){
             $db_name=$db['name'];
-            if(substr_count($db_name,$prefix))
-            {
+            if(substr_count($db_name,$prefix)){
                 $dbs_array[]=str_replace($prefix,'',$db_name);
             }
         }
@@ -295,8 +293,7 @@ class DataController extends Controller
                 $display[]=$row->getId();
             }
         }
-        switch($module->getType())
-        {
+        switch($module->getType()){
             case 'image':
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($module)
@@ -481,8 +478,7 @@ class DataController extends Controller
                 'title2'=>1
             )
         )->sort(array('_id'=>1))->limit($max_per_page)->skip($start);
-        foreach($c_locations as $id=>$l)
-        {
+        foreach($c_locations as $id=>$l){
             $loc=array();
             $loc['type']='Feature';
             $loc['id']=$id;
@@ -505,10 +501,8 @@ class DataController extends Controller
                 'module'=>$module_parent->getName(),
                 'id'=>$l['plantunit']['$id']->{'$id'}
             ));
-            foreach($l['property'] as $key=>$val)
-            {
-                if(array_key_exists($key,$display))
-                {
+            foreach($l['property'] as $key=>$val){
+                if(array_key_exists($key,$display)){
                     $loc['properties']['loc_data']=$loc['properties']['loc_data'].$display[$key].': '.$val."\n";
                 }
             }
@@ -593,12 +587,9 @@ class DataController extends Controller
         }
         $others=$plantunit->getOthers();
         $tab_others_groups=array();
-        if(count($others))
-        {
-            foreach($others as $other)
-            {
-                if(!in_array($other->getModule()->getId(),array_keys($tab_others_groups)))
-                {
+        if(count($others)){
+            foreach($others as $other){
+                if(!in_array($other->getModule()->getId(),array_keys($tab_others_groups))){
                     $order=array();
                     $field=$other->getModule()->getProperties();
                     foreach($field as $row){
