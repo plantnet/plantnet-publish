@@ -21,13 +21,14 @@
             </td>
             <td class="span2 middle">
                 <a href="{{ path('_module_taxo_view', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.level, 'taxon': taxon.name }) }}" id="t{{ taxon.id }}">
-                    <i class="icon-list"></i>
-                </a>
+                    <i class="icon-list"></i></a>
                 {% if taxon.hasimages %}
-                    <i class="icon-camera"></i>
+                    <a href="{{ path('_module_taxo_view_gallery', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.level, 'taxon': taxon.name }) }}" id="t{{ taxon.id }}">
+                        <i class="icon-camera"></i></a>
                 {% endif %}
                 {% if taxon.haslocations %}
-                    <i class="icon-map-marker"></i>
+                    <a href="{{ path('_module_taxo_view_map', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.level, 'taxon': taxon.name }) }}" id="t{{ taxon.id }}">
+                        <i class="icon-map-marker"></i></a>
                 {% endif %}
             </td>
         </tr>
