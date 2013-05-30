@@ -165,7 +165,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                         $dm->persist($last_taxon);
                                     }
                                 }
-                                echo $taxon->getName()."\n";
                             }
                             $punit->addTaxonsref($taxon);
                             $dm->persist($punit);

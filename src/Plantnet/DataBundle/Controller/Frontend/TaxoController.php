@@ -439,21 +439,8 @@ class TaxoController extends Controller
                 $display[]=$row->getId();
             }
         }
-        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-            ->hydrate(false)
-            ->select('_id')
-            ->field('module')->references($module)
-            ->field('taxonsrefs')->references($taxon);
-        $ids_c=$plantunits
-            ->getQuery()
-            ->execute();
-        $ids_tab=array();
-        foreach($ids_c as $id){
-            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
-        }
-        unset($ids_c);
         $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-            ->field('plantunit.id')->in($ids_tab)
+            ->field('taxonsrefs')->references($taxon)
             ->sort('title1','asc')
             ->sort('title2','asc');
         $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($images));
@@ -529,21 +516,8 @@ class TaxoController extends Controller
                 $display[]=$row->getId();
             }
         }
-        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-            ->hydrate(false)
-            ->select('_id')
-            ->field('module')->references($module)
-            ->field('taxonsrefs')->references($taxon);
-        $ids_c=$plantunits
-            ->getQuery()
-            ->execute();
-        $ids_tab=array();
-        foreach($ids_c as $id){
-            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
-        }
-        unset($ids_c);
         $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
-            ->field('plantunit.id')->in($ids_tab)
+            ->field('taxonsrefs')->references($taxon)
             ->getQuery()
             ->execute();
         //count to display

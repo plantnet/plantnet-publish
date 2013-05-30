@@ -12,8 +12,7 @@ class StringSearch
 		$to=str_split(strtolower(self::NO_ACCENT_STRINGS));
 		$text=utf8_decode($text);
 		$regex=array();
-		foreach($to as $key=>$value)
-		{
+		foreach($to as $key=>$value){
 			if(isset($regex[$value])){
 				$regex[$value].=$from[$key];
 			}
@@ -21,12 +20,10 @@ class StringSearch
 				$regex[$value]=$value;
 			}
 		}
-		foreach($regex as $rg_key=>$rg)
-		{
+		foreach($regex as $rg_key=>$rg){
 			$text=preg_replace("/[$rg]/","_{$rg_key}_",$text);
 		}
-		foreach($regex as $rg_key=>$rg)
-		{
+		foreach($regex as $rg_key=>$rg){
 			$text=preg_replace("/_{$rg_key}_/","[$rg]",$text);
 		}
 		return utf8_encode($text);
