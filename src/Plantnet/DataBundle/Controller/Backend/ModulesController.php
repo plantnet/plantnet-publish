@@ -702,7 +702,7 @@ class ModulesController extends Controller
                 //     }
                 // }
                 // $db=$this->getDataBase($user);
-                // $m=new \Mongo();
+                // $m=new \MongoClient();
                 // /*
                 // * Remove images
                 // */
@@ -775,7 +775,7 @@ class ModulesController extends Controller
             $dm=$this->get('doctrine.odm.mongodb.document_manager');
             $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
             $db=$this->getDataBase($user);
-            $m=new \Mongo();
+            $m=new \MongoClient();
             //old indexes
             $old_indexes=$module->getIndexes();
             if(count($old_indexes)){

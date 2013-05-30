@@ -30,7 +30,7 @@ class TaxoController extends Controller
         //display databases without prefix
         $prefix=$this->get_prefix();
         $dbs_array=array();
-        $connection=new \Mongo();
+        $connection=new \MongoClient();
         $dbs=$connection->admin->command(array(
             'listDatabases'=>1
         ));

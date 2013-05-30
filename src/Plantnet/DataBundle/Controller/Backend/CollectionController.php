@@ -210,7 +210,7 @@ class CollectionController extends Controller
                 //     rmdir($dir);
                 // }
                 // $db=$this->getDataBase($user);
-                // $m=new \Mongo();
+                // $m=new \MongoClient();
                 // $m->$db->Collection->remove(
                 //     array('_id'=>new \MongoId($collection->getId()))
                 // );

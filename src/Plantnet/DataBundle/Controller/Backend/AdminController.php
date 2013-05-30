@@ -188,7 +188,7 @@ class AdminController extends Controller
                 break;
             case 'locality':
                 $db=$this->getDataBase($user);
-                $m=new \Mongo();
+                $m=new \MongoClient();
                 // $plantunits=array();
                 // $c_plantunits=$m->$db->Plantunit->find(
                 //     array('module.$id'=>new \MongoId($module->getId())),
@@ -219,7 +219,7 @@ class AdminController extends Controller
                         '_id'=>1,
                         'latitude'=>1,
                         'longitude'=>1,
-                        'plantunit.$id'=>1,
+                        'plantunit'=>1,
                         'title1'=>1,
                         'title2'=>1
                     )

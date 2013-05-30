@@ -30,7 +30,7 @@ class DataController extends Controller
         //display databases without prefix
         $prefix=$this->get_prefix();
         $dbs_array=array();
-        $connection=new \Mongo();
+        $connection=new \MongoClient();
         $dbs=$connection->admin->command(array(
             'listDatabases'=>1
         ));
@@ -338,7 +338,7 @@ class DataController extends Controller
                 break;
             case 'locality':
                 // $db=$this->get_prefix().$project;
-                // $m=new \Mongo();
+                // $m=new \MongoClient();
                 // $plantunits=array();
                 // $c_plantunits=$m->$db->Plantunit->find(
                 //     array('module.$id'=>new \MongoId($module_parent->getId())),
@@ -357,7 +357,7 @@ class DataController extends Controller
                 //     array(
                 //         'module.$id'=>new \MongoId($module->getId())
                 //     ),
-                //     array('_id'=>1,'latitude'=>1,'longitude'=>1,'plantunit.$id'=>1)
+                //     array('_id'=>1,'latitude'=>1,'longitude'=>1,'plantunit'=>1)
                 // );
                 // foreach($c_locations as $id=>$l)
                 // {
@@ -452,7 +452,7 @@ class DataController extends Controller
         }
         //data extract
         $db=$this->get_prefix().$project;
-        $m=new \Mongo();
+        $m=new \MongoClient();
         // $plantunits=array();
         // $c_plantunits=$m->$db->Plantunit->find(
         //     array('module.$id'=>new \MongoId($module_parent->getId())),
@@ -472,7 +472,7 @@ class DataController extends Controller
                 '_id'=>1,
                 'latitude'=>1,
                 'longitude'=>1,
-                'plantunit.$id'=>1,
+                'plantunit'=>1,
                 'property'=>1,
                 'title1'=>1,
                 'title2'=>1
