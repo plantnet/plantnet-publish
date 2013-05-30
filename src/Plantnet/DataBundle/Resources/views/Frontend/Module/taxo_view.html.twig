@@ -37,7 +37,11 @@
         {% import _self as macros %}
         {{ macros.bc_taxon(taxon,project,collection,module) }}
         <li>
-            <a href="{{ path('_module_taxo_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.level, 'taxon': taxon.name }) }}">{{ taxon.name }}</a>
+            {% if taxon.haschildren == true %}
+                <a href="{{ path('_module_taxo_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.level, 'taxon': taxon.name }) }}">{{ taxon.name }}</a>
+            {% else %}
+                <a href="{{ path('_module_taxo_view', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.level, 'taxon': taxon.name }) }}">{{ taxon.name }}</a>
+            {% endif %}
             <span class="divider">/</span>
         </li>
         <li class="active">
