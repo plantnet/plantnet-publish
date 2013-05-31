@@ -520,4 +520,62 @@ class SearchController extends Controller
             'current'=>'collection'
         ));
     }
+
+    /**
+    * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/search/{attribute}/{query}",
+     *      defaults={"attribute"="null", "query"="null"},
+     *      name="_module_search_query_path"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/{module}/search/{attribute}/{query}",
+     *      name="_module_search_query"
+     *  )
+     * @Template()
+     */
+    public function module_search_queryAction($project,$collection,$module,$attribute,$query)
+    {
+        $projects=$this->database_list();
+        if(!in_array($project,$projects)){
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneByName($collection);
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'name'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            ->hydrate(false)
+            ->distinct('attributes.'.$attribute)
+            ->select('attributes.'.$attribute)
+            ->field('module')->references($module)
+            ->field('attributes.'.$attribute)->in(array(
+                new \MongoRegex('/.*'.StringSearch::accentToRegex($query).'.*/i')
+            ))
+            ->sort('attributes.'.$attribute,'asc')
+            ->limit(10)
+            ->getQuery()
+            ->execute();
+        $results=array();
+        foreach($plantunits as $punit){
+            $results[]=$punit;
+        }
+        $response=new Response(json_encode($results));
+        $response->headers->set('Content-Type','application/json');
+        return $response;
+        exit;
+    }
 }

@@ -54,6 +54,7 @@
     {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
     <script type="text/javascript">
         $(document).ready(function(){
+            $('input[type=text]').attr('autocomplete','off');
             $('#form .str').each(function(){
                 var item_class=$(this).attr('class').replace('str ','');
                 $(this).parent('div').first().children('label').first().append('<a href="#'+item_class+'" class="btn btn-mini add-btn"><i class="icon-plus"></i></a>');
@@ -68,6 +69,16 @@
                     +'<button class="btn rm-btn" type="button"><i class="icon-minus"></i></button>'
                     +'</div>'
                     +'</div>');
+                var col_name=$(this).parent('label').first().parent('div').first().next('input').val();
+                $(this).parent('label').first().parent('div').first().children('div').last().children('div').last().children('input').first().typeahead({
+                    source:function(query,process){
+                        return $.get('{{ path('_module_search_query_path', { 'project': project, 'collection': collection.name, 'module': module.name }) }}/'+col_name+'/'+query,function(data){
+                            return process(data);
+                        });
+                    },
+                    items:10,
+                    minLength:2
+                });
             });
             $(document).on('click','.rm-btn',function(event){
                 event.preventDefault();
@@ -84,6 +95,18 @@
                         string+=$(this).val();
                     });
                     $('.string_'+item_class).val(string);
+                });
+            });
+            $('input.str').each(function(){
+                var col_name=$(this).parent('div').next('input').val();
+                $(this).typeahead({
+                    source:function(query,process){
+                        return $.get('{{ path('_module_search_query_path', { 'project': project, 'collection': collection.name, 'module': module.name }) }}/'+col_name+'/'+query,function(data){
+                            return process(data);
+                        });
+                    },
+                    items:10,
+                    minLength:2
                 });
             });
         });
