@@ -73,8 +73,7 @@ class TaxoController extends Controller
                 'module'=>$module,
                 'level'=>$form_level,
                 'taxon'=>$form_name
-                )
-            ),301);
+            )),301);
         }
         $projects=$this->database_list();
         if(!in_array($project,$projects)){

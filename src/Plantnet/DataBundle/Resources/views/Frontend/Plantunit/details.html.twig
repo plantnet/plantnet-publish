@@ -4,7 +4,7 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.css') }}" type="text/css" />
-    {% if plantunit.locations|length > 0 %}
+    {% if plantunit.haslocations == true %}
         {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
@@ -107,7 +107,7 @@
                 </div>
             {% endfor %}
         {% endif %}
-        {% if plantunit.hasimages > 0 %}
+        {% if plantunit.hasimages == true %}
             <div class="gallery">
                 <h5>{{ "line-gallery"|trans|capitalize }}</h5>
                 <ul id="list_gallery" class="thumbnails per3">
@@ -120,7 +120,7 @@
                 </ul>
             </div>
         {% endif %}
-        {% if plantunit.haslocations > 0 %}
+        {% if plantunit.haslocations == true %}
             <div>
                 <h5>{{ "line-map"|trans|capitalize }}</h5>
                 {# LEAFLET MAP #}
@@ -233,7 +233,7 @@
             });
         });
     </script>
-    {% if plantunit.locations|length > 0 %}
+    {% if plantunit.haslocations == true %}
         {% set locations = plantunit.locations %}
         {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
     {% endif %}

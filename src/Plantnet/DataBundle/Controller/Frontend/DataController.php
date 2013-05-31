@@ -337,52 +337,7 @@ class DataController extends Controller
                 ));
                 break;
             case 'locality':
-                // $db=$this->get_prefix().$project;
-                // $m=new \MongoClient();
-                // $plantunits=array();
-                // $c_plantunits=$m->$db->Plantunit->find(
-                //     array('module.$id'=>new \MongoId($module_parent->getId())),
-                //     array('_id'=>1,'title1'=>1,'title2'=>1)
-                // );
-                // foreach($c_plantunits as $id=>$p)
-                // {
-                //     $plant=array();
-                //     $plant['title1']=$p['title1'];
-                //     $plant['title2']=$p['title2'];
-                //     $plantunits[$id]=$plant;
-                // }
-                // unset($c_plantunits);
                 $locations=array();
-                // $c_locations=$m->$db->Location->find(
-                //     array(
-                //         'module.$id'=>new \MongoId($module->getId())
-                //     ),
-                //     array('_id'=>1,'latitude'=>1,'longitude'=>1,'plantunit'=>1)
-                // );
-                // foreach($c_locations as $id=>$l)
-                // {
-                //     $loc=array();
-                //     $loc['id']=$id;
-                //     $loc['latitude']=$l['latitude'];
-                //     $loc['longitude']=$l['longitude'];
-                //     $loc['title1']='';
-                //     $loc['title2']='';
-                //     if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
-                //     {
-                //         if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))
-                //         {
-                //             $loc['title1']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title1'];
-                //         }
-                //         if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title2']))
-                //         {
-                //             $loc['title2']=$plantunits[$l['plantunit']['$id']->{'$id'}]['title2'];
-                //         }
-                //     }
-                //     $locations[]=$loc;
-                // }
-                // unset($plantunits);
-                // unset($c_locations);
-                // unset($m);
                 $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
                 return $this->render('PlantnetDataBundle:Frontend\Module:map.html.twig',array(
@@ -453,16 +408,6 @@ class DataController extends Controller
         //data extract
         $db=$this->get_prefix().$project;
         $m=new \MongoClient();
-        // $plantunits=array();
-        // $c_plantunits=$m->$db->Plantunit->find(
-        //     array('module.$id'=>new \MongoId($module_parent->getId())),
-        //     array('_id'=>1)
-        // );
-        // foreach($c_plantunits as $id=>$p)
-        // {
-        //     $plantunits[$id]=$id;
-        // }
-        // unset($c_plantunits);
         $locations=array();
         $c_locations=$m->$db->Location->find(
             array(
@@ -506,18 +451,8 @@ class DataController extends Controller
                     $loc['properties']['loc_data']=$loc['properties']['loc_data'].$display[$key].': '.$val."\n";
                 }
             }
-            // if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
-            // {
-            //     $loc['properties']['punit']=$this->get('router')->generate('_details',array(
-            //         'project'=>$project,
-            //         'collection'=>$collection->getName(),
-            //         'module'=>$module_parent->getName(),
-            //         'id'=>$l['plantunit']['$id']->{'$id'}
-            //     ));
-            // }
             $locations[]=$loc;
         }
-        // unset($plantunits);
         unset($c_locations);
         $total=$m->$db->Location->find(
             array(
