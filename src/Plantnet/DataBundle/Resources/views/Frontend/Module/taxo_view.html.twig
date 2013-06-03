@@ -1,5 +1,5 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
-{% block title collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
+{% block title project|capitalize ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
 {% block stylesheets %}
     {{ parent() }}
     {% if current_display == 'locations' %}

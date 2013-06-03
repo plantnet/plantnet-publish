@@ -1,5 +1,5 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title collection.name %}
+{% block title project|capitalize ~ ' - ' ~ collection.name ~ ' - Pl@ntnet' %}
 {% block stylesheets %}
 	{{ parent() }}
 {% endblock %}

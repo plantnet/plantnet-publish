@@ -10,7 +10,7 @@
 {% endblock %}
 {% block header %}<h1>{{ plantunit.title1 }}</h1>{% endblock %}
 {% block breadcrumb %}
-     <ul class="breadcrumb">
+    <ul class="breadcrumb">
         <li>
             <a href="{{ url('_project', {'project': project}) }}">{{ project|capitalize }}</a>
             <span class="divider">/</span>
@@ -28,7 +28,7 @@
             <span class="divider">></span>
             {{ "line-details"|trans }}
         </li>
-     </ul>
+    </ul>
 {% endblock %}
 {% block side %}
     {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}

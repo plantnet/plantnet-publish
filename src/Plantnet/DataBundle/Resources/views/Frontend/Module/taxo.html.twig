@@ -1,5 +1,5 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
+{% block title project|capitalize ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
 {% block stylesheets %}
 	{{ parent() }}
 {% endblock %}

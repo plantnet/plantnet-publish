@@ -1,5 +1,5 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-search"|trans|capitalize %}
+{% block title project|capitalize ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-search"|trans|capitalize %}
 {% block stylesheets %}
 	{{ parent() }}
     {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
