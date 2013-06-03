@@ -20,7 +20,7 @@ use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Other,
     Plantnet\DataBundle\Document\Taxon;
 
-ini_set('memory_limit', '-1');
+ini_set('memory_limit','-1');
 
 class TaxonomizeCommand extends ContainerAwareCommand
 {

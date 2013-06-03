@@ -39,17 +39,21 @@
             <div>
                 <h5>{{ "line-taxonomy"|trans|capitalize }}</h5>
                 <table class="table table-hover table-condensed">
-                    {% macro pa_taxon(taxon) %}
+                    {% macro pa_taxon(taxon,project,collection,module) %}
                         {% if taxon.parent %}
-                            {{ _self.pa_taxon(taxon.parent) }}
+                            {{ _self.pa_taxon(taxon.parent,project,collection,module) }}
                         {% endif %}
                         <tr>
                             <td>{{ taxon.label }}</td>
-                            <td>{{ taxon.name }}</td>
+                            <td>
+                                <a href="{{ path('_module_taxo_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'level': taxon.level, 'taxon': taxon.name }) }}">
+                                    {{ taxon.name }}
+                                </a>
+                            </td>
                         </tr>
                     {% endmacro %}
                     {% import _self as macros %}
-                    {{ macros.pa_taxon(plantunit.taxon) }}
+                    {{ macros.pa_taxon(plantunit.taxon,project,collection,module) }}
                 </table>
             </div>
         {% endif %}
