@@ -1,3 +1,10 @@
+php_value short_open_tag Off
+php_value date.timezone Europe/Paris
+php_value memory_limit 256M
+php_value post_max_size 2000M
+php_value upload_max_filesize 2000M
+php_value max_file_uploads 20
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
@@ -8,3 +15,15 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ app.php [QSA,L]
 </IfModule>
+
+<IfModule mod_expires.c>
+	ExpiresActive on
+	# cache control 20 jours
+	<FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
+		Header set Cache-Control "max-age=1728000, public, must-revalidate"
+	</FilesMatch>
+</IfModule>
+# supprime les ETags
+FileETag none
+# active la compression gzip pour differents formats
+AddOutputFilterByType DEFLATE text/javascript application/javascript text/css application/xhtml+xml text/html text/plain application/json text/xml
