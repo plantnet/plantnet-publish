@@ -482,7 +482,7 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 $kernel=$this->get('kernel');
-                $command='php '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' > /dev/null';
+                $command=$this->get_php_path().' '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' > /dev/null';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:import_moduledata.html.twig', array(
@@ -652,7 +652,7 @@ class ModulesController extends Controller
                 $dm->flush();
                 //command
                 $kernel=$this->get('kernel');
-                $command='php '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' > /dev/null';
+                $command=$this->get_php_path().' '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' > /dev/null';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 return $this->redirect($this->generateUrl('module_edit_taxo',array('id'=>$id)));
@@ -753,7 +753,7 @@ class ModulesController extends Controller
                 //     array('_id'=>new \MongoId($module->getId()))
                 // );
                 $kernel=$this->get('kernel');
-                $command='php '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' > /dev/null';
+                $command=$this->get_php_path().' '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' > /dev/null';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
             }
@@ -833,5 +833,13 @@ class ModulesController extends Controller
             $dm->persist($module);
             $dm->flush();
         }
+    }
+
+    private function get_php_path()
+    {
+        if(isset($_SERVER['HOSTNAME'])&&$_SERVER['HOSTNAME']=='bourgeais.cirad.fr'){
+            return '/opt/php/bin/php';
+        }
+        return 'php';
     }
 }

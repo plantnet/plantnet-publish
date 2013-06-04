@@ -215,7 +215,7 @@ class CollectionController extends Controller
                 //     array('_id'=>new \MongoId($collection->getId()))
                 // );
                 $kernel=$this->get('kernel');
-                $command='php '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' > /dev/null';
+                $command=$this->get_php_path().' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' > /dev/null';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
             }
@@ -228,5 +228,13 @@ class CollectionController extends Controller
         return $this->createFormBuilder(array('id' => $id))
             ->add('id', 'hidden')
             ->getForm();
+    }
+
+    private function get_php_path()
+    {
+        if(isset($_SERVER['HOSTNAME'])&&$_SERVER['HOSTNAME']=='bourgeais.cirad.fr'){
+            return '/opt/php/bin/php';
+        }
+        return 'php';
     }
 }
