@@ -1,3 +1,5 @@
+php_flag magic_quotes_gpc off
+
 php_value short_open_tag Off
 php_value date.timezone Europe/Paris
 php_value memory_limit 256M
