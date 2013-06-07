@@ -20,6 +20,11 @@ class Module
     protected $name;
 
     /**
+     * @MongoDB\Hash
+     */
+    protected $oldnames;
+
+    /**
      * @MongoDB\String
      */
     protected $description;
@@ -213,6 +218,26 @@ class Module
         $filename=eregi_replace("[ ]+",'-',strtolower($filename));
         $filename=preg_replace('/([^.a-z0-9]+)/i','_',$filename);
         return $filename;
+    }
+
+    /**
+     * Set oldnames
+     *
+     * @param hash $oldnames
+     */
+    public function setOldnames($oldnames)
+    {
+        $this->oldnames = $oldnames;
+    }
+
+    /**
+     * Get oldnames
+     *
+     * @return hash $oldnames
+     */
+    public function getOldnames()
+    {
+        return $this->oldnames;
     }
 
     /**

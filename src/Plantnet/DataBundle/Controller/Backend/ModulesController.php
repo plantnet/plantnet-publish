@@ -547,6 +547,7 @@ class ModulesController extends Controller
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
+        $old_name=$module->getName();
         $collection=$module->getCollection();
         $original_name=$module->getName();
         $editForm=$this->createForm(new ModulesType(),$module);
@@ -580,6 +581,22 @@ class ModulesController extends Controller
             }
             if($nb_mods===0){
                 if($editForm->isValid()){
+                    $new_name=$module->getName();
+                    if($old_name!=$new_name){
+                        $olds=$module->getOldnames();
+                        if(!$olds){
+                            $olds=array();
+                        }
+                        if(!in_array($old_name,$olds)){
+                            $olds[]=$old_name;
+                        }
+                        $exists=array_search($new_name,$olds);
+                        if($exists!==false){
+                            unset($olds[$exists]);
+                        }
+                        $olds=array_values($olds);
+                        $module->setOldnames($olds);
+                    }
                     $dm=$this->get('doctrine.odm.mongodb.document_manager');
                     $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                     $dm->persist($module);

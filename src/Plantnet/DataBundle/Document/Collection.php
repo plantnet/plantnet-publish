@@ -21,6 +21,11 @@ class Collection
     protected $name;
 
     /**
+     * @MongoDB\Hash
+     */
+    protected $oldnames;
+
+    /**
      * @MongoDB\String
      */
     protected $alias;
@@ -89,6 +94,26 @@ class Collection
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set oldnames
+     *
+     * @param hash $oldnames
+     */
+    public function setOldnames($oldnames)
+    {
+        $this->oldnames = $oldnames;
+    }
+
+    /**
+     * Get oldnames
+     *
+     * @return hash $oldnames
+     */
+    public function getOldnames()
+    {
+        return $this->oldnames;
     }
 
     /**
