@@ -139,29 +139,12 @@ class CollectionController extends Controller
         if (!$collection) {
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $old_name=$collection->getName();
         $editForm = $this->createForm(new CollectionType(), $collection);
         $deleteForm = $this->createDeleteForm($id);
         $request = $this->getRequest();
         if ('POST' === $request->getMethod()) {
             $editForm->bindRequest($request);
             if ($editForm->isValid()) {
-                $new_name=$collection->getName();
-                if($old_name!=$new_name){
-                    $olds=$collection->getOldnames();
-                    if(!$olds){
-                        $olds=array();
-                    }
-                    if(!in_array($old_name,$olds)){
-                        $olds[]=$old_name;
-                    }
-                    $exists=array_search($new_name,$olds);
-                    if($exists!==false){
-                        unset($olds[$exists]);
-                    }
-                    $olds=array_values($olds);
-                    $collection->setOldnames($olds);
-                }
                 $dm->persist($collection);
                 $dm->flush();
                 return $this->redirect($this->generateUrl('collection_edit', array('id' => $id)));

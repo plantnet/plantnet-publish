@@ -21,11 +21,6 @@ class Collection
     protected $name;
 
     /**
-     * @MongoDB\Hash
-     */
-    protected $oldnames;
-
-    /**
      * @MongoDB\String
      */
     protected $alias;
@@ -97,33 +92,13 @@ class Collection
     }
 
     /**
-     * Set oldnames
-     *
-     * @param hash $oldnames
-     */
-    public function setOldnames($oldnames)
-    {
-        $this->oldnames = $oldnames;
-    }
-
-    /**
-     * Get oldnames
-     *
-     * @return hash $oldnames
-     */
-    public function getOldnames()
-    {
-        return $this->oldnames;
-    }
-
-    /**
      * Set alias
      *
      * @param string $alias
      */
     public function setAlias($alias)
     {
-        $tmp=mb_strtolower($alias,'UTF-8');
+        $tmp=trim(mb_strtolower($alias,'UTF-8'));
         $tmp=eregi_replace("[ ]+",'-',strtolower($tmp));
         $tmp=preg_replace('/([^.a-z0-9]+)/i','_',$tmp);
         $this->alias = $tmp;
