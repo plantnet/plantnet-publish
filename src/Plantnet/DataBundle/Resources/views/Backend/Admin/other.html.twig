@@ -6,13 +6,13 @@
 {% block content %}
 	<ul class="breadcrumb">
         <li>
-            <a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}">
+            <a href="{{ path('admin_collection_view', { 'collection': collection.url }) }}">
             	{{ collection.name }}
             </a>
             <span class="divider">/</span>
         </li>
         <li>
-            <a href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module_parent.name }) }}">
+            <a href="{{ path('admin_module_view', { 'collection': collection.url, 'module': module_parent.url }) }}">
             	{{ module_parent.name }}
             </a>
             <span class="divider">/</span>

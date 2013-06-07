@@ -68,9 +68,9 @@ class AdminController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'name'=>$collection
+                'url'=>$collection
             ));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
@@ -89,13 +89,15 @@ class AdminController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
-            ->findOneByName($collection);
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneBy(array(
+                'url'=>$collection
+            ));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
-            ->findOneBy(array('name'=>$module,'collection.id'=>$collection->getId()));
+            ->findOneBy(array('url'=>$module,'collection.id'=>$collection->getId()));
         if(!$module||$module->getType()!='text'){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
@@ -140,14 +142,14 @@ class AdminController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'name'=>$collection
+                'url'=>$collection
             ));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$module,
+                'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
         if(!$module){
@@ -155,7 +157,7 @@ class AdminController extends Controller
         }
         $mod=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$submodule,
+                'url'=>$submodule,
                 'parent.id'=>$module->getId(),
                 'collection.id'=>$collection->getId()
             ));

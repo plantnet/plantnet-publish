@@ -50,14 +50,14 @@ class ExportController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
-                'name'=>$collection
+                'url'=>$collection
             ));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$module,
+                'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
         if(!$module){

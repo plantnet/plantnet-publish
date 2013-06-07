@@ -6,7 +6,7 @@
         </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
             <li>
-                <a href="{{ path('admin_collection_view', { 'collection': collection.name }) }}" class="ajax">
+                <a href="{{ path('admin_collection_view', { 'collection': collection.url }) }}" class="ajax">
                     <i class="icon-eye-open"></i>
                     View
                 </a>
@@ -30,7 +30,7 @@
             </a>
             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                 <li>
-                    <a href="{{ path('admin_module_view', { 'collection': collection.name, 'module': module.name }) }}" class="ajax">
+                    <a href="{{ path('admin_module_view', { 'collection': collection.url, 'module': module.url }) }}" class="ajax">
                         <i class="icon-eye-open"></i>
                         View
                     </a>
@@ -51,7 +51,7 @@
                         </li>
                     {% endif %}
                     <li>
-                        <a href="{{ path('admin_module_export_idao', { 'collection': collection.name, 'module': module.name }) }}">
+                        <a href="{{ path('admin_module_export_idao', { 'collection': collection.url, 'module': module.url }) }}">
                             <i class="icon-download"></i>
                             Export <small class="muted">IDAO</small>
                         </a>
@@ -75,7 +75,7 @@
                     </a>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                         <li>
-                            <a href="{{ path('admin_submodule_view', { 'collection': collection.name, 'module': module.name, 'submodule': child.name }) }}" class="ajax">
+                            <a href="{{ path('admin_submodule_view', { 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}" class="ajax">
                                 <i class="icon-eye-open"></i>
                                 View
                             </a>
