@@ -119,7 +119,7 @@ class DataController extends Controller
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
-            ->findOneByName($collection);
+            ->findOneBy(array('url'=>$collection));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
@@ -171,13 +171,13 @@ class DataController extends Controller
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
-            ->findOneByName($collection);
+            ->findOneBy(array('url'=>$collection));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$module,
+                'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
         if(!$module||$module->getType()!='text'){
@@ -265,13 +265,13 @@ class DataController extends Controller
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
-            ->findOneByName($collection);
+            ->findOneBy(array('url'=>$collection));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module_parent=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$module,
+                'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
         if(!$module_parent){
@@ -279,7 +279,7 @@ class DataController extends Controller
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$submodule,
+                'url'=>$submodule,
                 'parent.id'=>$module_parent->getId(),
                 'collection.id'=>$collection->getId()
             ));
@@ -377,13 +377,13 @@ class DataController extends Controller
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
-            ->findOneByName($collection);
+            ->findOneBy(array('url'=>$collection));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module_parent=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$module,
+                'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
         if(!$module_parent){
@@ -391,7 +391,7 @@ class DataController extends Controller
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$submodule,
+                'url'=>$submodule,
                 'parent.id'=>$module_parent->getId(),
                 'collection.id'=>$collection->getId()
             ));
@@ -442,8 +442,8 @@ class DataController extends Controller
             );
             $loc['properties']['punit']=$this->get('router')->generate('_details',array(
                 'project'=>$project,
-                'collection'=>$collection->getName(),
-                'module'=>$module_parent->getName(),
+                'collection'=>$collection->getUrl(),
+                'module'=>$module_parent->getUrl(),
                 'id'=>$l['plantunit']['$id']->{'$id'}
             ));
             foreach($l['property'] as $key=>$val){
@@ -493,13 +493,13 @@ class DataController extends Controller
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
-            ->findOneByName($collection);
+            ->findOneBy(array('url'=>$collection));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$module,
+                'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
         if(!$module){
@@ -587,12 +587,12 @@ class DataController extends Controller
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
-            ->findOneByName($collection);
+            ->findOneBy(array('url'=>$collection));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
-            ->findOneBy(array('name'=>$module,'collection.id'=>$collection->getId()));
+            ->findOneBy(array('url'=>$module,'collection.id'=>$collection->getId()));
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }

@@ -13,12 +13,12 @@
             <span class="divider">/</span>
         </li>
 		<li>
-			<a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
+			<a href="{{ path('_collection', { 'project': project, 'collection': collection.url }) }}">{{ collection.name }}</a>
 			<span class="divider">/</span>
 		</li>
 		{% if module_parent is defined %}
 			<li>
-				<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module_parent.name }) }}">{{ module_parent.name }}</a>
+				<a href="{{ path('_module', { 'project': project, 'collection': collection.url, 'module': module_parent.url }) }}">{{ module_parent.name }}</a>
 				<span class="divider">/</span>
 			</li>
 		{% endif %}

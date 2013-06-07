@@ -1,6 +1,6 @@
 <ul class="nav nav-tabs nav-stacked">
 	<li>
-		<a href="{{ path('_module', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
+		<a href="{{ path('_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
 			<i class="icon-list"></i>
 			{{ module.name }}
 			<small class="muted">{{ module.nbrows }} {{ "line-entities"|trans }}</small>
@@ -9,7 +9,7 @@
 	{% if module.children|length > 0 %}
 		{% for child in module.children if (child.type == 'image' and child.deleting != true) %}
 			<li class="child">
-				<a href="{{ path('_submodule', { 'project': project, 'collection': collection.name, 'module': module.name, 'submodule': child.name }) }}">
+				<a href="{{ path('_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
 					<i class="icon-camera"></i>
 					{{ child.name }}
 					<small class="muted">{{ child.nbrows }} {{ "line-entities"|trans }}</small>
@@ -18,7 +18,7 @@
 		{% endfor %}
 		{% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
 			<li class="child">
-				<a href="{{ path('_submodule', { 'project': project, 'collection': collection.name, 'module': module.name, 'submodule': child.name }) }}">
+				<a href="{{ path('_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
 					<i class="icon-map-marker"></i>
 					{{ child.name }}
 					<small class="muted">{{ child.nbrows }} {{ "line-entities"|trans }}</small>
@@ -28,14 +28,14 @@
 	{% endif %}
 	{% if module.taxonomy == true %}
 		<li class="child">
-			<a href="{{ path('_module_taxo', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
+			<a href="{{ path('_module_taxo', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
 				<i class="icon-tasks"></i>
 				{{ "line-taxonomy"|trans|capitalize }}
 			</a>
 		</li>
 	{% endif %}
 	<li>
-		<a href="{{ path('_module_search', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
+		<a href="{{ path('_module_search', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
 			<i class="icon-search zz"></i>
 			{{ "line-search-in"|trans|capitalize }} {{ module.name }}
 		</a>

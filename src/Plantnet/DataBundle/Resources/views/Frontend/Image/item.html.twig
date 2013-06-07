@@ -23,7 +23,7 @@
 			</p>
 		{% endif %}
 		<div class="access">
-			<a href="{{ path('_details', { 'project': project, 'collection': collection.name, 'module': image.plantunit.module.name, 'id': image.plantunit.id }) }}">
+			<a href="{{ path('_details', { 'project': project, 'collection': collection.url, 'module': image.plantunit.module.url, 'id': image.plantunit.id }) }}">
 				<i class="icon-list pop-tooltip" data-toggle="tooltip" title="{{ "line-details"|trans|capitalize }}"></i>
 			</a>
 			<a class="html-box" href="#data_{{ image.id }}">

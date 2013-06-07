@@ -14,15 +14,15 @@
             <span class="divider">/</span>
         </li>
         <li>
-            <a href="{{ path('_collection', { 'project': project, 'collection': collection.name }) }}">{{ collection.name }}</a>
+            <a href="{{ path('_collection', { 'project': project, 'collection': collection.url }) }}">{{ collection.name }}</a>
             <span class="divider">/</span>
         </li>
         <li>
-            <a href="{{ path('_collection', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">{{ module.name }}</a>
+            <a href="{{ path('_collection', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">{{ module.name }}</a>
             <span class="divider">/</span>
         </li>
         <li>
-            <a href="{{ path('_module_search', { 'project': project, 'collection': collection.name, 'module': module.name }) }}">
+            <a href="{{ path('_module_search', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
                 {{ "tab-search"|trans|capitalize }}
             </a>
             <span class="divider">/</span>
@@ -45,14 +45,14 @@
     <div class="results">
         <ul class="nav nav-tabs">
             <li{% if current_display == 'grid' %} class="active"{% endif %}>
-                <a href="{{ path('_module_result', {'project': project, 'collection': collection.name, 'module': module.name}) }}?{{ url }}">
+                <a href="{{ path('_module_result', {'project': project, 'collection': collection.url, 'module': module.url}) }}?{{ url }}">
                     <i class="icon-list"></i>
                     {{ "line-grid"|trans|capitalize }}
                 </a>
             </li>
             <li{% if current_display == 'images' %} class="active"{% endif %}>
                 {% if nb_images > 0 %}
-                    <a href="{{ path('_module_result_mode', {'project': project, 'collection': collection.name, 'module': module.name, 'mode': 'images'}) }}?{{ url }}">
+                    <a href="{{ path('_module_result_mode', {'project': project, 'collection': collection.url, 'module': module.url, 'mode': 'images'}) }}?{{ url }}">
                         <i class="icon-camera"></i>
                         {{ "line-images"|trans|capitalize }}
                     </a>
@@ -65,7 +65,7 @@
             </li>
             <li{% if current_display == 'locations' %} class="active"{% endif %}>
                 {% if nb_locations > 0 %}
-                    <a href="{{ path('_module_result_mode', {'project': project, 'collection': collection.name, 'module': module.name, 'mode': 'locations'}) }}?{{ url }}">
+                    <a href="{{ path('_module_result_mode', {'project': project, 'collection': collection.url, 'module': module.url, 'mode': 'locations'}) }}?{{ url }}">
                         <i class="icon-map-marker"></i>
                         {{ "line-locations"|trans|capitalize }}
                     </a>
@@ -109,9 +109,9 @@
                                         <th>
                                             {{ property.name }}
                                             <span class="nowrap">
-                                                <a href="{{ path('_module_result', {'project': project, 'collection': collection.name, 'module': module.name}) }}?{{ url }}&sort={{ property.id }}&order=asc">
+                                                <a href="{{ path('_module_result', {'project': project, 'collection': collection.url, 'module': module.url}) }}?{{ url }}&sort={{ property.id }}&order=asc">
                                                     <i class="icon-circle-arrow-up"></i></a></a>
-                                                <a href="{{ path('_module_result', {'project': project, 'collection': collection.name, 'module': module.name}) }}?{{ url }}&sort={{ property.id }}&order=desc">
+                                                <a href="{{ path('_module_result', {'project': project, 'collection': collection.url, 'module': module.url}) }}?{{ url }}&sort={{ property.id }}&order=desc">
                                                     <i class="icon-circle-arrow-down"></i></a></a>
                                             </span>
                                         </th>
@@ -122,14 +122,14 @@
                                 {% for plantunit in paginator %}
                                     <tr>
                                         <td>
-                                            <a href="{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}">
+                                            <a href="{{ path('_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
                                                 {% if plantunit.hasimages > 0 %}
                                                     <i class="icon-camera"></i>
                                                 {% endif %}
                                             </a>
                                         </td>
                                         <td>
-                                            <a href="{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}">
+                                            <a href="{{ path('_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
                                                 {% if plantunit.haslocations > 0 %}
                                                     <i class="icon-map-marker"></i>
                                                 {% endif %}
@@ -137,7 +137,7 @@
                                         </td>
                                         {% for field in display %}
                                             <td>
-                                                <a href="{{ path('_details', { 'project': project, 'collection': collection.name, 'module': module.name, 'id': plantunit.id }) }}">
+                                                <a href="{{ path('_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
                                                     {{ plantunit.attributes[field] }}
                                                 </a>
                                             </td>

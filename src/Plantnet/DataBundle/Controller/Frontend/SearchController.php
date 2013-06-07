@@ -111,13 +111,13 @@ class SearchController extends Controller
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
-            ->findOneByName($collection);
+            ->findOneBy(array('url'=>$collection));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$module,
+                'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
         if(!$module){
@@ -173,13 +173,13 @@ class SearchController extends Controller
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection = $dm->getRepository('PlantnetDataBundle:Collection')
-            ->findOneByName($collection);
+            ->findOneBy(array('url'=>$collection));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$module,
+                'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
         if(!$module){
@@ -542,13 +542,13 @@ class SearchController extends Controller
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
-            ->findOneByName($collection);
+            ->findOneBy(array('url'=>$collection));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array(
-                'name'=>$module,
+                'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
         if(!$module){
