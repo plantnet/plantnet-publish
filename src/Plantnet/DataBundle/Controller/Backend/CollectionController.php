@@ -89,13 +89,13 @@ class CollectionController extends Controller
                     ->execute()
                     ->count();
                 if($nb_alias==0){
-                    if ($form->isValid()) {
+                    if($form->isValid()){
                         $document->setDeleting(false);
                         $dm->persist($document);
                         $dm->flush();
-                        return $this->redirect($this->generateUrl('module_new', array(
-                            'id' => $document->getId(),
-                            'type' => 'module'
+                        return $this->redirect($this->generateUrl('module_new',array(
+                            'id'=>$document->getId(),
+                            'type'=>'module'
                         )));
                     }
                 }
@@ -175,7 +175,6 @@ class CollectionController extends Controller
             else{
                 $form->get('url')->addError(new FormError('Illegal characters (allowed \'a-z\', \'0-9\', \'-\', \'_\').'));
             }
-            
         }
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_edit.html.twig',array(
             'entity'=>$collection,

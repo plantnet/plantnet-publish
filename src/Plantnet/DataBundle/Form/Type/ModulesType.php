@@ -12,6 +12,7 @@ class ModulesType extends AbstractType
         $module=$options['data'];
         $builder
             ->add('name')
+            ->add('url')
         ;
         if($module->getType()=='text')
         {

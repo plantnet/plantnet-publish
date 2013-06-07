@@ -15,6 +15,11 @@
             {{ form_errors(edit_form.name) }}
             {{ form_widget(edit_form.name) }}
         </div >
+        <div class="field-form">
+            {{ form_label(edit_form.url) }}
+            {{ form_errors(edit_form.url) }}
+            {{ form_widget(edit_form.url) }}
+        </div >
         {% if entity.type == 'text' %}
             <div class="field-form">
                 {{ form_label(edit_form.taxonomy, 'Enable taxonomic browser', {'label_attr': {'class': 'inline'}}) }}

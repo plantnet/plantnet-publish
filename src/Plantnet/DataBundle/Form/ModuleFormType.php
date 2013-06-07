@@ -19,6 +19,7 @@ class ModuleFormType extends AbstractType
         {
             $builder
                 ->add('name')
+                ->add('url')
                 ->add('type', 'choice',array(
                     'choices' => array(
                         'image' => 'Image',
@@ -39,6 +40,7 @@ class ModuleFormType extends AbstractType
         {
             $builder
                 ->add('name')
+                ->add('url')
                 ->add('taxonomy', 'checkbox', array(
                     'required'=>false
                 ))

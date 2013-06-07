@@ -326,7 +326,7 @@ class ImportationCommand extends ContainerAwareCommand
 
     protected function data_encode($data)
     {
-        $data_encoding=mb_detect_encoding($data) ;
+        $data_encoding=mb_detect_encoding($data);
         if($data_encoding=="UTF-8"&&mb_check_encoding($data,"UTF-8")){
             $format=$data;
         }
