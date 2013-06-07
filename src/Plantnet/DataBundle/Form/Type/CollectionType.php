@@ -11,6 +11,7 @@ class CollectionType extends AbstractType
     {
         $builder
             ->add('name')
+            ->add('url')
             ->add('description', 'textarea', array('required'=>false))
         ;
     }

@@ -7,6 +7,8 @@ use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\CollectionRepository")
  * @MongoDBUnique(fields="name")
+ * @MongoDBUnique(fields="alias")
+ * @MongoDBUnique(fields="url")
  */
 class Collection
 {
@@ -24,6 +26,11 @@ class Collection
      * @MongoDB\String
      */
     protected $alias;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $url;
 
     /**
      * @MongoDB\String
@@ -101,7 +108,7 @@ class Collection
         $tmp=trim(mb_strtolower($alias,'UTF-8'));
         $tmp=eregi_replace("[ ]+",'-',strtolower($tmp));
         $tmp=preg_replace('/([^.a-z0-9]+)/i','_',$tmp);
-        $this->alias = $tmp;
+        $this->alias=$tmp;
     }
 
     /**
@@ -112,6 +119,26 @@ class Collection
     public function getAlias()
     {
         return $this->alias;
+    }
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string $url
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 
     /**

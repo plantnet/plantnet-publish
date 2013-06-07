@@ -28,4 +28,12 @@ class StringSearch
 		}
 		return utf8_encode($text);
 	}
+
+	static public function isGoodForUrl($text)
+	{
+		if($text==urlencode($text)){
+			return true;
+		}
+		return false;
+	}
 }

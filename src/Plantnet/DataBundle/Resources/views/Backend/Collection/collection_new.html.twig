@@ -16,6 +16,11 @@
 			{{ form_widget(form.name) }}
 		</div>
 		<div class="field-form">
+			{{ form_label(form.url) }}
+			{{ form_errors(form.url) }}
+			{{ form_widget(form.url) }}
+		</div>
+		<div class="field-form">
 			{{ form_label(form.description) }}
 			{{ form_errors(form.description) }}
 			{{ form_widget(form.description, { 'attr': {'class': 'textarea'} }) }}

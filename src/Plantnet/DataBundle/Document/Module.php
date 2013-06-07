@@ -22,6 +22,11 @@ class Module
     /**
      * @MongoDB\String
      */
+    protected $url;
+
+    /**
+     * @MongoDB\String
+     */
     protected $description;
 
     /**
@@ -213,6 +218,26 @@ class Module
         $filename=eregi_replace("[ ]+",'-',strtolower($filename));
         $filename=preg_replace('/([^.a-z0-9]+)/i','_',$filename);
         return $filename;
+    }
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string $url
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 
     /**

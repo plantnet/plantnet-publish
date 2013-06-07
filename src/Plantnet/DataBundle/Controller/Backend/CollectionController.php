@@ -11,6 +11,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Plantnet\DataBundle\Document\Collection,
     Plantnet\DataBundle\Form\Type\CollectionType;
 
+use Symfony\Component\Form\FormError;
+
+use Plantnet\DataBundle\Utils\StringSearch;
+
 /**
  * Collection controller.
  *
@@ -34,11 +38,11 @@ class CollectionController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $collections = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collections=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_list.html.twig',array(
-            'collections' => $collections,
-            'current' => 'administration'
+            'collections'=>$collections,
+            'current'=>'administration'
         ));
     }
 
@@ -50,11 +54,11 @@ class CollectionController extends Controller
      */
     public function collection_newAction()
     {
-        $document = new Collection();
-        $form = $this->createForm(new CollectionType(), $document);
+        $document=new Collection();
+        $form=$this->createForm(new CollectionType(),$document);
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_new.html.twig',array(
-            'entity' => $document,
-            'form' => $form->createView()
+            'entity'=>$document,
+            'form'=>$form->createView()
         ));
     }
 
@@ -70,26 +74,42 @@ class CollectionController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $document = new Collection();
-        $request = $this->getRequest();
-        $form = $this->createForm(new CollectionType(), $document);
-        if ('POST' === $request->getMethod()) {
+        $document=new Collection();
+        $request=$this->getRequest();
+        $form=$this->createForm(new CollectionType(),$document);
+        if('POST'===$request->getMethod()){
             $form->bindRequest($request);
-            if ($form->isValid()) {
-                // $document->setUser($user);
-                $document->setAlias($user->getUsername().'_'.$document->getName());
-                $document->setDeleting(false);
-                $dm->persist($document);
-                $dm->flush();
-                return $this->redirect($this->generateUrl('module_new', array(
-                    'id' => $document->getId(),
-                    'type' => 'module'
-                )));
+            $url=$document->getUrl();
+            if(StringSearch::isGoodForUrl($url)){
+                $document->setAlias($user->getUsername().'_'.$url);
+                $nb_alias=$dm->createQueryBuilder('PlantnetDataBundle:Collection')
+                    ->field('alias')->equals($document->getAlias())
+                    ->hydrate(true)
+                    ->getQuery()
+                    ->execute()
+                    ->count();
+                if($nb_alias==0){
+                    if ($form->isValid()) {
+                        $document->setDeleting(false);
+                        $dm->persist($document);
+                        $dm->flush();
+                        return $this->redirect($this->generateUrl('module_new', array(
+                            'id' => $document->getId(),
+                            'type' => 'module'
+                        )));
+                    }
+                }
+                else{
+                    $form->get('url')->addError(new FormError('This value is already used by system (URL or file path).'));
+                }
+            }
+            else{
+                $form->get('url')->addError(new FormError('Illegal characters (allowed \'a-z\', \'0-9\', \'-\', \'_\').'));
             }
         }
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_new.html.twig',array(
-            'entity' => $document,
-            'form' => $form->createView()
+            'entity'=>$document,
+            'form'=>$form->createView()
         ));
     }
 
@@ -108,15 +128,15 @@ class CollectionController extends Controller
             ->findOneBy(array(
                 'id'=>$id
             ));
-        if (!$collection) {
+        if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $editForm = $this->createForm(new CollectionType(), $collection);
-        $deleteForm = $this->createDeleteForm($id);
+        $editForm=$this->createForm(new CollectionType(),$collection);
+        $deleteForm=$this->createDeleteForm($id);
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_edit.html.twig',array(
-            'entity' => $collection,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            'entity'=>$collection,
+            'edit_form'=>$editForm->createView(),
+            'delete_form'=>$deleteForm->createView(),
         ));
     }
 
@@ -132,28 +152,35 @@ class CollectionController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
                 'id'=>$id
             ));
-        if (!$collection) {
+        if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        $editForm = $this->createForm(new CollectionType(), $collection);
-        $deleteForm = $this->createDeleteForm($id);
-        $request = $this->getRequest();
-        if ('POST' === $request->getMethod()) {
+        $editForm=$this->createForm(new CollectionType(),$collection);
+        $deleteForm=$this->createDeleteForm($id);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
             $editForm->bindRequest($request);
-            if ($editForm->isValid()) {
-                $dm->persist($collection);
-                $dm->flush();
-                return $this->redirect($this->generateUrl('collection_edit', array('id' => $id)));
+            $url=$collection->getUrl();
+            if(StringSearch::isGoodForUrl($url)){
+                if($editForm->isValid()){
+                    $dm->persist($collection);
+                    $dm->flush();
+                    return $this->redirect($this->generateUrl('collection_edit',array('id'=>$id)));
+                }
             }
+            else{
+                $form->get('url')->addError(new FormError('Illegal characters (allowed \'a-z\', \'0-9\', \'-\', \'_\').'));
+            }
+            
         }
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_edit.html.twig',array(
-            'entity' => $collection,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+            'entity'=>$collection,
+            'edit_form'=>$editForm->createView(),
+            'delete_form'=>$deleteForm->createView(),
         ));
     }
 
