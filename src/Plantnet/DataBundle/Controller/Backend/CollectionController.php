@@ -215,7 +215,7 @@ class CollectionController extends Controller
                 //     array('_id'=>new \MongoId($collection->getId()))
                 // );
                 $kernel=$this->get('kernel');
-                $command=$this->get_php_path().' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' > /dev/null';
+                $command=$this->get_php_path().' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
             }
