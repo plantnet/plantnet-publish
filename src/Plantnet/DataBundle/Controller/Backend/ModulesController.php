@@ -245,6 +245,7 @@ class ModulesController extends Controller
                             $module->setDeleting(false);
                             $dm->persist($module);
                             $dm->flush();
+                            $this->update_indexes($module);
                             return $this->redirect($this->generateUrl('fields_type',array('id'=>$collection->getId(),'idmodule'=>$module->getId())));
                         }
                     }
