@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints\Type as TypeConstraint;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
 
-use Plantnet\DataBundle\Utils\StringSearch;
+use Plantnet\DataBundle\Utils\StringHelp;
 
 
 /**
@@ -232,7 +232,7 @@ class TaxoController extends Controller
             ->select('name','level','label')
             ->field('module')->references($module)
             ->field('name')->in(array(
-                new \MongoRegex('/.*'.StringSearch::accentToRegex($query).'.*/i')
+                new \MongoRegex('/.*'.StringHelp::accentToRegex($query).'.*/i')
             ))
             ->sort('name','asc')
             ->limit(10)

@@ -46,7 +46,7 @@ class Taxon
      *      cascade={"remove"}
      *  )
      */
-    private $children;
+    private $children = array();
 
     /**
      * @MongoDB\ReferenceOne(

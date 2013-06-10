@@ -105,10 +105,7 @@ class Collection
      */
     public function setAlias($alias)
     {
-        $tmp=trim(mb_strtolower($alias,'UTF-8'));
-        $tmp=eregi_replace("[ ]+",'-',strtolower($tmp));
-        $tmp=preg_replace('/([^.a-z0-9]+)/i','_',$tmp);
-        $this->alias=$tmp;
+        $this->alias = $alias;
     }
 
     /**

@@ -13,7 +13,7 @@ use Plantnet\DataBundle\Document\Collection,
 
 use Symfony\Component\Form\FormError;
 
-use Plantnet\DataBundle\Utils\StringSearch;
+use Plantnet\DataBundle\Utils\StringHelp;
 
 /**
  * Collection controller.
@@ -80,8 +80,8 @@ class CollectionController extends Controller
         if('POST'===$request->getMethod()){
             $form->bindRequest($request);
             $url=$document->getUrl();
-            if(StringSearch::isGoodForUrl($url)){
-                $document->setAlias($user->getUsername().'_'.$url);
+            if(StringHelp::isGoodForUrl($url)){
+                $document->setAlias(StringHelp::cleanToPath($user->getUsername().'_'.$url));
                 $nb_alias=$dm->createQueryBuilder('PlantnetDataBundle:Collection')
                     ->field('alias')->equals($document->getAlias())
                     ->hydrate(true)
@@ -124,7 +124,7 @@ class CollectionController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
                 'id'=>$id
             ));
@@ -165,7 +165,7 @@ class CollectionController extends Controller
         if('POST'===$request->getMethod()){
             $editForm->bindRequest($request);
             $url=$collection->getUrl();
-            if(StringSearch::isGoodForUrl($url)){
+            if(StringHelp::isGoodForUrl($url)){
                 if($editForm->isValid()){
                     $dm->persist($collection);
                     $dm->flush();
@@ -183,6 +183,13 @@ class CollectionController extends Controller
         ));
     }
 
+    private function createDeleteForm($id)
+    {
+        return $this->createFormBuilder(array('id'=>$id))
+            ->add('id','hidden')
+            ->getForm();
+    }
+
     /**
      * Deletes a Collection entity.
      *
@@ -191,57 +198,14 @@ class CollectionController extends Controller
      */
     public function collection_deleteAction($id)
     {
-        $form = $this->createDeleteForm($id);
-        $request = $this->getRequest();
-        if ('POST' === $request->getMethod()) {
+        $form=$this->createDeleteForm($id);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
             $form->bindRequest($request);
-            if ($form->isValid()) {
+            if($form->isValid()){
                 $user=$this->container->get('security.context')->getToken()->getUser();
-                // $dm=$this->get('doctrine.odm.mongodb.document_manager');
-                // $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-                // $collection = $dm->getRepository('PlantnetDataBundle:Collection')
-                //     ->findOneBy(array(
-                //         'id'=>$id
-                //     ));
-                // if(!$collection){
-                //     throw $this->createNotFoundException('Unable to find Collection entity.');
-                // }
-                // /*
-                // * Remove Modules
-                // */
-                // $modules=$collection->getModules();
-                // if(count($modules))
-                // {
-                //     foreach($modules as $module)
-                //     {
-                //         $this->forward('PlantnetDataBundle:Backend\Modules:module_delete',array(
-                //             'id'=>$module->getId()
-                //         ));
-                //     }
-                // }
-                // /*
-                // * Remove csv directory (and files)
-                // */
-                // $dir=__DIR__.'/../../Resources/uploads/'.$collection->getAlias();
-                // if(file_exists($dir)&&is_dir($dir))
-                // {
-                //     $files=scandir($dir);
-                //     foreach($files as $file)
-                //     {
-                //         if($file!='.'&&$file!='..')
-                //         {
-                //             unlink($dir.'/'.$file);
-                //         }
-                //     }
-                //     rmdir($dir);
-                // }
-                // $db=$this->getDataBase($user);
-                // $m=new \MongoClient();
-                // $m->$db->Collection->remove(
-                //     array('_id'=>new \MongoId($collection->getId()))
-                // );
                 $kernel=$this->get('kernel');
-                $command=$this->get_php_path().' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
             }
@@ -249,21 +213,14 @@ class CollectionController extends Controller
         return $this->redirect($this->generateUrl('admin_index'));
     }
 
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder(array('id' => $id))
-            ->add('id', 'hidden')
-            ->getForm();
-    }
-
-    private function get_php_path()
-    {
-        if(isset($_SERVER['HOSTNAME'])&&$_SERVER['HOSTNAME']=='bourgeais.cirad.fr'){
-            return '/opt/php/bin/php';
-        }
-        if(isset($_SERVER['HTTP_HOST'])&&substr_count($_SERVER['HTTP_HOST'],'publish.plantnet-project.org')){
-            return '/opt/php/bin/php';
-        }
-        return 'php';
-    }
+    // private function get_php_path()
+    // {
+    //     if(isset($_SERVER['HOSTNAME'])&&$_SERVER['HOSTNAME']=='bourgeais.cirad.fr'){
+    //         return '/opt/php/bin/php';
+    //     }
+    //     if(isset($_SERVER['HTTP_HOST'])&&substr_count($_SERVER['HTTP_HOST'],'publish.plantnet-project.org')){
+    //         return '/opt/php/bin/php';
+    //     }
+    //     return 'php';
+    // }
 }

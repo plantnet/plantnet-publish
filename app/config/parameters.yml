@@ -15,3 +15,5 @@ parameters:
     secret:            ThisTokenIsNotSoSecretChangeIt
 
     mdb_base:   bota
+
+    php_bin:    php

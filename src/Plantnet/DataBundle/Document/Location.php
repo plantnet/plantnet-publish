@@ -73,7 +73,7 @@ class Location
     /**
      * @MongoDB\ReferenceMany(targetDocument="Taxon")
      */
-    private $taxonsrefs;
+    private $taxonsrefs = array();
 
     public function __construct()
     {

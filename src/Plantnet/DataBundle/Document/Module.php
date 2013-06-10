@@ -22,6 +22,11 @@ class Module
     /**
      * @MongoDB\String
      */
+    protected $alias;
+
+    /**
+     * @MongoDB\String
+     */
     protected $url;
 
     /**
@@ -84,7 +89,7 @@ class Module
      *      cascade={"remove"}
      *  )
      */
-    private $children;
+    private $children = array();
 
     /**
      * @MongoDB\Boolean
@@ -208,16 +213,23 @@ class Module
     }
 
     /**
-     * Get name
+     * Set alias
      *
-     * @return string $name
+     * @param string $alias
      */
-    public function getName_fname()
+    public function setAlias($alias)
     {
-        $filename=trim(mb_strtolower($this->name,'UTF-8'));
-        $filename=eregi_replace("[ ]+",'-',strtolower($filename));
-        $filename=preg_replace('/([^.a-z0-9]+)/i','_',$filename);
-        return $filename;
+        $this->alias = $alias;
+    }
+
+    /**
+     * Get alias
+     *
+     * @return string $alias
+     */
+    public function getAlias()
+    {
+        return $this->alias;
     }
 
     /**

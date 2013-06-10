@@ -2,10 +2,11 @@
 
 namespace Plantnet\DataBundle\Utils;
 
-class StringSearch
+class StringHelp
 {
 	const ACCENT_STRINGS='ŠŒŽšœžŸ¥µÀÁÂÃÄÅÆÇÈÉÊËẼÌÍÎÏĨÐÑÒÓÔÕÖØÙÚÛÜÝßàáâãäåæçèéêëẽìíîïĩðñòóôõöøùúûüýÿ';
 	const NO_ACCENT_STRINGS='SOZsozYYuAAAAAAACEEEEEIIIIIDNOOOOOOUUUUYsaaaaaaaceeeeeiiiiionoooooouuuuyy';
+
 	static public function accentToRegex($text)
 	{
 		$from=str_split(utf8_decode(self::ACCENT_STRINGS));
@@ -35,5 +36,13 @@ class StringSearch
 			return true;
 		}
 		return false;
+	}
+
+	static function cleanToPath($text)
+	{
+		$text=trim(mb_strtolower($text,'UTF-8'));
+        $text=eregi_replace("[ ]+",'-',strtolower($text));
+        $text=preg_replace('/([^.a-z0-9]+)/i','_',$text);
+        return $text;
 	}
 }

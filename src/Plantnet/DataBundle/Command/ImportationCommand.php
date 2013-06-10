@@ -46,9 +46,9 @@ class ImportationCommand extends ContainerAwareCommand
             $error='';
             $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
             $dm->getConfiguration()->setDefaultDB($dbname);
-            $configuration = $dm->getConnection()->getConfiguration();
+            $configuration=$dm->getConnection()->getConfiguration();
             $configuration->setLoggerCallable(null);
-            $module = $dm->getRepository('PlantnetDataBundle:Module')
+            $module=$dm->getRepository('PlantnetDataBundle:Module')
                 ->find($idmodule);
             if(!$module){
                 $error='Unable to find Module entity.';
@@ -60,8 +60,8 @@ class ImportationCommand extends ContainerAwareCommand
                 /*
                  * Open the uploaded csv
                  */
-                $csvfile=__DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getName_fname().'.csv';
-                $handle=fopen($csvfile, "r");
+                $csvfile=__DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'.csv';
+                $handle=fopen($csvfile,"r");
                 /*
                  * Get the module properties
                  */
@@ -79,7 +79,7 @@ class ImportationCommand extends ContainerAwareCommand
                 $batchSize=200;
                 $rowCount=0;
                 $errorCount=0;
-                while(($data = fgetcsv($handle, 0, ';'))!==FALSE){
+                while(($data=fgetcsv($handle,0,';'))!==FALSE){
                     $num=count($data);
                     if($module->getType()=='image'){
                         $image=new Image();
@@ -291,7 +291,7 @@ class ImportationCommand extends ContainerAwareCommand
                 $dm->clear();
                 //echo "Memory usage after: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
                 $e=microtime(true);
-                echo ' Inserted '.$rowCount.' objects in ' . ($e - $s) . ' seconds' . PHP_EOL;
+                echo ' Inserted '.$rowCount.' objects in '.($e-$s).' seconds'.PHP_EOL;
                 fclose($handle);
                 if(file_exists($csvfile)){
                     unlink($csvfile);

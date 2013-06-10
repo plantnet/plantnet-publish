@@ -76,7 +76,7 @@ class DeleteCommand extends ContainerAwareCommand
         /*
         * Remove csv file
         */
-        $csvfile=__DIR__.'/../Resources/uploads/'.$collection->getAlias().'/'.$module->getName_fname().'.csv';
+        $csvfile=__DIR__.'/../Resources/uploads/'.$collection->getAlias().'/'.$module->getAlias().'.csv';
         if(file_exists($csvfile)){
             unlink($csvfile);
         }

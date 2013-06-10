@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints\Type as TypeConstraint;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
 
-use Plantnet\DataBundle\Utils\StringSearch;
+use Plantnet\DataBundle\Utils\StringHelp;
 
 
 /**

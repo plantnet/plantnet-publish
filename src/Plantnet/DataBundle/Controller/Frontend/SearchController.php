@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints\Type as TypeConstraint;
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
 
-use Plantnet\DataBundle\Utils\StringSearch;
+use Plantnet\DataBundle\Utils\StringHelp;
 
 
 /**
@@ -269,7 +269,7 @@ class SearchController extends Controller
                             foreach($fields as $key=>$value){
                                 if(is_array($value)){
                                     for($i=0;$i<count($value);$i++){
-                                        $value[$i]=new \MongoRegex('/.*'.StringSearch::accentToRegex($value[$i]).'.*/i');
+                                        $value[$i]=new \MongoRegex('/.*'.StringHelp::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
                                         $value
@@ -278,7 +278,7 @@ class SearchController extends Controller
                                 else{
                                     $plantunits->field('attributes.'.$key)->in(
                                         array(
-                                            new \MongoRegex('/.*'.StringSearch::accentToRegex($value).'.*/i')
+                                            new \MongoRegex('/.*'.StringHelp::accentToRegex($value).'.*/i')
                                         )
                                     );
                                 }
@@ -371,7 +371,7 @@ class SearchController extends Controller
                             foreach($fields as $key=>$value){
                                 if(is_array($value)){
                                     for($i=0;$i<count($value);$i++){
-                                        $value[$i]=new \MongoRegex('/.*'.StringSearch::accentToRegex($value[$i]).'.*/i');
+                                        $value[$i]=new \MongoRegex('/.*'.StringHelp::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
                                         $value
@@ -380,7 +380,7 @@ class SearchController extends Controller
                                 else{
                                     $plantunits->field('attributes.'.$key)->in(
                                         array(
-                                            new \MongoRegex('/.*'.StringSearch::accentToRegex($value).'.*/i')
+                                            new \MongoRegex('/.*'.StringHelp::accentToRegex($value).'.*/i')
                                         )
                                     );
                                 }
@@ -447,7 +447,7 @@ class SearchController extends Controller
                             foreach($fields as $key=>$value){
                                 if(is_array($value)){
                                     for($i=0;$i<count($value);$i++){
-                                        $value[$i]=new \MongoRegex('/.*'.StringSearch::accentToRegex($value[$i]).'.*/i');
+                                        $value[$i]=new \MongoRegex('/.*'.StringHelp::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
                                         $value
@@ -456,7 +456,7 @@ class SearchController extends Controller
                                 else{
                                     $plantunits->field('attributes.'.$key)->in(
                                         array(
-                                            new \MongoRegex('/.*'.StringSearch::accentToRegex($value).'.*/i')
+                                            new \MongoRegex('/.*'.StringHelp::accentToRegex($value).'.*/i')
                                         )
                                     );
                                 }
@@ -563,7 +563,7 @@ class SearchController extends Controller
             ->select('attributes.'.$attribute)
             ->field('module')->references($module)
             ->field('attributes.'.$attribute)->in(array(
-                new \MongoRegex('/.*'.StringSearch::accentToRegex($query).'.*/i')
+                new \MongoRegex('/.*'.StringHelp::accentToRegex($query).'.*/i')
             ))
             ->sort('attributes.'.$attribute,'asc')
             ->limit(10)
