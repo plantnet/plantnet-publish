@@ -25,7 +25,7 @@ use Plantnet\DataBundle\Document\Other;
 /**
  * Admin controller.
  *
- * @Route("/admin")
+ * @Route("/admin", options={"i18n" = false})
  */
 class AdminController extends Controller
 {

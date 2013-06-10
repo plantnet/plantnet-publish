@@ -12,7 +12,7 @@ ini_set('memory_limit','-1');
 /**
  * Export controller.
  *
- * @Route("/admin/export")
+ * @Route("/admin/export", options={"i18n" = false})
  */
 class ExportController extends Controller
 {
