@@ -141,6 +141,17 @@ class DeleteCommand extends ContainerAwareCommand
                 ->getQuery()
                 ->execute();
         }
+        //indexes
+        $m=new \MongoClient();
+        $old_indexes=$module->getIndexes();
+        if(count($old_indexes)){
+            foreach($old_indexes as $old){
+                //delete old indexes
+                $m->$dbname->command(array('deleteIndexes'=>'Plantunit','index'=>$old));
+            }
+        }
+        unset($m);
+        unset($old_indexes);
         $dm->remove($module);
         $dm->flush();
         /*

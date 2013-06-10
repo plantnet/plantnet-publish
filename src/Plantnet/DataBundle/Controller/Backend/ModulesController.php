@@ -245,7 +245,6 @@ class ModulesController extends Controller
                             $module->setDeleting(false);
                             $dm->persist($module);
                             $dm->flush();
-                            $this->update_indexes($module);
                             return $this->redirect($this->generateUrl('fields_type',array('id'=>$collection->getId(),'idmodule'=>$module->getId())));
                         }
                     }
@@ -381,6 +380,7 @@ class ModulesController extends Controller
                     $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                     $dm->persist($module);
                     $dm->flush();
+                    $this->update_indexes($module);
                     return $this->redirect($this->generateUrl('import_data',array(
                         'id'=>$id,
                         'idmodule'=>$idmodule
