@@ -546,7 +546,7 @@ class ModulesController extends Controller
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:import_moduledata.html.twig',array(
-                    'importCount'=>'En cours d\'importation, un email vous sera envoyé à la fin du traitement.'
+                    'importCount'=>'Importing data in progress, an email will be sent at the end of task.'
                 ));
             }
         }else{
