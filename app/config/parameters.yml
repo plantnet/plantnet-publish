@@ -12,6 +12,7 @@ parameters:
     mailer_password:   ~
 
     locale:            en
+    locales: [en, fr, es]
     secret:            ThisTokenIsNotSoSecretChangeIt
 
     mdb_base:   bota

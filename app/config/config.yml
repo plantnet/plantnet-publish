@@ -23,7 +23,7 @@ framework:
 
 jms_i18n_routing:
     default_locale: en
-    locales: [en, fr, es]
+    locales: %locales%
     strategy: prefix_except_default
 
 sensio_framework_extra:
@@ -36,6 +36,8 @@ sensio_framework_extra:
 twig:
     debug:            %kernel.debug%
     strict_variables: %kernel.debug%
+    globals:
+        locales: %locales%
 
 # Assetic Configuration
 assetic:

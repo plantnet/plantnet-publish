@@ -70,6 +70,11 @@
 							{% endif %}
 						</ul>
 					</div>
+					<div class="pull-right">
+						{% for locale in locales %}
+							<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({ '_locale': locale })) }}">{{ locale }}</a>
+						{% endfor %}
+					</div>
 				</div>
 			</div>
 		</div>
