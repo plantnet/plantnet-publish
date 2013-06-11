@@ -49,7 +49,7 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/", name="_index")
+     * @Route("/", name="front_index")
      * @Template()
      */
     public function indexAction()
@@ -62,7 +62,7 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}", name="_project")
+     * @Route("/project/{project}", name="front_project")
      * @Template()
      */
     public function projectAction($project)
@@ -107,7 +107,7 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}", name="_collection")
+     * @Route("/project/{project}/collection/{collection}", name="front_collection")
      * @Template()
      */
     public function collectionAction($project,$collection)
@@ -134,18 +134,18 @@ class DataController extends Controller
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}",
      *      defaults={"page"=1, "sortby"="null", "sortorder"="null"},
-     *      name="_module"
+     *      name="front_module"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/page{page}",
      *      requirements={"page"="\d+"},
      *      defaults={"sortby"="null", "sortorder"="null"},
-     *      name="_module_paginated"
+     *      name="front_module_paginated"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/page{page}/sort-{sortby}/order-{sortorder}",
      *      requirements={"page"="\d+", "sortby"="\w+", "sortorder"="null|asc|desc"},
-     *      name="_module_paginated_sorted"
+     *      name="front_module_paginated_sorted"
      *  )
      * @Method("get")
      * @Template()
@@ -156,8 +156,8 @@ class DataController extends Controller
         if(!empty($form_page)){
             $page=$form_page;
         }
-        if($this->container->get('request')->get('_route')=='_module_paginated'&&$page==1){
-            return $this->redirect($this->generateUrl('_module',array(
+        if($this->container->get('request')->get('_route')=='front_module_paginated'&&$page==1){
+            return $this->redirect($this->generateUrl('front_module',array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module
@@ -233,12 +233,12 @@ class DataController extends Controller
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/module/{submodule}",
      *      defaults={"page"=1},
-     *      name="_submodule"
+     *      name="front_submodule"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/module/{submodule}/page{page}",
      *      requirements={"page"="\d+"},
-     *      name="_submodule_paginated"
+     *      name="front_submodule_paginated"
      *  )
      * @Method("get")
      * @Template()
@@ -249,8 +249,8 @@ class DataController extends Controller
         if(!empty($form_page)){
             $page=$form_page;
         }
-        if($this->container->get('request')->get('_route')=='_submodule_paginated'&&$page==1){
-            return $this->redirect($this->generateUrl('_submodule',array(
+        if($this->container->get('request')->get('_route')=='front_submodule_paginated'&&$page==1){
+            return $this->redirect($this->generateUrl('front_submodule',array(
                     'project'=>$project,
                     'collection'=>$collection,
                     'module'=>$module,
@@ -357,12 +357,12 @@ class DataController extends Controller
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/module/{submodule}/datamap",
      *      defaults={"page"=0},
-     *      name="_datamap"
+     *      name="front_datamap"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/module/{submodule}/datamap/page{page}",
      *      requirements={"page"="\d+"},
-     *      name="_datamap_paginated"
+     *      name="front_datamap_paginated"
      *  )
      * @Template()
      */
@@ -440,7 +440,7 @@ class DataController extends Controller
                 'title2'=>$l['title2'],
                 'loc_data'=>''
             );
-            $loc['properties']['punit']=$this->get('router')->generate('_details',array(
+            $loc['properties']['punit']=$this->get('router')->generate('front_details',array(
                 'project'=>$project,
                 'collection'=>$collection->getUrl(),
                 'module'=>$module_parent->getUrl(),
@@ -481,7 +481,7 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/details/{id}", name="_details")
+     * @Route("/project/{project}/collection/{collection}/{module}/details/{id}", name="front_details")
      * @Template()
      */
     public function detailsAction($project,$collection,$module,$id)
@@ -567,12 +567,12 @@ class DataController extends Controller
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/details_gallery/{id}",
      *      defaults={"page"=0},
-     *      name="_details_gallery"
+     *      name="front_details_gallery"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/details_gallery/{id}/page{page}",
      *      requirements={"page"="\d+"},
-     *      name="_details_gallery_paginated"
+     *      name="front_details_gallery_paginated"
      *  )
      * @Template()
      */
@@ -633,7 +633,7 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/credits", name="_credits")
+     * @Route("/project/{project}/credits", name="front_credits")
      * @Template()
      */
     public function creditsAction($project)
@@ -659,7 +659,7 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/mentions", name="_mentions")
+     * @Route("/project/{project}/mentions", name="front_mentions")
      * @Template()
      */
     public function mentionsAction($project)
@@ -685,7 +685,7 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/contacts", name="_contacts")
+     * @Route("/project/{project}/contacts", name="front_contacts")
      * @Template()
      */
     public function contactsAction($project)

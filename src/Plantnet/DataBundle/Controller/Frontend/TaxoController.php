@@ -52,12 +52,12 @@ class TaxoController extends Controller
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo",
      *      defaults={"level"=0, "taxon"="null"},
-     *      name="_module_taxo"
+     *      name="front_module_taxo"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo/{level}-{taxon}",
      *      requirements={"level"="\d+"},
-     *      name="_module_taxo_details"
+     *      name="front_module_taxo_details"
      *  )
      * @Method("get")
      * @Template()
@@ -66,8 +66,8 @@ class TaxoController extends Controller
     {
         $form_level=$request->query->get('form_level');
         $form_name=$request->query->get('form_name');
-        if($this->container->get('request')->get('_route')=='_module_taxo'&&!empty($form_level)&&!empty($form_name)){
-            return $this->redirect($this->generateUrl('_module_taxo_view',array(
+        if($this->container->get('request')->get('_route')=='front_module_taxo'&&!empty($form_level)&&!empty($form_name)){
+            return $this->redirect($this->generateUrl('front_module_taxo_view',array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module,
@@ -113,7 +113,7 @@ class TaxoController extends Controller
                 throw $this->createNotFoundException('Unable to find Taxon entity.');
             }
             if(count($taxon->getChildren())==0){
-                return $this->redirect($this->generateUrl('_module_taxo_view',array(
+                return $this->redirect($this->generateUrl('front_module_taxo_view',array(
                     'project'=>$project,
                     'collection'=>$collection,
                     'module'=>$module,
@@ -143,12 +143,12 @@ class TaxoController extends Controller
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo_children",
      *      defaults={"parent"=0},
-     *      name="_module_taxo_children"
+     *      name="front_module_taxo_children"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo_children/{parent}",
      *      requirements={"parent"="\w+"},
-     *      name="_module_taxo_children_parent"
+     *      name="front_module_taxo_children_parent"
      *  )
      * @Template()
      */
@@ -192,11 +192,11 @@ class TaxoController extends Controller
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo_query",
      *      defaults={"query"="null"},
-     *      name="_module_taxo_query_path"
+     *      name="front_module_taxo_query_path"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo_query/{query}",
-     *      name="_module_taxo_query"
+     *      name="front_module_taxo_query"
      *  )
      * @Template()
      */
@@ -257,18 +257,18 @@ class TaxoController extends Controller
      *      "/project/{project}/collection/{collection}/{module}/taxo_view/{level}-{taxon}",
      *      defaults={"page"=1, "sortby"="null", "sortorder"="null"},
      *      requirements={"level"="\d+"},
-     *      name="_module_taxo_view"
+     *      name="front_module_taxo_view"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo_view/{level}-{taxon}/page{page}",
      *      defaults={"sortby"="null", "sortorder"="null"},
      *      requirements={"level"="\d+", "page"="\d+"},
-     *      name="_module_taxo_view_paginated"
+     *      name="front_module_taxo_view_paginated"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo_view/{level}-{taxon}/page{page}/sort-{sortby}/order-{sortorder}",
      *      requirements={"level"="\d+", "page"="\d+", "sortby"="\w+", "sortorder"="null|asc|desc"},
-     *      name="_module_taxo_view_paginated_sorted"
+     *      name="front_module_taxo_view_paginated_sorted"
      *  )
      * @Method("get")
      * @Template()
@@ -279,8 +279,8 @@ class TaxoController extends Controller
         if(!empty($form_page)){
             $page=$form_page;
         }
-        if($this->container->get('request')->get('_route')=='_module_taxo_view_paginated'&&$page==1){
-            return $this->redirect($this->generateUrl('_module_taxo_view',array(
+        if($this->container->get('request')->get('_route')=='front_module_taxo_view_paginated'&&$page==1){
+            return $this->redirect($this->generateUrl('front_module_taxo_view',array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module,
@@ -377,12 +377,12 @@ class TaxoController extends Controller
      *      "/project/{project}/collection/{collection}/{module}/taxo_view_gallery/{level}-{taxon}",
      *      defaults={"page"=1},
      *      requirements={"level"="\d+"},
-     *      name="_module_taxo_view_gallery"
+     *      name="front_module_taxo_view_gallery"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo_view_gallery/{level}-{taxon}/page{page}",
      *      requirements={"level"="\d+", "page"="\d+"},
-     *      name="_module_taxo_view_gallery_paginated"
+     *      name="front_module_taxo_view_gallery_paginated"
      *  )
      * @Method("get")
      * @Template()
@@ -393,8 +393,8 @@ class TaxoController extends Controller
         if(!empty($form_page)){
             $page=$form_page;
         }
-        if($this->container->get('request')->get('_route')=='_module_taxo_view_gallery_paginated'&&$page==1){
-            return $this->redirect($this->generateUrl('_module_taxo_view_gallery',array(
+        if($this->container->get('request')->get('_route')=='front_module_taxo_view_gallery_paginated'&&$page==1){
+            return $this->redirect($this->generateUrl('front_module_taxo_view_gallery',array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module,
@@ -474,7 +474,7 @@ class TaxoController extends Controller
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo_view_map/{level}-{taxon}",
      *      requirements={"level"="\d+"},
-     *      name="_module_taxo_view_map"
+     *      name="front_module_taxo_view_map"
      *  )
      * @Template()
      */

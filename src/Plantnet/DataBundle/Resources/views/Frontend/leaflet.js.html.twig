@@ -149,7 +149,7 @@
 			marker_{{ location.id }}.bindPopup('<b>{{ title1|escape('js') }}</b><br /><b>{{ title2|escape('js') }}</b>'
 				+'<br />{{ loc_data|escape('js') }}'
 				{% if current_display is defined %}
-					+'<br /><br /><a href="{{ path('_details', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'id': location.plantunit.id }) }}">{{ "line-details"|trans|capitalize }}</a>'
+					+'<br /><br /><a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'id': location.plantunit.id }) }}">{{ "line-details"|trans|capitalize }}</a>'
 				{% endif %}
 			);
 			markers.addLayer(marker_{{ location.id }});
@@ -219,7 +219,7 @@
 	function load_markers(page)
 	{
 		map.removeLayer(markers);
-		$.getJSON('{{ path('_datamap', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'submodule': module.url }) }}/page'+page+'',function(data)
+		$.getJSON('{{ path('front_datamap', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'submodule': module.url }) }}/page'+page+'',function(data)
 		{
 			var geoJsonLayer=L.geoJson(data,{
 				onEachFeature:function(feature,layer)

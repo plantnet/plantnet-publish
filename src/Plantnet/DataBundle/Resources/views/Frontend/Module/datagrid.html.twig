@@ -17,11 +17,11 @@
             <div class="pagerfanta">
                 {% if paginator.haveToPaginate() %}
                     {% if sortby != 'null' and sortorder != 'null' %}
-                        <form method="get" action="{{ path('_module_paginated_sorted', { 'project': project, 'collection': collection.url, 'module': module.url, 'page': page, 'sortby': sortby, 'sortorder': sortorder }) }}">
+                        <form method="get" action="{{ path('front_module_paginated_sorted', { 'project': project, 'collection': collection.url, 'module': module.url, 'page': page, 'sortby': sortby, 'sortorder': sortorder }) }}">
                             <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
                         </form>
                     {% else %}
-                        <form method="get" action="{{ path('_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+                        <form method="get" action="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
                             <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
                         </form>
                     {% endif %}
@@ -32,7 +32,7 @@
                         'twitter_bootstrap_translated',
                         {
                             'proximity': 2,
-                            'routeName': '_module_paginated_sorted',
+                            'routeName': 'front_module_paginated_sorted',
                             'routeParams': {
                                 'project': project,
                                 'collection': collection.url,
@@ -48,7 +48,7 @@
                         'twitter_bootstrap_translated',
                         {
                             'proximity': 2,
-                            'routeName': '_module_paginated',
+                            'routeName': 'front_module_paginated',
                             'routeParams': {
                                 'project': project,
                                 'collection': collection.url,
@@ -67,9 +67,9 @@
                             <th>
                                 {{ property.name }}
                                 <span class="nowrap">
-                                    <a href="{{ path('_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/page1/sort-{{ property.id }}/order-asc">
+                                    <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/page1/sort-{{ property.id }}/order-asc">
                                         <i class="icon-circle-arrow-up"></i></a>
-                                    <a href="{{ path('_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/page1/sort-{{ property.id }}/order-desc">
+                                    <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/page1/sort-{{ property.id }}/order-desc">
                                         <i class="icon-circle-arrow-down"></i></a>
                                 </span>
                             </th>
@@ -80,14 +80,14 @@
                     {% for plantunit in paginator %}
                         <tr>
                             <td>
-                                <a href="{{ path('_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
+                                <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
                                     {% if plantunit.hasimages > 0 %}
                                         <i class="icon-camera"></i>
                                     {% endif %}
                                 </a>
                             </td>
                             <td>
-                                <a href="{{ path('_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
+                                <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
                                     {% if plantunit.haslocations > 0 %}
                                         <i class="icon-map-marker"></i>
                                     {% endif %}
@@ -95,7 +95,7 @@
                             </td>
                             {% for field in display %}
                                 <td>
-                                    <a href="{{ path('_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
+                                    <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
                                         {{ plantunit.attributes[field] }}
                                     </a>
                                 </td>
@@ -111,7 +111,7 @@
                         'twitter_bootstrap_translated',
                         {
                             'proximity': 2,
-                            'routeName': '_module_paginated_sorted',
+                            'routeName': 'front_module_paginated_sorted',
                             'routeParams': {
                                 'project': project,
                                 'collection': collection.url,
@@ -127,7 +127,7 @@
                         'twitter_bootstrap_translated',
                         {
                             'proximity': 2,
-                            'routeName': '_module_paginated',
+                            'routeName': 'front_module_paginated',
                             'routeParams': {
                                 'project': project,
                                 'collection': collection.url,

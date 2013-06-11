@@ -12,15 +12,15 @@
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
-            <a href="{{ url('_project', {'project': project}) }}">{{ project|capitalize }}</a>
+            <a href="{{ url('front_project', {'project': project}) }}">{{ project|capitalize }}</a>
             <span class="divider">/</span>
         </li>
         <li>
-            <a href="{{ path('_collection', { 'project': project, 'collection': collection.url }) }}">{{ collection.name }}</a>
+            <a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">{{ collection.name }}</a>
             <span class="divider">/</span>
         </li>
         <li>
-            <a href="{{ path('_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">{{ module.name }}</a>
+            <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">{{ module.name }}</a>
             <span class="divider">/</span>
         </li>
         <li class="active">
@@ -46,7 +46,7 @@
                         <tr>
                             <td>{{ taxon.label }}</td>
                             <td>
-                                <a href="{{ path('_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name }) }}">
+                                <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name }) }}">
                                     {{ taxon.name }}
                                 </a>
                             </td>
@@ -119,7 +119,7 @@
                         <a href="#" class="end_of_gallery_load"></a>
                     </li>
                     <li>
-                        <a href="{{ path('_details_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}/page0" id="end_of_gallery"></a>
+                        <a href="{{ path('front_details_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}/page0" id="end_of_gallery"></a>
                     </li>
                 </ul>
             </div>

@@ -1,6 +1,7 @@
 plantnet_file_manager:
     resource: "@PlantnetFileManagerBundle/Resources/config/routing.yml"
     prefix:   /
+    options: { i18n: false }
 
 PlantnetDataBundle:
     resource: "@PlantnetDataBundle/Controller/"

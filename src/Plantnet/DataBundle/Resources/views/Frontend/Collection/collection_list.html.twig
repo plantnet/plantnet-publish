@@ -1,6 +1,6 @@
 {% for collection in collections if collection.deleting != true %}
 	<li>
-		<a href="{{ path('_collection', { 'project': project, 'collection': collection.url }) }}">
+		<a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">
 			{{ collection.name }}
 		</a>
 	</li>

@@ -99,7 +99,7 @@ class SearchController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/{module}/search", name="_module_search")
+     * @Route("/project/{project}/collection/{collection}/{module}/search", name="front_module_search")
      * @Template()
      */
     public function module_searchAction($project,$collection,$module)
@@ -154,12 +154,12 @@ class SearchController extends Controller
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/result",
      *      defaults={"mode"="grid"},
-     *      name="_module_result"
+     *      name="front_module_result"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/result/{mode}",
      *      requirements={"mode"="\w+"},
-     *      name="_module_result_mode"
+     *      name="front_module_result_mode"
      *  )
      * @Method("get")
      * @Template()
@@ -506,7 +506,7 @@ class SearchController extends Controller
             }
         }
         else{
-            return $this->redirect($this->generateUrl('_module_search',array(
+            return $this->redirect($this->generateUrl('front_module_search',array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module,
@@ -525,11 +525,11 @@ class SearchController extends Controller
     * @Route(
      *      "/project/{project}/collection/{collection}/{module}/search/{attribute}/{query}",
      *      defaults={"attribute"="null", "query"="null"},
-     *      name="_module_search_query_path"
+     *      name="front_module_search_query_path"
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/search/{attribute}/{query}",
-     *      name="_module_search_query"
+     *      name="front_module_search_query"
      *  )
      * @Template()
      */
