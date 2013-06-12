@@ -51,11 +51,11 @@
 							{% endif %}
 							<li{% if current == 'index' or current == 'project' %} class="active" {% endif %}>
 								{% if project is not defined %}
-									<a href="{{ url('front_index') }}">
+									<a href="{{ path('front_index') }}">
 										{{ "tab-home"|trans|capitalize }}
 									</a>
 								{% else %}
-									<a href="{{ url('front_project', {'project': project}) }}">
+									<a href="{{ path('front_project', {'project': project}) }}">
 										{{ "tab-home"|trans|capitalize }}
 									</a>
 								{% endif %}
@@ -118,17 +118,17 @@
 					<nav id="mention">
 						<ul>
 							<li class="liens">
-								<a href="{{ url('front_credits', {'project': project}) }}" class="btn btn-small">
+								<a href="{{ path('front_credits', {'project': project}) }}" class="btn btn-small">
 									{{ "footer-credits"|trans|capitalize }}
 								</a>
 							</li>
 							<li class="liens">
-								<a href="{{ url('front_mentions', {'project': project}) }}" class="btn btn-small">
+								<a href="{{ path('front_mentions', {'project': project}) }}" class="btn btn-small">
 									{{ "footer-legal"|trans|capitalize }}
 								</a>
 							</li>
 							<li class="liens">
-								<a href="{{ url('front_contacts', {'project': project}) }}" class="btn btn-small">
+								<a href="{{ path('front_contacts', {'project': project}) }}" class="btn btn-small">
 									{{ "footer-contacts"|trans|capitalize }}
 								</a>
 							</li>
@@ -155,7 +155,7 @@
 		<script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 		{#
 		<script type="text/javascript" src="{{ asset('bundles/bazingaexposetranslation/js/translator.min.js') }}"></script>
-		<script type="text/javascript" src="{{ url('bazinga_exposetranslation_js') }}"></script>
+		<script type="text/javascript" src="{{ path('bazinga_exposetranslation_js') }}"></script>
 		#}
 		<script type="text/javascript">
 			$.ajaxSetup({

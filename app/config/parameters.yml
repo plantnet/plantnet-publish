@@ -19,3 +19,6 @@ parameters:
     mdb_base:   bota
 
     php_bin:    php
+
+    node:       /usr/local/bin/node
+    node_paths: [/usr/local/lib/node_modules]
