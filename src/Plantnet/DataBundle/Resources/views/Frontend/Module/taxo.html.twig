@@ -52,7 +52,7 @@
         <form method="get" action="{{ path('front_module_taxo', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
             <div class="input-append">
                 <input type="text" name="taxon" id="typeahead" class="span4" placeholder="{{ "line-taxon"|trans|capitalize }}" autocomplete="off" data-provide="typeahead">
-                <button class="btn" type="submit">Search</button>
+                <button class="btn" type="submit">{{ "tab-search"|trans|capitalize }}</button>
             </div>
             <input type="hidden" name="form_level" id="form_level" />
             <input type="hidden" name="form_name" id="form_name" />
