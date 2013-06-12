@@ -126,8 +126,8 @@ fos_user:
     use_listener:           true
     use_username_form_type: true
     from_email:
-        address:        support@plantnet-project.org
-        sender_name:    plantnet-project.org
+        address:        %from_email_adress%
+        sender_name:    %from_email_sender_name%
     profile:
         form:
             type:               fos_user_profile
