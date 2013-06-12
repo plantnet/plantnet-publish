@@ -129,6 +129,6 @@ class CreateUserCommand extends BaseCommand
 
 	private function get_prefix()
 	{
-		return $this->container->getParameter('mdb_base').'_';
+		return $this->getContainer()->getParameter('mdb_base').'_';
 	}
 }
