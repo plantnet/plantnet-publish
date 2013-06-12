@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:jms="urn:jms:translation" version="1.2">
-  <file date="2011-12-12T09:58:48Z" source-language="en" target-language="en" datatype="plaintext" original="not.available">
+  <file date="2011-12-12T09:58:48Z" source-language="en" target-language="es" datatype="plaintext" original="not.available">
     <header>
       <tool tool-id="JMSTranslationBundle" tool-name="JMSTranslationBundle" tool-version="1.0.0-DEV"/>
       <note>The source node in most cases contains the sample message as written by the developer. If it looks like a dot-delimitted string such as "form.label.firstname", then the developer has not provided a default message.</note>
@@ -9,117 +9,117 @@
       <trans-unit id="0" resname="search-field">
         <jms:reference-file line="141">Resources/views/layout.html.twig</jms:reference-file>
         <source>search-field</source>
-        <target state="new">search</target>
+        <target state="new">buscar</target>
       </trans-unit>
       <trans-unit id="1" resname="tab-coll">
         <jms:reference-file line="129">Resources/views/layout.html.twig</jms:reference-file>
         <source>tab-coll</source>
-        <target state="new">collections</target>
+        <target state="new">colecciones</target>
       </trans-unit>
       <trans-unit id="2" resname="tab-home">
         <jms:reference-file line="125">Resources/views/layout.html.twig</jms:reference-file>
         <source>tab-home</source>
-        <target state="new">home</target>
+        <target state="new">inicio</target>
       </trans-unit>
       <trans-unit id="3" resname="line-projects-list">
         <source>line-projects-list</source>
-        <target state="new">"publish v2" projects:</target>
+        <target state="new">"publish v2" proyectos :</target>
       </trans-unit>
       <trans-unit id="4" resname="tab-search">
         <source>tab-search</source>
-        <target state="new">search</target>
+        <target state="new">buscar</target>
       </trans-unit>
       <trans-unit id="5" resname="footer-credits">
         <source>footer-credits</source>
-        <target state="new">credits</target>
+        <target state="new">créditos</target>
       </trans-unit>
       <trans-unit id="6" resname="footer-legal">
         <source>footer-legal</source>
-        <target state="new">legal details</target>
+        <target state="new">detalles legales</target>
       </trans-unit>
       <trans-unit id="7" resname="footer-contacts">
         <source>footer-contacts</source>
-        <target state="new">contacts</target>
+        <target state="new">contactos</target>
       </trans-unit>
       <trans-unit id="8" resname="footer-sitemap">
         <source>footer-sitemap</source>
-        <target state="new">site map</target>
+        <target state="new">mapa del sitio</target>
       </trans-unit>
       <trans-unit id="9" resname="line-projects">
         <source>line-projects</source>
-        <target state="new">projects</target>
+        <target state="new">proyectos</target>
       </trans-unit>
       <trans-unit id="10" resname="line-introduction">
         <source>line-introduction</source>
-        <target state="new">introduction</target>
+        <target state="new">introducción</target>
       </trans-unit>
       <trans-unit id="11" resname="tab-result">
         <source>tab-result</source>
-        <target state="new">result</target>
+        <target state="new">resultado</target>
       </trans-unit>
       <trans-unit id="12" resname="line-no-result">
         <source>line-no-result</source>
-        <target state="new">no result</target>
+        <target state="new">sin resultado</target>
       </trans-unit>
       <trans-unit id="13" resname="line-row">
         <source>line-row</source>
-        <target state="new">row</target>
+        <target state="new">fila</target>
       </trans-unit>
       <trans-unit id="14" resname="line-entities">
         <source>line-entities</source>
-        <target state="new">entities</target>
+        <target state="new">entidades</target>
       </trans-unit>
       <trans-unit id="15" resname="line-details">
         <source>line-details</source>
-        <target state="new">details</target>
+        <target state="new">detalles</target>
       </trans-unit>
       <trans-unit id="16" resname="line-back-form">
         <source>line-back-form</source>
-        <target state="new">back to form</target>
+        <target state="new">vuelva al formulario</target>
       </trans-unit>
       <trans-unit id="17" resname="line-search-in">
         <source>line-search-in</source>
-        <target state="new">search in</target>
+        <target state="new">buscar en</target>
       </trans-unit>
       <trans-unit id="18" resname="line-images">
         <source>line-images</source>
-        <target state="new">images</target>
+        <target state="new">imágenes</target>
       </trans-unit>
       <trans-unit id="19" resname="line-locations">
         <source>line-locations</source>
-        <target state="new">locations</target>
+        <target state="new">ubicaciones</target>
       </trans-unit>
       <trans-unit id="20" resname="line-or">
         <source>line-or</source>
-        <target state="new">or</target>
+        <target state="new">o</target>
       </trans-unit>
       <trans-unit id="21" resname="line-grid">
         <source>line-grid</source>
-        <target state="new">grid</target>
+        <target state="new">cuadrícula</target>
       </trans-unit>
       <trans-unit id="22" resname="line-taxonomy">
         <source>line-taxonomy</source>
-        <target state="new">taxonomy</target>
+        <target state="new">taxonomía</target>
       </trans-unit>
       <trans-unit id="23" resname="line-map">
         <source>line-map</source>
-        <target state="new">map</target>
+        <target state="new">mapa</target>
       </trans-unit>
       <trans-unit id="24" resname="line-gallery">
         <source>line-gallery</source>
-        <target state="new">gallery</target>
+        <target state="new">galería</target>
       </trans-unit>
       <trans-unit id="25" resname="line-taxon">
         <source>line-taxon</source>
-        <target state="new">taxon</target>
+        <target state="new">taxón</target>
       </trans-unit>
       <trans-unit id="26" resname="line-specimens">
         <source>line-specimens</source>
-        <target state="new">specimens</target>
+        <target state="new">especímenes</target>
       </trans-unit>
       <trans-unit id="27" resname="line-views">
         <source>line-views</source>
-        <target state="new">views</target>
+        <target state="new">mostrar</target>
       </trans-unit>
     </body>
   </file>

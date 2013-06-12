@@ -119,7 +119,7 @@
       </trans-unit>
       <trans-unit id="27" resname="line-views">
         <source>line-views</source>
-        <target state="new">Affichage</target>
+        <target state="new">affichage</target>
       </trans-unit>
     </body>
   </file>

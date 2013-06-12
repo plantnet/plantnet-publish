@@ -22,7 +22,7 @@ framework:
     session:         ~
 
 jms_i18n_routing:
-    default_locale: en
+    default_locale: %locale%
     locales: %locales%
     strategy: prefix_except_default
 
@@ -82,7 +82,7 @@ doctrine_mongodb:
             server: mongodb://localhost:27017
             options:
                 connect: true
-    default_database: bota
+    default_database: %mdb_base%
     document_managers:
         default:
             auto_mapping: true

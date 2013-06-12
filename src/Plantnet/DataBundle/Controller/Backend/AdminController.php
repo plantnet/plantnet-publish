@@ -44,7 +44,7 @@ class AdminController extends Controller
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
         return $this->render('PlantnetDataBundle:Backend\Admin:title.html.twig', array(
-            'title'=>str_replace('bota_','',$user->getDbName())
+            'title'=>str_replace($this->container->getParameter('mdb_base').'_','',$user->getDbName())
         ));
     }
 

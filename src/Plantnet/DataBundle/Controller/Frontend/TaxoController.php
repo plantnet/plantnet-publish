@@ -45,7 +45,7 @@ class TaxoController extends Controller
 
     private function get_prefix()
     {
-        return 'bota_';
+        return $this->container->getParameter('mdb_base').'_';
     }
 
     /**
