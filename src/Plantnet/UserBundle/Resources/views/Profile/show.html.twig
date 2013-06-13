@@ -1,4 +1,21 @@
-{% extends "PlantnetUserBundle::layout.html.twig" %}
-{% block fos_user_content %}
-	{% include "FOSUserBundle:Profile:show_content.html.twig" %}
-{% endblock fos_user_content %}
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block title 'Profile' %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block content %}
+	<ul class="breadcrumb">
+		<li class="active">
+			<i class="icon-user"></i>
+			Profile
+			[ {{ app.user.username }} ]
+		</li>
+	</ul>
+	<div>
+		{% block fos_user_content %}
+			{% include "FOSUserBundle:Profile:show_content.html.twig" %}
+		{% endblock fos_user_content %}
+		<a href="{{ path('fos_user_profile_edit') }}" class="btn">Edit profile</a>
+		<a href="{{ path('fos_user_change_password') }}" class="btn">Change password</a>
+	</div>
+{% endblock %}

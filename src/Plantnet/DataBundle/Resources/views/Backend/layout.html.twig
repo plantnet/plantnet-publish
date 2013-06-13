@@ -132,7 +132,7 @@
 										{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 											{% block user_panel %}
 												<li>
-													<a title="Account Settings and Profile Page" href="#">
+													<a title="Account Settings and Profile Page" href="{{ path('fos_user_profile_show') }}" class="ajax">
 														<i class="icon-wrench"></i>
 														Settings
 													</a>
