@@ -50,7 +50,7 @@ security:
         #- { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
         # URL of FOSUserBundle which need to be available to anonymous users
         - { path: ^/admin/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        # - { path: ^/admin/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         # - { path: ^/admin/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
         # Secured part of the site
