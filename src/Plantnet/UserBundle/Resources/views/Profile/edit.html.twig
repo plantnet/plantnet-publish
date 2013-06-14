@@ -4,6 +4,11 @@
     {{ parent() }}
 {% endblock %}
 {% block content %}
+	<div id="title-form">
+        <h4 class="text-info">
+            Profile edit
+        </h4>
+    </div>
 	<ul class="breadcrumb">
 		<li>
 			<a href="{{ path('fos_user_profile_show') }}">

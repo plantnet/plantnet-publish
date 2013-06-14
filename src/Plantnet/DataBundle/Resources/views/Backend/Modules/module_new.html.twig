@@ -8,6 +8,27 @@
             <em>Collection: {{ collection.name }}</em> > New module
         </h4>
     </div>
+    {% if form.type.vars.value is defined and form.type.vars.value == 'text' %}
+        <p>
+            Each line of the file must contain a unique identifier.
+            <br />
+            File reading starts at the first line, so it must not contain column heads.
+            <br />
+            Columns must be in desired order display.
+            <br />
+            If you choose to enable the taxonomic browser, you will need to enter applying rules in the module's options after data importation.
+        </p>
+    {% else %}
+        <p>
+            Each line of the file must contain a reference to a unique identifier specified in the main module.
+            <br />
+            If this reference does not exist, the corresponding line will be ignored.
+            <br />
+            File reading starts at the first line, so it must not contain column heads.
+            <br />
+            Columns must be in desired order display.
+        </p>
+    {% endif %}
     <form id="add_module" action="{{ path('module_create', { 'id': collection.id, 'type': type }) }}" method="post" {{ form_enctype(form) }}>
         {{ form_errors(form) }}
         <div class="field-form">

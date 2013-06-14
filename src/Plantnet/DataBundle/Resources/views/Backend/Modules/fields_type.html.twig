@@ -8,6 +8,13 @@
             <em>Module: {{ module.name }}</em> > Properties configuration
         </h4>
     </div>
+    <p>
+        "Title" types will be used to characterize data (page title, image title, location, ...).
+        <br />
+        Warning, "Type" column will not be available for update.
+        <br />
+        "Sort order" allows to set the sort order that will be applied for data display. To sort first on the colum "X" and secondly on the colum "Y", you must specify "X" : 1 and "Y" : 2.
+    </p>
     <form action="{{ path('save_fields', { 'id': collection.id, 'idmodule': module.id }) }}" method="post" {{ form_enctype(form) }}>
         {{ form_errors(form) }}
         <div class="field-form">

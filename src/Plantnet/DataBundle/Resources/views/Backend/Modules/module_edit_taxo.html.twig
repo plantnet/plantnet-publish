@@ -8,6 +8,9 @@
             <em>Module: {{ entity.name }}</em> > Taxonomy configuration
         </h4>
     </div>
+    <p>
+        Choose a level and a label (example: 1 Family, 2 Genus, 3 Species).
+    </p>
     <form action="{{ path('module_update_taxo', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
         {{ form_errors(edit_form) }}
         {% if entity.type == 'text' %}
