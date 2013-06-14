@@ -14,17 +14,17 @@ class Config
     protected $id;
 
     /**
-     * @MongoDB\EmbedOne(targetDocument="Language")
+     * @MongoDB\String
      */
     protected $defaultlanguage;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Language")
+     * @MongoDB\Hash
      */
     protected $availablelanguages;
 
     /**
-     * @MongoDB\EmbedMany(targetDocument="Language")
+     * @MongoDB\Hash
      */
     protected $customlanguages;
 
@@ -57,9 +57,9 @@ class Config
     /**
      * Set defaultlanguage
      *
-     * @param Plantnet\DataBundle\Document\Language $defaultlanguage
+     * @param string $defaultlanguage
      */
-    public function setDefaultlanguage(\Plantnet\DataBundle\Document\Language $defaultlanguage)
+    public function setDefaultlanguage($defaultlanguage)
     {
         $this->defaultlanguage = $defaultlanguage;
     }
@@ -67,87 +67,47 @@ class Config
     /**
      * Get defaultlanguage
      *
-     * @return Plantnet\DataBundle\Document\Language $defaultlanguage
+     * @return string $defaultlanguage
      */
     public function getDefaultlanguage()
     {
         return $this->defaultlanguage;
     }
-
+    
     /**
-     * Add availablelanguages
+     * Set availablelanguages
      *
-     * @param Plantnet\DataBundle\Document\Language $availablelanguages
+     * @param hash $availablelanguages
      */
-    public function addAvailablelanguage(\Plantnet\DataBundle\Document\Language $availablelanguages)
+    public function setAvailablelanguages($availablelanguages)
     {
-        $this->availablelanguages[] = $availablelanguages;
-    }
-
-    /**
-    * Remove availablelanguages
-    *
-    * @param <variableType$availablelanguages
-    */
-    public function removeAvailablelanguage(\Plantnet\DataBundle\Document\Language $availablelanguages)
-    {
-        $this->availablelanguages->removeElement($availablelanguages);
-    }
-
-    /**
-     * Add availablelanguages
-     *
-     * @param Plantnet\DataBundle\Document\Language $availablelanguages
-     */
-    public function addAvailablelanguages(\Plantnet\DataBundle\Document\Language $availablelanguages)
-    {
-        $this->availablelanguages[] = $availablelanguages;
+        $this->availablelanguages = $availablelanguages;
     }
 
     /**
      * Get availablelanguages
      *
-     * @return Doctrine\Common\Collections\Collection $availablelanguages
+     * @return hash $availablelanguages
      */
     public function getAvailablelanguages()
     {
         return $this->availablelanguages;
     }
-    
-    /**
-     * Add customlanguages
-     *
-     * @param Plantnet\DataBundle\Document\Language $customlanguages
-     */
-    public function addCustomlanguage(\Plantnet\DataBundle\Document\Language $customlanguages)
-    {
-        $this->customlanguages[] = $customlanguages;
-    }
 
     /**
-    * Remove customlanguages
-    *
-    * @param <variableType$customlanguages
-    */
-    public function removeCustomlanguage(\Plantnet\DataBundle\Document\Language $customlanguages)
-    {
-        $this->customlanguages->removeElement($customlanguages);
-    }
-
-    /**
-     * Add customlanguages
+     * Set customlanguages
      *
-     * @param Plantnet\DataBundle\Document\Language $customlanguages
+     * @param hash $customlanguages
      */
-    public function addCustomlanguages(\Plantnet\DataBundle\Document\Language $customlanguages)
+    public function setCustomlanguages($customlanguages)
     {
-        $this->customlanguages[] = $customlanguages;
+        $this->customlanguages = $customlanguages;
     }
 
     /**
      * Get customlanguages
      *
-     * @return Doctrine\Common\Collections\Collection $customlanguages
+     * @return hash $customlanguages
      */
     public function getCustomlanguages()
     {

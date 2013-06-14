@@ -46,7 +46,7 @@ class ConfigController extends Controller
         if(!$config){
             throw $this->createNotFoundException('Unable to find Config entity.');
         }
-        $editForm=$this->createForm(new ConfigType(),$config);
+        $editForm=$this->createForm(new ConfigType(),$config,array('languages'=>$this->container->getParameter('locales')));
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
             'entity'=>$config,
             'edit_form'=>$editForm->createView()
@@ -71,10 +71,16 @@ class ConfigController extends Controller
         if(!$config){
             throw $this->createNotFoundException('Unable to find Config entity.');
         }
-        $editForm=$this->createForm(new ConfigType(),$config);
+        $editForm=$this->createForm(new ConfigType(),$config,array('languages'=>$this->container->getParameter('locales')));
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
             $editForm->bindRequest($request);
+            $default=$config->getDefaultlanguage();
+            $availables=$config->getAvailablelanguages();
+            if(!in_array($default,$availables)){
+                $availables[]=$default;
+                $config->setAvailablelanguages($availables);
+            }
             if($editForm->isValid()){
                 $dm->persist($config);
                 $dm->flush();
