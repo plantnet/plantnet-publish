@@ -4,7 +4,8 @@
 {% block content %}
 	<form id="formProgress" action="{{ path('plantnet_file_manager_upload',{'name':name}) }}" method="post" {{ form_enctype(form) }}>
 	    {{ form_widget(form) }}
-		<input type="submit" value="Submit" />
+	    <br />
+		<input type="submit" value="Submit" class="btn" />
 	</form>
 	<div id="progress">
 		<div class="bar"></div >
