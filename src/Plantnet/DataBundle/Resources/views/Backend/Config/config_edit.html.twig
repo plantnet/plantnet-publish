@@ -38,4 +38,16 @@
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('input:radio').change(function(){
+				var selected=$('input:radio:checked').val();
+				$('input:checkbox').each(function(){
+					if($(this).val()==selected){
+						$(this).attr('checked',true);
+					}
+				});
+			});
+		});
+	</script>
 {% endblock %}

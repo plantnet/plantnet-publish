@@ -8,7 +8,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Plantnet\DataBundle\Document\Config,
-    Plantnet\DataBundle\Document\Language,
     Plantnet\DataBundle\Form\Type\ConfigType;
 
 /**
@@ -44,7 +43,12 @@ class ConfigController extends Controller
             ->getQuery()
             ->getSingleResult();
         if(!$config){
-            throw $this->createNotFoundException('Unable to find Config entity.');
+            $config=new Config();
+            $config->setDefaultlanguage($this->container->getParameter('locale'));
+            $config->setAvailablelanguages(array('0'=>$this->container->getParameter('locale')));
+            $config->setCustomlanguages(array());
+            $dm->persist($config);
+            $dm->flush();
         }
         $editForm=$this->createForm(new ConfigType(),$config,array('languages'=>$this->container->getParameter('locales')));
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
