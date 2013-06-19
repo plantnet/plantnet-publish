@@ -737,6 +737,7 @@ class ModulesController extends Controller
             if($editForm->isValid()){
                 $dm=$this->get('doctrine.odm.mongodb.document_manager');
                 $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                $module->setUpdating(true);
                 $dm->persist($module);
                 $dm->flush();
                 //command
