@@ -1,0 +1,7 @@
+{% extends "PlantnetUserBundle::layout.html.twig" %}
+{% block fos_user_content %}
+    <p>{{ 'registration.check_email'|trans({'%email%': user.email}, 'FOSUserBundle') }}</p>
+    <p>
+    	Note that the account will be active after validation by an administrator.
+    </p>
+{% endblock fos_user_content %}

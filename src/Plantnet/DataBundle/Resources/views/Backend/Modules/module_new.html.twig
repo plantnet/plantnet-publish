@@ -10,9 +10,9 @@
     </div>
     {% if form.type.vars.value is defined and form.type.vars.value == 'text' %}
         <p>
-            Each line of the file must contain a unique identifier.
+            File reading starts at the second line, so first one must contain column heads.
             <br />
-            File reading starts at the first line, so it must not contain column heads.
+            Each line of the file must contain a unique identifier.
             <br />
             Columns must be in desired order display.
             <br />
@@ -20,11 +20,11 @@
         </p>
     {% else %}
         <p>
+            File reading starts at the second line, so first one must contain column heads.
+            <br />
             Each line of the file must contain a reference to a unique identifier specified in the main module.
             <br />
             If this reference does not exist, the corresponding line will be ignored.
-            <br />
-            File reading starts at the first line, so it must not contain column heads.
             <br />
             Columns must be in desired order display.
         </p>
