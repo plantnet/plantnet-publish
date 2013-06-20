@@ -11,14 +11,14 @@
                     View
                 </a>
             </li>
-            {% if is_granted('ROLE_USER') %}
+            {#% if is_granted('ROLE_USER') %#}
                 <li>
                     <a href="{{ path('collection_edit', { 'id': collection.id }) }}" class="ajax">
                         <i class="icon-pencil"></i>
                         Edit
                     </a>
                 </li>
-            {% endif %}
+            {#% endif %#}
         </ul>
     </li>
     {% for module in collection.modules if module.deleting != true %}
@@ -35,7 +35,7 @@
                         View
                     </a>
                 </li>
-                {% if is_granted('ROLE_USER') %}
+                {#% if is_granted('ROLE_USER') %#}
                     <li>
                         <a href="{{ path('module_edit', { 'id': module.id }) }}" class="ajax">
                             <i class="icon-pencil"></i>
@@ -56,7 +56,7 @@
                             Export <small class="muted">IDAO</small>
                         </a>
                     </li>
-                {% endif %}
+                {#% endif %#}
             </ul>
         </li>
         {% if module.children|length > 0 %}
@@ -80,7 +80,7 @@
                                 View
                             </a>
                         </li>
-                        {% if is_granted('ROLE_USER') %}
+                        {#% if is_granted('ROLE_USER') %#}
                             <li>
                                 <a href="{{ path('module_edit', { 'id': child.id }) }}" class="ajax">
                                     <i class="icon-pencil"></i>
@@ -95,13 +95,13 @@
                                     </a>
                                 </li>
                             {% endif %}
-                        {% endif %}
+                        {#% endif %#}
                     </ul>
                 </li>
             {% endfor %}
         {% endif %}
     {% endfor %}
-    {% if is_granted('ROLE_USER') %}
+    {#% if is_granted('ROLE_USER') %#}
         <li>
             <a href="{{ path('module_new', { 'id': collection.id, 'type': 'module' }) }}" class="muted ajax">
                 <i class="icon-plus"></i>
@@ -116,14 +116,14 @@
                 </a>
             </li>
         {% endif %}
-    {% endif %}
+    {#% endif %#}
     <li class="divider"></li>
 {% endfor %}
-{% if is_granted('ROLE_USER') %}
+{#% if is_granted('ROLE_USER') %#}
     <li>
         <a href="{{ path('collection_new') }}" class="muted ajax">
             <i class="icon-plus-sign"></i>
             New Collection
         </a>
     </li>
-{% endif %}
+{#% endif %#}

@@ -115,6 +115,14 @@
 										Languages
 									</a>
 								</li>
+								{% if is_granted('ROLE_SUPER_ADMIN') %}
+									<li>
+										<a title="Users" href="{{ path('admin_users_list') }}">
+											<i class="icon-user"></i>
+											Users
+										</a>
+									</li>
+								{% endif %}
 								<li>
 									<a title="Public Website" href="{{ path('front_index') }}">
 										<i class="icon-leaf"></i>

@@ -4,9 +4,11 @@ namespace Plantnet\UserBundle\Document;
 
 use FOS\UserBundle\Document\User as BaseUser;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 
 /**
  * @MongoDB\Document
+ * @MongoDBUnique(fields="dbName", groups={"Registration"})
  */
 class User extends BaseUser
 {
@@ -18,7 +20,7 @@ class User extends BaseUser
     /**
      * @MongoDB\String
      */
-    private $dbName;
+    protected $dbName;
 
     public function __construct()
     {

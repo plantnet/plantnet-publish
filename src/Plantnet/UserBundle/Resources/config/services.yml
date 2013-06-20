@@ -1,0 +1,6 @@
+services:
+    plantnet_user.registration.form.type:
+        class: Plantnet\UserBundle\Form\Type\RegistrationFormType
+        arguments: [%fos_user.model.user.class%]
+        tags:
+            - { name: form.type, alias: plantnet_user_registration }

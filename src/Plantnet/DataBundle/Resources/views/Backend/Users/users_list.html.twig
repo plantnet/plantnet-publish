@@ -1,0 +1,36 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block form %}
+    <div id="title-form">
+        <h4 class="text-info">
+            Users list
+        </h4>
+    </div>
+    <table class="table table-striped table-hover table-condensed">
+    	<tr>
+    		<th>User</th>
+    		<th>eMail</th>
+    		<th>Role</th>
+    		<th>Database</th>
+    	</tr>
+    	{% for user in users %}
+    		<tr{% if app.user.usernameCanonical == user.usernameCanonical %} class="info"{% endif %}>
+				<td>{{ user.usernameCanonical }}</td>
+				<td>{{ user.emailCanonical }}</td>
+    			<td>{{ user.roles.0 }}</td>
+    			<td>
+    				{% if user.roles.0 == 'ROLE_SUPER_ADMIN' %}
+    					all
+    				{% else %}
+    					{{ user.dbName }}
+    				{% endif %}
+    			</td>
+    		</tr>
+    	{% endfor %}
+    </table>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
