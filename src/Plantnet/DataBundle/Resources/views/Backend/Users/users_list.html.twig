@@ -17,15 +17,19 @@
     	</tr>
     	{% for user in users %}
     		<tr{% if app.user.usernameCanonical == user.usernameCanonical %} class="info"{% endif %}>
-				<td>{{ user.usernameCanonical }}</td>
+				<td>
+                    <a href="{{ path('admin_users_edit', { 'username': user.usernameCanonical }) }}">
+                        {{ user.usernameCanonical }}
+                    </a>
+                </td>
 				<td>{{ user.emailCanonical }}</td>
     			<td>{{ user.roles.0 }}</td>
     			<td>
-    				{% if user.roles.0 == 'ROLE_SUPER_ADMIN' %}
-    					all
-    				{% else %}
-    					{{ user.dbName }}
-    				{% endif %}
+                    {% if user.dbName %}
+    				    {{ user.dbName }}
+                    {% else %}
+                        -
+                    {% endif %}
     			</td>
     		</tr>
     	{% endfor %}

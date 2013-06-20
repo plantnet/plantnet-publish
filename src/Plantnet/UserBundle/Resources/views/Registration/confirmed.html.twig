@@ -1,8 +1,12 @@
 {% extends "PlantnetUserBundle::layout.html.twig" %}
 {% block fos_user_content %}
     <p>{{ 'registration.confirmed'|trans({'%username%': user.username}, 'FOSUserBundle') }}</p>
+    <p>It must be validated by an administrator.</p>
     {% if app.session is not empty %}
+    	{#
         {% set targetUrl = app.session.get('_security.' ~ app.security.token.providerKey ~ '.target_path') %}
         {% if targetUrl is not empty %}<p><a href="{{ targetUrl }}">{{ 'registration.back'|trans({}, 'FOSUserBundle') }}</a></p>{% endif %}
+        #}
+        <p><a href="{{ path('fos_user_security_logout') }}">{{ 'registration.back'|trans({}, 'FOSUserBundle') }}</a></p>
     {% endif %}
 {% endblock fos_user_content %}

@@ -82,7 +82,11 @@
 					<header>
 						<a title="Back to Homepage" href="{{ path('admin_index') }}"></a>
 						<h3 class="muted">
-							[Publish - {% render controller("PlantnetDataBundle:Backend/Admin:displayTitle") %}]
+							{% if app.user.dbName %}
+								[Publish - {% render controller("PlantnetDataBundle:Backend/Admin:displayTitle") %}]
+							{% else %}
+								[Publish]
+							{% endif %}
 						</h3>
 					</header>
 				{% endblock %}
@@ -99,22 +103,24 @@
 										Home
 									</a>
 								</li>
-								<li class="dropdown{% if current == 'pages' %} active{% endif %}">
-									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-										<i class="icon-edit"></i>
-										Edit pages
-										<span class="caret"></span>
-									</a>
-									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-										{% render controller("PlantnetDataBundle:Backend/Admin:page_list") %}
-									</ul>
-								</li>
-								<li>
-									<a title="Languages" href="{{ path('config_edit') }}">
-										<i class="icon-globe"></i>
-										Languages
-									</a>
-								</li>
+								{% if app.user.dbName %}
+									<li class="dropdown{% if current == 'pages' %} active{% endif %}">
+										<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+											<i class="icon-edit"></i>
+											Edit pages
+											<span class="caret"></span>
+										</a>
+										<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+											{% render controller("PlantnetDataBundle:Backend/Admin:page_list") %}
+										</ul>
+									</li>
+									<li>
+										<a title="Languages" href="{{ path('config_edit') }}">
+											<i class="icon-globe"></i>
+											Languages
+										</a>
+									</li>
+								{% endif %}
 								{% if is_granted('ROLE_SUPER_ADMIN') %}
 									<li>
 										<a title="Users" href="{{ path('admin_users_list') }}">
@@ -171,9 +177,11 @@
 				<div class="span4">
 					{% block sidebar %}
 						<div class="well wellnav">
-							<ul id="left-menu" class="nav nav-list">
-								{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
-							</ul>
+							{% if app.user.dbName %}
+								<ul id="left-menu" class="nav nav-list">
+									{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
+								</ul>
+							{% endif %}
 						</div>
 					{% endblock %}
 				</div>

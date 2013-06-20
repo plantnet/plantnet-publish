@@ -1,0 +1,110 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block form %}
+    <div id="title-form">
+        <h4 class="text-info">
+            Edit user: {{ user.usernameCanonical }}
+        </h4>
+    </div>
+    <table class="table table-striped table-hover table-condensed">
+        <tr>
+            <td>User:</td>
+            <td>{{ user.usernameCanonical }}</td>
+        </tr>
+        <tr>
+            <td>eMail:</td>
+            <td>{{ user.emailCanonical }}</td>
+        </tr>
+        <tr>
+            <td>Database name:</td>
+            {% if user.dbName %}
+                <td>{{ user.dbName }}</td>
+            {% else %}
+                <td>{{ user.dbNameUq }}</td>
+            {% endif %}
+        </tr>
+    </table>
+    {% if role == 'admin' %}
+        <form action="{{ path('admin_users_switch', { 'username': user.usernameCanonical }) }}" method="post">
+            {{ form_widget(switch_form) }}
+            <button type="submit" class="btn">Switch database</button>
+        </form>
+    {% endif %}
+    {% if role == 'user' %}
+        <form id="form-enable" action="{{ path('admin_users_enable', { 'username': user.usernameCanonical }) }}" method="post">
+            {{ form_widget(enable_form) }}
+            <button id="btn-enable-1" type="submit" class="btn">
+                <i class="icon-ok"></i>
+                Enable the user account
+            </button>
+        </form>
+        <div id="modal-enable" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    <i class="icon-remove-sign"></i>
+                </button>
+                <h3 id="myModalLabel2">Enable ?</h3>
+            </div>
+            <div class="modal-body">
+                <p class="text-error">
+                    <i class="icon-warning-sign"></i> Enable this user account ?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">No</button>
+                <button class="btn" id="btn-enable-2"><i class="icon-ok"></i> Yes</button>
+            </div>
+        </div>
+        <form id="form-delete" action="{{ path('admin_users_delete', { 'username': user.usernameCanonical }) }}" method="post">
+            {{ form_widget(delete_form) }}
+            <button id="btn-delete-1" type="submit" class="btn">
+                <i class="icon-trash"></i>
+                Delete the user account
+            </button>
+        </form>
+        <div id="modal-delete" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    <i class="icon-remove-sign"></i>
+                </button>
+                <h3 id="myModalLabel">Delete ?</h3>
+            </div>
+            <div class="modal-body">
+                <p class="text-error">
+                    <i class="icon-warning-sign"></i> Delete this user account ?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">No</button>
+                <button class="btn" id="btn-delete-2"><i class="icon-trash"></i> Yes</button>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% if role == 'user' %}
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#btn-delete-1').click(function(event){
+                    event.preventDefault();
+                    $('#modal-delete').modal();
+                    return false;
+                });
+                $('#btn-delete-2').click(function(){
+                    $('#form-delete').submit();
+                });
+                $('#btn-enable-1').click(function(event){
+                    event.preventDefault();
+                    $('#modal-enable').modal();
+                    return false;
+                });
+                $('#btn-enable-2').click(function(){
+                    $('#form-enable').submit();
+                });
+            });
+        </script>
+    {% endif %}
+{% endblock %}

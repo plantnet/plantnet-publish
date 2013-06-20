@@ -8,7 +8,7 @@ use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 
 /**
  * @MongoDB\Document
- * @MongoDBUnique(fields="dbName", groups={"Registration"})
+ * @MongoDBUnique(fields="dbNameUq", groups={"Registration"})
  */
 class User extends BaseUser
 {
@@ -20,12 +20,37 @@ class User extends BaseUser
     /**
      * @MongoDB\String
      */
+    protected $dbNameUq;
+
+    /**
+     * @MongoDB\String
+     */
     protected $dbName;
 
     public function __construct()
     {
         parent::__construct();
         // your own logic
+    }
+
+    /**
+     * Set dbNameUq
+     *
+     * @param string $dbNameUq
+     */
+    public function setDbNameUq($dbNameUq)
+    {
+        $this->dbNameUq = $dbNameUq;
+    }
+
+    /**
+     * Get dbNameUq
+     *
+     * @return string $dbNameUq
+     */
+    public function getDbNameUq()
+    {
+        return $this->dbNameUq;
     }
 
     /**

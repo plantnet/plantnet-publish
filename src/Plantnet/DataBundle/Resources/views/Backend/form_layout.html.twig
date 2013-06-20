@@ -4,9 +4,11 @@
 {% endblock %}
 {% block sidebar %}
 	<div class="well wellnav">
-		<ul id="left-menu" class="nav nav-list">
-			{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
-		</ul>
+		{% if app.user.dbName %}
+			<ul id="left-menu" class="nav nav-list">
+				{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
+			</ul>
+		{% endif %}
 	</div>
 {% endblock %}
 {% block content %}

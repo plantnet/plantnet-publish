@@ -15,22 +15,22 @@ class RegistrationFormType extends BaseType
     {
         parent::buildForm($builder, $options);
         // add your custom field
-        $builder->add('dbName','text',array(
+        $builder->add('dbNameUq','text',array(
             'label'=>'Database name (only letters):',
             'required'=>true
         ));
         $builder->addValidator(new CallbackValidator(function(FormInterface $form){
-            $dbName=$form->get('dbName');
-            if(!is_null($dbName->getData())){
-                if(!ctype_lower($dbName->getData())){
-                    $dbName->addError(new FormError("This field is not valid (only letters)"));
+            $dbNameUq=$form->get('dbNameUq');
+            if(!is_null($dbNameUq->getData())){
+                if(!ctype_lower($dbNameUq->getData())){
+                    $dbNameUq->addError(new FormError("This field is not valid (only letters)"));
                 }
-                if(strlen($dbName->getData())<3||strlen($dbName->getData())>50){
-                    $dbName->addError(new FormError("This field must contain 3 to 50 letters"));
+                if(strlen($dbNameUq->getData())<3||strlen($dbNameUq->getData())>50){
+                    $dbNameUq->addError(new FormError("This field must contain 3 to 50 letters"));
                 }
             }
             else{
-                $dbName->addError(new FormError("This field must not be empty"));
+                $dbNameUq->addError(new FormError("This field must not be empty"));
             }
         }));
     }
