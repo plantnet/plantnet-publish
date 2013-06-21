@@ -31,10 +31,10 @@ fos_user_register:
     prefix: /admin/register
     options: { i18n: false }
 
-# fos_user_resetting:
-#     resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
-#     prefix: /admin/resetting
-#     options: { i18n: false }
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /admin/resetting
+    options: { i18n: false }
 
 # fos_user_group:
 #     resource: "@FOSUserBundle/Resources/config/routing/group.xml"

@@ -59,6 +59,22 @@ class UserController extends Controller
         return $users;
     }
 
+    public function displayNewAction()
+    {
+        $nb=0;
+        $userManager=$this->get('fos_user.user_manager');
+        $users=$userManager->findUsers();
+        foreach($users as $user){
+            $roles=$user->getRoles();
+            if(!in_array('ROLE_ADMIN',$roles)&&!in_array('ROLE_SUPER_ADMIN',$roles)){
+                $nb++;
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Users:new.html.twig',array(
+            'nb'=>$nb
+        ));
+    }
+
     /**
      * @Route("/", name="admin_users_list")
      * @Template()
@@ -93,8 +109,11 @@ class UserController extends Controller
         }
         $role='user';
         $roles=$user->getRoles();
-        if(in_array('ROLE_ADMIN',$roles)||in_array('ROLE_SUPER_ADMIN',$roles)){
+        if(in_array('ROLE_ADMIN',$roles)){
             $role='admin';
+        }
+        if(in_array('ROLE_SUPER_ADMIN',$roles)){
+            $role='superadmin';
         }
         $switchForm=$this->createSwitchForm($this->database_list(),$user->getDbName());
         $enableForm=$this->createEnableForm($username);

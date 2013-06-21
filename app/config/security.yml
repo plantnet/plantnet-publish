@@ -51,11 +51,11 @@ security:
         # URL of FOSUserBundle which need to be available to anonymous users
         - { path: ^/admin/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        # - { path: ^/admin/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
         # Secured part of the site
         # This config requires being logged for the whole site and having the admin role for the admin part.
         # Change these rules to adapt them to your needs
-        - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/admin/users/, role: ROLE_SUPER_ADMIN }
+        - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/.*, role: IS_AUTHENTICATED_ANONYMOUSLY }

@@ -126,6 +126,7 @@
 										<a title="Users" href="{{ path('admin_users_list') }}">
 											<i class="icon-user"></i>
 											Users
+											{% render controller("PlantnetDataBundle:Backend/User:displayNew") %}
 										</a>
 									</li>
 								{% endif %}
