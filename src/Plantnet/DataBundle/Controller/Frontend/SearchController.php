@@ -172,7 +172,9 @@ class SearchController extends Controller
         }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $collection = $dm->getRepository('PlantnetDataBundle:Collection')
+        $configuration=$dm->getConnection()->getConfiguration();
+        $configuration->setLoggerCallable(null);
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array('url'=>$collection));
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');

@@ -56,6 +56,7 @@ class DeleteCommand extends ContainerAwareCommand
         $dm->getConfiguration()->setDefaultDB($dbname);
         $configuration=$dm->getConnection()->getConfiguration();
         $configuration->setLoggerCallable(null);
+        \MongoCursor::$timeout=-1;
         $module=$dm->getRepository('PlantnetDataBundle:Module')->find($id);
         if(!$module){
             $error='Unable to find Module entity.';
@@ -276,6 +277,7 @@ class DeleteCommand extends ContainerAwareCommand
         $dm->getConfiguration()->setDefaultDB($dbname);
         $configuration=$dm->getConnection()->getConfiguration();
         $configuration->setLoggerCallable(null);
+        \MongoCursor::$timeout=-1;
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array(
                 'id'=>$id
