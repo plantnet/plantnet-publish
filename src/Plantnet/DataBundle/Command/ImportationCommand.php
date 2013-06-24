@@ -303,24 +303,19 @@ class ImportationCommand extends ContainerAwareCommand
                     $message.="\n".'These "id parent" do not exist:'."\n";
                     $message.=implode(', ',$orphans);
                 }
-                /*
-                // Récupération du mailer service.
-                $container=$this->getContainer();
-                $mailer=$container->get('mailer');
-                // Création de l'e-mail : le service mailer utilise SwiftMailer, donc nous créons une instance de Swift_Message.
-                $message=\Swift_Message::newInstance()
-                ->setSubject('Importation success')
-                ->setFrom('support@plantnet-project.org')
-                ->setTo($usermail)
-                ->setBody('Your data for the module were imported');
-                // Retour au service mailer, nous utilisons sa méthode « send() » pour envoyer notre $message.
-                $mailer->send($message);
-                */
             }
             else{
                 $message=$error;
             }
-            mail($usermail,'Pl@ntnet - Publish',$message);
+            $message_mail=\Swift_Message::newInstance()
+                ->setSubject('Publish : task ended')
+                ->setFrom($this->getContainer()->getParameter('from_email_adress'))
+                ->setTo($usermail)
+                ->setBody($message.$this->getContainer()->get('templating')->render(
+                    'PlantnetDataBundle:Backend\Mail:task.txt.twig'
+                ))
+            ;
+            $this->getContainer()->get('mailer')->send($message_mail);
         }
     }
 
