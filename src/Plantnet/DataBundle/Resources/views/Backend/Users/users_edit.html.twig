@@ -38,37 +38,69 @@
             {% endif %}
         </tr>
     </table>
-    {% if role == 'superadmin' %}
+    {# SUPER ADMIN [SWITCH DATABASE] #}
+    {% if role == 'superadmin' and app.user.usernameCanonical == user.usernameCanonical %}
         <form action="{{ path('admin_users_switch', { 'username': user.usernameCanonical }) }}" method="post">
             {{ form_widget(switch_form) }}
             <button type="submit" class="btn">Switch database</button>
         </form>
     {% endif %}
+    {# USER [WAITING FOR VALIDATION] #}
     {% if role == 'user' %}
-        <form id="form-enable" action="{{ path('admin_users_enable', { 'username': user.usernameCanonical }) }}" method="post">
-            {{ form_widget(enable_form) }}
-            <button id="btn-enable-1" type="submit" class="btn">
-                <i class="icon-ok"></i>
-                Enable the user account
-            </button>
-        </form>
-        <div id="modal-enable" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    <i class="icon-remove-sign"></i>
+        {% if enable_super_form is not null %}
+            {# WAITING FOR SUPER ADMIN ACCOUNT #}
+            <form id="form-enable-super" action="{{ path('admin_users_enable_super_admin', { 'username': user.usernameCanonical }) }}" method="post">
+                {{ form_widget(enable_super_form) }}
+                <button id="btn-enable-super-1" type="submit" class="btn">
+                    <i class="icon-ok"></i>
+                    Enable the Super Admin account
                 </button>
-                <h3 id="myModalLabel2">Enable ?</h3>
+            </form>
+            <div id="modal-enable-super" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        <i class="icon-remove-sign"></i>
+                    </button>
+                    <h3 id="myModalLabel3">Enable ?</h3>
+                </div>
+                <div class="modal-body">
+                    <p class="text-error">
+                        <i class="icon-warning-sign"></i> Enable this Super Admin account ?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">No</button>
+                    <button class="btn" id="btn-enable-super-2"><i class="icon-ok"></i> Yes</button>
+                </div>
             </div>
-            <div class="modal-body">
-                <p class="text-error">
-                    <i class="icon-warning-sign"></i> Enable this user account ?
-                </p>
+        {% else %}
+            {# WAITING FOR ADMIN ACCOUNT #}
+            <form id="form-enable" action="{{ path('admin_users_enable', { 'username': user.usernameCanonical }) }}" method="post">
+                {{ form_widget(enable_form) }}
+                <button id="btn-enable-1" type="submit" class="btn">
+                    <i class="icon-ok"></i>
+                    Enable the user account
+                </button>
+            </form>
+            <div id="modal-enable" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        <i class="icon-remove-sign"></i>
+                    </button>
+                    <h3 id="myModalLabel2">Enable ?</h3>
+                </div>
+                <div class="modal-body">
+                    <p class="text-error">
+                        <i class="icon-warning-sign"></i> Enable this user account ?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">No</button>
+                    <button class="btn" id="btn-enable-2"><i class="icon-ok"></i> Yes</button>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">No</button>
-                <button class="btn" id="btn-enable-2"><i class="icon-ok"></i> Yes</button>
-            </div>
-        </div>
+        {% endif %}
+        {# WAITING FOR ACCOUNT BUT DELETE #}
         <form id="form-delete" action="{{ path('admin_users_delete', { 'username': user.usernameCanonical }) }}" method="post">
             {{ form_widget(delete_form) }}
             <button id="btn-delete-1" type="submit" class="btn">
@@ -99,23 +131,37 @@
     {{ parent() }}
     {% if role == 'user' %}
         <script type="text/javascript">
-            $(document).ready(function() {
-                $('#btn-delete-1').click(function(event){
-                    event.preventDefault();
-                    $('#modal-delete').modal();
-                    return false;
-                });
-                $('#btn-delete-2').click(function(){
-                    $('#form-delete').submit();
-                });
-                $('#btn-enable-1').click(function(event){
-                    event.preventDefault();
-                    $('#modal-enable').modal();
-                    return false;
-                });
-                $('#btn-enable-2').click(function(){
-                    $('#form-enable').submit();
-                });
+            $(document).ready(function(){
+                if($('#btn-delete-1').length>0){
+                    $('#btn-delete-1').click(function(event){
+                        event.preventDefault();
+                        $('#modal-delete').modal();
+                        return false;
+                    });
+                    $('#btn-delete-2').click(function(){
+                        $('#form-delete').submit();
+                    });
+                }
+                if($('#btn-enable-1').length>0){
+                    $('#btn-enable-1').click(function(event){
+                        event.preventDefault();
+                        $('#modal-enable').modal();
+                        return false;
+                    });
+                    $('#btn-enable-2').click(function(){
+                        $('#form-enable').submit();
+                    });
+                }
+                if($('#btn-enable-super-1').length>0){
+                    $('#btn-enable-super-1').click(function(event){
+                        event.preventDefault();
+                        $('#modal-enable-super').modal();
+                        return false;
+                    });
+                    $('#btn-enable-super-2').click(function(){
+                        $('#form-enable-super').submit();
+                    });
+                }
             });
         </script>
     {% endif %}

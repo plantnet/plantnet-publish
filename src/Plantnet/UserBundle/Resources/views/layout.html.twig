@@ -66,4 +66,18 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            if($('#chk_super input:checkbox').length>0){
+                $('#chk_super input:checkbox').first().change(function(){
+                    if($(this).attr('checked')=='checked'){
+                        $('#chk_super_hidden').hide();
+                    }
+                    else{
+                        $('#chk_super_hidden').show();
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}

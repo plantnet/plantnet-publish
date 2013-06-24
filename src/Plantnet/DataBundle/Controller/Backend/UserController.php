@@ -117,6 +117,10 @@ class UserController extends Controller
         }
         $switchForm=$this->createSwitchForm($this->database_list(),$user->getDbName());
         $enableForm=$this->createEnableForm($username);
+        $enableSuperAdminForm=false;
+        if($user->getSuper()===true){
+            $enableSuperAdminForm=$this->createEnableSuperAdminForm($username);
+        }
         $deleteForm=$this->createDeleteForm($username);
         return $this->render('PlantnetDataBundle:Backend\Users:users_edit.html.twig',array(
             'user'=>$user,
@@ -124,6 +128,7 @@ class UserController extends Controller
             'switch_form'=>$switchForm->createView(),
             'delete_form'=>$deleteForm->createView(),
             'enable_form'=>$enableForm->createView(),
+            'enable_super_form'=>($enableSuperAdminForm!=false)?$enableSuperAdminForm->createView():null,
             'current'=>'users'
         ));
     }
@@ -163,9 +168,54 @@ class UserController extends Controller
             $form->bindRequest($request);
             if($form->isValid()){
                 $roles=$user->getRoles();
-                if(in_array('ROLE_SUPER_ADMIN',$roles)){
+                if(in_array('ROLE_SUPER_ADMIN',$roles)&&$username==$this->container->get('security.context')->getToken()->getUser()->getUsernameCanonical()){
                     $user->setDbName($form->get('dbs')->getData());
                     $userManager->updateUser($user);
+                }
+            }
+        }
+        return $this->redirect($this->generateUrl('admin_users_edit',array('username'=>$username)));
+    }
+
+    private function createEnableSuperAdminForm($username)
+    {
+        return $this->createFormBuilder(array('username'=>$username))
+            ->add('username','hidden')
+            ->getForm();
+    }
+
+    /**
+     * Enables a User (superadmin) entity.
+     *
+     * @Route("/{username}/enable_super_admin", name="admin_users_enable_super_admin")
+     * @Method("post")
+     */
+    public function users_enable_super_adminAction($username)
+    {
+        $form=$this->createEnableForm($username);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $form->bindRequest($request);
+            if($form->isValid()){
+                $userManager=$this->get('fos_user.user_manager');
+                $user=$userManager->findUserByUsername($username);
+                if(!$user||$user->getSuper()!=true){
+                    throw $this->createNotFoundException('Unable to find User entity.');
+                }
+                $roles=$user->getRoles();
+                if(!in_array('ROLE_ADMIN',$roles)&&!in_array('ROLE_SUPER_ADMIN',$roles)){
+                    //check if database exists
+                    $dbs_array=$this->database_list();
+                    if(!in_array($user->getDbNameUq(),$dbs_array)){
+                        //update user account
+                        $user->setSuper(false);
+                        $user->addRole('ROLE_SUPER_ADMIN');
+                        $userManager->updateUser($user);
+                    }
+                    else{
+                        echo 'Error...';
+                        exit;
+                    }
                 }
             }
         }

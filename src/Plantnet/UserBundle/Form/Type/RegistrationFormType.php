@@ -15,22 +15,30 @@ class RegistrationFormType extends BaseType
     {
         parent::buildForm($builder, $options);
         // add your custom field
+        $builder->add('super','checkbox',array(
+            'label'=>'Looking for Super Admin account:',
+            'required'=>false
+        ));
         $builder->add('dbNameUq','text',array(
             'label'=>'Database name (only letters):',
-            'required'=>true
+            'required'=>false
         ));
         $builder->addValidator(new CallbackValidator(function(FormInterface $form){
             $dbNameUq=$form->get('dbNameUq');
-            if(!is_null($dbNameUq->getData())){
-                if(!ctype_lower($dbNameUq->getData())){
-                    $dbNameUq->addError(new FormError("This field is not valid (only letters)"));
+            $super=$form->get('super')->getData();
+            if(!$super)
+            {
+                if(!is_null($dbNameUq->getData())){
+                    if(!ctype_lower($dbNameUq->getData())){
+                        $dbNameUq->addError(new FormError("This field is not valid (only letters)"));
+                    }
+                    if(strlen($dbNameUq->getData())<3||strlen($dbNameUq->getData())>50){
+                        $dbNameUq->addError(new FormError("This field must contain 3 to 50 letters"));
+                    }
                 }
-                if(strlen($dbNameUq->getData())<3||strlen($dbNameUq->getData())>50){
-                    $dbNameUq->addError(new FormError("This field must contain 3 to 50 letters"));
+                else{
+                    $dbNameUq->addError(new FormError("This field must not be empty"));
                 }
-            }
-            else{
-                $dbNameUq->addError(new FormError("This field must not be empty"));
             }
         }));
     }

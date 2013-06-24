@@ -27,6 +27,11 @@ class User extends BaseUser
      */
     protected $dbName;
 
+    /**
+     * @MongoDB\Boolean
+     */
+    private $super;
+
     public function __construct()
     {
         parent::__construct();
@@ -71,5 +76,25 @@ class User extends BaseUser
     public function getDbName()
     {
         return $this->dbName;
+    }
+
+    /**
+     * Set super
+     *
+     * @param boolean $super
+     */
+    public function setSuper($super)
+    {
+        $this->super = $super;
+    }
+
+    /**
+     * Get super
+     *
+     * @return boolean $super
+     */
+    public function getSuper()
+    {
+        return $this->super;
     }
 }

@@ -21,7 +21,7 @@
             {{ form_label(form.name) }}
             {{ form_errors(form.name) }}
             {{ form_widget(form.name) }}
-        </div >
+        </div>
         {% if app.session.hasFlash('error') %}
             <div id="flashmessage" class="flash-error">
                 <p class="text-error">

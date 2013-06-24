@@ -35,18 +35,18 @@
             {{ form_label(form.name) }}
             {{ form_errors(form.name) }}
             {{ form_widget(form.name) }}
-        </div >
+        </div>
         <div class="field-form">
             {{ form_label(form.url) }}
             {{ form_errors(form.url) }}
             {{ form_widget(form.url) }}
-        </div >
+        </div>
         {% if form.type.vars.value is defined and form.type.vars.value == 'text' %}
             <div class="field-form">
                 {{ form_label(form.taxonomy, 'Enable taxonomic browser', {'label_attr': {'class': 'inline'}}) }}
                 {{ form_errors(form.taxonomy) }}
                 {{ form_widget(form.taxonomy) }}
-            </div >
+            </div>
             <div class="field-form">
                 {{ form_label(form.description) }}
                 {{ form_errors(form.description) }}

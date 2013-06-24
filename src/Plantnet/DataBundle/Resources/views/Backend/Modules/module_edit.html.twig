@@ -25,18 +25,18 @@
             {{ form_label(edit_form.name) }}
             {{ form_errors(edit_form.name) }}
             {{ form_widget(edit_form.name) }}
-        </div >
+        </div>
         <div class="field-form">
             {{ form_label(edit_form.url) }}
             {{ form_errors(edit_form.url) }}
             {{ form_widget(edit_form.url) }}
-        </div >
+        </div>
         {% if entity.type == 'text' %}
             <div class="field-form">
                 {{ form_label(edit_form.taxonomy, 'Enable taxonomic browser', {'label_attr': {'class': 'inline'}}) }}
                 {{ form_errors(edit_form.taxonomy) }}
                 {{ form_widget(edit_form.taxonomy) }}
-            </div >
+            </div>
             <div class="field-form">
                 {{ form_label(edit_form.description) }}
                 {{ form_errors(edit_form.description) }}
