@@ -4,6 +4,7 @@ namespace Plantnet\DataBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class CollectionType extends AbstractType
 {
@@ -14,6 +15,13 @@ class CollectionType extends AbstractType
             ->add('url')
             ->add('description', 'textarea', array('required'=>false))
         ;
+    }
+
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => 'Plantnet\DataBundle\Document\Collection',
+        ));
     }
 
     public function getDefaultOptions(array $options)

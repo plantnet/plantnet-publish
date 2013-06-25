@@ -4,6 +4,7 @@ namespace Plantnet\DataBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class PropertiesTaxoType extends AbstractType
 {
@@ -18,6 +19,13 @@ class PropertiesTaxoType extends AbstractType
 			))
 		;
 	}
+
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => 'Plantnet\DataBundle\Document\Property',
+        ));
+    }
 
 	public function getDefaultOptions(array $options)
 	{

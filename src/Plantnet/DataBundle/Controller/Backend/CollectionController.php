@@ -78,7 +78,7 @@ class CollectionController extends Controller
         $request=$this->getRequest();
         $form=$this->createForm(new CollectionType(),$document);
         if('POST'===$request->getMethod()){
-            $form->bindRequest($request);
+            $form->bind($request);
             $url=$document->getUrl();
             if(StringHelp::isGoodForUrl($url)){
                 $document->setAlias(StringHelp::cleanToPath($user->getUsername().'_'.$url));
@@ -163,7 +163,7 @@ class CollectionController extends Controller
         $deleteForm=$this->createDeleteForm($id);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
-            $editForm->bindRequest($request);
+            $editForm->bind($request);
             $url=$collection->getUrl();
             if(StringHelp::isGoodForUrl($url)){
                 if($editForm->isValid()){
@@ -201,7 +201,7 @@ class CollectionController extends Controller
         $form=$this->createDeleteForm($id);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
-            $form->bindRequest($request);
+            $form->bind($request);
             if($form->isValid()){
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');

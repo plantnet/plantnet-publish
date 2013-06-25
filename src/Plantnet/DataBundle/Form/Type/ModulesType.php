@@ -4,6 +4,7 @@ namespace Plantnet\DataBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ModulesType extends AbstractType
 {
@@ -52,6 +53,13 @@ class ModulesType extends AbstractType
                 ))
             ;
         }
+    }
+
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => 'Plantnet\DataBundle\Document\Module',
+        ));
     }
 
     public function getDefaultOptions(array $options)

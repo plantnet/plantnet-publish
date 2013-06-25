@@ -121,7 +121,7 @@ class ModulesController extends Controller
         }
         $form=$this->createForm(new ModuleFormType(),$module,array('idparent'=>$idparent));
         if('POST'===$request->getMethod()){
-            $form->bindRequest($request);
+            $form->bind($request);
             $check_name=$module->getName();
             $url=$module->getUrl();
             if(StringHelp::isGoodForUrl($url)){
@@ -373,7 +373,7 @@ class ModulesController extends Controller
                     $error=true;
                 }
             }
-            $form->bindRequest($request);
+            $form->bind($request);
             if(!$error){
                 if($form->isValid()){
                     $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -613,7 +613,7 @@ class ModulesController extends Controller
         $deleteForm=$this->createDeleteForm($id);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
-            $editForm->bindRequest($request);
+            $editForm->bind($request);
             $check_name=$module->getName();
             $url=$module->getUrl();
             if(StringHelp::isGoodForUrl($url)){
@@ -733,7 +733,7 @@ class ModulesController extends Controller
         $editForm=$this->createForm(new ModulesTaxoType(),$module);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
-            $editForm->bindRequest($request);
+            $editForm->bind($request);
             if($editForm->isValid()){
                 $dm=$this->get('doctrine.odm.mongodb.document_manager');
                 $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -765,7 +765,7 @@ class ModulesController extends Controller
         $form=$this->createDeleteForm($id);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
-            $form->bindRequest($request);
+            $form->bind($request);
             if($form->isValid()){
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');

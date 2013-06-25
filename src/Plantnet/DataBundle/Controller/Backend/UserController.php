@@ -165,7 +165,7 @@ class UserController extends Controller
         $form=$this->createSwitchForm($this->database_list(),$user->getDbName());
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
-            $form->bindRequest($request);
+            $form->bind($request);
             if($form->isValid()){
                 $roles=$user->getRoles();
                 if(in_array('ROLE_SUPER_ADMIN',$roles)&&$username==$this->container->get('security.context')->getToken()->getUser()->getUsernameCanonical()){
@@ -195,7 +195,7 @@ class UserController extends Controller
         $form=$this->createEnableForm($username);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
-            $form->bindRequest($request);
+            $form->bind($request);
             if($form->isValid()){
                 $userManager=$this->get('fos_user.user_manager');
                 $user=$userManager->findUserByUsername($username);
@@ -240,7 +240,7 @@ class UserController extends Controller
         $form=$this->createEnableForm($username);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
-            $form->bindRequest($request);
+            $form->bind($request);
             if($form->isValid()){
                 $userManager=$this->get('fos_user.user_manager');
                 $user=$userManager->findUserByUsername($username);
@@ -309,7 +309,7 @@ class UserController extends Controller
         $form=$this->createDeleteForm($username);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
-            $form->bindRequest($request);
+            $form->bind($request);
             if($form->isValid()){
                 $userManager=$this->get('fos_user.user_manager');
                 $user=$userManager->findUserByUsername($username);

@@ -29,7 +29,7 @@ class ModuleFormType extends AbstractType
                     'multiple' => false
                 ))
                 ->add('parent', 'choice',array(
-                    'property_path' => false,
+                    'mapped' => false,
                     'choices' => $options['idparent'],
                     'required'=>true
                 ))

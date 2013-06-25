@@ -357,7 +357,7 @@ class AdminController extends Controller
         $editForm=$this->createForm(new PageType(),$page);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
-            $editForm->bindRequest($request);
+            $editForm->bind($request);
             if($editForm->isValid()){
                 $dm->persist($page);
                 $dm->flush();

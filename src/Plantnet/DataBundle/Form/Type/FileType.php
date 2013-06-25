@@ -4,6 +4,7 @@ namespace Plantnet\DataBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class FileType extends AbstractType
 {
@@ -12,6 +13,13 @@ class FileType extends AbstractType
         $builder
             ->add('file', 'file')
         ;
+    }
+
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => 'Plantnet\DataBundle\Document\File',
+        ));
     }
 
     public function getDefaultOptions(array $options)

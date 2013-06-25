@@ -78,7 +78,7 @@ class ConfigController extends Controller
         $editForm=$this->createForm(new ConfigType(),$config,array('languages'=>$this->container->getParameter('locales')));
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
-            $editForm->bindRequest($request);
+            $editForm->bind($request);
             $default=$config->getDefaultlanguage();
             $availables=$config->getAvailablelanguages();
             if(!in_array($default,$availables)){

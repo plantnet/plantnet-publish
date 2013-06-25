@@ -22,13 +22,20 @@
             {{ form_errors(form.name) }}
             {{ form_widget(form.name) }}
         </div>
-        {% if app.session.hasFlash('error') %}
+        {#% if app.session.hasFlash('error') %}
             <div id="flashmessage" class="flash-error">
                 <p class="text-error">
                     {{ app.session.flash('error') }}
                 </p>
             </div>
-        {% endif %}
+        {% endif %#}
+        {% for flashmessage in app.session.flashbag.get('error') %}
+            <div class="flash-error">
+                <p class="text-error">
+                    {{ flashmessage }}
+                </p>
+            </div>
+        {% endfor %}
         <table id="table-form" class="table table-bordered table-condensed table-hover">
             <thead>
                 <tr>
