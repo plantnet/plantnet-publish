@@ -28,6 +28,11 @@ class User extends BaseUser
     protected $dbName;
 
     /**
+     * @MongoDB\String
+     */
+    protected $defaultlanguage;
+
+    /**
      * @MongoDB\Boolean
      */
     private $super;
@@ -76,6 +81,26 @@ class User extends BaseUser
     public function getDbName()
     {
         return $this->dbName;
+    }
+
+    /**
+     * Set defaultlanguage
+     *
+     * @param string $defaultlanguage
+     */
+    public function setDefaultlanguage($defaultlanguage)
+    {
+        $this->defaultlanguage = $defaultlanguage;
+    }
+
+    /**
+     * Get defaultlanguage
+     *
+     * @return string $defaultlanguage
+     */
+    public function getDefaultlanguage()
+    {
+        return $this->defaultlanguage;
     }
 
     /**

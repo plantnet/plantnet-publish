@@ -25,9 +25,14 @@ class RegistrationFormType extends BaseType
             'label'=>'Database name (only letters):',
             'required'=>false
         ));
+        $builder->add('defaultlanguage','text',array(
+            'label'=>'Default language (only letters):',
+            'required'=>false
+        ));
         $extraValidator=function(FormEvent $event){
             $form=$event->getForm();
             $dbNameUq=$form->get('dbNameUq');
+            $defaultlanguage=$form->get('defaultlanguage');
             $super=$form->get('super')->getData();
             if(!$super)
             {
@@ -41,6 +46,17 @@ class RegistrationFormType extends BaseType
                 }
                 else{
                     $dbNameUq->addError(new FormError("This field must not be empty"));
+                }
+                if(!is_null($defaultlanguage->getData())){
+                    if(!ctype_lower($defaultlanguage->getData())){
+                        $defaultlanguage->addError(new FormError("This field is not valid (only letters)"));
+                    }
+                    if(strlen($defaultlanguage->getData())<2||strlen($defaultlanguage->getData())>3){
+                        $defaultlanguage->addError(new FormError("This field must contain 2 or 3 letters"));
+                    }
+                }
+                else{
+                    $defaultlanguage->addError(new FormError("This field must not be empty"));
                 }
             }
         };

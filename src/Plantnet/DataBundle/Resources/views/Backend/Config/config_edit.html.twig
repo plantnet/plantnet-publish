@@ -24,13 +24,23 @@
 		<div class="field-form rd_chk">
 			{{ form_label(edit_form.defaultlanguage) }}
 			{{ form_errors(edit_form.defaultlanguage) }}
-			{{ form_widget(edit_form.defaultlanguage) }}
+			{{ form_widget(edit_form.defaultlanguage, {'attr': {'class': 'span1'}}) }}
 		</div>
 		<div class="field-form rd_chk">
 			{{ form_label(edit_form.availablelanguages) }}
+			<br />
 			{{ form_errors(edit_form.availablelanguages) }}
 			{{ form_widget(edit_form.availablelanguages) }}
 		</div>
+		{% if entity.availablelanguages|length > 0 %}
+			<br />
+			<p>
+				Current available languages:
+				{% for language in entity.availablelanguages %}
+					<strong>{{ language }} </strong>
+				{% endfor %}
+			</p>
+		{% endif %}
 		{{ form_rest(edit_form) }}
 		<br />
 		<button type="submit" class="btn">Update</button>
@@ -38,16 +48,4 @@
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
-	<script type="text/javascript">
-		$(document).ready(function(){
-			$('input:radio').change(function(){
-				var selected=$('input:radio:checked').val();
-				$('input:checkbox').each(function(){
-					if($(this).val()==selected){
-						$(this).attr('checked',true);
-					}
-				});
-			});
-		});
-	</script>
 {% endblock %}

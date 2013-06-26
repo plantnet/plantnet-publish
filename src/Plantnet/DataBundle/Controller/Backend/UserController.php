@@ -276,6 +276,8 @@ class UserController extends Controller
                         $db->Page->insert(array('name'=>'mentions','order'=>2));
                         $db->Page->insert(array('name'=>'credits','order'=>3));
                         $db->Page->insert(array('name'=>'contacts','order'=>4));
+                        //init config
+                        $db->Config->insert(array('defaultlanguage'=>$user->getDefaultlanguage()));
                         //update user account
                         $user->setDbName($dbName);
                         $user->addRole('ROLE_ADMIN');

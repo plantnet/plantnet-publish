@@ -43,14 +43,9 @@ class ConfigController extends Controller
             ->getQuery()
             ->getSingleResult();
         if(!$config){
-            $config=new Config();
-            $config->setDefaultlanguage($this->container->getParameter('locale'));
-            $config->setAvailablelanguages(array('0'=>$this->container->getParameter('locale')));
-            $config->setCustomlanguages(array());
-            $dm->persist($config);
-            $dm->flush();
+            throw $this->createNotFoundException('Unable to find Config entity.');
         }
-        $editForm=$this->createForm(new ConfigType(),$config,array('languages'=>$this->container->getParameter('locales')));
+        $editForm=$this->createForm(new ConfigType(),$config);
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
             'entity'=>$config,
             'edit_form'=>$editForm->createView()
@@ -75,21 +70,12 @@ class ConfigController extends Controller
         if(!$config){
             throw $this->createNotFoundException('Unable to find Config entity.');
         }
-        $editForm=$this->createForm(new ConfigType(),$config,array('languages'=>$this->container->getParameter('locales')));
+        $editForm=$this->createForm(new ConfigType(),$config);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
             $editForm->bind($request);
-            $default=$config->getDefaultlanguage();
-            $availables=$config->getAvailablelanguages();
-            if(!in_array($default,$availables)){
-                $availables[]=$default;
-                $config->setAvailablelanguages($availables);
-            }
-            if($editForm->isValid()){
-                $dm->persist($config);
-                $dm->flush();
-                return $this->redirect($this->generateUrl('config_edit'));
-            }
+            $dm->persist($config);
+            $dm->flush();
         }
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
             'entity'=>$config,

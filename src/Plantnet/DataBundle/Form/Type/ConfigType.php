@@ -14,29 +14,16 @@ class ConfigType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $languages=array();
-        foreach($options['languages'] as $language){
-            $languages[$language]=$language;
-        }
         $builder
-            ->add('defaultlanguage', 'choice', array(
+            ->add('defaultlanguage', 'text', array(
                 'label'=>'Default language',
                 'required'=>true,
-                'expanded'=>true,
-                'choices'=>array(
-                    $languages
-                )
+                'read_only'=>true
             ))
-            ->add('availablelanguages', 'choice', array(
+            ->add('availablelanguages', 'language', array(
                 'label'=>'Available languages',
-                'required'=>true,
-                'expanded'=>true,
-                'multiple'=>true,
-                'choices'=>array(
-                    $languages
-                )
+                'multiple'=>true
             ))
-            // ->add('availablelanguages', 'text', array('required'=>true))
         ;
     }
 
@@ -54,11 +41,7 @@ class ConfigType extends AbstractType
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $compound = function (Options $options) {
-            return $options['languages'];
-        };
         $resolver->setDefaults(array(
-            'languages' => $compound,
             'data_class' => 'Plantnet\DataBundle\Document\Config',
         ));
     }

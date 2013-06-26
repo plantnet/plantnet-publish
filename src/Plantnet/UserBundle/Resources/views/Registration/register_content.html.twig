@@ -26,12 +26,22 @@
     </div>
     <br />
     <div id="chk_super_hidden">
-    	<p class="text-warning">
-			Warning, the database name can not be changed later.
-		</p>
-        {{ form_label(form.dbNameUq) }}
-        {{ form_errors(form.dbNameUq) }}
-        {{ form_widget(form.dbNameUq) }}
+        <div>
+        	<p class="text-warning">
+    			Warning, the database name can not be changed later.
+    		</p>
+            {{ form_label(form.dbNameUq) }}
+            {{ form_errors(form.dbNameUq) }}
+            {{ form_widget(form.dbNameUq) }}
+        </div>
+        <div>
+            <p class="text-warning">
+                Warning, the default language can not be changed later.
+            </p>
+            {{ form_label(form.defaultlanguage) }}
+            {{ form_errors(form.defaultlanguage) }}
+            {{ form_widget(form.defaultlanguage) }}
+        </div>
     </div>
     {{ form_widget(form) }}
     <div>

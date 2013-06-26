@@ -24,11 +24,6 @@ class Config
     protected $availablelanguages;
 
     /**
-     * @MongoDB\Hash
-     */
-    protected $customlanguages;
-
-    /**
      * To String
      *
      * @return string
@@ -41,7 +36,6 @@ class Config
     public function __construct()
     {
         $this->availablelanguages = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->customlanguages = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -92,25 +86,5 @@ class Config
     public function getAvailablelanguages()
     {
         return $this->availablelanguages;
-    }
-
-    /**
-     * Set customlanguages
-     *
-     * @param hash $customlanguages
-     */
-    public function setCustomlanguages($customlanguages)
-    {
-        $this->customlanguages = $customlanguages;
-    }
-
-    /**
-     * Get customlanguages
-     *
-     * @return hash $customlanguages
-     */
-    public function getCustomlanguages()
-    {
-        return $this->customlanguages;
     }
 }
