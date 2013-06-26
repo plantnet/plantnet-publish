@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormError;
 /**
  * User controller.
  *
- * @Route("/admin/users", options={"i18n" = false})
+ * @Route("/admin/users")
  */
 class UserController extends Controller
 {

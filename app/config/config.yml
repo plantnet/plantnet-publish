@@ -21,10 +21,10 @@ framework:
     trusted_proxies: ['127.0.0.1']
     session:         ~
 
-jms_i18n_routing:
-    default_locale: %locale%
-    locales: %locales%
-    strategy: prefix_except_default
+# jms_i18n_routing:
+#     default_locale: %locale%
+#     locales: %locales%
+#     strategy: prefix_except_default
 
 sensio_framework_extra:
     router:  { annotations: true }
@@ -36,8 +36,8 @@ sensio_framework_extra:
 twig:
     debug:            %kernel.debug%
     strict_variables: %kernel.debug%
-    globals:
-        locales: %locales%
+    # globals:
+    #     locales: %locales%
 
 # Assetic Configuration
 assetic:
@@ -109,7 +109,7 @@ jms_translation:
             excluded_dirs: [cache, data, logs]
             extractors: []
 
-bazinga_expose_translation: ~
+# bazinga_expose_translation: ~
 
 # Extra bundles configuration
 

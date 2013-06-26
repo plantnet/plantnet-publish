@@ -18,7 +18,7 @@ use Plantnet\DataBundle\Utils\StringHelp;
 /**
  * Collection controller.
  *
- * @Route("/admin/collection", options={"i18n" = false})
+ * @Route("/admin/collection")
  */
 class CollectionController extends Controller
 {

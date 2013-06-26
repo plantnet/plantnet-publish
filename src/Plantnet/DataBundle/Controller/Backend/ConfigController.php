@@ -13,7 +13,7 @@ use Plantnet\DataBundle\Document\Config,
 /**
  * Config controller.
  *
- * @Route("/admin/config", options={"i18n" = false})
+ * @Route("/admin/config")
  */
 class ConfigController extends Controller
 {

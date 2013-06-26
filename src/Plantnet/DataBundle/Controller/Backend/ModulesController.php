@@ -32,7 +32,7 @@ use Plantnet\DataBundle\Utils\StringHelp;
 /**
  * Module controller.
  *
- * @Route("/admin/module", options={"i18n" = false})
+ * @Route("/admin/module")
  */
 class ModulesController extends Controller
 {

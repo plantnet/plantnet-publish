@@ -24,9 +24,9 @@ class AppKernel extends Kernel
 
             new Doctrine\Bundle\MongoDBBundle\DoctrineMongoDBBundle(),
 
-            new Bazinga\ExposeTranslationBundle\BazingaExposeTranslationBundle(),
+            // new Bazinga\ExposeTranslationBundle\BazingaExposeTranslationBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
-            new JMS\I18nRoutingBundle\JMSI18nRoutingBundle(),
+            // new JMS\I18nRoutingBundle\JMSI18nRoutingBundle(),
             new JMS\TranslationBundle\JMSTranslationBundle(),
             new WhiteOctober\PagerfantaBundle\WhiteOctoberPagerfantaBundle(),
 
