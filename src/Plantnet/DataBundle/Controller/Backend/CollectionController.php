@@ -9,7 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Plantnet\DataBundle\Document\Collection,
-    Plantnet\DataBundle\Form\Type\CollectionType;
+    Plantnet\DataBundle\Form\Type\CollectionType,
+    Plantnet\DataBundle\Form\Type\CollectionLangType;
 
 use Symfony\Component\Form\FormError;
 
@@ -31,6 +32,25 @@ class CollectionController extends Controller
             return $dm->getConfiguration()->getDefaultDB();
         }
         return $this->container->getParameter('mdb_base');
+    }
+
+    public function language_listAction($id,$lang='default')
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        return $this->render('PlantnetDataBundle:Backend\Collection:language_list.html.twig',array(
+            'id'=>$id,
+            'lang'=>$lang,
+            'config'=>$config,
+            'current'=>'administration'
+        ));
     }
 
     public function collection_listAction()
@@ -141,6 +161,34 @@ class CollectionController extends Controller
     }
 
     /**
+     * Displays a form to edit an existing Collection entity.
+     *
+     * @Route("/{id}/edit/{lang}", name="collection_edit_lang")
+     * @Template()
+     */
+    public function collection_edit_langAction($id,$lang)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneBy(array(
+                'id'=>$id
+            ));
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $collection->setTranslatableLocale('z'.$lang);
+        $dm->refresh($collection);
+        $editForm=$this->createForm(new CollectionLangType(),$collection);
+        return $this->render('PlantnetDataBundle:Backend\Collection:collection_edit_lang.html.twig',array(
+            'entity'=>$collection,
+            'lang'=>$lang,
+            'edit_form'=>$editForm->createView()
+        ));
+    }
+
+    /**
      * Edits an existing Collection entity.
      *
      * @Route("/{id}/update", name="collection_update")
@@ -180,6 +228,44 @@ class CollectionController extends Controller
             'entity'=>$collection,
             'edit_form'=>$editForm->createView(),
             'delete_form'=>$deleteForm->createView(),
+        ));
+    }
+
+    /**
+     * Edits an existing Collection entity.
+     *
+     * @Route("/{id}/update/{lang}", name="collection_update_lang")
+     * @Method("post")
+     * @Template()
+     */
+    public function collection_update_langAction($id,$lang)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneBy(array(
+                'id'=>$id
+            ));
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $collection->setTranslatableLocale('z'.$lang);
+        $dm->refresh($collection);
+        $editForm=$this->createForm(new CollectionLangType(),$collection);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $editForm->bind($request);
+            if($editForm->isValid()){
+                $dm->persist($collection);
+                $dm->flush();
+                return $this->redirect($this->generateUrl('collection_edit',array('id'=>$id)));
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Collection:collection_edit.html.twig',array(
+            'entity'=>$collection,
+            'edit_form'=>$editForm->createView(),
+            'delete_form'=>$deleteForm->createView()
         ));
     }
 

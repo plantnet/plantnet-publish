@@ -3,23 +3,18 @@
 	{{ parent() }}
 {% endblock %}
 {% block form %}
-	{% render controller("PlantnetDataBundle:Backend/Collection:language_list", { 'id': entity.id }) %}
+	{% render controller("PlantnetDataBundle:Backend/Collection:language_list", { 'id': entity.id, 'lang': lang }) %}
 	<div id="title-form">
 		<h4 class="text-info">
-			Collection edit
+			Collection edit [{{ lang }}]
 		</h4>
 	</div>
-	<form action="{{ path('collection_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+	<form action="{{ path('collection_update_lang', { 'id': entity.id, 'lang': lang }) }}" method="post" {{ form_enctype(edit_form) }}>
 		{{ form_errors(edit_form) }}
 		<div class="field-form">
 			{{ form_label(edit_form.name) }}
 			{{ form_errors(edit_form.name) }}
 			{{ form_widget(edit_form.name) }}
-		</div>
-		<div class="field-form">
-			{{ form_label(edit_form.url) }}
-			{{ form_errors(edit_form.url) }}
-			{{ form_widget(edit_form.url) }}
 		</div>
 		<div class="field-form">
 			{{ form_label(edit_form.description) }}
@@ -41,46 +36,11 @@
 	        {% endif %}
         {% endfor %}
     {% endfor %}
-    {% if updating == false %}
-		<form id="form-delete" action="{{ path('collection_delete', { 'id': entity.id }) }}" method="post">
-			{{ form_widget(delete_form) }}
-			<button id="btn-delete-1" type="submit" class="btn"><i class="icon-trash"></i> Delete</button>
-		</form>
-		<div id="modal-delete" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-					<i class="icon-remove-sign"></i>
-				</button>
-				<h3 id="myModalLabel">Delete ?</h3>
-			</div>
-			<div class="modal-body">
-				<p class="text-error">
-					<i class="icon-warning-sign"></i> Delete this entity and its associated data ?
-				</p>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">No</button>
-				<button class="btn" id="btn-delete-2"><i class="icon-trash"></i> Yes</button>
-			</div>
-		</div>
-	{% else %}
-		<p class="text-warning">
-            There is a work in progress, delete action is disabled.
-        </p>
-	{% endif %}
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$('#btn-delete-1').click(function(event){
-				event.preventDefault();
-				$('#modal-delete').modal();
-				return false;
-			});
-			$('#btn-delete-2').click(function(){
-				$('#form-delete').submit();
-			});
 			$(".textarea").cleditor({
 				width: '100%', // width not including margins, borders or padding
 				height: 300, // height not including margins, borders or padding

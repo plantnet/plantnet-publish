@@ -4,13 +4,16 @@ namespace Plantnet\DataBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\Bundle\MongoDBBundle\Validator\Constraints\Unique as MongoDBUnique;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
+
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\CollectionRepository")
  * @MongoDBUnique(fields="name")
  * @MongoDBUnique(fields="alias")
  * @MongoDBUnique(fields="url")
  */
-class Collection
+class Collection implements Translatable
 {
     /**
      * @MongoDB\Id
@@ -19,6 +22,7 @@ class Collection
 
     /**
      * @MongoDB\String
+     * @Gedmo\Translatable
      */
     protected $name;
 
@@ -34,6 +38,7 @@ class Collection
 
     /**
      * @MongoDB\String
+     * @Gedmo\Translatable
      */
     protected $description;
     
@@ -52,6 +57,13 @@ class Collection
      * @MongoDB\Boolean
      */
     private $deleting;
+
+    /**
+     * @Gedmo\Locale
+     * Used locale to override Translation listener`s locale
+     * this is not a mapped field of entity metadata, just a simple property
+     */
+    private $locale;
 
     /**
      * To String
@@ -206,5 +218,10 @@ class Collection
     public function getDeleting()
     {
         return $this->deleting;
+    }
+
+    public function setTranslatableLocale($locale)
+    {
+        $this->locale = $locale;
     }
 }

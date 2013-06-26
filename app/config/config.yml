@@ -87,6 +87,12 @@ doctrine_mongodb:
         default:
             auto_mapping: true
             mappings:
+                gedmo_translatable:
+                    type: annotation
+                    prefix: Gedmo\Translatable\Document
+                    dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translatable/Document"
+                    alias: GedmoTranslatable # this one is optional and will default to the name set for the mapping
+                    is_bundle: false
                 StofDoctrineExtensionsBundle: false
                 #PlantnetBotaBundle: false
 

@@ -211,7 +211,7 @@
 		<script type="text/javascript" src="{{ asset('bundles/plantnetfilemanager/js/script.js') }}"></script>
 		<script type="text/javascript">
 			$(document).ready(function(){
-				$('a.ajax').click(function(e){
+				$('a.ajax').live('click',function(e){
 					var $url=$(this).attr('href');
 					if($url!='#')
 					{
