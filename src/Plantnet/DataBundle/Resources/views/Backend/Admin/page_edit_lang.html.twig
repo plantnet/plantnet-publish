@@ -5,11 +5,11 @@
 {% block form %}
 	<div id="title-form">
 		<h4 class="text-info">
-			<em>Page {{ page.name|capitalize }}</em> > Edit
+			<em>Page {{ page.name|capitalize }}</em> > Edit [{{ lang }}]
 		</h4>
 	</div>
-	{% render controller("PlantnetDataBundle:Backend/Admin:language_list", { 'alias': page.alias }) %}
-	<form action="{{ path('page_update', { 'alias': page.alias }) }}" method="post" {{ form_enctype(edit_form) }}>
+	{% render controller("PlantnetDataBundle:Backend/Admin:language_list", { 'alias': page.alias, 'lang': lang }) %}
+	<form action="{{ path('page_update_lang', { 'alias': page.alias, 'lang': lang }) }}" method="post" {{ form_enctype(edit_form) }}>
 		{{ form_errors(edit_form) }}
 		<div class="field-form">
 			{{ form_label(edit_form.name) }}

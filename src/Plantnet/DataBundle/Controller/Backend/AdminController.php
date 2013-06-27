@@ -14,7 +14,8 @@ use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
 
 use Plantnet\DataBundle\Document\Page,
-    Plantnet\DataBundle\Form\Type\PageType;
+    Plantnet\DataBundle\Form\Type\PageType,
+    Plantnet\DataBundle\Form\Type\PageLangType;
 
 //?
 use Plantnet\DataBundle\Document\Plantunit;
@@ -294,6 +295,25 @@ class AdminController extends Controller
         }
     }
 
+    public function language_listAction($alias,$lang='default')
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        return $this->render('PlantnetDataBundle:Backend\Admin:language_list.html.twig',array(
+            'alias'=>$alias,
+            'lang'=>$lang,
+            'config'=>$config,
+            'current'=>'administration'
+        ));
+    }
+
     public function page_listAction()
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
@@ -336,6 +356,35 @@ class AdminController extends Controller
     }
 
     /**
+     * Displays a form to edit a page.
+     *
+     * @Route("/page/{alias}/edit/{lang}", name="page_edit_lang")
+     * @Template()
+     */
+    public function page_edit_langAction($alias,$lang)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $page=$dm->getRepository('PlantnetDataBundle:Page')
+            ->findOneBy(array(
+                'alias'=>$alias
+            ));
+        if(!$page){
+            throw $this->createNotFoundException('Unable to find Page entity.');
+        }
+        $page->setTranslatableLocale('z'.$lang);
+        $dm->refresh($page);
+        $editForm=$this->createForm(new PageLangType(),$page);
+        return $this->render('PlantnetDataBundle:Backend\Admin:page_edit_lang.html.twig',array(
+            'page'=>$page,
+            'lang'=>$lang,
+            'edit_form'=>$editForm->createView(),
+            'current'=>'pages'
+        ));
+    }
+
+    /**
      * Edits an existing Page entity.
      *
      * @Route("/page/{alias}/update", name="page_update")
@@ -355,6 +404,44 @@ class AdminController extends Controller
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
         $editForm=$this->createForm(new PageType(),$page);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $editForm->bind($request);
+            if($editForm->isValid()){
+                $dm->persist($page);
+                $dm->flush();
+                return $this->redirect($this->generateUrl('page_edit',array('alias'=>$alias)));
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Admin:page_edit.html.twig',array(
+            'page'=>$page,
+            'edit_form'=>$editForm->createView(),
+            'current'=>'pages'
+        ));
+    }
+
+    /**
+     * Edits an existing Page entity.
+     *
+     * @Route("/page/{alias}/update/{lang}", name="page_update_lang")
+     * @Method("post")
+     * @Template()
+     */
+    public function page_update_langAction($alias,$lang)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $page=$dm->getRepository('PlantnetDataBundle:Page')
+            ->findOneBy(array(
+                'alias'=>$alias
+            ));
+        if(!$page){
+            throw $this->createNotFoundException('Unable to find Page entity.');
+        }
+        $page->setTranslatableLocale('z'.$lang);
+        $dm->refresh($page);
+        $editForm=$this->createForm(new PageLangType(),$page);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
             $editForm->bind($request);

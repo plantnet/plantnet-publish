@@ -3,6 +3,9 @@ namespace Plantnet\DataBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
+
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\PageRepository")
  */
@@ -15,6 +18,7 @@ class Page
 
     /**
      * @MongoDB\String
+     * @Gedmo\Translatable
      */
     protected $name;
 
@@ -25,8 +29,16 @@ class Page
 
     /**
      * @MongoDB\String
+     * @Gedmo\Translatable
      */
     protected $content;
+
+    /**
+     * @Gedmo\Locale
+     * Used locale to override Translation listener`s locale
+     * this is not a mapped field of entity metadata, just a simple property
+     */
+    private $locale;
 
     /**
      * To String
@@ -111,5 +123,10 @@ class Page
     public function getContent()
     {
         return $this->content;
+    }
+
+    public function setTranslatableLocale($locale)
+    {
+        $this->locale = $locale;
     }
 }
