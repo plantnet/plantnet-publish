@@ -23,6 +23,24 @@
                 {{ form_widget(edit_form.description, { 'attr': {'class': 'textarea'} }) }}
             </div>
         {% endif %}
+        <br />
+        <table id="table-form" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th class="middle">Field</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for property in edit_form.properties %}
+                    <tr>
+                        <td>
+                            {{ form_errors(property.name) }}
+                            {{ form_widget(property.name) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         {{ form_rest(edit_form) }}
         <br />
         <button type="submit" class="btn">Update</button>

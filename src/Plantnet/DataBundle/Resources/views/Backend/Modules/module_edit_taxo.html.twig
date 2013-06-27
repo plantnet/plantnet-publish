@@ -26,7 +26,7 @@
                     {% for property in edit_form.properties %}
                         <tr>
                             <td>
-                                {{ property.get('value').name }}
+                                {{ property.vars.value }}
                             </td>
                             <td class="middle">
                                 {{ form_errors(property.taxolevel) }}

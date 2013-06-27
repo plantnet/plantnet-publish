@@ -20,18 +20,33 @@ class ModulesLangType extends AbstractType
                 ->add('description', 'textarea', array(
                     'required'=>false
                 ))
+                ->add('properties', 'collection', array(
+                    'type' => new PropertiesLangType(),
+                ))
             ;
         }
         elseif($module->getType()=='locality')
         {
+            $builder
+                ->add('properties', 'collection', array(
+                    'type' => new PropertiesLangType(),
+                ))
             ;
         }
         elseif($module->getType()=='image')
         {
+            $builder
+                ->add('properties', 'collection', array(
+                    'type' => new PropertiesLangType(),
+                ))
             ;
         }
         else
         {
+            $builder
+                ->add('properties', 'collection', array(
+                    'type' => new PropertiesLangType(),
+                ))
             ;
         }
     }

@@ -628,6 +628,11 @@ class ModulesController extends Controller
         }
         $module->setTranslatableLocale('z'.$lang);
         $dm->refresh($module);
+        $properties=$module->getProperties();
+        foreach($properties as &$property){
+            $property->setTranslatableLocale('z'.$lang);
+            $dm->refresh($property);
+        }
         $editForm=$this->get('form.factory')->create(new ModulesLangType(),$module);
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_lang.html.twig',array(
             'entity'=>$module,
@@ -735,30 +740,6 @@ class ModulesController extends Controller
         ));
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Edits an existing Module entity.
      *
@@ -778,8 +759,6 @@ class ModulesController extends Controller
         }
         $module->setTranslatableLocale('z'.$lang);
         $dm->refresh($module);
-
-
         $collection=$module->getCollection();
         $editForm=$this->createForm(new ModulesLangType(),$module);
         $request=$this->getRequest();
@@ -788,6 +767,11 @@ class ModulesController extends Controller
             if($editForm->isValid()){
                 $dm=$this->get('doctrine.odm.mongodb.document_manager');
                 $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                $properties=$module->getProperties();
+                foreach($properties as $property){
+                    $property->setTranslatableLocale('z'.$lang);
+                    $dm->persist($property);
+                }
                 $dm->persist($module);
                 $dm->flush();
                 return $this->redirect($this->generateUrl('module_edit',array('id'=>$id)));
@@ -799,38 +783,6 @@ class ModulesController extends Controller
             'delete_form'=>$deleteForm->createView(),
         ));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Displays a form to edit an existing Module entity.

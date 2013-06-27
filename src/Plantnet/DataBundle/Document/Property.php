@@ -3,10 +3,13 @@ namespace Plantnet\DataBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
+
 /**
  * @MongoDB\EmbeddedDocument
  */
-class Property
+class Property implements Translatable
 {
     /**
      * @MongoDB\Id
@@ -15,6 +18,7 @@ class Property
 
     /**
      * @MongoDB\String
+     * @Gedmo\Translatable
      */
     protected $name;
 
@@ -52,6 +56,13 @@ class Property
      * @MongoDB\String
      */
     protected $taxolabel;
+
+    /**
+     * @Gedmo\Locale
+     * Used locale to override Translation listener`s locale
+     * this is not a mapped field of entity metadata, just a simple property
+     */
+    private $locale;
 
     /**
      * Get id
@@ -231,5 +242,10 @@ class Property
     public function getTaxolabel()
     {
         return $this->taxolabel;
+    }
+
+    public function setTranslatableLocale($locale)
+    {
+        $this->locale = $locale;
     }
 }
