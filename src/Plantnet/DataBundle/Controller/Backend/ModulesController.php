@@ -24,6 +24,7 @@ use Plantnet\DataBundle\Form\ImportFormType,
     Plantnet\DataBundle\Form\Type\ModulesType,
     Plantnet\DataBundle\Form\Type\ModulesLangType,
     Plantnet\DataBundle\Form\Type\ModulesTaxoType,
+    Plantnet\DataBundle\Form\Type\ModulesTaxoLangType,
     Plantnet\DataBundle\Form\ModuleFormType;
 
 use Symfony\Component\Form\FormError;
@@ -60,6 +61,25 @@ class ModulesController extends Controller
             throw $this->createNotFoundException('Unable to find Config entity.');
         }
         return $this->render('PlantnetDataBundle:Backend\Modules:language_list.html.twig',array(
+            'id'=>$id,
+            'lang'=>$lang,
+            'config'=>$config,
+            'current'=>'administration'
+        ));
+    }
+
+    public function language_list_taxoAction($id,$lang='default')
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        return $this->render('PlantnetDataBundle:Backend\Modules:language_list_taxo.html.twig',array(
             'id'=>$id,
             'lang'=>$lang,
             'config'=>$config,
@@ -779,8 +799,7 @@ class ModulesController extends Controller
         }
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit.html.twig',array(
             'entity'=>$module,
-            'edit_form'=>$editForm->createView(),
-            'delete_form'=>$deleteForm->createView(),
+            'edit_form'=>$editForm->createView()
         ));
     }
 
@@ -803,6 +822,37 @@ class ModulesController extends Controller
         $editForm=$this->get('form.factory')->create(new ModulesTaxoType(),$module);
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_taxo.html.twig',array(
             'entity'=>$module,
+            'edit_form'=>$editForm->createView(),
+        ));
+    }
+
+    /**
+     * Displays a form to edit an existing Module entity.
+     *
+     * @Route("/{id}/edit_taxo/{lang}", name="module_edit_taxo_lang")
+     * @Template()
+     */
+    public function module_edit_taxo_langAction($id,$lang)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $module->setTranslatableLocale('z'.$lang);
+        $dm->refresh($module);
+        $properties=$module->getProperties();
+        foreach($properties as &$property){
+            $property->setTranslatableLocale('z'.$lang);
+            $dm->refresh($property);
+        }
+        $editForm=$this->get('form.factory')->create(new ModulesTaxoLangType(),$module);
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_taxo_lang.html.twig',array(
+            'entity'=>$module,
+            'lang'=>$lang,
             'edit_form'=>$editForm->createView(),
         ));
     }
@@ -840,6 +890,57 @@ class ModulesController extends Controller
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
+                return $this->redirect($this->generateUrl('module_edit_taxo',array('id'=>$id)));
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_taxo.html.twig',array(
+            'entity'=>$module,
+            'edit_form'=>$editForm->createView(),
+        ));
+    }
+
+    /**
+     * Edits an existing Module entity.
+     *
+     * @Route("/{id}/update_taxo/{lang}", name="module_update_taxo_lang")
+     * @Method("post")
+     * @Template()
+     */
+    public function module_update_taxo_langAction($id,$lang)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $module->setTranslatableLocale('z'.$lang);
+        $dm->refresh($module);
+
+
+        $collection=$module->getCollection();
+        $editForm=$this->createForm(new ModulesTaxoLangType(),$module);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $editForm->bind($request);
+            if($editForm->isValid()){
+                $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                // $module->setUpdating(true);
+                $properties=$module->getProperties();
+                foreach($properties as $property){
+                    $property->setTranslatableLocale('z'.$lang);
+                    $dm->persist($property);
+                }
+                $dm->persist($module);
+                $dm->flush();
+                //command
+                // $kernel=$this->get('kernel');
+                // $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' &> /dev/null &';
+                // $process=new \Symfony\Component\Process\Process($command);
+                // $process->start();
                 return $this->redirect($this->generateUrl('module_edit_taxo',array('id'=>$id)));
             }
         }

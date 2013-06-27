@@ -54,6 +54,7 @@ class Property implements Translatable
 
     /**
      * @MongoDB\String
+     * @Gedmo\Translatable
      */
     protected $taxolabel;
 

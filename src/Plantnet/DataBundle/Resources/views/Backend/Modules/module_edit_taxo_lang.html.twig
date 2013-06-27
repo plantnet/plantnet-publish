@@ -5,14 +5,11 @@
 {% block form %}
     <div id="title-form">
         <h4 class="text-info">
-            <em>Module: {{ entity.name }}</em> > Taxonomy configuration
+            <em>Module: {{ entity.name }}</em> > Taxonomy configuration [{{ lang }}]
         </h4>
     </div>
-    {% render controller("PlantnetDataBundle:Backend/Modules:language_list_taxo", { 'id': entity.id }) %}
-    <p>
-        Choose a level and a label (example: 1 Family, 2 Genus, 3 Species).
-    </p>
-    <form action="{{ path('module_update_taxo', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+    {% render controller("PlantnetDataBundle:Backend/Modules:language_list_taxo", { 'id': entity.id, 'lang': lang }) %}
+    <form action="{{ path('module_update_taxo_lang', { 'id': entity.id, 'lang': lang }) }}" method="post" {{ form_enctype(edit_form) }}>
         {{ form_errors(edit_form) }}
         {% if entity.type == 'text' %}
             <table id="table-form" class="table table-bordered table-condensed table-hover">
