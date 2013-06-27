@@ -22,6 +22,7 @@ use Plantnet\DataBundle\Document\Module,
 
 use Plantnet\DataBundle\Form\ImportFormType,
     Plantnet\DataBundle\Form\Type\ModulesType,
+    Plantnet\DataBundle\Form\Type\ModulesLangType,
     Plantnet\DataBundle\Form\Type\ModulesTaxoType,
     Plantnet\DataBundle\Form\ModuleFormType;
 
@@ -45,6 +46,25 @@ class ModulesController extends Controller
             return $dm->getConfiguration()->getDefaultDB();
         }
         return $this->container->getParameter('mdb_base');
+    }
+
+    public function language_listAction($id,$lang='default')
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        return $this->render('PlantnetDataBundle:Backend\Modules:language_list.html.twig',array(
+            'id'=>$id,
+            'lang'=>$lang,
+            'config'=>$config,
+            'current'=>'administration'
+        ));
     }
 
     /**
@@ -591,6 +611,32 @@ class ModulesController extends Controller
     }
 
     /**
+     * Displays a form to edit an existing Module entity.
+     *
+     * @Route("/{id}/edit/{lang}", name="module_edit_lang")
+     * @Template()
+     */
+    public function module_edit_langAction($id,$lang)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $module->setTranslatableLocale('z'.$lang);
+        $dm->refresh($module);
+        $editForm=$this->get('form.factory')->create(new ModulesLangType(),$module);
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_lang.html.twig',array(
+            'entity'=>$module,
+            'lang'=>$lang,
+            'edit_form'=>$editForm->createView()
+        ));
+    }
+
+    /**
      * Edits an existing Module entity.
      *
      * @Route("/{id}/update", name="module_update")
@@ -688,6 +734,103 @@ class ModulesController extends Controller
             'delete_form'=>$deleteForm->createView(),
         ));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Edits an existing Module entity.
+     *
+     * @Route("/{id}/update/{lang}", name="module_update_lang")
+     * @Method("post")
+     * @Template()
+     */
+    public function module_update_langAction($id,$lang)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $module->setTranslatableLocale('z'.$lang);
+        $dm->refresh($module);
+
+
+        $collection=$module->getCollection();
+        $editForm=$this->createForm(new ModulesLangType(),$module);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $editForm->bind($request);
+            if($editForm->isValid()){
+                $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                $dm->persist($module);
+                $dm->flush();
+                return $this->redirect($this->generateUrl('module_edit',array('id'=>$id)));
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_edit.html.twig',array(
+            'entity'=>$module,
+            'edit_form'=>$editForm->createView(),
+            'delete_form'=>$deleteForm->createView(),
+        ));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Displays a form to edit an existing Module entity.
@@ -847,15 +990,4 @@ class ModulesController extends Controller
             $dm->flush();
         }
     }
-
-    // private function get_php_path()
-    // {
-    //     if(isset($_SERVER['HOSTNAME'])&&$_SERVER['HOSTNAME']=='bourgeais.cirad.fr'){
-    //         return '/opt/php/bin/php';
-    //     }
-    //     if(isset($_SERVER['HTTP_HOST'])&&substr_count($_SERVER['HTTP_HOST'],'publish.plantnet-project.org')){
-    //         return '/opt/php/bin/php';
-    //     }
-    //     return 'php';
-    // }
 }

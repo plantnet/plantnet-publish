@@ -25,17 +25,6 @@
 		<br />
 		<button type="submit" class="btn">Update</button>
 	</form>
-	{% set updating = false %}
-	{% for module in entity.modules %}
-        {% if module.updating == true %}
-            {% set updating = true %}
-        {% endif %}
-        {% for child in module.children %}
-        	{% if child.updating == true %}
-	            {% set updating = true %}
-	        {% endif %}
-        {% endfor %}
-    {% endfor %}
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}

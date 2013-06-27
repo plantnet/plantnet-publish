@@ -8,6 +8,7 @@
             <em>Module: {{ entity.name }}</em> > Properties configuration
         </h4>
     </div>
+    {% render controller("PlantnetDataBundle:Backend/Modules:language_list", { 'id': entity.id }) %}
     {% if entity.type == 'text' %}
         <p>
             If you choose to enable the taxonomic browser, you will need to enter applying rules in the module's options.

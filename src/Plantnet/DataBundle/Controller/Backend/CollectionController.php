@@ -298,15 +298,4 @@ class CollectionController extends Controller
         }
         return $this->redirect($this->generateUrl('admin_index'));
     }
-
-    // private function get_php_path()
-    // {
-    //     if(isset($_SERVER['HOSTNAME'])&&$_SERVER['HOSTNAME']=='bourgeais.cirad.fr'){
-    //         return '/opt/php/bin/php';
-    //     }
-    //     if(isset($_SERVER['HTTP_HOST'])&&substr_count($_SERVER['HTTP_HOST'],'publish.plantnet-project.org')){
-    //         return '/opt/php/bin/php';
-    //     }
-    //     return 'php';
-    // }
 }

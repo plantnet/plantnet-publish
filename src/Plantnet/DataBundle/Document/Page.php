@@ -9,7 +9,7 @@ use Gedmo\Translatable\Translatable;
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\PageRepository")
  */
-class Page
+class Page implements Translatable
 {
     /**
      * @MongoDB\Id
