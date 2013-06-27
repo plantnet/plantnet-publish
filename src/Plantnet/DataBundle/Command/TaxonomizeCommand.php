@@ -201,9 +201,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
             }
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
-        ->findOneBy(array(
-            'id'=>$id_module
-        ));
+            ->findOneBy(array(
+                'id'=>$id_module
+            ));
         $module->setUpdating(false);
         $dm->persist($module);
         $dm->flush();

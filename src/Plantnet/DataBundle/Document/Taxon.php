@@ -3,10 +3,13 @@ namespace Plantnet\DataBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
+
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\TaxonRepository")
  */
-class Taxon
+class Taxon implements Translatable
 {
     /**
      * @MongoDB\Id
@@ -20,6 +23,7 @@ class Taxon
 
     /**
      * @MongoDB\String
+     * @Gedmo\Translatable
      */
     protected $label;
 
@@ -83,6 +87,13 @@ class Taxon
      * @MongoDB\Boolean
      */
     private $haschildren;
+
+    /**
+     * @Gedmo\Locale
+     * Used locale to override Translation listener`s locale
+     * this is not a mapped field of entity metadata, just a simple property
+     */
+    private $locale;
 
     /**
      * To String
@@ -358,5 +369,10 @@ class Taxon
     public function getHaschildren()
     {
         return $this->haschildren;
+    }
+
+    public function setTranslatableLocale($locale)
+    {
+        $this->locale = $locale;
     }
 }

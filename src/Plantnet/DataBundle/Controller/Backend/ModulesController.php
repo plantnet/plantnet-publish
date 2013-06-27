@@ -918,8 +918,6 @@ class ModulesController extends Controller
         }
         $module->setTranslatableLocale('z'.$lang);
         $dm->refresh($module);
-
-
         $collection=$module->getCollection();
         $editForm=$this->createForm(new ModulesTaxoLangType(),$module);
         $request=$this->getRequest();
@@ -937,10 +935,10 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 //command
-                // $kernel=$this->get('kernel');
-                // $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' &> /dev/null &';
-                // $process=new \Symfony\Component\Process\Process($command);
-                // $process->start();
+                $kernel=$this->get('kernel');
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon_lang '.$id.' '.$lang.' '.$user->getDbName().' &> /dev/null &';
+                $process=new \Symfony\Component\Process\Process($command);
+                $process->start();
                 return $this->redirect($this->generateUrl('module_edit_taxo',array('id'=>$id)));
             }
         }
