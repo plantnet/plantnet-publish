@@ -1,11 +1,11 @@
 {% if config.availablelanguages|length > 0 %}
     <ul class="nav nav-tabs">
         <li{% if lang == 'default' %} class="active"{% endif %}>
-            <a href="{{ path('collection_edit', { 'id': id }) }}" class="ajax">{{ config.defaultlanguage }}</a>
+            <a href="{{ path('collection_edit', { 'id': id }) }}" class="ajax sub">{{ config.defaultlanguage }}</a>
         </li>
         {% for language in config.availablelanguages %}
             <li{% if lang == language %} class="active"{% endif %}>
-                <a href="{{ path('collection_edit_lang', { 'id': id, 'lang': language }) }}" class="ajax">{{ language }}</a>
+                <a href="{{ path('collection_edit_lang', { 'id': id, 'lang': language }) }}" class="ajax sub">{{ language }}</a>
             </li>
         {% endfor %}
     </ul>

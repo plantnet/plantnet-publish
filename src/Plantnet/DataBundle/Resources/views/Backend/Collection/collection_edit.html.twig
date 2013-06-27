@@ -3,12 +3,12 @@
 	{{ parent() }}
 {% endblock %}
 {% block form %}
-	{% render controller("PlantnetDataBundle:Backend/Collection:language_list", { 'id': entity.id }) %}
 	<div id="title-form">
 		<h4 class="text-info">
-			Collection edit
+			<em>Collection: {{ entity.name }}</em> > edit
 		</h4>
 	</div>
+	{% render controller("PlantnetDataBundle:Backend/Collection:language_list", { 'id': entity.id }) %}
 	<form action="{{ path('collection_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
 		{{ form_errors(edit_form) }}
 		<div class="field-form">

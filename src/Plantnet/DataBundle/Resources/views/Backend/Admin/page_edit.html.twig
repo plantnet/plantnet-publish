@@ -5,7 +5,7 @@
 {% block form %}
 	<div id="title-form">
 		<h4 class="text-info">
-			Page Edit: {{ page.name|capitalize }}
+			<em>Page {{ page.name|capitalize }}</em> > Edit
 		</h4>
 	</div>
 	<form action="{{ path('page_update', { 'name': page.name }) }}" method="post" {{ form_enctype(edit_form) }}>

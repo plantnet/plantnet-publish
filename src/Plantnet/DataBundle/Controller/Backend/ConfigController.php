@@ -48,7 +48,8 @@ class ConfigController extends Controller
         $editForm=$this->createForm(new ConfigType(),$config);
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
             'entity'=>$config,
-            'edit_form'=>$editForm->createView()
+            'edit_form'=>$editForm->createView(),
+            'current'=>'languages'
         ));
     }
 
@@ -79,7 +80,8 @@ class ConfigController extends Controller
         }
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
             'entity'=>$config,
-            'edit_form'=>$editForm->createView()
+            'edit_form'=>$editForm->createView(),
+            'current'=>'languages'
         ));
     }
 }
