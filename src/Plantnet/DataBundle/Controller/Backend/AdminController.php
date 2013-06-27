@@ -312,17 +312,17 @@ class AdminController extends Controller
     /**
      * Displays a form to edit a page.
      *
-     * @Route("/page/{name}/edit", name="page_edit")
+     * @Route("/page/{alias}/edit", name="page_edit")
      * @Template()
      */
-    public function page_editAction($name)
+    public function page_editAction($alias)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $page=$dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
-                'name'=>$name
+                'alias'=>$alias
             ));
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
@@ -338,18 +338,18 @@ class AdminController extends Controller
     /**
      * Edits an existing Page entity.
      *
-     * @Route("/page/{name}/update", name="page_update")
+     * @Route("/page/{alias}/update", name="page_update")
      * @Method("post")
      * @Template()
      */
-    public function page_updateAction($name)
+    public function page_updateAction($alias)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         $page=$dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
-                'name'=>$name
+                'alias'=>$alias
             ));
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
@@ -361,7 +361,7 @@ class AdminController extends Controller
             if($editForm->isValid()){
                 $dm->persist($page);
                 $dm->flush();
-                return $this->redirect($this->generateUrl('page_edit',array('name'=>$name)));
+                return $this->redirect($this->generateUrl('page_edit',array('alias'=>$alias)));
             }
         }
         return $this->render('PlantnetDataBundle:Backend\Admin:page_edit.html.twig',array(

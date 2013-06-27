@@ -8,8 +8,13 @@
 			<em>Page {{ page.name|capitalize }}</em> > Edit
 		</h4>
 	</div>
-	<form action="{{ path('page_update', { 'name': page.name }) }}" method="post" {{ form_enctype(edit_form) }}>
+	<form action="{{ path('page_update', { 'alias': page.alias }) }}" method="post" {{ form_enctype(edit_form) }}>
 		{{ form_errors(edit_form) }}
+		<div class="field-form">
+			{{ form_label(edit_form.name) }}
+			{{ form_errors(edit_form.name) }}
+			{{ form_widget(edit_form.name) }}
+		</div>
 		<div class="field-form">
 			{{ form_label(edit_form.content) }}
 			{{ form_errors(edit_form.content) }}

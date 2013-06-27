@@ -11,14 +11,12 @@
                     View
                 </a>
             </li>
-            {#% if is_granted('ROLE_USER') %#}
-                <li>
-                    <a href="{{ path('collection_edit', { 'id': collection.id }) }}" class="ajax">
-                        <i class="icon-pencil"></i>
-                        Edit
-                    </a>
-                </li>
-            {#% endif %#}
+            <li>
+                <a href="{{ path('collection_edit', { 'id': collection.id }) }}" class="ajax">
+                    <i class="icon-pencil"></i>
+                    Edit
+                </a>
+            </li>
         </ul>
     </li>
     {% for module in collection.modules if module.deleting != true %}
@@ -35,28 +33,26 @@
                         View
                     </a>
                 </li>
-                {#% if is_granted('ROLE_USER') %#}
+                <li>
+                    <a href="{{ path('module_edit', { 'id': module.id }) }}" class="ajax">
+                        <i class="icon-pencil"></i>
+                        Edit
+                    </a>
+                </li>
+                {% if module.taxonomy == true %}
                     <li>
-                        <a href="{{ path('module_edit', { 'id': module.id }) }}" class="ajax">
-                            <i class="icon-pencil"></i>
-                            Edit
+                        <a href="{{ path('module_edit_taxo', { 'id': module.id }) }}" class="ajax">
+                            <i class="icon-tasks"></i>
+                            Taxonomy
                         </a>
                     </li>
-                    {% if module.taxonomy == true %}
-                        <li>
-                            <a href="{{ path('module_edit_taxo', { 'id': module.id }) }}" class="ajax">
-                                <i class="icon-tasks"></i>
-                                Taxonomy
-                            </a>
-                        </li>
-                    {% endif %}
-                    <li>
-                        <a href="{{ path('admin_module_export_idao', { 'collection': collection.url, 'module': module.url }) }}">
-                            <i class="icon-download"></i>
-                            Export <small class="muted">IDAO</small>
-                        </a>
-                    </li>
-                {#% endif %#}
+                {% endif %}
+                <li>
+                    <a href="{{ path('admin_module_export_idao', { 'collection': collection.url, 'module': module.url }) }}">
+                        <i class="icon-download"></i>
+                        Export <small class="muted">IDAO</small>
+                    </a>
+                </li>
             </ul>
         </li>
         {% if module.children|length > 0 %}
@@ -80,50 +76,44 @@
                                 View
                             </a>
                         </li>
-                        {#% if is_granted('ROLE_USER') %#}
+                        <li>
+                            <a href="{{ path('module_edit', { 'id': child.id }) }}" class="ajax">
+                                <i class="icon-pencil"></i>
+                                Edit
+                            </a>
+                        </li>
+                        {% if child.type=='image' %}
                             <li>
-                                <a href="{{ path('module_edit', { 'id': child.id }) }}" class="ajax">
-                                    <i class="icon-pencil"></i>
-                                    Edit
+                                <a href="{{ path('plantnet_file_manager_homepage', {'name': child.uploaddir}) }}" class="ajax">
+                                    <i class="icon-upload"></i>
+                                    Images upload
                                 </a>
                             </li>
-                            {% if child.type=='image' %}
-                                <li>
-                                    <a href="{{ path('plantnet_file_manager_homepage', {'name': child.uploaddir}) }}" class="ajax">
-                                        <i class="icon-upload"></i>
-                                        Images upload
-                                    </a>
-                                </li>
-                            {% endif %}
-                        {#% endif %#}
+                        {% endif %}
                     </ul>
                 </li>
             {% endfor %}
         {% endif %}
     {% endfor %}
-    {#% if is_granted('ROLE_USER') %#}
-        <li>
-            <a href="{{ path('module_new', { 'id': collection.id, 'type': 'module' }) }}" class="muted ajax">
-                <i class="icon-plus"></i>
-                Add Module
-            </a>
-        </li>
-        {% if collection.modules|length > 0 %}
-            <li>
-                <a href="{{ path('module_new', { 'id': collection.id, 'type': 'submodule' }) }}" class="muted ajax">
-                    <i class="icon-plus"></i>
-                    Add Sub-module
-                </a>
-            </li>
-        {% endif %}
-    {#% endif %#}
-    <li class="divider"></li>
-{% endfor %}
-{#% if is_granted('ROLE_USER') %#}
     <li>
-        <a href="{{ path('collection_new') }}" class="muted ajax">
-            <i class="icon-plus-sign"></i>
-            New Collection
+        <a href="{{ path('module_new', { 'id': collection.id, 'type': 'module' }) }}" class="muted ajax">
+            <i class="icon-plus"></i>
+            Add Module
         </a>
     </li>
-{#% endif %#}
+    {% if collection.modules|length > 0 %}
+        <li>
+            <a href="{{ path('module_new', { 'id': collection.id, 'type': 'submodule' }) }}" class="muted ajax">
+                <i class="icon-plus"></i>
+                Add Sub-module
+            </a>
+        </li>
+    {% endif %}
+    <li class="divider"></li>
+{% endfor %}
+<li>
+    <a href="{{ path('collection_new') }}" class="muted ajax">
+        <i class="icon-plus-sign"></i>
+        New Collection
+    </a>
+</li>

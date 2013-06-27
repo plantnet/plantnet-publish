@@ -94,7 +94,7 @@ class DataController extends Controller
             ->findAll();
         $page=$dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
-                'name'=>'home'
+                'alias'=>'home'
             ));
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
@@ -671,7 +671,7 @@ class DataController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $page=$dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
-                'name'=>'credits'
+                'alias'=>'credits'
             ));
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
@@ -698,7 +698,7 @@ class DataController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $page = $dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
-                'name'=>'mentions'
+                'alias'=>'mentions'
             ));
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
@@ -725,7 +725,7 @@ class DataController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $page = $dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
-                'name'=>'contacts'
+                'alias'=>'contacts'
             ));
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');

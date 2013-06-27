@@ -1,15 +1,7 @@
 {% for page in pages %}
-    {#% if is_granted('ROLE_USER') %#}
-        <li>
-            <a class="edit ajax" href="{{ path('page_edit', { 'name': page.name }) }}">
-                {{ page.name|capitalize }}
-            </a>
-        </li>
-    {#% else %}
-        <li class="disabled">
-            <a href="#">
-                {{ page.name|capitalize }}
-            </a>
-        </li>
-    {% endif %#}
+    <li>
+        <a class="edit ajax" href="{{ path('page_edit', { 'alias': page.alias }) }}">
+            {{ page.name|capitalize }}
+        </a>
+    </li>
 {% endfor %}

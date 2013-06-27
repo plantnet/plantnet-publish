@@ -21,6 +21,11 @@ class Page
     /**
      * @MongoDB\String
      */
+    protected $alias;
+
+    /**
+     * @MongoDB\String
+     */
     protected $content;
 
     /**
@@ -66,6 +71,26 @@ class Page
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set alias
+     *
+     * @param string $alias
+     */
+    public function setAlias($alias)
+    {
+        $this->alias = $alias;
+    }
+
+    /**
+     * Get alias
+     *
+     * @return string $alias
+     */
+    public function getAlias()
+    {
+        return $this->alias;
     }
 
     /**

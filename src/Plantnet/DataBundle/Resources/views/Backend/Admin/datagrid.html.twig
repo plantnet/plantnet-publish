@@ -53,11 +53,6 @@
     {{ parent() }}
     <script type="text/javascript">
         $(document).ready(function() {
-            // $("table").tablesorter({widthFixed: false, widgets: ['zebra'] });
-        });
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function() {
             $('.pagerfanta a').click(function(e) {
                 e.preventDefault();
                 var $url=$(this).attr('href');
