@@ -4,13 +4,10 @@ namespace Plantnet\DataBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Symfony\Component\Validator\Constraints as Assert;
 
-use Gedmo\Mapping\Annotation as Gedmo;
-use Gedmo\Translatable\Translatable;
-
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\ModuleRepository")
  */
-class Module implements Translatable
+class Module
 {
     /**
      * @MongoDB\Id
@@ -19,7 +16,6 @@ class Module implements Translatable
 
     /**
      * @MongoDB\String
-     * @Gedmo\Translatable
      */
     protected $name;
 
@@ -35,7 +31,6 @@ class Module implements Translatable
 
     /**
      * @MongoDB\String
-     * @Gedmo\Translatable
      */
     protected $description;
 
@@ -165,13 +160,6 @@ class Module implements Translatable
      * @MongoDB\Hash
      */
     protected $indexes;
-
-    /**
-     * @Gedmo\Locale
-     * Used locale to override Translation listener`s locale
-     * this is not a mapped field of entity metadata, just a simple property
-     */
-    private $locale;
 
     /**
      * To String
@@ -772,10 +760,5 @@ class Module implements Translatable
     public function getIndexes()
     {
         return $this->indexes;
-    }
-
-    public function setTranslatableLocale($locale)
-    {
-        $this->locale = $locale;
     }
 }

@@ -8,7 +8,6 @@
 			<em>Page {{ page.name|capitalize }}</em> > Edit
 		</h4>
 	</div>
-	{% render controller("PlantnetDataBundle:Backend/Admin:language_list", { 'alias': page.alias }) %}
 	<form action="{{ path('page_update', { 'alias': page.alias }) }}" method="post" {{ form_enctype(edit_form) }}>
 		{{ form_errors(edit_form) }}
 		<div class="field-form">
