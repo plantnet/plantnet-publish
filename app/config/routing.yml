@@ -1,19 +1,19 @@
 plantnet_file_manager:
     resource: "@PlantnetFileManagerBundle/Resources/config/routing.yml"
-    prefix:   /admin/
+    prefix: /admin/
     # options: { i18n: false }
 
 PlantnetDataBundle:
     resource: "@PlantnetDataBundle/Controller/"
-    type:     annotation
-    prefix:   /
+    type: annotation
+    prefix: /
 
 # _bazinga_exposetranslation:
 #     resource: "@BazingaExposeTranslationBundle/Resources/config/routing/routing.yml"
 
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"
-    prefix:   /admin/
+    prefix: /admin/
     # options: { i18n: false }
 
 fos_user_profile:
@@ -57,4 +57,4 @@ plantnet_userrest:
 
 _imagine:
     resource: .
-    type:     imagine
+    type: imagine

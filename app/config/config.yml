@@ -7,19 +7,19 @@ services:
         class: Plantnet\UserBundle\Security\WsseHeaderRequestMatcher
 
 framework:
-    esi:             ~
-    translator:      { fallback: %locale% }
-    secret:          %secret%
+    esi: ~
+    translator: { fallback: %locale% }
+    secret: %secret%
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: %kernel.debug%
-    form:            true
+    form: true
     csrf_protection: true
-    validation:      { enable_annotations: true }
-    templating:      { engines: ['twig'] } #assets_version: SomeVersionScheme
-    default_locale:  "%locale%"
+    validation: { enable_annotations: true }
+    templating: { engines: ['twig'] } #assets_version: SomeVersionScheme
+    default_locale: "%locale%"
     trusted_proxies: ['127.0.0.1']
-    session:         ~
+    session: ~
 
 # jms_i18n_routing:
 #     default_locale: %locale%
@@ -27,23 +27,23 @@ framework:
 #     strategy: prefix_except_default
 
 sensio_framework_extra:
-    router:  { annotations: true }
+    router: { annotations: true }
     request: { converters: true }
-    view:    { annotations: false }  # More info at https://github.com/FriendsOfSymfony/FOSRestBundle/issues/95
-    cache:   { annotations: true }
+    view: { annotations: false }  # More info at https://github.com/FriendsOfSymfony/FOSRestBundle/issues/95
+    cache: { annotations: true }
 
 # Twig Configuration
 twig:
-    debug:            %kernel.debug%
+    debug: %kernel.debug%
     strict_variables: %kernel.debug%
     # globals:
     #     locales: %locales%
 
 # Assetic Configuration
 assetic:
-    debug:          %kernel.debug%
+    debug: %kernel.debug%
     use_controller: false
-    bundles:        [ PlantnetDataBundle ]
+    bundles: [ PlantnetDataBundle ]
     #java: /usr/bin/java
     filters:
         cssrewrite: ~
@@ -61,13 +61,13 @@ assetic:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   %database_driver%
-        host:     %database_host%
-        port:     %database_port%
-        dbname:   %database_name%
-        user:     %database_user%
+        driver: %database_driver%
+        host: %database_host%
+        port: %database_port%
+        dbname: %database_name%
+        user: %database_user%
         password: %database_password%
-        charset:  UTF8
+        charset: UTF8
         # if using pdo_sqlite as your database driver, add the path in parameters.yml
         # e.g. database_path: %kernel.root_dir%/data/data.db3
         # path:     %database_path%
@@ -87,22 +87,22 @@ doctrine_mongodb:
         default:
             auto_mapping: true
             mappings:
+                StofDoctrineExtensionsBundle: false
                 # gedmo_translatable:
                 #     type: annotation
                 #     prefix: Gedmo\Translatable\Document
                 #     dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translatable/Document"
                 #     alias: GedmoTranslatable # this one is optional and will default to the name set for the mapping
                 #     is_bundle: false
-                StofDoctrineExtensionsBundle: false
                 #PlantnetBotaBundle: false
 
 # Swiftmailer Configuration
 swiftmailer:
     transport: %mailer_transport%
-    host:      %mailer_host%
-    username:  %mailer_user%
-    password:  %mailer_password%
-    spool:     { type: memory }
+    host: %mailer_host%
+    username: %mailer_user%
+    password: %mailer_password%
+    spool: { type: memory }
     # delivery_adress: ...
 
 jms_translation:
@@ -117,8 +117,6 @@ jms_translation:
 
 # bazinga_expose_translation: ~
 
-# Extra bundles configuration
-
 # stof_doctrine_extensions:
 #     default_locale: %locale%
 #     translation_fallback: true
@@ -130,49 +128,45 @@ fos_user:
     db_driver: mongodb
     firewall_name: main
     user_class: Plantnet\UserBundle\Document\User
-    use_listener:           true
+    use_listener: true
     use_username_form_type: true
     from_email:
-        address:        %from_email_adress%
-        sender_name:    %from_email_sender_name%
+        address: %from_email_adress%
+        sender_name: %from_email_sender_name%
     profile:
         form:
-            type:               fos_user_profile
-            # handler:            fos_user.profile.form.handler.default
-            name:               fos_user_profile_form
-            validation_groups:  [Profile]
+            type: fos_user_profile
+            name: fos_user_profile_form
+            validation_groups: [Profile]
     change_password:
         form:
-            type:               fos_user_change_password
-            # handler:            fos_user.change_password.form.handler.default
-            name:               fos_user_change_password_form
-            validation_groups:  [ChangePassword]
+            type: fos_user_change_password
+            name: fos_user_change_password_form
+            validation_groups: [ChangePassword]
     registration:
         confirmation:
-            enabled:    true
-            template:   FOSUserBundle:Registration:email.txt.twig
+            enabled: true
+            template: FOSUserBundle:Registration:email.txt.twig
         form:
-            type:               plantnet_user_registration
-            # type:               fos_user_registration
-            # handler:            fos_user.registration.form.handler.default
-            name:               fos_user_registration_form
-            validation_groups:  [Registration]
+            # type: fos_user_registration
+            type: plantnet_user_registration
+            name: fos_user_registration_form
+            validation_groups: [Registration]
 
     resetting:
         token_ttl: 86400
         email:
-            template:   FOSUserBundle:Resetting:email.txt.twig
+            template: FOSUserBundle:Resetting:email.txt.twig
         form:
-            type:               fos_user_resetting
-            # handler:            fos_user.resetting.form.handler.default
-            name:               fos_user_resetting_form
-            validation_groups:  [ResetPassword]
+            type: fos_user_resetting
+            name: fos_user_resetting_form
+            validation_groups: [ResetPassword]
 
     service:
-        mailer:                 fos_user.mailer.default
-        email_canonicalizer:    fos_user.util.canonicalizer.default
+        mailer: fos_user.mailer.default
+        email_canonicalizer: fos_user.util.canonicalizer.default
         username_canonicalizer: fos_user.util.canonicalizer.default
-        user_manager:           fos_user.user_manager.default
+        user_manager: fos_user.user_manager.default
 
     template:
         engine: twig
@@ -203,31 +197,31 @@ escape_wsse_authentication:
 
 raul_fraile_ladybug:  
     general:              
-        expanded:             true 
+        expanded: true 
     object:               
-        max_nesting_level:    3 
-        show_data:            true 
-        show_classinfo:       true 
-        show_constants:       true 
-        show_methods:         true 
-        show_properties:      true 
+        max_nesting_level: 3 
+        show_data: true 
+        show_classinfo: true 
+        show_constants: true 
+        show_methods: true 
+        show_properties: true 
     array:                
-        max_nesting_level:    8 
+        max_nesting_level: 8 
     processor:            
-        active:               true 
+        active: true 
     bool:                 
-        html_color:           #008 
-        cli_color:            blue 
+        html_color: #008 
+        cli_color: blue 
     float:                
-        html_color:           #800 
-        cli_color:            red 
+        html_color: #800 
+        cli_color: red 
     int:                  
-        html_color:           #800 
-        cli_color:            red 
+        html_color: #800 
+        cli_color: red 
     string:               
-        html_color:           #080 
-        cli_color:            green 
-        show_quotes:          true
+        html_color: #080 
+        cli_color: green 
+        show_quotes: true
 
 liip_imagine:
     cache_clearer: false
@@ -254,29 +248,3 @@ liip_imagine:
         thumb_570_325:
             filters:
                 thumbnail: { size: [570, 325], mode: outbound }
-
-#fos_elastica:
-    #default_manager: mongodb
-    #clients:
-        #default: { host: localhost, port: 9200 }
-    #indexes:
-        #bota:
-            #client: default
-            #types:
-                #plantunit:
-                    #mappings:
-                        #id: ~
-                        #identifier: ~
-                        #title1: { boost: 2 }
-                        #title2: { boost: 2 }
-                        #attributes: { boost: 5 }
-                    #persistence:
-                        #driver: mongodb
-                        #model: Plantnet\DataBundle\Document\Plantunit
-                        #identifier: id
-                        #provider: ~
-                        #finder: ~
-                        #listener:
-                            #insert: false
-                            #update: true
-                            #delete: true
