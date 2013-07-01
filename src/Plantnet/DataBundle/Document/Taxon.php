@@ -16,6 +16,11 @@ class Taxon
     /**
      * @MongoDB\String
      */
+    protected $identifier;
+
+    /**
+     * @MongoDB\String
+     */
     protected $name;
 
     /**
@@ -27,6 +32,11 @@ class Taxon
      * @MongoDB\Int
      */
     private $level;
+
+    /**
+     * @MongoDB\Boolean
+     */
+    private $issynonym;
 
     /**
      * @MongoDB\ReferenceOne(
@@ -47,6 +57,26 @@ class Taxon
      *  )
      */
     private $children = array();
+
+    /**
+     * @MongoDB\ReferenceOne(
+     *      targetDocument="Taxon",
+     *      nullable="true",
+     *      inversedBy="synonyms"
+     *  )
+     */
+    private $chosen;
+
+    /**
+     * @MongoDB\ReferenceMany(
+     *      targetDocument="Taxon",
+     *      sort={"name"="asc"},
+     *      nullable="true",
+     *      mappedBy="chosen",
+     *      cascade={"remove"}
+     *  )
+     */
+    private $synonyms = array();
 
     /**
      * @MongoDB\ReferenceOne(
@@ -97,6 +127,7 @@ class Taxon
     public function __construct()
     {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->synonyms = new \Doctrine\Common\Collections\ArrayCollection();
         $this->plantunits = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
@@ -108,6 +139,26 @@ class Taxon
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set identifier
+     *
+     * @param string $identifier
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+    }
+
+    /**
+     * Get identifier
+     *
+     * @return string $identifier
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     /**
@@ -171,6 +222,26 @@ class Taxon
     }
 
     /**
+     * Set issynonym
+     *
+     * @param boolean $issynonym
+     */
+    public function setIssynonym($issynonym)
+    {
+        $this->issynonym = $issynonym;
+    }
+
+    /**
+     * Get issynonym
+     *
+     * @return boolean $issynonym
+     */
+    public function getIssynonym()
+    {
+        return $this->issynonym;
+    }
+
+    /**
      * Set parent
      *
      * @param Plantnet\DataBundle\Document\Taxon $parent
@@ -218,6 +289,66 @@ class Taxon
     public function getChildren()
     {
         return $this->children;
+    }
+    
+    /**
+     * Set chosen
+     *
+     * @param Plantnet\DataBundle\Document\Taxon $chosen
+     */
+    public function setChosen(\Plantnet\DataBundle\Document\Taxon $chosen)
+    {
+        $this->chosen = $chosen;
+    }
+
+    /**
+     * Get chosen
+     *
+     * @return Plantnet\DataBundle\Document\Taxon $chosen
+     */
+    public function getChosen()
+    {
+        return $this->chosen;
+    }
+
+    /**
+     * Add synonyms
+     *
+     * @param Plantnet\DataBundle\Document\Taxon $synonyms
+     */
+    public function addSynonym(\Plantnet\DataBundle\Document\Taxon $synonyms)
+    {
+        $this->synonyms[] = $synonyms;
+    }
+
+    /**
+    * Remove synonyms
+    *
+    * @param <variableType$synonyms
+    */
+    public function removeSynonym(\Plantnet\DataBundle\Document\Taxon $synonyms)
+    {
+        $this->synonyms->removeElement($synonyms);
+    }
+
+    /**
+     * Add synonyms
+     *
+     * @param Plantnet\DataBundle\Document\Taxon $synonyms
+     */
+    public function addSynonyms(\Plantnet\DataBundle\Document\Taxon $synonyms)
+    {
+        $this->synonyms[] = $synonyms;
+    }
+
+    /**
+     * Get synonyms
+     *
+     * @return Doctrine\Common\Collections\Collection $synonyms
+     */
+    public function getSynonyms()
+    {
+        return $this->synonyms;
     }
 
     /**
