@@ -211,6 +211,48 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         ));
                 }
             }
+            // gestion de la synonymie
+            $csv=__DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
+            if(file_exists($csv)){
+                $syns=array();
+                $cols=array();
+                $handle=fopen($csv,"r");
+                $field=fgetcsv($handle,0,";");
+                foreach($field as $col){
+                    $col_name='';
+                    $cur_encoding=mb_detect_encoding($col);
+                    if($cur_encoding=="UTF-8"&&mb_check_encoding($col,"UTF-8")){
+                        $col_name=$col;
+                    }
+                    else{
+                        $col_name=utf8_encode($col);
+                    }
+                    $cols[]=$col_name;
+                }
+                print_r($cols);
+                foreach($taxo as $level=>$data){
+                    $syns[$level]=array(
+                        'col_non_valid'=>'',
+                        'col_valid'=>''
+                    );
+                    foreach($cols as $key=>$col){
+                        if($col==$data[1]){
+                            $syns[$level]['col_non_valid']=$key;
+                        }
+                        if($col!=$data[1]&&strlen($col)>=strlen($data[1])&&substr_count($col,$data[1],0,strlen($data[1]))){
+                            $syns[$level]['col_valid']=$key;
+                        }
+                    }
+                }
+                print_r($syns);
+            }
+            exit;
+            
+
+
+
+
+
             $module=$dm->getRepository('PlantnetDataBundle:Module')
                 ->findOneBy(array(
                     'id'=>$id_module
