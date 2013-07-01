@@ -754,53 +754,7 @@ class ModulesController extends Controller
             'edit_form'=>$editForm->createView(),
         ));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
     /**
      * Displays a form to add syns to Module entity.
      *
@@ -865,21 +819,6 @@ class ModulesController extends Controller
                 {
                     throw new \Exception($e->getMessage());
                 }
-                $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
-                $handle=fopen($csv, "r");
-                $field=fgetcsv($handle,0,";");
-                $tab_syns=array();
-                foreach($field as $col){
-                    $property=new Property();
-                    $cur_encoding=mb_detect_encoding($col);
-                    if($cur_encoding=="UTF-8" && mb_check_encoding($col,"UTF-8")){
-                        $tab_syns[$col]='';
-                    }
-                    else{
-                        $tab_syns[utf8_encode($col)]='';
-                    }
-                    $module->setSyns($tab_syns);
-                }
                 $dm->persist($module);
                 $dm->flush();
                 return $this->redirect($this->generateUrl('module_syn',array('id'=>$module->getId())));
@@ -891,95 +830,6 @@ class ModulesController extends Controller
         ));
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
     /**
      * Deletes a Module entity.
      *

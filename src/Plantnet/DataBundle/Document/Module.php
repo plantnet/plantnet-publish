@@ -70,11 +70,6 @@ class Module
     protected $synfile;
 
     /**
-     * @MongoDB\Hash
-     */
-    protected $syns;
-
-    /**
      * @MongoDB\ReferenceOne(
      *      targetDocument="Collection",
      *      inversedBy="modules"
@@ -423,26 +418,6 @@ class Module
         return $this->synfile;
     }
 
-    /**
-     * Set syns
-     *
-     * @param hash $syns
-     */
-    public function setSyns($syns)
-    {
-        $this->syns = $syns;
-    }
-
-    /**
-     * Get syns
-     *
-     * @return hash $syns
-     */
-    public function getSyns()
-    {
-        return $this->syns;
-    }
-    
     /**
      * Set collection
      *
