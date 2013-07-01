@@ -64,6 +64,17 @@ class Module
     protected $file;
 
     /**
+     * 
+     * @Assert\File(maxSize = "60M")
+     */
+    protected $synfile;
+
+    /**
+     * @MongoDB\Hash
+     */
+    protected $syns;
+
+    /**
      * @MongoDB\ReferenceOne(
      *      targetDocument="Collection",
      *      inversedBy="modules"
@@ -392,6 +403,46 @@ class Module
         return $this->file;
     }
 
+    /**
+     * Set synfile
+     *
+     * @param text $synfile
+     */
+    public function setSynfile($synfile)
+    {
+        $this->synfile = $synfile;
+    }
+
+    /**
+     * Get synfile
+     *
+     * @return text $synfile
+     */
+    public function getSynfile()
+    {
+        return $this->synfile;
+    }
+
+    /**
+     * Set syns
+     *
+     * @param hash $syns
+     */
+    public function setSyns($syns)
+    {
+        $this->syns = $syns;
+    }
+
+    /**
+     * Get syns
+     *
+     * @return hash $syns
+     */
+    public function getSyns()
+    {
+        return $this->syns;
+    }
+    
     /**
      * Set collection
      *

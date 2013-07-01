@@ -23,7 +23,8 @@ use Plantnet\DataBundle\Document\Module,
 use Plantnet\DataBundle\Form\ImportFormType,
     Plantnet\DataBundle\Form\Type\ModulesType,
     Plantnet\DataBundle\Form\Type\ModulesTaxoType,
-    Plantnet\DataBundle\Form\ModuleFormType;
+    Plantnet\DataBundle\Form\ModuleFormType,
+    Plantnet\DataBundle\Form\ModuleSynFormType;
 
 use Symfony\Component\Form\FormError;
 
@@ -753,6 +754,231 @@ class ModulesController extends Controller
             'edit_form'=>$editForm->createView(),
         ));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Displays a form to add syns to Module entity.
+     *
+     * @Route("/{id}/syn", name="module_syn")
+     * @Template()
+     */
+    public function module_synAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'id'=>$id
+            ));
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $form=$this->createForm(new ModuleSynFormType(),$module);
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_syn.html.twig',array(
+            'module'=>$module,
+            'form'=>$form->createView()
+        ));
+    }
+
+    /**
+     * Add syn to Module entity.
+     *
+     * @Route("/{id}/syn_update", name="module_syn_update")
+     * @Method("post")
+     * @Template()
+     */
+    public function module_syn_updateAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'id'=>$id
+            ));
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $request=$this->getRequest();
+        $form=$this->createForm(new ModuleSynFormType(),$module);
+        if('POST'===$request->getMethod()){
+            $form->bind($request);
+            if($form->isValid()){
+                $uploadedSynFile=$module->getSynfile();
+                try{
+                    $uploadedSynFile->move(
+                        __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/',
+                        $module->getAlias().'_syn.csv'
+                    );
+                }
+                catch(FilePermissionException $e)
+                {
+                    return false;
+                }
+                catch(\Exception $e)
+                {
+                    throw new \Exception($e->getMessage());
+                }
+                $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
+                $handle=fopen($csv, "r");
+                $field=fgetcsv($handle,0,";");
+                $tab_syns=array();
+                foreach($field as $col){
+                    $property=new Property();
+                    $cur_encoding=mb_detect_encoding($col);
+                    if($cur_encoding=="UTF-8" && mb_check_encoding($col,"UTF-8")){
+                        $tab_syns[$col]='';
+                    }
+                    else{
+                        $tab_syns[utf8_encode($col)]='';
+                    }
+                    $module->setSyns($tab_syns);
+                }
+                $dm->persist($module);
+                $dm->flush();
+                return $this->redirect($this->generateUrl('module_syn',array('id'=>$module->getId())));
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_syn.html.twig',array(
+            'module'=>$module,
+            'form'=>$form->createView()
+        ));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     /**
      * Deletes a Module entity.

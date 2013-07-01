@@ -42,7 +42,7 @@
             </table>
         {% endif %}
         {{ form_rest(edit_form) }}
-        <a href="#" class="btn">Add synonymy</a>
+        <a href="{{ path('module_syn', { 'id': entity.id }) }}" class="btn">Add synonymy</a>
         <br />
         <br />
         <button type="submit" class="btn">Update</button>
