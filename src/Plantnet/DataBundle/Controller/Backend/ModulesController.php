@@ -560,7 +560,8 @@ class ModulesController extends Controller
         $data_encoding=mb_detect_encoding($data);
         if($data_encoding=="UTF-8"&&mb_check_encoding($data,"UTF-8")){
             $format=$data;
-        }else {
+        }
+        else{
             $format=utf8_encode($data);
         }
         return $format;
