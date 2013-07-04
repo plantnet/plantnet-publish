@@ -19,7 +19,7 @@ use Plantnet\DataBundle\Utils\StringHelp;
 
 
 /**
- * Taxo  controller.
+ * Taxo controller.
  *
  * @Route("")
  */
@@ -68,28 +68,25 @@ class TaxoController extends Controller
     /**
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo",
-     *      defaults={"level"=0, "taxon"="null"},
+     *      defaults={"taxon"="null"},
      *      name="front_module_taxo"
      *  )
      * @Route(
-     *      "/project/{project}/collection/{collection}/{module}/taxo/{level}-{taxon}",
-     *      requirements={"level"="\d+"},
+     *      "/project/{project}/collection/{collection}/{module}/taxo/{taxon}",
      *      name="front_module_taxo_details"
      *  )
      * @Method("get")
      * @Template()
      */
-    public function module_taxoAction($project,$collection,$module,$level,$taxon,Request $request)
+    public function module_taxoAction($project,$collection,$module,$taxon,Request $request)
     {
-        $form_level=$request->query->get('form_level');
-        $form_name=$request->query->get('form_name');
-        if($this->container->get('request')->get('_route')=='front_module_taxo'&&!empty($form_level)&&!empty($form_name)){
-            return $this->redirect($this->generateUrl('front_module_taxo_view',array(
+        $form_identifier=$request->query->get('form_identifier');
+        if($this->container->get('request')->get('_route')=='front_module_taxo'&&!empty($form_identifier)){
+            return $this->redirect($this->generateUrl('front_module_taxo_details',array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module,
-                'level'=>$form_level,
-                'taxon'=>$form_name
+                'taxon'=>$form_identifier
             )),301);
         }
         $projects=$this->database_list();
@@ -115,33 +112,31 @@ class TaxoController extends Controller
             $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
                 ->field('module')->references($module)
                 ->field('parent')->equals(null)
+                ->field('issynonym')->equals(false)
                 ->sort('name','asc')
                 ->getQuery()
                 ->execute();
         }
         else{
-            $taxon=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
-                ->field('module')->references($module)
-                ->field('name')->equals($taxon)
-                ->field('level')->equals(intval($level))
-                ->getQuery()
-                ->getSingleResult();
+            $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
+                ->findOneBy(array(
+                    'module.id'=>$module->getId(),
+                    'identifier'=>$taxon
+                ));
             if(!$taxon){
                 throw $this->createNotFoundException('Unable to find Taxon entity.');
             }
-            if(count($taxon->getChildren())==0){
-                return $this->redirect($this->generateUrl('front_module_taxo_view',array(
-                    'project'=>$project,
-                    'collection'=>$collection,
-                    'module'=>$module,
-                    'level'=>$level,
-                    'taxon'=>$taxon
-                    )
-                ),301);
+            $tab_id=array($taxon->getId());
+            $syns=$taxon->getSynonyms();
+            if(count($syns)){
+                foreach($syns as $syn){
+                    $tab_id[]=$syn->getId();
+                }
             }
             $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
                 ->field('module')->references($module)
-                ->field('parent')->references($taxon)
+                ->field('parent.id')->in($tab_id)
+                ->field('issynonym')->equals(false)
                 ->sort('name','asc')
                 ->getQuery()
                 ->execute();
@@ -191,9 +186,25 @@ class TaxoController extends Controller
         if(!$module||$module->getType()!='text'){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
+        $parent=$dm->getRepository('PlantnetDataBundle:Taxon')
+            ->findOneBy(array(
+                'module.id'=>$module->getId(),
+                'id'=>$parent
+            ));
+        if(!$parent){
+            throw $this->createNotFoundException('Unable to find Taxon entity.');
+        }
+        $tab_id=array($parent->getId());
+        $syns=$parent->getSynonyms();
+        if(count($syns)){
+            foreach($syns as $syn){
+                $tab_id[]=$syn->getId();
+            }
+        }
         $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
             ->field('module')->references($module)
-            ->field('parent.id')->equals($parent)
+            ->field('parent.id')->in($tab_id)
+            ->field('issynonym')->equals(false)
             ->sort('name','asc')
             ->getQuery()
             ->execute();
@@ -248,7 +259,7 @@ class TaxoController extends Controller
         }
         $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
             ->hydrate(false)
-            ->select('name','level','label')
+            ->select('name','identifier','label','issynonym')
             ->field('module')->references($module)
             ->field('name')->in(array(
                 new \MongoRegex('/.*'.StringHelp::accentToRegex($query).'.*/i')
@@ -260,9 +271,10 @@ class TaxoController extends Controller
         $results=array();
         foreach($taxons as $tax){
             $results[]=array(
-                'level'=>$tax['level'],
+                'identifier'=>$tax['identifier'],
                 'name'=>$tax['name'],
-                'label'=>$tax['label']
+                'label'=>$tax['label'],
+                'issynonym'=>$tax['issynonym']
             );
         }
         $response=new Response(json_encode($results));
@@ -273,26 +285,25 @@ class TaxoController extends Controller
 
     /**
      * @Route(
-     *      "/project/{project}/collection/{collection}/{module}/taxo_view/{level}-{taxon}",
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view/{taxon}",
      *      defaults={"page"=1, "sortby"="null", "sortorder"="null"},
-     *      requirements={"level"="\d+"},
      *      name="front_module_taxo_view"
      *  )
      * @Route(
-     *      "/project/{project}/collection/{collection}/{module}/taxo_view/{level}-{taxon}/page{page}",
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view/{taxon}/page{page}",
      *      defaults={"sortby"="null", "sortorder"="null"},
-     *      requirements={"level"="\d+", "page"="\d+"},
+     *      requirements={"page"="\d+"},
      *      name="front_module_taxo_view_paginated"
      *  )
      * @Route(
-     *      "/project/{project}/collection/{collection}/{module}/taxo_view/{level}-{taxon}/page{page}/sort-{sortby}/order-{sortorder}",
-     *      requirements={"level"="\d+", "page"="\d+", "sortby"="\w+", "sortorder"="null|asc|desc"},
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view/{taxon}/page{page}/sort-{sortby}/order-{sortorder}",
+     *      requirements={"page"="\d+", "sortby"="\w+", "sortorder"="null|asc|desc"},
      *      name="front_module_taxo_view_paginated_sorted"
      *  )
      * @Method("get")
      * @Template()
      */
-    public function module_taxo_viewAction($project,$collection,$module,$level,$taxon,$page,$sortby,$sortorder,Request $request)
+    public function module_taxo_viewAction($project,$collection,$module,$taxon,$page,$sortby,$sortorder,Request $request)
     {
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
@@ -303,7 +314,6 @@ class TaxoController extends Controller
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module,
-                'level'=>$level,
                 'taxon'=>$taxon
                 )
             ),301);
@@ -329,8 +339,7 @@ class TaxoController extends Controller
         }
         $taxon=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
             ->field('module')->references($module)
-            ->field('name')->equals($taxon)
-            ->field('level')->equals(intval($level))
+            ->field('identifier')->equals($taxon)
             ->getQuery()
             ->getSingleResult();
         if(!$taxon){
@@ -348,9 +357,63 @@ class TaxoController extends Controller
             }
         }
         ksort($order);
-        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-            ->field('module')->references($module)
-            ->field('taxonsrefs')->references($taxon);
+        // version 3
+        $tab_ref=array(
+            $taxon->getId()=>$taxon
+        );
+        $syns=$taxon->getSynonyms();
+        if(count($syns)){
+            foreach($syns as $syn){
+                $tab_ref[$syn->getId()]=$syn;
+            }
+        }
+        $children=$taxon->getChildren();
+        while(count($children)){
+            $children_new=array();
+            foreach($children as $child){
+                $tab_ref[$child->getId()]=$child;
+                $syns=$child->getSynonyms();
+                if(count($syns)){
+                    foreach($syns as $syn){
+                        $tab_ref[$syn->getId()]=$syn;
+                    }
+                }
+                $tmp_children=$child->getChildren();
+                if(count($tmp_children)){
+                    foreach($tmp_children as $new_child){
+                        $children_new[$new_child->getId()]=$new_child;
+                    }
+                }
+            }
+            $children=$children_new;
+        }
+        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit');
+        $plantunits->field('module')->references($module);
+        if(count($tab_ref)>1){
+            foreach($tab_ref as $ref){
+                $plantunits->addOr($plantunits->expr()->field('taxonsrefs')->references($ref));
+            }
+        }
+        else{
+            $plantunits->field('taxonsrefs')->references($tab_ref[key($tab_ref)]);
+        }
+        // // version 2
+        // $syns=$taxon->getSynonyms();
+        // $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit');
+        // $plantunits->field('module')->references($module);
+        // if(count($syns)){
+        //     $plantunits->addOr($plantunits->expr()->field('taxonsrefs')->references($taxon));
+        //     foreach($syns as $syn){
+        //         $plantunits->addOr($plantunits->expr()->field('taxonsrefs')->references($syn));
+        //     }
+        // }
+        // else{
+        //     $plantunits->field('taxonsrefs')->references($taxon);
+        // }
+        // // version 1
+        // $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+        //     ->field('module')->references($module)
+        //     ->field('taxonsrefs')->references($taxon);
         if($sortby!='null'&&$sortorder!='null'){
             if(in_array($sortby,$order)){
                 unset($order[array_search($sortby,$order)]);
@@ -394,20 +457,19 @@ class TaxoController extends Controller
 
     /**
      * @Route(
-     *      "/project/{project}/collection/{collection}/{module}/taxo_view_gallery/{level}-{taxon}",
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view_gallery/{taxon}",
      *      defaults={"page"=1},
-     *      requirements={"level"="\d+"},
      *      name="front_module_taxo_view_gallery"
      *  )
      * @Route(
-     *      "/project/{project}/collection/{collection}/{module}/taxo_view_gallery/{level}-{taxon}/page{page}",
-     *      requirements={"level"="\d+", "page"="\d+"},
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view_gallery/{taxon}/page{page}",
+     *      requirements={"page"="\d+"},
      *      name="front_module_taxo_view_gallery_paginated"
      *  )
      * @Method("get")
      * @Template()
      */
-    public function module_taxo_view_galleryAction($project,$collection,$module,$level,$taxon,$page,Request $request)
+    public function module_taxo_view_galleryAction($project,$collection,$module,$taxon,$page,Request $request)
     {
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
@@ -418,7 +480,6 @@ class TaxoController extends Controller
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module,
-                'level'=>$level,
                 'taxon'=>$taxon
                 )
             ),301);
@@ -444,8 +505,7 @@ class TaxoController extends Controller
         }
         $taxon=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
             ->field('module')->references($module)
-            ->field('name')->equals($taxon)
-            ->field('level')->equals(intval($level))
+            ->field('identifier')->equals($taxon)
             ->getQuery()
             ->getSingleResult();
         if(!$taxon){
@@ -458,10 +518,52 @@ class TaxoController extends Controller
                 $display[]=$row->getId();
             }
         }
-        $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-            ->field('taxonsrefs')->references($taxon)
-            ->sort('title1','asc')
-            ->sort('title2','asc');
+        // version 3
+        $tab_ref=array(
+            $taxon->getId()=>$taxon
+        );
+        $syns=$taxon->getSynonyms();
+        if(count($syns)){
+            foreach($syns as $syn){
+                $tab_ref[$syn->getId()]=$syn;
+            }
+        }
+        $children=$taxon->getChildren();
+        while(count($children)){
+            $children_new=array();
+            foreach($children as $child){
+                $tab_ref[$child->getId()]=$child;
+                $syns=$child->getSynonyms();
+                if(count($syns)){
+                    foreach($syns as $syn){
+                        $tab_ref[$syn->getId()]=$syn;
+                    }
+                }
+                $tmp_children=$child->getChildren();
+                if(count($tmp_children)){
+                    foreach($tmp_children as $new_child){
+                        $children_new[$new_child->getId()]=$new_child;
+                    }
+                }
+            }
+            $children=$children_new;
+        }
+        $images=$dm->createQueryBuilder('PlantnetDataBundle:Image');
+        if(count($tab_ref)>1){
+            foreach($tab_ref as $ref){
+                $images->addOr($images->expr()->field('taxonsrefs')->references($ref));
+            }
+        }
+        else{
+            $images->field('taxonsrefs')->references($tab_ref[key($tab_ref)]);
+        }
+        $images->sort('title1','asc');
+        $images->sort('title2','asc');
+        // // version 1
+        // $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+        //     ->field('taxonsrefs')->references($taxon)
+        //     ->sort('title1','asc')
+        //     ->sort('title2','asc');
         $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($images));
         try{
             $paginator->setMaxPerPage(15);
@@ -493,13 +595,12 @@ class TaxoController extends Controller
 
     /**
      * @Route(
-     *      "/project/{project}/collection/{collection}/{module}/taxo_view_map/{level}-{taxon}",
-     *      requirements={"level"="\d+"},
+     *      "/project/{project}/collection/{collection}/{module}/taxo_view_map/{taxon}",
      *      name="front_module_taxo_view_map"
      *  )
      * @Template()
      */
-    public function module_taxo_view_mapAction($project,$collection,$module,$level,$taxon)
+    public function module_taxo_view_mapAction($project,$collection,$module,$taxon)
     {
         $projects=$this->database_list();
         if(!in_array($project,$projects)){
@@ -522,8 +623,7 @@ class TaxoController extends Controller
         }
         $taxon=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
             ->field('module')->references($module)
-            ->field('name')->equals($taxon)
-            ->field('level')->equals(intval($level))
+            ->field('identifier')->equals($taxon)
             ->getQuery()
             ->getSingleResult();
         if(!$taxon){
@@ -536,10 +636,52 @@ class TaxoController extends Controller
                 $display[]=$row->getId();
             }
         }
-        $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
-            ->field('taxonsrefs')->references($taxon)
-            ->getQuery()
+        // version 3
+        $tab_ref=array(
+            $taxon->getId()=>$taxon
+        );
+        $syns=$taxon->getSynonyms();
+        if(count($syns)){
+            foreach($syns as $syn){
+                $tab_ref[$syn->getId()]=$syn;
+            }
+        }
+        $children=$taxon->getChildren();
+        while(count($children)){
+            $children_new=array();
+            foreach($children as $child){
+                $tab_ref[$child->getId()]=$child;
+                $syns=$child->getSynonyms();
+                if(count($syns)){
+                    foreach($syns as $syn){
+                        $tab_ref[$syn->getId()]=$syn;
+                    }
+                }
+                $tmp_children=$child->getChildren();
+                if(count($tmp_children)){
+                    foreach($tmp_children as $new_child){
+                        $children_new[$new_child->getId()]=$new_child;
+                    }
+                }
+            }
+            $children=$children_new;
+        }
+        $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location');
+        if(count($tab_ref)>1){
+            foreach($tab_ref as $ref){
+                $locations->addOr($locations->expr()->field('taxonsrefs')->references($ref));
+            }
+        }
+        else{
+            $locations->field('taxonsrefs')->references($tab_ref[key($tab_ref)]);
+        }
+        $locations->getQuery()
             ->execute();
+        // // version 1
+        // $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+        //     ->field('taxonsrefs')->references($taxon)
+        //     ->getQuery()
+        //     ->execute();
         //count to display
         $nb_images=($taxon->getHasimages())?1:0;
         $nb_locations=1;

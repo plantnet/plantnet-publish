@@ -121,6 +121,18 @@
         <source>line-views</source>
         <target state="new">views</target>
       </trans-unit>
+      <trans-unit id="28" resname="line-synonym">
+        <source>line-synonym</source>
+        <target state="new">synonym:</target>
+      </trans-unit>
+      <trans-unit id="29" resname="line-synonyms">
+        <source>line-synonyms</source>
+        <target state="new">synonyms:</target>
+      </trans-unit>
+      <trans-unit id="30" resname="line-valid-taxon">
+        <source>line--valid-taxon</source>
+        <target state="new">valid taxon:</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

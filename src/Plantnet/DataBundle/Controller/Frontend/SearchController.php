@@ -19,7 +19,7 @@ use Plantnet\DataBundle\Utils\StringHelp;
 
 
 /**
- * Search  controller.
+ * Search controller.
  *
  * @Route("")
  */

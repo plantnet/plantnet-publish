@@ -8,6 +8,7 @@
 {% endblock %}
 {% block header %}<h1>{{ module.name }} - {{ "line-taxonomy"|trans|capitalize }} - {{ taxon.name }}</h1>{% endblock %}
 {% block breadcrumb %}
+    {#}
     <ul class="breadcrumb">
         <li>
             <a href="{{ path('front_project', {'project': project}) }}">{{ project|capitalize }}</a>
@@ -29,7 +30,7 @@
             {% if taxon.parent %}
                 {{ _self.bc_taxon(taxon.parent,project,collection,module) }}
                 <li>
-                    <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.parent.level, 'taxon': taxon.parent.name }) }}">{{ taxon.parent.name }}</a>
+                    <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.parent.name }) }}">{{ taxon.parent.name }}</a>
                     <span class="divider">/</span>
                 </li>
             {% endif %}
@@ -38,9 +39,9 @@
         {{ macros.bc_taxon(taxon,project,collection,module) }}
         <li>
             {% if taxon.haschildren == true %}
-                <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name }) }}">{{ taxon.name }}</a>
+                <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.name }) }}">{{ taxon.name }}</a>
             {% else %}
-                <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name }) }}">{{ taxon.name }}</a>
+                <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.name }) }}">{{ taxon.name }}</a>
             {% endif %}
             <span class="divider">/</span>
         </li>
@@ -48,6 +49,7 @@
             <span class="badge">{{ nbResults }}</span>
         </li>
     </ul>
+    #}
 {% endblock %}
 {% block side %}
     {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
@@ -56,14 +58,14 @@
     <div class="results">
         <ul class="nav nav-tabs">
             <li{% if current_display == 'grid' %} class="active"{% endif %}>
-                <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name }) }}">
+                <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
                     <i class="icon-list"></i>
                     {{ "line-grid"|trans|capitalize }}
                 </a>
             </li>
             <li{% if current_display == 'images' %} class="active"{% endif %}>
                 {% if nb_images > 0 %}
-                    <a href="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name }) }}">
+                    <a href="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
                         <i class="icon-camera"></i>
                         {{ "line-images"|trans|capitalize }}
                     </a>
@@ -76,7 +78,7 @@
             </li>
             <li{% if current_display == 'locations' %} class="active"{% endif %}>
                 {% if nb_locations > 0 %}
-                    <a href="{{ path('front_module_taxo_view_map', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name }) }}">
+                    <a href="{{ path('front_module_taxo_view_map', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
                         <i class="icon-map-marker"></i>
                         {{ "line-locations"|trans|capitalize }}
                     </a>
@@ -95,11 +97,11 @@
                         <div class="pagerfanta">
                             {% if paginator.haveToPaginate() %}
                                 {% if sortby != 'null' and sortorder != 'null' %}
-                                    <form method="get" action="{{ path('front_module_taxo_view_paginated_sorted', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name, 'page': page, 'sortby': sortby, 'sortorder': sortorder }) }}">
+                                    <form method="get" action="{{ path('front_module_taxo_view_paginated_sorted', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier, 'page': page, 'sortby': sortby, 'sortorder': sortorder }) }}">
                                         <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
                                     </form>
                                 {% else %}
-                                    <form method="get" action="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name }) }}">
+                                    <form method="get" action="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
                                         <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
                                     </form>
                                 {% endif %}
@@ -115,8 +117,7 @@
                                             'project': project,
                                             'collection': collection.url,
                                             'module': module.url,
-                                            'level': taxon.level,
-                                            'taxon': taxon.name,
+                                            'taxon': taxon.identifier,
                                             'sortby': sortby,
                                             'sortorder': sortorder,
                                         }
@@ -133,8 +134,7 @@
                                             'project': project,
                                             'collection': collection.url,
                                             'module': module.url,
-                                            'level': taxon.level,
-                                            'taxon': taxon.name
+                                            'taxon': taxon.identifier
                                         }
                                     }
                                 ) }}
@@ -149,9 +149,9 @@
                                         <th>
                                             {{ property.name }}
                                             <span class="nowrap">
-                                                <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name }) }}/page1/sort-{{ property.id }}/order-asc">
+                                                <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}/page1/sort-{{ property.id }}/order-asc">
                                                     <i class="icon-circle-arrow-up"></i></a>
-                                                <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name }) }}/page1/sort-{{ property.id }}/order-desc">
+                                                <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}/page1/sort-{{ property.id }}/order-desc">
                                                     <i class="icon-circle-arrow-down"></i></a>
                                             </span>
                                         </th>
@@ -198,8 +198,7 @@
                                             'project': project,
                                             'collection': collection.url,
                                             'module': module.url,
-                                            'level': taxon.level,
-                                            'taxon': taxon.name,
+                                            'taxon': taxon.identifier,
                                             'sortby': sortby,
                                             'sortorder': sortorder,
                                         }
@@ -216,8 +215,7 @@
                                             'project': project,
                                             'collection': collection.url,
                                             'module': module.url,
-                                            'level': taxon.level,
-                                            'taxon': taxon.name
+                                            'taxon': taxon.identifier
                                         }
                                     }
                                 ) }}
@@ -231,7 +229,7 @@
                     {% if paginator|length > 0 %}
                         <div class="pagerfanta">
                             {% if paginator.haveToPaginate() %}
-                                <form method="get" action="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'level': taxon.level, 'taxon': taxon.name }) }}">
+                                <form method="get" action="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
                                     <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
                                 </form>
                             {% endif %}
@@ -245,8 +243,7 @@
                                         'project': project,
                                         'collection': collection.url,
                                         'module': module.url,
-                                        'level': taxon.level,
-                                        'taxon': taxon.name
+                                        'taxon': taxon.identifier
                                     }
                                 }
                             ) }}
@@ -269,8 +266,7 @@
                                         'project': project,
                                         'collection': collection.url,
                                         'module': module.url,
-                                        'level': taxon.level,
-                                        'taxon': taxon.name
+                                        'taxon': taxon.identifier
                                     }
                                 }
                             ) }}

@@ -820,8 +820,13 @@ class ModulesController extends Controller
                 {
                     throw new \Exception($e->getMessage());
                 }
+                $module->setUpdating(true);
                 $dm->persist($module);
                 $dm->flush();
+                $kernel=$this->get('kernel');
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' &> /dev/null &';
+                $process=new \Symfony\Component\Process\Process($command);
+                $process->start();
                 return $this->redirect($this->generateUrl('module_syn',array('id'=>$module->getId())));
             }
         }

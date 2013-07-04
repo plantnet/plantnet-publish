@@ -19,7 +19,7 @@ use Plantnet\DataBundle\Utils\StringHelp;
 
 
 /**
- * Default  controller.
+ * Default controller.
  *
  * @Route("")
  */
