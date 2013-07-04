@@ -339,7 +339,13 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             $last_valid=$tax;
                         }
                     }
-                    if($last_valid&&$last_non_valid&&$last_valid->getIdentifier()!=$last_non_valid->getIdentifier()){
+                    $exists=false;
+                    if($last_non_valid->getIssynonym()&&$last_non_valid->getChosen()){
+                        if($last_non_valid->getChosen()->getId()==$last_valid->getId()){
+                            $exists=true;
+                        }
+                    }
+                    if(!$exists&&$last_valid&&$last_non_valid&&$last_valid->getIdentifier()!=$last_non_valid->getIdentifier()){
                         $last_non_valid->setIssynonym(true);
                         $last_non_valid->setChosen($last_valid);
                         if($last_non_valid->getHaschildren()){

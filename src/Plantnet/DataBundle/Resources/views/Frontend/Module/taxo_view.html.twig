@@ -8,7 +8,6 @@
 {% endblock %}
 {% block header %}<h1>{{ module.name }} - {{ "line-taxonomy"|trans|capitalize }} - {{ taxon.name }}</h1>{% endblock %}
 {% block breadcrumb %}
-    {#}
     <ul class="breadcrumb">
         <li>
             <a href="{{ path('front_project', {'project': project}) }}">{{ project|capitalize }}</a>
@@ -27,10 +26,16 @@
             <span class="divider">/</span>
         </li>
         {% macro bc_taxon(taxon,project,collection,module) %}
-            {% if taxon.parent %}
+            {% if taxon.parent and taxon.parent.chosen %}
+                {{ _self.bc_taxon(taxon.parent.chosen,project,collection,module) }}
+                <li>
+                    <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.parent.chosen.identifier }) }}">{{ taxon.parent.chosen.name }}</a>
+                    <span class="divider">/</span>
+                </li>
+            {% elseif taxon.parent %}
                 {{ _self.bc_taxon(taxon.parent,project,collection,module) }}
                 <li>
-                    <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.parent.name }) }}">{{ taxon.parent.name }}</a>
+                    <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.parent.identifier }) }}">{{ taxon.parent.name }}</a>
                     <span class="divider">/</span>
                 </li>
             {% endif %}
@@ -38,24 +43,57 @@
         {% import _self as macros %}
         {{ macros.bc_taxon(taxon,project,collection,module) }}
         <li>
-            {% if taxon.haschildren == true %}
-                <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.name }) }}">{{ taxon.name }}</a>
-            {% else %}
-                <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.name }) }}">{{ taxon.name }}</a>
-            {% endif %}
+            <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">{{ taxon.name }}</a>
             <span class="divider">/</span>
         </li>
         <li class="active">
             <span class="badge">{{ nbResults }}</span>
         </li>
     </ul>
-    #}
 {% endblock %}
 {% block side %}
     {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     <div class="results">
+        {% if taxon.chosen %}
+            <p>
+                {{ "line-valid-taxon"|trans|capitalize }}
+                {% macro valid_taxonomy(taxon,project,collection,module) %}
+                    {% if taxon.parent and taxon.parent.chosen %}
+                        {{ _self.valid_taxonomy(taxon.parent.chosen,project,collection,module) }}
+                        <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.parent.chosen.identifier }) }}">
+                            {{ taxon.parent.chosen.name }}</a>
+                    {% elseif taxon.parent %}
+                        {{ _self.valid_taxonomy(taxon.parent,project,collection,module) }}
+                        <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.parent.identifier }) }}">
+                            {{ taxon.parent.name }}</a>
+                    {% endif %}
+                {% endmacro %}
+                {% import _self as macros2 %}
+                {{ macros2.valid_taxonomy(taxon.chosen,project,collection,module) }}
+                <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.chosen.identifier }) }}">
+                    {{ taxon.chosen.name }}</a>
+            </p>
+        {% endif %}
+        {% if taxon.synonyms|length > 0 %}
+            <p>
+                {% if taxon.synonyms|length >= 2 %}
+                    {{ "line-synonyms"|trans|capitalize }}
+                {% else %}
+                    {{ "line-synonym"|trans|capitalize }}
+                {% endif %}
+            </p>
+            <ul>
+                {% for syn in taxon.synonyms %}
+                    <li>
+                        <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': syn.identifier }) }}">
+                            {{ syn.identifier }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         <ul class="nav nav-tabs">
             <li{% if current_display == 'grid' %} class="active"{% endif %}>
                 <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
