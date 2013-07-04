@@ -262,6 +262,28 @@ class DeleteCommand extends ContainerAwareCommand
                         $dm->persist($parent_taxon);
                         $parent_taxon=$parent_taxon->getParent();
                     }
+                    //maj taxo valide
+                    if($taxon->getIssynonym()){
+                        $taxon_valid=$taxon->getChosen();
+                        if($img_bool){
+                            $taxon_valid->setHasimages(true);
+                        }
+                        if($loc_bool){
+                            $taxon_valid->setHaslocations(true);
+                        }
+                        $dm->persist($taxon_valid);
+                        $parent_taxon_valid=$taxon_valid->getParent();
+                        while($parent_taxon_valid){
+                            if($img_bool){
+                                $parent_taxon_valid->setHasimages(true);
+                            }
+                            if($loc_bool){
+                                $parent_taxon_valid->setHaslocations(true);
+                            }
+                            $dm->persist($parent_taxon_valid);
+                            $parent_taxon_valid=$parent_taxon_valid->getParent();
+                        }
+                    }
                 }
                 $dm->flush();
             }
