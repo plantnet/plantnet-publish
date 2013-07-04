@@ -137,6 +137,18 @@ class ImportationCommand extends ContainerAwareCommand
                                     $parent_taxon=$parent_taxon->getParent();
                                 }
                                 $dm->persist($image);
+                                //maj taxo valide
+                                if($taxon->getIssynonym()){
+                                    $taxon_valid=$taxon->getChosen();
+                                    $taxon_valid->setHasimages(true);
+                                    $dm->persist($taxon_valid);
+                                    $parent_taxon_valid=$taxon_valid->getParent();
+                                    while($parent_taxon_valid){
+                                        $parent_taxon_valid->setHasimages(true);
+                                        $dm->persist($parent_taxon_valid);
+                                        $parent_taxon_valid=$parent_taxon_valid->getParent();
+                                    }
+                                }
                             }
                         }
                         else{
@@ -213,6 +225,18 @@ class ImportationCommand extends ContainerAwareCommand
                                     $parent_taxon=$parent_taxon->getParent();
                                 }
                                 $dm->persist($location);
+                                //maj taxo valide
+                                if($taxon->getIssynonym()){
+                                    $taxon_valid=$taxon->getChosen();
+                                    $taxon_valid->setHaslocations(true);
+                                    $dm->persist($taxon_valid);
+                                    $parent_taxon_valid=$taxon_valid->getParent();
+                                    while($parent_taxon_valid){
+                                        $parent_taxon_valid->setHaslocations(true);
+                                        $dm->persist($parent_taxon_valid);
+                                        $parent_taxon_valid=$parent_taxon_valid->getParent();
+                                    }
+                                }
                             }
                         }
                         else{
