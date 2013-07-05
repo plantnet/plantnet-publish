@@ -204,7 +204,11 @@
     {% endif %}
     <script type="text/javascript">
         $(document).ready(function(){
-            $('span.dot').tooltip();
+            $('span.dot').each(function(){
+                if($(this)[0].offsetWidth<$(this)[0].scrollWidth){
+                    $(this).tooltip();
+                }
+            });
             $('.pop-tooltip').tooltip();
             /* Apply fancybox to multiple items */
             $('a.grouped_elements').fancybox({
