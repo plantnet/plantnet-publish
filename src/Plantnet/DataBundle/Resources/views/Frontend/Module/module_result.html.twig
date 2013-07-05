@@ -99,15 +99,19 @@
                             {% endif %}
                             {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
                         </div>
-                        <table class="table table-striped table-hover tr-link">
+                        <table class="table table-striped table-hover tr-link dot">
                             <thead>
                                 <tr>
-                                    <th></th>
-                                    <th></th>
+                                    <th class="fixe">
+                                        <i class="icon-camera"></i>
+                                    </th>
+                                    <th class="fixe">
+                                        <i class="icon-map-marker"></i>
+                                    </th>
                                     {% set array_form = app.request.query.all() %}
                                     {% for property in module.properties if property.id in display %}
                                         <th>
-                                            {{ property.name }}
+                                            <span class="dot" data-title="{{ property.name }}" data-toggle="tooltip">{{ property.name }}</span>
                                             <span class="nowrap">
                                                 <a href="{{ path('front_module_result', {'project': project, 'collection': collection.url, 'module': module.url}) }}?{{ url }}&sort={{ property.id }}&order=asc">
                                                     <i class="icon-circle-arrow-up"></i></a></a>
@@ -200,6 +204,7 @@
     {% endif %}
     <script type="text/javascript">
         $(document).ready(function(){
+            $('span.dot').tooltip();
             $('.pop-tooltip').tooltip();
             /* Apply fancybox to multiple items */
             $('a.grouped_elements').fancybox({
