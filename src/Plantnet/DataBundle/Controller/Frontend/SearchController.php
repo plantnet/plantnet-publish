@@ -62,6 +62,10 @@ class SearchController extends Controller
         if(!$config){
             throw $this->createNotFoundException('Unable to find Config entity.');
         }
+        $default=$config->getDefaultlanguage();
+        if(!empty($default)){
+            $this->getRequest()->setLocale($default);
+        }
         return $config;
     }
 
