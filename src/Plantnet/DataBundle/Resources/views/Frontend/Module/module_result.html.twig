@@ -81,8 +81,8 @@
             <div class="tab-pane{% if current_display == 'grid' %} active{% endif %}" id="grid-tab">
                 {% if current_display == 'grid' %}
                     {% if paginator|length > 0 %}
-                        <div class="pagerfanta">
-                            {% if paginator.haveToPaginate() %}
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
                                 <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
                                     {% set array_form = app.request.query.all() %}
                                     {% for form,values in array_form if values is iterable %}
@@ -96,9 +96,9 @@
                                     {% endif %}
                                     <input type="number" name="page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
                                 </form>
-                            {% endif %}
-                            {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
-                        </div>
+                                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2, 'prev_message': '←', 'next_message': '→',}) }}
+                            </div>
+                        {% endif %}
                         <table class="table table-striped table-hover tr-link dot">
                             <thead>
                                 <tr>
@@ -150,17 +150,19 @@
                                 {% endfor %}
                             </tbody>
                         </table>
-                        <div class="pagerfanta">
-                            {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
-                        </div>
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
+                                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2, 'prev_message': '←', 'next_message': '→',}) }}
+                            </div>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             </div>
             <div class="tab-pane{% if current_display == 'images' %} active{% endif %}" id="images-tab">
                 {% if current_display == 'images' %}
                     {% if paginator|length > 0 %}
-                        <div class="pagerfanta">
-                            {% if paginator.haveToPaginate() %}
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
                                 <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
                                     {% set array_form = app.request.query.all() %}
                                     {% for form,values in array_form if values is iterable %}
@@ -170,9 +172,9 @@
                                     {% endfor %}
                                     <input type="number" name="page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
                                 </form>
-                            {% endif %}
-                            {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
-                        </div>
+                                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2, 'prev_message': '←', 'next_message': '→',}) }}
+                            </div>
+                        {% endif %}
                         <div class="gallery">
                             <ul class="thumbnails per3">
                                 {% for image in paginator %}
@@ -180,9 +182,11 @@
                                 {% endfor %}
                             </ul>
                         </div>
-                        <div class="pagerfanta">
-                            {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2}) }}
-                        </div>
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
+                                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2, 'prev_message': '←', 'next_message': '→',}) }}
+                            </div>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             </div>

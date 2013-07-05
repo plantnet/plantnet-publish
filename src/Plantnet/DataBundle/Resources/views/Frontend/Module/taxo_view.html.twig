@@ -132,8 +132,8 @@
             <div class="tab-pane{% if current_display == 'grid' %} active{% endif %}" id="grid-tab">
                 {% if current_display == 'grid' %}
                     {% if paginator|length > 0 %}
-                        <div class="pagerfanta">
-                            {% if paginator.haveToPaginate() %}
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
                                 {% if sortby != 'null' and sortorder != 'null' %}
                                     <form method="get" action="{{ path('front_module_taxo_view_paginated_sorted', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier, 'page': page, 'sortby': sortby, 'sortorder': sortorder }) }}">
                                         <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
@@ -143,41 +143,45 @@
                                         <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
                                     </form>
                                 {% endif %}
-                            {% endif %}
-                            {% if sortby != 'null' and sortorder != 'null' %}
-                                {{ pagerfanta(
-                                    paginator,
-                                    'twitter_bootstrap_translated',
-                                    {
-                                        'proximity': 2,
-                                        'routeName': 'front_module_taxo_view_paginated_sorted',
-                                        'routeParams': {
-                                            'project': project,
-                                            'collection': collection.url,
-                                            'module': module.url,
-                                            'taxon': taxon.identifier,
-                                            'sortby': sortby,
-                                            'sortorder': sortorder,
+                                {% if sortby != 'null' and sortorder != 'null' %}
+                                    {{ pagerfanta(
+                                        paginator,
+                                        'twitter_bootstrap_translated',
+                                        {
+                                            'proximity': 2,
+                                            'prev_message': '←',
+                                            'next_message': '→',
+                                            'routeName': 'front_module_taxo_view_paginated_sorted',
+                                            'routeParams': {
+                                                'project': project,
+                                                'collection': collection.url,
+                                                'module': module.url,
+                                                'taxon': taxon.identifier,
+                                                'sortby': sortby,
+                                                'sortorder': sortorder,
+                                            }
                                         }
-                                    }
-                                ) }}
-                            {% else %}
-                                {{ pagerfanta(
-                                    paginator,
-                                    'twitter_bootstrap_translated',
-                                    {
-                                        'proximity': 2,
-                                        'routeName': 'front_module_taxo_view_paginated',
-                                        'routeParams': {
-                                            'project': project,
-                                            'collection': collection.url,
-                                            'module': module.url,
-                                            'taxon': taxon.identifier
+                                    ) }}
+                                {% else %}
+                                    {{ pagerfanta(
+                                        paginator,
+                                        'twitter_bootstrap_translated',
+                                        {
+                                            'proximity': 2,
+                                            'prev_message': '←',
+                                            'next_message': '→',
+                                            'routeName': 'front_module_taxo_view_paginated',
+                                            'routeParams': {
+                                                'project': project,
+                                                'collection': collection.url,
+                                                'module': module.url,
+                                                'taxon': taxon.identifier
+                                            }
                                         }
-                                    }
-                                ) }}
-                            {% endif %}
-                        </div>
+                                    ) }}
+                                {% endif %}
+                            </div>
+                        {% endif %}
                          <table class="table table-striped table-hover tr-link dot">
                             <thead>
                                 <tr>
@@ -228,31 +232,66 @@
                                 {% endfor %}
                             </tbody>
                         </table>
-                        <div class="pagerfanta">
-                            {% if sortby != 'null' and sortorder != 'null' %}
-                                {{ pagerfanta(
-                                    paginator,
-                                    'twitter_bootstrap_translated',
-                                    {
-                                        'proximity': 2,
-                                        'routeName': 'front_module_taxo_view_paginated_sorted',
-                                        'routeParams': {
-                                            'project': project,
-                                            'collection': collection.url,
-                                            'module': module.url,
-                                            'taxon': taxon.identifier,
-                                            'sortby': sortby,
-                                            'sortorder': sortorder,
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
+                                {% if sortby != 'null' and sortorder != 'null' %}
+                                    {{ pagerfanta(
+                                        paginator,
+                                        'twitter_bootstrap_translated',
+                                        {
+                                            'proximity': 2,
+                                            'prev_message': '←',
+                                            'next_message': '→',
+                                            'routeName': 'front_module_taxo_view_paginated_sorted',
+                                            'routeParams': {
+                                                'project': project,
+                                                'collection': collection.url,
+                                                'module': module.url,
+                                                'taxon': taxon.identifier,
+                                                'sortby': sortby,
+                                                'sortorder': sortorder,
+                                            }
                                         }
-                                    }
-                                ) }}
-                            {% else %}
+                                    ) }}
+                                {% else %}
+                                    {{ pagerfanta(
+                                        paginator,
+                                        'twitter_bootstrap_translated',
+                                        {
+                                            'proximity': 2,
+                                            'prev_message': '←',
+                                            'next_message': '→',
+                                            'routeName': 'front_module_taxo_view_paginated',
+                                            'routeParams': {
+                                                'project': project,
+                                                'collection': collection.url,
+                                                'module': module.url,
+                                                'taxon': taxon.identifier
+                                            }
+                                        }
+                                    ) }}
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="tab-pane{% if current_display == 'images' %} active{% endif %}" id="images-tab">
+                {% if current_display == 'images' %}
+                    {% if paginator|length > 0 %}
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
+                                <form method="get" action="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
+                                    <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
+                                </form>
                                 {{ pagerfanta(
                                     paginator,
                                     'twitter_bootstrap_translated',
                                     {
                                         'proximity': 2,
-                                        'routeName': 'front_module_taxo_view_paginated',
+                                        'prev_message': '←',
+                                        'next_message': '→',
+                                        'routeName': 'front_module_taxo_view_gallery_paginated',
                                         'routeParams': {
                                             'project': project,
                                             'collection': collection.url,
@@ -261,35 +300,8 @@
                                         }
                                     }
                                 ) }}
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                {% endif %}
-            </div>
-            <div class="tab-pane{% if current_display == 'images' %} active{% endif %}" id="images-tab">
-                {% if current_display == 'images' %}
-                    {% if paginator|length > 0 %}
-                        <div class="pagerfanta">
-                            {% if paginator.haveToPaginate() %}
-                                <form method="get" action="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
-                                    <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
-                                </form>
-                            {% endif %}
-                            {{ pagerfanta(
-                                paginator,
-                                'twitter_bootstrap_translated',
-                                {
-                                    'proximity': 2,
-                                    'routeName': 'front_module_taxo_view_gallery_paginated',
-                                    'routeParams': {
-                                        'project': project,
-                                        'collection': collection.url,
-                                        'module': module.url,
-                                        'taxon': taxon.identifier
-                                    }
-                                }
-                            ) }}
-                        </div>
+                            </div>
+                        {% endif %}
                         <div class="gallery">
                             <ul class="thumbnails per3">
                                 {% for image in paginator %}
@@ -297,22 +309,26 @@
                                 {% endfor %}
                             </ul>
                         </div>
-                        <div class="pagerfanta">
-                            {{ pagerfanta(
-                                paginator,
-                                'twitter_bootstrap_translated',
-                                {
-                                    'proximity': 2,
-                                    'routeName': 'front_module_taxo_view_gallery_paginated',
-                                    'routeParams': {
-                                        'project': project,
-                                        'collection': collection.url,
-                                        'module': module.url,
-                                        'taxon': taxon.identifier
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
+                                {{ pagerfanta(
+                                    paginator,
+                                    'twitter_bootstrap_translated',
+                                    {
+                                        'proximity': 2,
+                                        'prev_message': '←',
+                                        'next_message': '→',
+                                        'routeName': 'front_module_taxo_view_gallery_paginated',
+                                        'routeParams': {
+                                            'project': project,
+                                            'collection': collection.url,
+                                            'module': module.url,
+                                            'taxon': taxon.identifier
+                                        }
                                     }
-                                }
-                            ) }}
-                        </div>
+                                ) }}
+                            </div>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             </div>

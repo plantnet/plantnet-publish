@@ -9,27 +9,29 @@
 {% block main %}
 	<div class="results">
 		{% if paginator|length > 0 %}
-			<div class="pagerfanta">
-				{% if paginator.haveToPaginate() %}
+			{% if paginator.haveToPaginate() %}
+				<div class="pagerfanta">
                     <form method="get" action="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'submodule': module.url }) }}">
                         <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
                     </form>
-                {% endif %}
-				{{ pagerfanta(
-					paginator,
-					'twitter_bootstrap_translated',
-					{
-						'proximity': 2,
-						'routeName': 'front_submodule_paginated',
-                        'routeParams': {
-                            'project': project,
-                            'collection': collection.url,
-                            'module': module_parent.url,
-                            'submodule': module.url
-                        }
-					}
-				) }}
-			</div>
+					{{ pagerfanta(
+						paginator,
+						'twitter_bootstrap_translated',
+						{
+							'proximity': 2,
+							'prev_message': '←',
+	                        'next_message': '→',
+							'routeName': 'front_submodule_paginated',
+	                        'routeParams': {
+	                            'project': project,
+	                            'collection': collection.url,
+	                            'module': module_parent.url,
+	                            'submodule': module.url
+	                        }
+						}
+					) }}
+				</div>
+			{% endif %}
 			<div class="gallery">
 				<ul class="thumbnails per3">
 					{% for image in paginator %}
@@ -37,22 +39,26 @@
 					{% endfor %}
 				</ul>
 			</div>
-			<div class="pagerfanta">
-				{{ pagerfanta(
-					paginator,
-					'twitter_bootstrap_translated',
-					{
-						'proximity': 2,
-						'routeName': 'front_submodule_paginated',
-                        'routeParams': {
-                            'project': project,
-                            'collection': collection.url,
-                            'module': module_parent.url,
-                            'submodule': module.url
-                        }
-					}
-				) }}
-			</div>
+			{% if paginator.haveToPaginate() %}
+				<div class="pagerfanta">
+					{{ pagerfanta(
+						paginator,
+						'twitter_bootstrap_translated',
+						{
+							'proximity': 2,
+							'prev_message': '←',
+	                        'next_message': '→',
+							'routeName': 'front_submodule_paginated',
+	                        'routeParams': {
+	                            'project': project,
+	                            'collection': collection.url,
+	                            'module': module_parent.url,
+	                            'submodule': module.url
+	                        }
+						}
+					) }}
+				</div>
+			{% endif %}
 		{% endif %}
 	</div>
 {% endblock %}

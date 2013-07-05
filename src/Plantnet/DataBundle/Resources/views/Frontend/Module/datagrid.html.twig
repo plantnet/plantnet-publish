@@ -16,8 +16,8 @@
     {% endif %}
     <div class="results">
         {% if paginator|length > 0 %}
-            <div class="pagerfanta">
-                {% if paginator.haveToPaginate() %}
+            {% if paginator.haveToPaginate() %}
+                <div class="pagerfanta">
                     {% if sortby != 'null' and sortorder != 'null' %}
                         <form method="get" action="{{ path('front_module_paginated_sorted', { 'project': project, 'collection': collection.url, 'module': module.url, 'page': page, 'sortby': sortby, 'sortorder': sortorder }) }}">
                             <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
@@ -27,39 +27,43 @@
                             <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
                         </form>
                     {% endif %}
-                {% endif %}
-                {% if sortby != 'null' and sortorder != 'null' %}
-                    {{ pagerfanta(
-                        paginator,
-                        'twitter_bootstrap_translated',
-                        {
-                            'proximity': 2,
-                            'routeName': 'front_module_paginated_sorted',
-                            'routeParams': {
-                                'project': project,
-                                'collection': collection.url,
-                                'module': module.url,
-                                'sortby': sortby,
-                                'sortorder': sortorder,
+                    {% if sortby != 'null' and sortorder != 'null' %}
+                        {{ pagerfanta(
+                            paginator,
+                            'twitter_bootstrap_translated',
+                            {
+                                'proximity': 2,
+                                'prev_message': '←',
+                                'next_message': '→',
+                                'routeName': 'front_module_paginated_sorted',
+                                'routeParams': {
+                                    'project': project,
+                                    'collection': collection.url,
+                                    'module': module.url,
+                                    'sortby': sortby,
+                                    'sortorder': sortorder,
+                                }
                             }
-                        }
-                    ) }}
-                {% else %}
-                    {{ pagerfanta(
-                        paginator,
-                        'twitter_bootstrap_translated',
-                        {
-                            'proximity': 2,
-                            'routeName': 'front_module_paginated',
-                            'routeParams': {
-                                'project': project,
-                                'collection': collection.url,
-                                'module': module.url
+                        ) }}
+                    {% else %}
+                        {{ pagerfanta(
+                            paginator,
+                            'twitter_bootstrap_translated',
+                            {
+                                'proximity': 2,
+                                'prev_message': '←',
+                                'next_message': '→',
+                                'routeName': 'front_module_paginated',
+                                'routeParams': {
+                                    'project': project,
+                                    'collection': collection.url,
+                                    'module': module.url
+                                }
                             }
-                        }
-                    ) }}
-                {% endif %}
-            </div>
+                        ) }}
+                    {% endif %}
+                </div>
+            {% endif %}
              <table class="table table-striped table-hover tr-link dot">
                 <thead>
                     <tr>
@@ -110,39 +114,45 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <div class="pagerfanta">
-                {% if sortby != 'null' and sortorder != 'null' %}
-                    {{ pagerfanta(
-                        paginator,
-                        'twitter_bootstrap_translated',
-                        {
-                            'proximity': 2,
-                            'routeName': 'front_module_paginated_sorted',
-                            'routeParams': {
-                                'project': project,
-                                'collection': collection.url,
-                                'module': module.url,
-                                'sortby': sortby,
-                                'sortorder': sortorder,
+            {% if paginator.haveToPaginate() %}
+                <div class="pagerfanta">
+                    {% if sortby != 'null' and sortorder != 'null' %}
+                        {{ pagerfanta(
+                            paginator,
+                            'twitter_bootstrap_translated',
+                            {
+                                'proximity': 2,
+                                'prev_message': '←',
+                                'next_message': '→',
+                                'routeName': 'front_module_paginated_sorted',
+                                'routeParams': {
+                                    'project': project,
+                                    'collection': collection.url,
+                                    'module': module.url,
+                                    'sortby': sortby,
+                                    'sortorder': sortorder,
+                                }
                             }
-                        }
-                    ) }}
-                {% else %}
-                    {{ pagerfanta(
-                        paginator,
-                        'twitter_bootstrap_translated',
-                        {
-                            'proximity': 2,
-                            'routeName': 'front_module_paginated',
-                            'routeParams': {
-                                'project': project,
-                                'collection': collection.url,
-                                'module': module.url
+                        ) }}
+                    {% else %}
+                        {{ pagerfanta(
+                            paginator,
+                            'twitter_bootstrap_translated',
+                            {
+                                'proximity': 2,
+                                'prev_message': '←',
+                                'next_message': '→',
+                                'routeName': 'front_module_paginated',
+                                'routeParams': {
+                                    'project': project,
+                                    'collection': collection.url,
+                                    'module': module.url
+                                }
                             }
-                        }
-                    ) }}
-                {% endif %}
-            </div>
+                        ) }}
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endif %}
     </div>
 {% endblock %}
