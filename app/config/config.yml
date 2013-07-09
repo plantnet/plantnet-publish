@@ -20,6 +20,9 @@ framework:
     default_locale: "%locale%"
     trusted_proxies: ['127.0.0.1']
     session: ~
+    fragments:
+        enabled: true
+        path: /_fragment
 
 # jms_i18n_routing:
 #     default_locale: %locale%

@@ -38,8 +38,10 @@ class CollectionController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $collections=$dm->getRepository('PlantnetDataBundle:Collection')
-            ->findAll();
+        $collections=$dm->createQueryBuilder('PlantnetDataBundle:Collection')
+            ->sort('name','asc')
+            ->getQuery()
+            ->execute();
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_list.html.twig',array(
             'collections'=>$collections,
             'current'=>'administration'
