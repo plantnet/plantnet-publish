@@ -188,6 +188,7 @@ class SearchController extends Controller
      */
     public function module_resultAction($project,$collection,$module,$mode,Request $request)
     {
+        $this->get_config($project);
         $projects=$this->database_list();
         if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');

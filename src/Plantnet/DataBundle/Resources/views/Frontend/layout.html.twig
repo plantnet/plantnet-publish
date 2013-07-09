@@ -83,9 +83,11 @@
 	{% endblock %}
 	<div class="container">
 		<div class="content">
-			<div class="page-header">
-				{% block header %}{% endblock %}
-			</div>
+				{% if current != 'index' %}<div id="banner"{% if current != 'project' %} class="mini"{% endif %}>{% endif %}
+					<div class="page-header">
+						{% block header %}{% endblock %}
+					</div>
+				{% if current != 'index' %}</div>{% endif %}
 			<div class="row">
 				<div class="span12">
 					{% block breadcrumb %}{% endblock %}
