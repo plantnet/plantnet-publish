@@ -32,6 +32,13 @@
 			%}
 			<link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
 			{% endstylesheets %}
+			{% if config.filepath %}
+				<style type="text/css">
+					#banner{
+						background-image:url(/{{ config.filepath }});
+					}
+				</style>
+			{% endif %}
 		{% endblock %}
 	{% endblock %}
 </head>
@@ -73,11 +80,15 @@
 	{% endblock %}
 	<div class="container">
 		<div class="content">
-				{#<div id="banner"{% if current != 'project' %} class="mini"{% endif %}>#}
-					<div class="page-header">
-						{% block header %}{% endblock %}
-					</div>
-				{#</div>#}
+			{% if config.filepath %}
+				<div id="banner"{% if current != 'project' %} class="mini"{% endif %}>
+			{% endif %}
+			<div class="page-header">
+				{% block header %}{% endblock %}
+			</div>
+			{% if config.filepath %}
+				</div>
+			{% endif %}
 			<div class="row">
 				<div class="span12">
 					{% block breadcrumb %}{% endblock %}
