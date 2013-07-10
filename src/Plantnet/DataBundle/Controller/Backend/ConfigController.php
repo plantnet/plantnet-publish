@@ -104,9 +104,11 @@ class ConfigController extends Controller
             throw $this->createNotFoundException('Unable to find Config entity.');
         }
         $editForm=$this->createForm(new ConfigImageType(),$config);
+        $deleteForm=$this->createDeleteBannerForm();
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit_banner.html.twig',array(
             'entity'=>$config,
             'edit_form'=>$editForm->createView(),
+            'delete_form'=>$deleteForm->createView(),
             'current'=>'config'
         ));
     }
@@ -135,6 +137,7 @@ class ConfigController extends Controller
             unlink($this->get('kernel')->getRootDir().'/../web/'.$old_banner);
         }
         $editForm=$this->createForm(new ConfigImageType(),$config);
+        $deleteForm=$this->createDeleteBannerForm();
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
             $editForm->bind($request);
@@ -161,7 +164,49 @@ class ConfigController extends Controller
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit_banner.html.twig',array(
             'entity'=>$config,
             'edit_form'=>$editForm->createView(),
+            'delete_form'=>$deleteForm->createView(),
             'current'=>'config'
         ));
+    }
+
+    private function createDeleteBannerForm()
+    {
+        return $this->createFormBuilder(array('delete_banner'=>1))
+            ->add('delete_banner','hidden')
+            ->getForm();
+    }
+
+    /**
+     * Deletes banner from Config entity.
+     *
+     * @Route("/delete_banner", name="config_delete_banner")
+     * @Method("post")
+     */
+    public function config_delete_bannerAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        $form=$this->createDeleteBannerForm();
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $form->bind($request);
+            if($form->isValid()){
+                $old_banner=$config->getFilepath();
+                if($old_banner&&file_exists($this->get('kernel')->getRootDir().'/../web/'.$old_banner)){
+                    $config->setFilepath('');
+                    unlink($this->get('kernel')->getRootDir().'/../web/'.$old_banner);
+                    $dm->persist($config);
+                    $dm->flush();
+                }
+            }
+        }
+        return $this->redirect($this->generateUrl('config_edit_banner'));
     }
 }
