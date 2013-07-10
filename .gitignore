@@ -3,6 +3,7 @@ web/css/*
 web/js/*
 web/media/*
 web/uploads/*
+web/banners/*
 src/Plantnet/DataBundle/Resources/uploads/*
 src/Plantnet/DataBundle/Resources/public/data_images/*
 app/bootstrap.php.cache

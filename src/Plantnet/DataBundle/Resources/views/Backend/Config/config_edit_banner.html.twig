@@ -1,0 +1,37 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+	{{ parent() }}
+{% endblock %}
+{% block form %}
+	<div id="title-form">
+		<h4 class="text-info">
+			<em>Config banner</em> > Edit
+		</h4>
+	</div>
+	<p>
+		Recommended image size: 1200 px * 208 px.
+		<br />
+		If a banner already exists, it will be replaced with the new image file.
+	</p>
+	{% if entity.filepath %}
+		<div>
+			<p>Current banner</p>
+			<img src="/{{ entity.filepath }}" alt="banner" />
+		</div>
+		<br />
+	{% endif %}
+	<form action="{{ path('config_update_banner') }}" method="post" {{ form_enctype(edit_form) }}>
+		{{ form_errors(edit_form) }}
+		<div class="field-form rd_chk">
+			{{ form_label(edit_form.file) }}
+			{{ form_errors(edit_form.file) }}
+			{{ form_widget(edit_form.file) }}
+		</div>
+		{{ form_rest(edit_form) }}
+		<br />
+		<button type="submit" class="btn">Update</button>
+	</form>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+{% endblock %}

@@ -114,11 +114,26 @@
 											{% render controller("PlantnetDataBundle:Backend/Admin:page_list") %}
 										</ul>
 									</li>
-									<li{% if current == 'languages' %} class="active"{% endif %}>
-										<a title="Languages" href="{{ path('config_edit') }}">
-											<i class="icon-globe"></i>
-											Languages
+									<li class="dropdown{% if current == 'config' %} active{% endif %}">
+										<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+											<i class="icon-wrench"></i>
+											Settings
+											<span class="caret"></span>
 										</a>
+										<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+											<li>
+												<a class="edit ajax" href="{{ path('config_edit') }}">
+													<i class="icon-globe"></i>
+										            Languages
+										        </a>
+											</li>
+											<li>
+												<a class="edit ajax" href="{{ path('config_edit_banner') }}">
+													<i class="icon-picture"></i>
+													Banner
+												</a>
+											</li>
+										</ul>
 									</li>
 								{% endif %}
 								{% if is_granted('ROLE_SUPER_ADMIN') %}
