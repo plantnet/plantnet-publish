@@ -135,6 +135,8 @@ class ConfigController extends Controller
         if($old_banner&&file_exists($this->get('kernel')->getRootDir().'/../web/'.$old_banner)){
             $config->setFilepath('');
             unlink($this->get('kernel')->getRootDir().'/../web/'.$old_banner);
+            $dm->persist($config);
+            $dm->flush();
         }
         $editForm=$this->createForm(new ConfigImageType(),$config);
         $deleteForm=$this->createDeleteBannerForm();

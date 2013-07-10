@@ -26,6 +26,9 @@ body{
 div.clear{
 	clear:both;
 }
+span.nowrap{
+	white-space:nowrap;
+}
 .navbar-inverse .navbar-inner, .navbar-inverse .nav .active > a, .navbar-inverse .nav .active > a:hover, .navbar-inverse .nav .active > a:focus, .navbar-inverse .nav li.dropdown.open > .dropdown-toggle, .navbar-inverse .nav li.dropdown.active > .dropdown-toggle, .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle{
 	background-image:url(../../images/overlay.png);
 }
@@ -50,10 +53,18 @@ div.clear{
 	   -moz-box-shadow:0 2px 4px rgba(0,0,0,.15);
 	        box-shadow:0 2px 4px rgba(0,0,0,.15);
 }
+.page-header{
+	background-color:#F5F5F5;
+	margin:-@content_padding -@content_padding @content_padding -@content_padding;
+	padding-top:4px;
+	padding-left:20px;
+	padding-right:20px;
+	padding-bottom:4px;
+}
 #banner{
 	height:200px;
 	background-repeat:no-repeat;
-	background-size:100% 208px;
+	background-size:1210px 208px;
 	margin:-@content_padding -@content_padding @content_padding -@content_padding;
 	padding-left:20px;
 	padding-right:20px;
@@ -62,14 +73,6 @@ div.clear{
 }
 #banner.mini{
 	height:120px;
-}
-.page-header{
-	background-color:#F5F5F5;
-	margin:-@content_padding -@content_padding @content_padding -@content_padding;
-	padding-top:4px;
-	padding-left:20px;
-	padding-right:20px;
-	padding-bottom:4px;
 }
 #banner .page-header{
 	margin:0;
@@ -91,16 +94,6 @@ div.clear{
 	margin-top:10px;
 	margin-left:6px;
 }
-div.description{
-	margin-bottom:20px;
-}
-span.nowrap{
-	white-space:nowrap;
-}
-#details h5{
-	margin-top:0px;
-	padding-left:15px;
-}
 table.dot{
 	width:100%;
 	table-layout:fixed;
@@ -119,15 +112,27 @@ table.dot span.dot{
 	overflow:hidden;
 	text-overflow:ellipsis;
 }
+div.description{
+	margin-bottom:20px;
+}
+table.tr-link tbody > tr:hover{
+	cursor:pointer;
+}
+table.tr-link td{
+	padding:0px;
+}
+table.tr-link td a{
+	padding:8px;
+	display:block;
+	text-decoration:none;
+	color:#333333;
+}
 
 
 // Bootstrap : Custom
 // --------------------------------------------------
 span.pop-tooltip{
 	cursor:default;
-}
-.carousel .item{
-	text-align:center;
 }
 .results .pagerfanta:first-child .pagination{
 	margin-top:0;
@@ -137,12 +142,13 @@ span.pop-tooltip{
 }
 .breadcrumb{
 	border:solid 1px #EEE;
-}
-.breadcrumb{
 	font-size:12px;
 }
 .breadcrumb .badge{
 	font-size:10px;
+}
+div.navbar-fixed-top{
+	margin-bottom:0px;
 }
 .nav-stacked li.child{
 	padding-left:30px;
@@ -162,18 +168,6 @@ span.pop-tooltip{
 	height:24px;
 	text-align:center;
 }
-table.tr-link tbody > tr:hover{
-	cursor:pointer;
-}
-table.tr-link td{
-	padding:0px;
-}
-table.tr-link td a{
-	padding:8px;
-	display:block;
-	text-decoration:none;
-	color:#333333;
-}
 ul.nav-tabs a.muted{
 	cursor:default;
 }
@@ -188,47 +182,83 @@ div.popover-content{
 .collection_presentation{
 	margin-top:20px;
 }
-.collection_presentation .head{
-	margin-bottom:0px;
+.collection_presentation h4{
+	border-bottom:solid 1px #E3E3E3;
 }
-.collection_presentation .head h4{
-	margin:0px;
-}
-.collection_presentation .content{
-	margin-top:-1px;
-	margin-left:20px;
-	padding:20px;
-	border:1px solid #E3E3E3;
-	-webkit-border-radius:0 0 8px 8px;
-	   -moz-border-radius:0 0 8px 8px;
-	        border-radius:0 0 8px 8px;
-	-webkit-box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
-	   -moz-box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
-	        box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
-}
-.collection_presentation .content div.details{
-	float:right;
-	padding:10px;
-	margin-top:-20px;
-	margin-right:-20px;
-	margin-left:10px;
-	margin-bottom:10px;
-	border-left:1px solid #E3E3E3;
-	border-bottom:1px solid #E3E3E3;
-}
-.collection_presentation .content div.details h5{
-	display:inline;
-	margin:0px;
-}
-.collection_presentation .content div.details span{
-	margin-left:2px;
+.collection_presentation h5{
+	margin-bottom:2px;
+	margin-top:15px;
 }
 .collection_presentation .images{
 	background-color:rgba(0, 0, 0, 0.2);
-	margin-top:20px;
-	margin-right:20px;
-	max-width:350px;
-	max-height:200px;
+	margin-top:0px;
+	max-width:370px;
+	max-height:210px;
+}
+.collection_presentation .details{
+	padding-top:21px;
+}
+
+
+// Footer
+// --------------------------------------------------
+#footer{
+	height:79px;
+}
+#footer ul{
+	list-style-type:none;
+	float:left;
+	margin:0;
+}
+#footer li{
+	display:inline;
+	margin-right:@content_padding;
+}
+#mention ul{
+	float:right;
+	margin-top:25px;
+}
+#mention li{
+	margin-right:0;
+	margin-left:@content_padding;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+// Styles
+// --------------------------------------------------
+#details h5{
+	margin-top:0px;
+	padding-left:15px;
+}
+
+
+// Bootstrap : Custom
+// --------------------------------------------------
+.carousel .item{
+	text-align:center;
 }
 
 
@@ -432,27 +462,4 @@ span.taxo-6{
 	margin-left:10px;
 	background:url(../../images/page-loader.gif);
 }
-
-
-// Footer
-// --------------------------------------------------
-#footer{
-	height:79px;
-}
-#footer ul{
-	list-style-type:none;
-	float:left;
-	margin:0;
-}
-#footer li{
-	display:inline;
-	margin-right:@content_padding;
-}
-#mention ul{
-	float:right;
-	margin-top:25px;
-}
-#mention li{
-	margin-right:0;
-	margin-left:@content_padding;
-}
+*/

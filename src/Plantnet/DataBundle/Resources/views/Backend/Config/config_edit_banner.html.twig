@@ -16,7 +16,7 @@
 	{% if entity.filepath %}
 		<div>
 			<p>Current banner</p>
-			<img src="/{{ entity.filepath }}" alt="banner" />
+			<img src="/{{ entity.filepath }}?{{ random(99999) }}" alt="banner" />
 		</div>
 		<form id="form-delete" action="{{ path('config_delete_banner') }}" method="post">
 			{{ form_widget(delete_form) }}
