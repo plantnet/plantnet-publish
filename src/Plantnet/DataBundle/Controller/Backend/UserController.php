@@ -32,7 +32,7 @@ class UserController extends Controller
         //display databases without prefix
         $prefix=$this->get_prefix();
         $dbs_array=array();
-        $connection=new \Mongo();
+        $connection=new \MongoClient();
         $dbs=$connection->admin->command(array(
             'listDatabases'=>1
         ));
@@ -253,7 +253,7 @@ class UserController extends Controller
                     $dbs_array=$this->database_list();
                     if(!in_array($user->getDbNameUq(),$dbs_array)){
                         $dbName=$this->get_prefix().$user->getDbNameUq();
-                        $connection=new \Mongo();
+                        $connection=new \MongoClient();
                         $db=$connection->$dbName;
                         $db->listCollections();
                         //collections
@@ -269,7 +269,7 @@ class UserController extends Controller
                         //indexes
                         $db->Image->ensureIndex(array("title1"=>1,"title2"=>1));
                         $db->Location->ensureIndex(array("coordinates"=>"2d"));
-                        $db->Plantunit->ensureIndex(array("attributes"=>"text"));
+                        // $db->Plantunit->ensureIndex(array("attributes"=>"text"));
                         $db->Taxon->ensureIndex(array("name"=>1));
                         //pages data
                         $db->Page->insert(array('name'=>'home','alias'=>'home','order'=>1));

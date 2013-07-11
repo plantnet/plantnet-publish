@@ -79,12 +79,18 @@ class ConfigController extends Controller
             // supprimer la langue par defaut des langues dispo
             $default=$config->getDefaultlanguage();
             $availables=$config->getAvailablelanguages();
-            foreach($availables as $key=>$available){
-                if($available==$default){
-                    unset($availables[$key]);
+            if(count($availables)){
+                foreach($availables as $key=>$available){
+                    if($available==$default){
+                        unset($availables[$key]);
+                    }
                 }
+                if(count($availables)){
+                    $availables=array_values($availables);
+                    $this->check_databases($availables,$user);
+                }
+                $config->setAvailablelanguages($availables);
             }
-            $config->setAvailablelanguages($availables);
             $dm->persist($config);
             $dm->flush();
         }
@@ -219,5 +225,56 @@ class ConfigController extends Controller
             }
         }
         return $this->redirect($this->generateUrl('config_edit_banner'));
+    }
+
+    private function check_databases($languages,$user)
+    {
+        $prefix=$this->container->getParameter('mdb_base').'_';
+        $default_db=$user->getDbName();
+        $connection=new \MongoClient();
+        $dbs=$connection->admin->command(array(
+            'listDatabases'=>1
+        ));
+        $dbs_array=array();
+        foreach($dbs['databases'] as $db){
+            $db_name=$db['name'];
+            if(substr_count($db_name,$prefix)&&substr_count($db_name,$default_db)){
+                $dbs_array[]=$db_name;
+            }
+        }
+        $news=array();
+        foreach($languages as $language){
+            if(!in_array($default_db.'_'.$language,$dbs_array)){
+                $news[]=$default_db.'_'.$language;
+            }
+        }
+        if(count($news)){
+            foreach($news as $new){
+                $db=$connection->$new;
+                $db->listCollections();
+                //collections
+                $db->createCollection('Collection');
+                $db->createCollection('Config');
+                $db->createCollection('Image');
+                $db->createCollection('Location');
+                $db->createCollection('Other');
+                $db->createCollection('Module');
+                $db->createCollection('Plantunit');
+                $db->createCollection('Taxon');
+                $db->createCollection('Page');
+                //indexes
+                $db->Image->ensureIndex(array("title1"=>1,"title2"=>1));
+                $db->Location->ensureIndex(array("coordinates"=>"2d"));
+                // $db->Plantunit->ensureIndex(array("attributes"=>"text"));
+                $db->Taxon->ensureIndex(array("name"=>1));
+                //pages data
+                $db->Page->insert(array('name'=>'home','alias'=>'home','order'=>1));
+                $db->Page->insert(array('name'=>'mentions','alias'=>'mentions','order'=>2));
+                $db->Page->insert(array('name'=>'credits','alias'=>'credits','order'=>3));
+                $db->Page->insert(array('name'=>'contacts','alias'=>'contacts','order'=>4));
+                //init config
+                $db->Config->insert(array('defaultlanguage'=>'_'));
+            }
+        }
     }
 }
