@@ -76,6 +76,15 @@ class ConfigController extends Controller
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
             $editForm->bind($request);
+            // supprimer la langue par defaut des langues dispo
+            $default=$config->getDefaultlanguage();
+            $availables=$config->getAvailablelanguages();
+            foreach($availables as $key=>$available){
+                if($available==$default){
+                    unset($availables[$key]);
+                }
+            }
+            $config->setAvailablelanguages($availables);
             $dm->persist($config);
             $dm->flush();
         }
