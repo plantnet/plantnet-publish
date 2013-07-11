@@ -245,9 +245,6 @@ liip_imagine:
         thumb_370_210:
             filters:
                 thumbnail: { size: [370, 210], mode: outbound }
-        thumb_270_150:
+        thumb_130_75:
             filters:
-                thumbnail: { size: [270, 150], mode: outbound }
-        thumb_570_325:
-            filters:
-                thumbnail: { size: [570, 325], mode: outbound }
+                thumbnail: { size: [130, 75], mode: outbound }

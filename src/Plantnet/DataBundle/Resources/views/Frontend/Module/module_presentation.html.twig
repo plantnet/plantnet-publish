@@ -1,7 +1,14 @@
 {% set imgs = [] %}
-{% set nb_img = 3 %}
+{% set nb_img = 9 %}
+{% for child in module.children if (child.type == 'image' and child.deleting != true and imgs|length < nb_img) %}
+    {% if child.nbrows > 0 and imgs|length < nb_img %}
+        {% for image in child.images if imgs|length < nb_img %}
+            {% set imgs = imgs|merge([image]) %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
 <div class="module_presentation">
-    <div class="head well well-small">
+    <div class="well well-small">
         <h4>
             <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module':module.url }) }}">
                 {{ module.name }}
@@ -11,89 +18,64 @@
             {{ module.nbrows }} {{ "line-entities"|trans }}
         </small>
     </div>
-    <div class="content">
-        {% if module.children|length > 0 %}
-            <div class="details">
-                <table>
+    <div class="row">
+        {% if imgs|length > 0 %}
+            <div class="span6">
+        {% else %}
+            <div class="span12">
+        {% endif %}
+            <div class="row">
+                {% if imgs|length > 0 %}
+                    <div class="span6">
+                {% else %}
+                    <div class="span9">
+                {% endif %}
+                    {% autoescape false %}
+                        {{ module.description }}
+                    {% endautoescape %}
+                    <br />
+                </div>
+                <div class="span3">
                     {% for child in module.children if (child.type == 'image' and child.deleting != true) %}
-                        {% if child.nbrows > 0 and imgs|length < nb_img %}
-                            {% for image in child.images if imgs|length < nb_img %}
-                                {% set imgs = imgs|merge([image]) %}
-                            {% endfor %}
-                        {% endif %}
-                        <tr>
-                            <td>
-                                <i class="icon-camera"></i>
-                                <h5>
-                                    {{ child.name }}
-                                </h5>
-                            </td>
-                            <td>
-                                <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-images"|trans }}">
-                                    {{ child.nbrows }}
-                                </span>
-                            </td>
-                        </tr>
+                        <div>
+                            <i class="icon-camera"></i>
+                            <h5>{{ child.name }}</h5>
+                            <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-images"|trans }}">
+                                {{ child.nbrows }}
+                            </span>
+                        </div>
                     {% endfor %}
                     {% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
-                        <tr>
-                            <td>
-                                <i class="icon-map-marker"></i>
-                                <h5>
-                                    {{ child.name }}
-                                </h5>
-                            </td>
-                            <td>
-                                <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-locations"|trans }}">
-                                    {{ child.nbrows }}
-                                </span>
-                            </td>
-                        </tr>
+                        <div>
+                            <i class="icon-map-marker"></i>
+                            <h5>{{ child.name }}</h5>
+                            <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-locations"|trans }}">
+                                {{ child.nbrows }}
+                            </span>
+                        </div>
                     {% endfor %}
-                </table>
-            </div>
-        {% endif %}
-        <div>
-            {% autoescape false %}
-                {{ module.description }}
-            {% endautoescape %}
-        </div>
-        <div>
-            <div class="row">
-                <div class="span{{ item_size/2 }} middle">
-                    <div class="images {% if item_size/2 == 3 %}mini{% elseif item_size/2 == 6 %}maxi{% endif %}">
-                        {% if imgs|length > 0 %}
-                            <div id="carousel_{{ module.id }}" class="carousel slide">
-                                <ol class="carousel-indicators">
-                                    {% for image in imgs %}
-                                        <li data-target="#carousel_{{ module.id }}" data-slide-to="{{ loop.index0 }}"{% if loop.index0 == 0 %} class="active"{% endif %}></li>
-                                    {% endfor %}
-                                </ol>
-                                <div class="carousel-inner">
-                                    {% for image in imgs %}
-                                        {% set imgspe = image.path|basename %}
-                                        {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
-                                        <div class="{% if loop.index0 == 0 %}active {% endif %}item">
-                                            {% if item_size/2 == 3 %}
-                                                <img src="{{ asset(img) | imagine_filter('thumb_270_150') }}" alt="{{ image.copyright }}" />
-                                            {% elseif item_size/2 == 6 %}
-                                                <img src="{{ asset(img) | imagine_filter('thumb_570_325') }}" alt="{{ image.copyright }}" />
-                                            {% endif %}
-                                            {% if image.copyright is not empty %}
-                                                <div class="carousel-caption">
-                                                    <p>{{ image.copyright }}</p>
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% else %}
-                            <div class="img_empty"></div>
-                        {% endif %}
-                    </div>
+                    {% if module.taxonomy == true %}
+                        <div>
+                            <i class="icon-tasks"></i>
+                            <h5>{{ "line-taxonomy"|trans|capitalize }}</h5>
+                        </div>
+                    {% endif %}
+                    <br />
                 </div>
             </div>
         </div>
+        {% if imgs|length > 0 %}
+            <div class="span6">
+                <div class="row">
+                    {% for image in imgs %}
+                        {% set imgspe = image.path|basename %}
+                        {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+                        <div class="span2">
+                            <img src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ image.copyright }}" class="img-polaroid img-tooltip" data-toggle="tooltip" title="{{ image.title1 }} {{ image.title2 }}" />
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
     </div>
 </div>

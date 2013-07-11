@@ -8,7 +8,7 @@
         {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
-{% block header %}<h1>{{ plantunit.title1 }}</h1>{% endblock %}
+{% block header %}<h1>{{ plantunit.title1 }} - {{ plantunit.title2 }}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
@@ -38,35 +38,35 @@
         {% if plantunit.taxon %}
             <div>
                 <h5>{{ "line-taxonomy"|trans|capitalize }}</h5>
-                <table class="table table-hover table-condensed">
-                    {% macro pa_taxon(taxon,project,collection,module) %}
-                        {% if taxon.parent %}
-                            {{ _self.pa_taxon(taxon.parent,project,collection,module) }}
-                        {% endif %}
-                        <tr>
-                            <td>{{ taxon.label }}</td>
-                            <td>
-                                <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
-                                    {{ taxon.name }}
-                                </a>
-                            </td>
-                        </tr>
-                    {% endmacro %}
-                    {% import _self as macros %}
-                    {{ macros.pa_taxon(plantunit.taxon,project,collection,module) }}
-                </table>
+                {% macro pa_taxon(taxon,project,collection,module) %}
+                    {% if taxon.parent %}
+                        {{ _self.pa_taxon(taxon.parent,project,collection,module) }}
+                    {% endif %}
+                    <div class="row">
+                        <div class="span2">{{ taxon.label }}</div>
+                        <div class="span7">
+                            <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
+                                {{ taxon.name }}
+                            </a>
+                        </div>
+                    </div>
+                {% endmacro %}
+                {% import _self as macros %}
+                {{ macros.pa_taxon(plantunit.taxon,project,collection,module) }}
             </div>
         {% endif %}
         <div>
             <h5>{{ "line-details"|trans|capitalize }}</h5>
-            <table class="table table-striped table-bordered table-hover table-condensed">
-                {% for property in module.properties if property.id in display %}
-                    <tr>
-                        <td class="field-name">{{ property.name }}</td>
-                        <td class="field-name">{{ plantunit.attributes[property.id]|nl2br }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
+            {% for property in module.properties if property.id in display %}
+                <div class="row">
+                    <div class="span3 break">
+                       <span class="text-info">{{ property.name }}</span>
+                    </div>
+                    <div class="span6 break">
+                        {{ plantunit.attributes[property.id]|nl2br }}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
         {% if tab_others_groups|length > 0 %}
             {% for group in tab_others_groups %}

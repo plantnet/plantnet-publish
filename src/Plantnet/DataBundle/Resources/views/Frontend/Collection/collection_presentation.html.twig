@@ -1,7 +1,7 @@
 {% set imgs = [] %}
 {% set nb_img = 3 %}
 {% for module in collection.modules if module.deleting != true %}
-	{% for child in module.children if (child.deleting != true and child.type == 'image') %}
+	{% for child in module.children if (child.deleting != true and child.type == 'image' and imgs|length < nb_img) %}
 		{% if child.nbrows > 0 and imgs|length < nb_img %}
 			{% for image in child.images if imgs|length < nb_img %}
 				{% set imgs = imgs|merge([image]) %}
@@ -33,11 +33,9 @@
 										{% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
 										<div class="{% if loop.index0 == 0 %}active {% endif %}item">
 											<img src="{{ asset(img) | imagine_filter('thumb_370_210') }}" alt="{{ image.copyright }}" />
-											{% if image.copyright is not empty %}
-												<div class="carousel-caption">
-													<p>{{ image.copyright }}</p>
-												</div>
-											{% endif %}
+											<div class="carousel-caption">
+												<p>{{ image.title1 }} {{ image.title2 }}</p>
+											</div>
 										</div>
 									{% endfor %}
 								</div>

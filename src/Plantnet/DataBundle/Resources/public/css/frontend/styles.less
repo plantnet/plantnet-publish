@@ -175,6 +175,11 @@ div.popover-content{
 	word-wrap:break-word;
 	overflow-wrap:break-word;
 }
+.carousel-caption p{
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+}
 
 
 // Collection : Presentation
@@ -200,118 +205,30 @@ div.popover-content{
 }
 
 
-// Footer
-// --------------------------------------------------
-#footer{
-	height:79px;
-}
-#footer ul{
-	list-style-type:none;
-	float:left;
-	margin:0;
-}
-#footer li{
-	display:inline;
-	margin-right:@content_padding;
-}
-#mention ul{
-	float:right;
-	margin-top:25px;
-}
-#mention li{
-	margin-right:0;
-	margin-left:@content_padding;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-// Styles
-// --------------------------------------------------
-#details h5{
-	margin-top:0px;
-	padding-left:15px;
-}
-
-
 // Module : Presentation
 // --------------------------------------------------
 .module_presentation{
 	margin-top:20px;
 }
-.module_presentation .head{
-	margin-bottom:0px;
-	margin-left:-3px;
-	margin-right:-3px;
-}
-.module_presentation .head h4, .module_presentation h5{
+.module_presentation h4,.module_presentation h5{
 	margin:0px;
 	display:inline;
 }
-.module_presentation .content{
-	margin-top:-1px;
-	padding:20px;
-	border:1px solid #E3E3E3;
-	-webkit-border-radius:0 0 8px 8px;
-	   -moz-border-radius:0 0 8px 8px;
-	        border-radius:0 0 8px 8px;
-	-webkit-box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
-	   -moz-box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
-	        box-shadow: 0px -1px 2px rgba(0,0,0,.15) inset;
+.module_presentation .img-polaroid{
+	margin-bottom:5px;
 }
-.module_presentation .content div.details{
-	float:right;
-	padding:10px;
-	margin-top:-20px;
-	margin-right:-20px;
-	margin-left:10px;
-	margin-bottom:10px;
-	border-left:1px solid #E3E3E3;
-	border-bottom:1px solid #E3E3E3;
+
+
+// Details
+// --------------------------------------------------
+div.break{
+	word-wrap:break-word;
+	overflow-wrap:break-word;
+	border-top:1px solid #DDDDDD;
+	padding:4px 0px;
 }
-.module_presentation .content div.details span{
-	margin-left:2px;
-}
-.module_presentation .images{
-	background-color:rgba(0, 0, 0, 0.2);
-	margin-top:20px;
-}
-.module_presentation .images .carousel{
-	margin-bottom:0;
-}
-.module_presentation .middle{
-	float:none;
-	margin-left:auto;
-	margin-right:auto;
-}
-.module_presentation .mini{
-	max-width:270px;
-	max-height:150px;
-}
-.module_presentation .maxi{
-	max-width:570px;
-	max-height:325px;
+#details div:first-child h5{
+	margin-top:0px;
 }
 
 
@@ -455,4 +372,27 @@ span.taxo-6{
 	margin-left:10px;
 	background:url(../../images/page-loader.gif);
 }
-*/
+
+
+// Footer
+// --------------------------------------------------
+#footer{
+	height:79px;
+}
+#footer ul{
+	list-style-type:none;
+	float:left;
+	margin:0;
+}
+#footer li{
+	display:inline;
+	margin-right:@content_padding;
+}
+#mention ul{
+	float:right;
+	margin-top:25px;
+}
+#mention li{
+	margin-right:0;
+	margin-left:@content_padding;
+}
