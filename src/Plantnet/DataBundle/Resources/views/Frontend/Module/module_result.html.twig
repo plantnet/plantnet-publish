@@ -126,14 +126,14 @@
                                 {% for plantunit in paginator %}
                                     <tr>
                                         <td>
-                                            <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
+                                            <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.identifier }) }}">
                                                 {% if plantunit.hasimages > 0 %}
                                                     <i class="icon-camera"></i>
                                                 {% endif %}
                                             </a>
                                         </td>
                                         <td>
-                                            <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
+                                            <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.identifier }) }}">
                                                 {% if plantunit.haslocations > 0 %}
                                                     <i class="icon-map-marker"></i>
                                                 {% endif %}
@@ -141,7 +141,7 @@
                                         </td>
                                         {% for field in display %}
                                             <td>
-                                                <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}">
+                                                <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.identifier }) }}">
                                                     {{ plantunit.attributes[field] }}
                                                 </a>
                                             </td>

@@ -534,6 +534,21 @@ class DataController extends Controller
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
+        //check for old links
+        $check_plantunit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+            ->findOneBy(array(
+                'module.id'=>$module->getId(),
+                'id'=>$id
+            ));
+        if($check_plantunit){
+            return $this->redirect($this->generateUrl('front_details',array(
+                'project'=>$project,
+                'collection'=>$collection->getUrl(),
+                'module'=>$module->getUrl(),
+                'id'=>$check_plantunit->getIdentifier()
+                )
+            ),301);
+        }
         $display=array();
         $field=$module->getProperties();
         foreach($field as $row){
@@ -544,7 +559,7 @@ class DataController extends Controller
         $plantunit=$dm->getRepository('PlantnetDataBundle:Plantunit')
             ->findOneBy(array(
                 'module.id'=>$module->getId(),
-                'id'=>$id
+                'identifier'=>$id
             ));
         if(!$plantunit){
             throw $this->createNotFoundException('Unable to find Plantunit entity.');
