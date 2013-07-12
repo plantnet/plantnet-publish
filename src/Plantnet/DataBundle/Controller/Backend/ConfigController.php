@@ -72,27 +72,29 @@ class ConfigController extends Controller
         if(!$config){
             throw $this->createNotFoundException('Unable to find Config entity.');
         }
-        $editForm=$this->createForm(new ConfigType(),$config);
-        $request=$this->getRequest();
-        if('POST'===$request->getMethod()){
-            $editForm->bind($request);
-            // supprimer la langue par defaut des langues dispo
-            $default=$config->getDefaultlanguage();
-            $availables=$config->getAvailablelanguages();
-            if(count($availables)){
-                foreach($availables as $key=>$available){
-                    if($available==$default){
-                        unset($availables[$key]);
-                    }
-                }
+        if($config->getIslocked()!=true){
+            $editForm=$this->createForm(new ConfigType(),$config);
+            $request=$this->getRequest();
+            if('POST'===$request->getMethod()){
+                $editForm->bind($request);
+                // supprimer la langue par defaut des langues dispo
+                $default=$config->getDefaultlanguage();
+                $availables=$config->getAvailablelanguages();
                 if(count($availables)){
-                    $availables=array_values($availables);
-                    $this->check_databases($availables,$user);
+                    foreach($availables as $key=>$available){
+                        if($available==$default){
+                            unset($availables[$key]);
+                        }
+                    }
+                    if(count($availables)){
+                        $availables=array_values($availables);
+                        $this->check_databases($availables,$user,$default);
+                    }
+                    $config->setAvailablelanguages($availables);
                 }
-                $config->setAvailablelanguages($availables);
+                $dm->persist($config);
+                $dm->flush();
             }
-            $dm->persist($config);
-            $dm->flush();
         }
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
             'entity'=>$config,
@@ -227,7 +229,7 @@ class ConfigController extends Controller
         return $this->redirect($this->generateUrl('config_edit_banner'));
     }
 
-    private function check_databases($languages,$user)
+    private function check_databases($languages,$user,$default)
     {
         $prefix=$this->container->getParameter('mdb_base').'_';
         $default_db=$user->getDbName();
@@ -243,9 +245,13 @@ class ConfigController extends Controller
             }
         }
         $news=array();
+        $olds=array();
         foreach($languages as $language){
             if(!in_array($default_db.'_'.$language,$dbs_array)){
                 $news[]=$default_db.'_'.$language;
+            }
+            else{
+                $olds[]=$default_db.'_'.$language;
             }
         }
         if(count($news)){
@@ -273,7 +279,17 @@ class ConfigController extends Controller
                 $db->Page->insert(array('name'=>'credits','alias'=>'credits','order'=>3));
                 $db->Page->insert(array('name'=>'contacts','alias'=>'contacts','order'=>4));
                 //init config
-                $db->Config->insert(array('defaultlanguage'=>'_'));
+                $db->Config->insert(array(
+                    'islocked'=>true,
+                    'defaultlanguage'=>$default,
+                    'availablelanguages'=>$languages
+                ));
+            }
+        }
+        if(count($olds)){
+            foreach($olds as $old){
+                $db=$connection->$old;
+                $db->Config->update(array(),array('$set'=>array('availablelanguages'=>$languages)));
             }
         }
     }

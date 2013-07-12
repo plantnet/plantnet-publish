@@ -36,6 +36,11 @@ class Config
     protected $filepath;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $islocked;
+
+    /**
      * To String
      *
      * @return string
@@ -138,5 +143,25 @@ class Config
     public function getFilepath()
     {
         return $this->filepath;
+    }
+
+    /**
+     * Set islocked
+     *
+     * @param boolean $islocked
+     */
+    public function setIslocked($islocked)
+    {
+        $this->islocked = $islocked;
+    }
+
+    /**
+     * Get islocked
+     *
+     * @return boolean $islocked
+     */
+    public function getIslocked()
+    {
+        return $this->islocked;
     }
 }

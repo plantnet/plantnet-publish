@@ -277,7 +277,10 @@ class UserController extends Controller
                         $db->Page->insert(array('name'=>'credits','alias'=>'credits','order'=>3));
                         $db->Page->insert(array('name'=>'contacts','alias'=>'contacts','order'=>4));
                         //init config
-                        $db->Config->insert(array('defaultlanguage'=>$user->getDefaultlanguage()));
+                        $db->Config->insert(array(
+                            'defaultlanguage'=>$user->getDefaultlanguage(),
+                            'islocked'=>false
+                        ));
                         //update user account
                         $user->setDbName($dbName);
                         $user->addRole('ROLE_ADMIN');
