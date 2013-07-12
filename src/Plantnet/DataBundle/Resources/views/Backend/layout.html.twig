@@ -135,6 +135,7 @@
 											</li>
 										</ul>
 									</li>
+									{% render controller("PlantnetDataBundle:Backend/Config:language_list") %}
 								{% endif %}
 								{% if is_granted('ROLE_SUPER_ADMIN') %}
 									<li{% if current == 'users' %} class="active"{% endif %}>

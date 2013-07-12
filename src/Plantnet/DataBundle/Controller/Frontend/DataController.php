@@ -25,8 +25,6 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class DataController extends Controller
 {
-    // $this->getRequest()->setLocale('fr');
-    
     private function database_list()
     {
         //display databases without prefix

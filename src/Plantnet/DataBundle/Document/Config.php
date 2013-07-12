@@ -41,6 +41,11 @@ class Config
     private $islocked;
 
     /**
+     * @MongoDB\String
+     */
+    protected $originaldb;
+
+    /**
      * To String
      *
      * @return string
@@ -163,5 +168,25 @@ class Config
     public function getIslocked()
     {
         return $this->islocked;
+    }
+
+    /**
+     * Set originaldb
+     *
+     * @param string $originaldb
+     */
+    public function setOriginaldb($originaldb)
+    {
+        $this->originaldb = $originaldb;
+    }
+
+    /**
+     * Get originaldb
+     *
+     * @return string $originaldb
+     */
+    public function getOriginaldb()
+    {
+        return $this->originaldb;
     }
 }

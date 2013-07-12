@@ -29,6 +29,53 @@ class ConfigController extends Controller
         return $this->container->getParameter('mdb_base');
     }
 
+    public function language_listAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        return $this->render('PlantnetDataBundle:Backend\Config:language_list.html.twig',array(
+            'default'=>$config->getDefaultlanguage(),
+            'availables'=>$config->getAvailablelanguages(),
+            'current'=>'administration'
+        ));
+    }
+
+    /**
+     * @Route("/language_switch/{lang}", name="config_language_switch")
+     * @Template()
+     */
+    public function config_language_switchAction($lang)
+    {
+        $userManager=$this->get('fos_user.user_manager');
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        $default=$config->getDefaultlanguage();
+        $availables=$config->getAvailablelanguages();
+        $default_db=$config->getOriginaldb();
+        $user->setDbName($default_db);
+        if($lang!=$default){
+            if(in_array($lang,$availables)){
+                $user->setDbName($default_db.'_'.$lang);
+            }
+        }
+        $userManager->updateUser($user);
+        return $this->redirect($this->generateUrl('admin_index'));
+    }
+
     /**
      * Displays a form to edit Config entity.
      *
@@ -281,6 +328,7 @@ class ConfigController extends Controller
                 //init config
                 $db->Config->insert(array(
                     'islocked'=>true,
+                    'originaldb'=>$default_db,
                     'defaultlanguage'=>$default,
                     'availablelanguages'=>$languages
                 ));

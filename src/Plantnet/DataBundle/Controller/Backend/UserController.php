@@ -279,7 +279,8 @@ class UserController extends Controller
                         //init config
                         $db->Config->insert(array(
                             'defaultlanguage'=>$user->getDefaultlanguage(),
-                            'islocked'=>false
+                            'islocked'=>false,
+                            'originaldb'=>$dbName
                         ));
                         //update user account
                         $user->setDbName($dbName);
