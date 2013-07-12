@@ -76,6 +76,12 @@ class CollectionController extends Controller
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
         $document=new Collection();
         $request=$this->getRequest();
         $form=$this->createForm(new CollectionType(),$document);
@@ -83,7 +89,7 @@ class CollectionController extends Controller
             $form->bind($request);
             $url=$document->getUrl();
             if(StringHelp::isGoodForUrl($url)){
-                $document->setAlias(StringHelp::cleanToPath($user->getUsername().'_'.$url));
+                $document->setAlias(StringHelp::cleanToPath($config->getOriginaldb().'_'.$url));
                 $nb_alias=$dm->createQueryBuilder('PlantnetDataBundle:Collection')
                     ->field('alias')->equals($document->getAlias())
                     ->hydrate(true)

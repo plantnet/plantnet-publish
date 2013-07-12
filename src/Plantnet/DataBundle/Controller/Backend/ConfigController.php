@@ -321,10 +321,10 @@ class ConfigController extends Controller
                 // $db->Plantunit->ensureIndex(array("attributes"=>"text"));
                 $db->Taxon->ensureIndex(array("name"=>1));
                 //pages data
-                $db->Page->insert(array('name'=>'home','alias'=>'home','order'=>1));
-                $db->Page->insert(array('name'=>'mentions','alias'=>'mentions','order'=>2));
-                $db->Page->insert(array('name'=>'credits','alias'=>'credits','order'=>3));
-                $db->Page->insert(array('name'=>'contacts','alias'=>'contacts','order'=>4));
+                $db->Page->insert(array('name'=>'Home','alias'=>'home','order'=>1));
+                $db->Page->insert(array('name'=>'Mentions','alias'=>'mentions','order'=>2));
+                $db->Page->insert(array('name'=>'Credits','alias'=>'credits','order'=>3));
+                $db->Page->insert(array('name'=>'Contacts','alias'=>'contacts','order'=>4));
                 //init config
                 $db->Config->insert(array(
                     'islocked'=>true,

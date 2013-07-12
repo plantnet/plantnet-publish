@@ -22,7 +22,9 @@ class ConfigType extends AbstractType
             ))
             ->add('availablelanguages', 'language', array(
                 'label'=>'Available languages',
-                'multiple'=>true
+                'required'=>false,
+                'multiple'=>true,
+                'expanded'=>true
             ))
         ;
     }
