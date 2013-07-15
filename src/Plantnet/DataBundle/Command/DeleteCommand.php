@@ -85,7 +85,36 @@ class DeleteCommand extends ContainerAwareCommand
         * Remove upload directory
         */
         $dir=$module->getUploaddir();
-        if($dir){
+        $del_dir=true;
+        $nb_equal_dirs=0;
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if($config){
+            $original_db=$config->getOriginaldb();
+            if($original_db){
+                $connection=new \MongoClient();
+                $dbs_array=array();
+                $dbs=$connection->admin->command(array(
+                    'listDatabases'=>1
+                ));
+                foreach($dbs['databases'] as $db){
+                    $db_name=$db['name'];
+                    if(substr_count($db_name,$original_db)){
+                        $dbs_array[]=$db_name;
+                    }
+                }
+                if(count($dbs_array)>1){
+                    foreach($dbs_array as $chk_db){
+                        $nb_equal_dirs+=$connection->$chk_db->Module->find(array('uploaddir'=>$dir))->count();
+                    }
+                }
+            }
+        }
+        if($nb_equal_dirs>1){
+            $del_dir=false;
+        }
+        if($dir&&$del_dir){
             $dir=__DIR__.'/../../../../web/uploads/'.$dir;
             if(file_exists($dir)&&is_dir($dir)){
                 $files=scandir($dir);
