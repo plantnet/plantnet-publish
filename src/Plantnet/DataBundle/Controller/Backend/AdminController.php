@@ -35,6 +35,22 @@ class AdminController extends Controller
     private function getDataBase($user=null,$dm=null)
     {
         if($user){
+            $dm=$this->get('doctrine.odm.mongodb.document_manager');
+            $dm->getConfiguration()->setDefaultDB($this->getDataBase());
+            $database=$dm->createQueryBuilder('PlantnetDataBundle:Database')
+                ->field('name')->equals($user->getDbName())
+                ->getQuery()
+                ->getSingleResult();
+            if(!$database){
+                throw $this->createNotFoundException('Unable to find Database entity.');
+            }
+            if($database->getEnable()!=true){
+                $this->get('session')->getFlashBag()->get('db_error',array());
+                $this->get('session')->getFlashBag()->add(
+                    'db_error',
+                    'This database is no longer active, it has been disabled by the administrator or by the super administrator.'
+                );
+            }
             return $user->getDbName();
         }
         elseif($dm){
