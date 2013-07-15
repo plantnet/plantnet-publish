@@ -9,6 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\Form\FormError;
 
+use Plantnet\DataBundle\Document\Database;
+
 /**
  * User controller.
  *
@@ -42,6 +44,25 @@ class UserController extends Controller
                 $dbs_array[]=str_replace($prefix,'',$db_name);
             }
         }
+        return $dbs_array;
+    }
+
+    private function top_level_database_list()
+    {
+        //display databases without prefix
+        $prefix=$this->get_prefix();
+        $dbs_array=array();
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase());
+        $databases=$dm->getRepository('PlantnetDataBundle:Database')
+            ->findBy(array(
+                'parent'=>null
+            ));
+        foreach($databases as $db){
+            $dbs_array[]=str_replace($prefix,'',$db->getName());
+        }
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
         return $dbs_array;
     }
 
@@ -115,7 +136,7 @@ class UserController extends Controller
         if(in_array('ROLE_SUPER_ADMIN',$roles)){
             $role='superadmin';
         }
-        $switchForm=$this->createSwitchForm($this->database_list(),$user->getDbName());
+        $switchForm=$this->createSwitchForm($this->top_level_database_list(),$user->getDbName());
         $enableForm=$this->createEnableForm($username);
         $enableSuperAdminForm=false;
         if($user->getSuper()===true){
@@ -162,7 +183,7 @@ class UserController extends Controller
         if(!$user){
             throw $this->createNotFoundException('Unable to find User entity.');
         }
-        $form=$this->createSwitchForm($this->database_list(),$user->getDbName());
+        $form=$this->createSwitchForm($this->top_level_database_list(),$user->getDbName());
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
             $form->bind($request);
@@ -253,6 +274,14 @@ class UserController extends Controller
                     $dbs_array=$this->database_list();
                     if(!in_array($user->getDbNameUq(),$dbs_array)){
                         $dbName=$this->get_prefix().$user->getDbNameUq();
+                        //add Database entity
+                        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                        $database=new Database();
+                        $database->setName($dbName);
+                        $database->setLanguage($user->getDefaultlanguage());
+                        $dm->persist($database);
+                        $dm->flush();
+                        //create new database
                         $connection=new \MongoClient();
                         $db=$connection->$dbName;
                         $db->listCollections();

@@ -7,7 +7,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Plantnet\DataBundle\Document\Config,
+use Plantnet\DataBundle\Document\Database,
+    Plantnet\DataBundle\Document\Config,
     Plantnet\DataBundle\Form\Type\ConfigType,
     Plantnet\DataBundle\Form\Type\ConfigImageType;
 
@@ -27,127 +28,6 @@ class ConfigController extends Controller
             return $dm->getConfiguration()->getDefaultDB();
         }
         return $this->container->getParameter('mdb_base');
-    }
-
-    public function language_listAction()
-    {
-        $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
-            ->getQuery()
-            ->getSingleResult();
-        if(!$config){
-            throw $this->createNotFoundException('Unable to find Config entity.');
-        }
-        return $this->render('PlantnetDataBundle:Backend\Config:language_list.html.twig',array(
-            'default'=>$config->getDefaultlanguage(),
-            'availables'=>$config->getAvailablelanguages(),
-            'current'=>'administration'
-        ));
-    }
-
-    /**
-     * @Route("/language_switch/{lang}", name="config_language_switch")
-     * @Template()
-     */
-    public function config_language_switchAction($lang)
-    {
-        $userManager=$this->get('fos_user.user_manager');
-        $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
-            ->getQuery()
-            ->getSingleResult();
-        if(!$config){
-            throw $this->createNotFoundException('Unable to find Config entity.');
-        }
-        $default=$config->getDefaultlanguage();
-        $availables=$config->getAvailablelanguages();
-        $default_db=$config->getOriginaldb();
-        $user->setDbName($default_db);
-        if($lang!=$default){
-            if(in_array($lang,$availables)){
-                $user->setDbName($default_db.'_'.$lang);
-            }
-        }
-        $userManager->updateUser($user);
-        return $this->redirect($this->generateUrl('admin_index'));
-    }
-
-    /**
-     * Displays a form to edit Config entity.
-     *
-     * @Route("/edit", name="config_edit")
-     * @Template()
-     */
-    public function config_editAction()
-    {
-        $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
-            ->getQuery()
-            ->getSingleResult();
-        if(!$config){
-            throw $this->createNotFoundException('Unable to find Config entity.');
-        }
-        $editForm=$this->createForm(new ConfigType(),$config);
-        return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
-            'entity'=>$config,
-            'edit_form'=>$editForm->createView(),
-            'current'=>'config'
-        ));
-    }
-
-    /**
-     * Edits Config entity.
-     *
-     * @Route("/update", name="config_update")
-     * @Method("post")
-     * @Template()
-     */
-    public function config_updateAction()
-    {
-        $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
-            ->getQuery()
-            ->getSingleResult();
-        if(!$config){
-            throw $this->createNotFoundException('Unable to find Config entity.');
-        }
-        if($config->getIslocked()!=true){
-            $editForm=$this->createForm(new ConfigType(),$config);
-            $request=$this->getRequest();
-            if('POST'===$request->getMethod()){
-                $editForm->bind($request);
-                // supprimer la langue par defaut des langues dispo
-                $default=$config->getDefaultlanguage();
-                $availables=$config->getAvailablelanguages();
-                if(count($availables)){
-                    foreach($availables as $key=>$available){
-                        if($available==$default){
-                            unset($availables[$key]);
-                        }
-                    }
-                    if(count($availables)){
-                        $availables=array_values($availables);
-                        $this->check_databases($availables,$user,$default);
-                    }
-                    $config->setAvailablelanguages($availables);
-                }
-                $dm->persist($config);
-                $dm->flush();
-            }
-        }
-        return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
-            'entity'=>$config,
-            'edit_form'=>$editForm->createView(),
-            'current'=>'config'
-        ));
     }
 
     /**
@@ -276,34 +156,128 @@ class ConfigController extends Controller
         return $this->redirect($this->generateUrl('config_edit_banner'));
     }
 
+    /**
+     * Displays a form to edit Config entity.
+     *
+     * @Route("/edit", name="config_edit")
+     * @Template()
+     */
+    public function config_editAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        $editForm=$this->createForm(new ConfigType(),$config);
+        return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
+            'entity'=>$config,
+            'edit_form'=>$editForm->createView(),
+            'current'=>'config'
+        ));
+    }
+
+    /**
+     * Edits Config entity.
+     *
+     * @Route("/update", name="config_update")
+     * @Method("post")
+     * @Template()
+     */
+    public function config_updateAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        if($config->getIslocked()!=true){
+            $editForm=$this->createForm(new ConfigType(),$config);
+            $request=$this->getRequest();
+            if('POST'===$request->getMethod()){
+                $editForm->bind($request);
+                // supprimer la langue par defaut des langues dispo
+                $default=$config->getDefaultlanguage();
+                $availables=$config->getAvailablelanguages();
+                if(count($availables)){
+                    foreach($availables as $key=>$available){
+                        if($available==$default){
+                            unset($availables[$key]);
+                        }
+                    }
+                    if(count($availables)){
+                        $availables=array_values($availables);
+                        $this->check_databases($availables,$user,$default);
+                    }
+                    $config->setAvailablelanguages($availables);
+                }
+                $dm->persist($config);
+                $dm->flush();
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
+            'entity'=>$config,
+            'edit_form'=>$editForm->createView(),
+            'current'=>'config'
+        ));
+    }
+
     private function check_databases($languages,$user,$default)
     {
-        $prefix=$this->container->getParameter('mdb_base').'_';
         $default_db=$user->getDbName();
-        $connection=new \MongoClient();
-        $dbs=$connection->admin->command(array(
-            'listDatabases'=>1
-        ));
-        $dbs_array=array();
-        foreach($dbs['databases'] as $db){
-            $db_name=$db['name'];
-            if(substr_count($db_name,$prefix)&&substr_count($db_name,$default_db)){
-                $dbs_array[]=$db_name;
-            }
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase());
+        $database=$dm->getRepository('PlantnetDataBundle:Database')
+            ->findOneBy(array(
+                'name'=>$default_db,
+                'language'=>$default
+            ));
+        if(!$database){
+            throw $this->createNotFoundException('Unable to find Database entity.');
         }
-        $news=array();
-        $olds=array();
+        $children=$database->getChildren();
+        if(count($children)){
+            foreach($children as $child){
+                if(in_array($child->getLanguage(),$languages)){
+                    $child->setEnable(true);
+                    $dm->persist($child);
+                }
+                else{
+                    $child->setEnable(false);
+                    $dm->persist($child);
+                }
+            }
+            $dm->flush();
+        }
         foreach($languages as $language){
-            if(!in_array($default_db.'_'.$language,$dbs_array)){
-                $news[]=$default_db.'_'.$language;
+            $exists=false;
+            if(count($children)){
+                foreach($children as $child){
+                    if($language==$child->getLanguage()){
+                        $exists=true;
+                    }
+                }
             }
-            else{
-                $olds[]=$default_db.'_'.$language;
-            }
-        }
-        if(count($news)){
-            foreach($news as $new){
-                $db=$connection->$new;
+            if(!$exists){
+                $new_name=$default_db.'_'.$language;
+                $new_database=new Database();
+                $new_database->setName($new_name);
+                $new_database->setLanguage($language);
+                $new_database->setEnable(true);
+                $new_database->setParent($database);
+                $dm->persist($new_database);
+                $dm->flush();
+                //create new database
+                $connection=new \MongoClient();
+                $db=$connection->$new_name;
                 $db->listCollections();
                 //collections
                 $db->createCollection('Collection');
@@ -329,16 +303,85 @@ class ConfigController extends Controller
                 $db->Config->insert(array(
                     'islocked'=>true,
                     'originaldb'=>$default_db,
-                    'defaultlanguage'=>$default,
-                    'availablelanguages'=>$languages
+                    'defaultlanguage'=>$language
                 ));
             }
         }
-        if(count($olds)){
-            foreach($olds as $old){
-                $db=$connection->$old;
-                $db->Config->update(array(),array('$set'=>array('availablelanguages'=>$languages)));
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+    }
+
+    public function language_listAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase());
+        $database=$dm->getRepository('PlantnetDataBundle:Database')
+            ->findOneBy(array(
+                'name'=>$user->getDbName()
+            ));
+        if(!$database){
+            throw $this->createNotFoundException('Unable to find Database entity.');
+        }
+        $parent=$database->getParent();
+        if($parent){
+            $database=$parent;
+        }
+        $availables=array();
+        $children=$database->getChildren();
+        if(count($children)){
+            foreach($children as $child){
+                if($child->getEnable()==true){
+                    $availables[]=$child->getLanguage();
+                }
             }
         }
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        return $this->render('PlantnetDataBundle:Backend\Config:language_list.html.twig',array(
+            'default'=>$database->getLanguage(),
+            'availables'=>$availables,
+            'current'=>'administration'
+        ));
+    }
+
+    /**
+     * @Route("/language_switch/{lang}", name="config_language_switch")
+     * @Template()
+     */
+    public function config_language_switchAction($lang)
+    {
+        $userManager=$this->get('fos_user.user_manager');
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase());
+        $database=$dm->getRepository('PlantnetDataBundle:Database')
+            ->findOneBy(array(
+                'name'=>$user->getDbName()
+            ));
+        if(!$database){
+            throw $this->createNotFoundException('Unable to find Database entity.');
+        }
+        $parent=$database->getParent();
+        if($parent){
+            $database=$parent;
+        }
+        $default=$database->getLanguage();
+        $availables=array();
+        $children=$database->getChildren();
+        if(count($children)){
+            foreach($children as $child){
+                if($child->getEnable()==true){
+                    $availables[]=$child->getLanguage();
+                }
+            }
+        }
+        $default_db=$database->getName();
+        $user->setDbName($default_db);
+        if($lang!=$default){
+            if(in_array($lang,$availables)){
+                $user->setDbName($default_db.'_'.$lang);
+            }
+        }
+        $userManager->updateUser($user);
+        return $this->redirect($this->generateUrl('admin_index'));
     }
 }
