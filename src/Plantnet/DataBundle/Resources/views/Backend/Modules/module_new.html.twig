@@ -8,67 +8,85 @@
             <em>Collection: {{ collection.name }}</em> > New module
         </h4>
     </div>
-    {% if form.type.vars.value is defined and form.type.vars.value == 'text' %}
-        <p>
-            File reading starts at the second line, so first one must contain column heads.
-            <br />
-            Each line of the file must contain a unique identifier.
-            <br />
-            Columns must be in desired order display.
-            <br />
-            If you choose to enable the taxonomic browser, you will need to enter applying rules in the module's options after data importation.
+    {% set updating = false %}
+    {% for module in collection.modules %}
+        {% if module.updating == true %}
+            {% set updating = true %}
+        {% else %}
+            {% for child in module.children %}
+                {% if child.updating == true %}
+                    {% set updating = true %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+    {% if module.type == 'submodule' and updating == true %}
+        <p class="text-warning">
+            There is a work in progress, this process is disabled few minutes.
         </p>
     {% else %}
-        <p>
-            File reading starts at the second line, so first one must contain column heads.
-            <br />
-            Each line of the file must contain a reference to a unique identifier specified in the main module.
-            <br />
-            If this reference does not exist, the corresponding line will be ignored.
-            <br />
-            Columns must be in desired order display.
-        </p>
-    {% endif %}
-    <form id="add_module" action="{{ path('module_create', { 'id': collection.id, 'type': type }) }}" method="post" {{ form_enctype(form) }}>
-        {{ form_errors(form) }}
-        <div class="field-form">
-            {{ form_label(form.name) }}
-            {{ form_errors(form.name) }}
-            {{ form_widget(form.name) }}
-        </div>
-        <div class="field-form">
-            {{ form_label(form.url) }}
-            {{ form_errors(form.url) }}
-            {{ form_widget(form.url) }}
-        </div>
         {% if form.type.vars.value is defined and form.type.vars.value == 'text' %}
-            <div class="field-form">
-                {{ form_label(form.taxonomy, 'Enable taxonomic browser', {'label_attr': {'class': 'inline'}}) }}
-                {{ form_errors(form.taxonomy) }}
-                {{ form_widget(form.taxonomy) }}
-            </div>
-            <div class="field-form">
-                {{ form_label(form.description) }}
-                {{ form_errors(form.description) }}
-                {{ form_widget(form.description, { 'attr': {'class': 'textarea'} }) }}
-            </div>
+            <p>
+                File reading starts at the second line, so first one must contain column heads.
+                <br />
+                Each line of the file must contain a unique identifier.
+                <br />
+                Columns must be in desired order display.
+                <br />
+                If you choose to enable the taxonomic browser, you will need to enter applying rules in the module's options after data importation.
+            </p>
+        {% else %}
+            <p>
+                File reading starts at the second line, so first one must contain column heads.
+                <br />
+                Each line of the file must contain a reference to a unique identifier specified in the main module.
+                <br />
+                If this reference does not exist, the corresponding line will be ignored.
+                <br />
+                Columns must be in desired order display.
+            </p>
         {% endif %}
-        <div class="field-form">
-            {% if form.type.vars.value is defined and form.type.vars.value!='text' %}
-                {{ form_label(form.type) }}
+        <form id="add_module" action="{{ path('module_create', { 'id': collection.id, 'type': type }) }}" method="post" {{ form_enctype(form) }}>
+            {{ form_errors(form) }}
+            <div class="field-form">
+                {{ form_label(form.name) }}
+                {{ form_errors(form.name) }}
+                {{ form_widget(form.name) }}
+            </div>
+            <div class="field-form">
+                {{ form_label(form.url) }}
+                {{ form_errors(form.url) }}
+                {{ form_widget(form.url) }}
+            </div>
+            {% if form.type.vars.value is defined and form.type.vars.value == 'text' %}
+                <div class="field-form">
+                    {{ form_label(form.taxonomy, 'Enable taxonomic browser', {'label_attr': {'class': 'inline'}}) }}
+                    {{ form_errors(form.taxonomy) }}
+                    {{ form_widget(form.taxonomy) }}
+                </div>
+                <div class="field-form">
+                    {{ form_label(form.description) }}
+                    {{ form_errors(form.description) }}
+                    {{ form_widget(form.description, { 'attr': {'class': 'textarea'} }) }}
+                </div>
             {% endif %}
-            {{ form_errors(form.type) }}
-            {{ form_widget(form.type, { 'separator': '=====' }) }}
-        </div>
-        <div class="field-form">
-            {{ form_label(form.file, 'CSV data') }}
-            {{ form_errors(form.file) }}
-            {{ form_widget(form.file) }}
-        </div>
-        {{ form_rest(form) }}
-        <br />
-        <button type="submit" class="btn">Import structure</button>
-    </form>
+            <div class="field-form">
+                {% if form.type.vars.value is defined and form.type.vars.value!='text' %}
+                    {{ form_label(form.type) }}
+                {% endif %}
+                {{ form_errors(form.type) }}
+                {{ form_widget(form.type, { 'separator': '=====' }) }}
+            </div>
+            <div class="field-form">
+                {{ form_label(form.file, 'CSV data') }}
+                {{ form_errors(form.file) }}
+                {{ form_widget(form.file) }}
+            </div>
+            {{ form_rest(form) }}
+            <br />
+            <button type="submit" class="btn">Import structure</button>
+        </form>
+    {% endif %}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}

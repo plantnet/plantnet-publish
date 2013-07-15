@@ -8,17 +8,32 @@
             <em>Module: {{ module.name }}</em> > Taxonomy - synonymy
         </h4>
     </div>
-    <form action="{{ path('module_syn_update', { 'id': module.id }) }}" method="post" {{ form_enctype(form) }}>
-        {{ form_errors(form) }}
-        <div class="field-form">
-            {{ form_label(form.synfile, 'CSV synonymy') }}
-            {{ form_errors(form.synfile) }}
-            {{ form_widget(form.synfile) }}
-        </div>
-        {{ form_rest(form) }}
-        <br />
-        <button type="submit" class="btn">Import structure</button>
-    </form>
+    {% set updating = false %}
+    {% if module.updating == true %}
+        {% set updating = true %}
+    {% endif %}
+    {% for child in module.children %}
+        {% if child.updating == true %}
+            {% set updating = true %}
+        {% endif %}
+    {% endfor %}
+    {% if updating == true %}
+        <p class="text-warning">
+            There is a work in progress, taxonomy configuration is disabled few minutes.
+        </p>
+    {% else %}
+        <form action="{{ path('module_syn_update', { 'id': module.id }) }}" method="post" {{ form_enctype(form) }}>
+            {{ form_errors(form) }}
+            <div class="field-form">
+                {{ form_label(form.synfile, 'CSV synonymy') }}
+                {{ form_errors(form.synfile) }}
+                {{ form_widget(form.synfile) }}
+            </div>
+            {{ form_rest(form) }}
+            <br />
+            <button type="submit" class="btn">Import structure</button>
+        </form>
+    {% endif %}
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
