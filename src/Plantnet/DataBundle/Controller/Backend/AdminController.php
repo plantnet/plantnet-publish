@@ -44,7 +44,7 @@ class AdminController extends Controller
             if(!$database){
                 throw $this->createNotFoundException('Unable to find Database entity.');
             }
-            if($database->getEnable()!=true){
+            if($database->getEnable()===false){
                 $this->get('session')->getFlashBag()->get('db_error',array());
                 $this->get('session')->getFlashBag()->add(
                     'db_error',
