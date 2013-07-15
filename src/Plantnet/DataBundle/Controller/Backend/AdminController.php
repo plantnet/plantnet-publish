@@ -74,18 +74,22 @@ class AdminController extends Controller
     public function indexAction()
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
-        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
-            ->getQuery()
-            ->getSingleResult();
-        if(!$config){
-            throw $this->createNotFoundException('Unable to find Config entity.');
+        $config=null;
+        $editForm=null;
+        if($user->getDbName()){
+            $dm=$this->get('doctrine.odm.mongodb.document_manager');
+            $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+            $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+                ->getQuery()
+                ->getSingleResult();
+            if(!$config){
+                throw $this->createNotFoundException('Unable to find Config entity.');
+            }
+            $editForm=$this->createForm(new ConfigNameType(),$config);
         }
-        $editForm=$this->createForm(new ConfigNameType(),$config);
         return $this->render('PlantnetDataBundle:Backend:index.html.twig',array(
             'config'=>$config,
-            'edit_form'=>$editForm->createView(),
+            'edit_form'=>($editForm!=null)?$editForm->createView():null,
             'current'=>'index'
         ));
     }

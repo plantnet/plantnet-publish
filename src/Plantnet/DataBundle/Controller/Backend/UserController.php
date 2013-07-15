@@ -278,6 +278,7 @@ class UserController extends Controller
                         $dm=$this->get('doctrine.odm.mongodb.document_manager');
                         $database=new Database();
                         $database->setName($dbName);
+                        $database->setDisplayedname(ucfirst($user->getDbNameUq()));
                         $database->setLink($user->getDbNameUq());
                         $database->setLanguage($user->getDefaultlanguage());
                         $dm->persist($database);
