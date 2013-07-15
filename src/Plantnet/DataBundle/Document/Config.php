@@ -17,6 +17,11 @@ class Config
     /**
      * @MongoDB\String
      */
+    protected $name;
+
+    /**
+     * @MongoDB\String
+     */
     protected $defaultlanguage;
 
     /**
@@ -68,6 +73,26 @@ class Config
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $defaultlanguage
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string $name
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

@@ -16,6 +16,9 @@ use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
 use Plantnet\DataBundle\Document\Page,
     Plantnet\DataBundle\Form\Type\PageType;
 
+use Plantnet\DataBundle\Document\Config,
+    Plantnet\DataBundle\Form\Type\ConfigNameType;
+
 //?
 use Plantnet\DataBundle\Document\Plantunit;
 use Plantnet\DataBundle\Document\Image;
@@ -54,9 +57,67 @@ class AdminController extends Controller
      */
     public function indexAction()
     {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        $editForm=$this->createForm(new ConfigNameType(),$config);
         return $this->render('PlantnetDataBundle:Backend:index.html.twig',array(
+            'config'=>$config,
+            'edit_form'=>$editForm->createView(),
             'current'=>'index'
         ));
+    }
+
+    /**
+     * Edits an existing Config entity.
+     *
+     * @Route("/config/update/name", name="config_update_name")
+     * @Method("post")
+     * @Template()
+     */
+    public function config_update_nameAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        $editForm=$this->createForm(new ConfigNameType(),$config);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $editForm->bind($request);
+            if($editForm->isValid()){
+                $dm->persist($config);
+                $dm->flush();
+                $name=$config->getOriginaldb();
+                $displayedname=$config->getName();
+                $language=$config->getDefaultlanguage();
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase());
+                $database=$dm->getRepository('PlantnetDataBundle:Database')
+                    ->findOneBy(array(
+                        'name'=>$name,
+                        'language'=>$language
+                    ));
+                if($database){
+                    $database->setDisplayedname($displayedname);
+                    $dm->persist($database);
+                    $dm->flush();
+                }
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                return $this->redirect($this->generateUrl('admin_index'));
+            }
+        }
+        return $this->redirect($this->generateUrl('admin_index'));
     }
 
     /**

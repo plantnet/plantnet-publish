@@ -278,6 +278,7 @@ class UserController extends Controller
                         $dm=$this->get('doctrine.odm.mongodb.document_manager');
                         $database=new Database();
                         $database->setName($dbName);
+                        $database->setLink($user->getDbNameUq());
                         $database->setLanguage($user->getDefaultlanguage());
                         $dm->persist($database);
                         $dm->flush();
@@ -309,7 +310,8 @@ class UserController extends Controller
                         $db->Config->insert(array(
                             'defaultlanguage'=>$user->getDefaultlanguage(),
                             'islocked'=>false,
-                            'originaldb'=>$dbName
+                            'originaldb'=>$dbName,
+                            'name'=>ucfirst($user->getDbNameUq())
                         ));
                         //update user account
                         $user->setDbName($dbName);

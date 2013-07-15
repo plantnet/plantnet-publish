@@ -6,10 +6,19 @@
 		<h5>
 			{{ "line-projects-list"|trans|capitalize }}
 		</h5>
-		<div class="btn-group btn-group-vertical">
-			{% for project in projects %}
-				<a href="{{ path('front_project', {'project': project}) }}" class="btn">{{ project|capitalize }}</a>
-			{% endfor %}
-		</div>
+		{% for project in projects %}
+			<div class="btn-group">
+				<a href="{{ path('front_project', {'project': project.link}) }}" class="btn">
+					{{ project.displayedname }}
+				</a>
+				{% if project.children|length > 0 %}
+					{% for child in project.children if child.enable == true %}
+						<a href="{{ path('front_project', {'project': child.link}) }}" class="btn">
+							[{{ child.language }}]
+						</a>
+					{% endfor %}
+				{% endif %}
+			</div>
+		{% endfor %}
 	</div>
 {% endblock %}

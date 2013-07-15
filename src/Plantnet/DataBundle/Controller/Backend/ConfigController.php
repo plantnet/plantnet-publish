@@ -270,6 +270,7 @@ class ConfigController extends Controller
                 $new_name=$default_db.'_'.$language;
                 $new_database=new Database();
                 $new_database->setName($new_name);
+                $new_database->setLink($user->getDbNameUq().'_'.$language);
                 $new_database->setLanguage($language);
                 $new_database->setEnable(true);
                 $new_database->setParent($database);
@@ -303,7 +304,8 @@ class ConfigController extends Controller
                 $db->Config->insert(array(
                     'islocked'=>true,
                     'originaldb'=>$default_db,
-                    'defaultlanguage'=>$language
+                    'defaultlanguage'=>$language,
+                    'name'=>ucfirst($default_db).' '.$language
                 ));
             }
         }

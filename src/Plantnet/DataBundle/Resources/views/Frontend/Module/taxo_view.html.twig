@@ -1,5 +1,5 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
-{% block title project|capitalize ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
+{% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
 {% block stylesheets %}
     {{ parent() }}
     {% if current_display == 'locations' %}
@@ -10,7 +10,7 @@
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
-            <a href="{{ path('front_project', {'project': project}) }}">{{ project|capitalize }}</a>
+            <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
             <span class="divider">/</span>
         </li>
         <li>

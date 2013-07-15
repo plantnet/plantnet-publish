@@ -1,5 +1,5 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title project|capitalize ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-search"|trans|capitalize %}
+{% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-search"|trans|capitalize %}
 {% block stylesheets %}
 	{{ parent() }}
     {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
@@ -8,7 +8,7 @@
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
-            <a href="{{ path('front_project', {'project': project}) }}">{{ project|capitalize }}</a>
+            <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
             <span class="divider">/</span>
         </li>
         <li>

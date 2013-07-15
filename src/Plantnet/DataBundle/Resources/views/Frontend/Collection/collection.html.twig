@@ -1,5 +1,5 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title project|capitalize ~ ' - ' ~ collection.name ~ ' - Pl@ntnet' %}
+{% block title config.name ~ ' - ' ~ collection.name ~ ' - Pl@ntnet' %}
 {% block stylesheets %}
 	{{ parent() }}
 {% endblock %}
@@ -7,7 +7,7 @@
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
-            <a href="{{ path('front_project', {'project': project}) }}">{{ project|capitalize }}</a>
+            <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
             <span class="divider">/</span>
         </li>
         <li class="active">

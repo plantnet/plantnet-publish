@@ -1,4 +1,47 @@
 {% extends "PlantnetDataBundle:Backend:layout.html.twig" %}
+{% block stylesheets %}
+	{{ parent() }}
+{% endblock %}
 {% block content %}
 	<h3>Dashboard</h3>
+	<h4>
+		{{ config.name }}
+		<a href="#" id="title_edit" class="btn btn-small">
+			<i class="icon-edit"></i>
+		</a>
+		<small class="muted right">Language: {{ config.defaultlanguage }}</small>
+	</h4>
+	<div id="modal-update" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<i class="icon-remove-sign"></i>
+			</button>
+			<h3 id="myModalLabel">Project name</h3>
+		</div>
+		<div class="modal-body">
+			<form action="{{ path('config_update_name') }}" method="post" {{ form_enctype(edit_form) }}>
+				{{ form_errors(edit_form) }}
+				<div class="field-form">
+					{{ form_label(edit_form.name) }}
+					{{ form_errors(edit_form.name) }}
+					{{ form_widget(edit_form.name) }}
+				</div>
+				{{ form_rest(edit_form) }}
+				<br />
+				<button type="submit" class="btn">Update</button>
+			</form>
+		</div>
+	</div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#title_edit').click(function(event){
+				event.preventDefault();
+				$('#modal-update').modal();
+				return false;
+			});
+		});
+	</script>
 {% endblock %}

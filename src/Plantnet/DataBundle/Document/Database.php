@@ -23,6 +23,16 @@ class Database
     /**
      * @MongoDB\String
      */
+    protected $link;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $displayedname;
+
+    /**
+     * @MongoDB\String
+     */
     protected $language;
 
     /**
@@ -95,6 +105,46 @@ class Database
         return $this->name;
     }
 
+    /**
+     * Set link
+     *
+     * @param string $link
+     */
+    public function setLink($link)
+    {
+        $this->link = $link;
+    }
+
+    /**
+     * Get link
+     *
+     * @return string $link
+     */
+    public function getLink()
+    {
+        return $this->link;
+    }
+
+    /**
+     * Set displayedname
+     *
+     * @param string $displayedname
+     */
+    public function setDisplayedname($displayedname)
+    {
+        $this->displayedname = $displayedname;
+    }
+
+    /**
+     * Get displayedname
+     *
+     * @return string $displayedname
+     */
+    public function getDisplayedname()
+    {
+        return $this->displayedname;
+    }
+    
     /**
      * Set language
      *
