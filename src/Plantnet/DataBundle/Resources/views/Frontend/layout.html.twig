@@ -69,11 +69,29 @@
 							</li>
 						</ul>
 					</div>
-					<div class="pull-right">
-						{#% for locale in locales %}
-							<a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({ '_locale': locale })) }}">{{ locale }}</a>
-						{% endfor %#}
-					</div>
+					{% if translations is defined %}
+						<div class="pull-right">
+							<ul class="nav">
+								<li class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										{% for translation in translations if translation.active == 1 %}
+											{{ translation.language|capitalize }}
+										{% endfor %}
+										<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+										{% for translation in translations if translation.active == 0 %}
+											<li>
+												<a href="{{ translation.link }}">
+													{{ translation.language|capitalize }}
+												</a>
+											</li>
+										{% endfor %}
+									</ul>
+								</li>
+							</ul>
+						</div>
+					{% endif %}
 				</div>
 			</div>
 		</div>

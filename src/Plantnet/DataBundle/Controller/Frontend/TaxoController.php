@@ -69,6 +69,55 @@ class TaxoController extends Controller
         return $config;
     }
 
+    private function make_translations($project,$route,$params)
+    {
+        $tab_links=array();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->container->getParameter('mdb_base'));
+        $database=$dm->createQueryBuilder('PlantnetDataBundle:Database')
+            ->field('link')->equals($project)
+            ->getQuery()
+            ->getSingleResult();
+        if(!$database){
+            throw $this->createNotFoundException('Unable to find Database entity.');
+        }
+        $current=$database->getlanguage();
+        $parent=$database->getParent();
+        if($parent){
+            $database=$parent;
+        }
+        $children=$database->getChildren();
+        if(count($children)){
+            $params['project']=$database->getLink();
+            $tab_links[$database->getLanguage()]=array(
+                'lang'=>$database->getLanguage(),
+                'language'=>\Locale::getDisplayName($database->getLanguage(),$database->getLanguage()),
+                'link'=>$this->get('router')->generate($route,$params,true),
+                'active'=>($database->getLanguage()==$current)?1:0
+            );
+            $tab_sub_links=array();
+            foreach($children as $child){
+                if($child->getEnable()==true){
+                    $params['project']=$child->getLink();
+                    $tab_sub_links[$child->getLanguage()]=array(
+                        'lang'=>$child->getLanguage(),
+                        'language'=>\Locale::getDisplayName($child->getLanguage(),$child->getLanguage()),
+                        'link'=>$this->get('router')->generate($route,$params,true),
+                        'active'=>($child->getLanguage()==$current)?1:0
+                    );
+                }
+            }
+            if(count($tab_sub_links)){
+                ksort($tab_sub_links);
+                $tab_links=array_merge($tab_links,$tab_sub_links);
+            }
+            else{
+                $tab_links=array();
+            }
+        }
+        return $tab_links;
+    }
+
     /**
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/taxo",
@@ -93,6 +142,17 @@ class TaxoController extends Controller
                 'taxon'=>$form_identifier
             )),301);
         }
+        //
+        $translations=$this->make_translations(
+            $project,
+            'front_module_taxo',
+            array(
+                'project'=>$project,
+                'collection'=>$collection,
+                'module'=>$module
+            )
+        );
+        //
         $projects=$this->database_list();
         if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
@@ -152,6 +212,7 @@ class TaxoController extends Controller
             'module'=>$module,
             'taxon'=>$taxon,
             'taxons'=>$taxons,
+            'translations'=>$translations,
             'current'=>'collection'
         ));
     }
@@ -322,6 +383,17 @@ class TaxoController extends Controller
                 )
             ),301);
         }
+        //
+        $translations=$this->make_translations(
+            $project,
+            'front_module_taxo',
+            array(
+                'project'=>$project,
+                'collection'=>$collection,
+                'module'=>$module
+            )
+        );
+        //
         $projects=$this->database_list();
         if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
@@ -454,6 +526,7 @@ class TaxoController extends Controller
             'page'=>$page,
             'sortby'=>$sortby,
             'sortorder'=>$sortorder,
+            'translations'=>$translations,
             'current'=>'collection',
             'current_display'=>'grid'
         ));
@@ -488,6 +561,17 @@ class TaxoController extends Controller
                 )
             ),301);
         }
+        //
+        $translations=$this->make_translations(
+            $project,
+            'front_module_taxo',
+            array(
+                'project'=>$project,
+                'collection'=>$collection,
+                'module'=>$module
+            )
+        );
+        //
         $projects=$this->database_list();
         if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
@@ -592,6 +676,7 @@ class TaxoController extends Controller
             'nb_locations'=>$nb_locations,
             'display'=>$display,
             'page'=>$page,
+            'translations'=>$translations,
             'current'=>'collection',
             'current_display'=>'images'
         ));
@@ -606,6 +691,16 @@ class TaxoController extends Controller
      */
     public function module_taxo_view_mapAction($project,$collection,$module,$taxon)
     {
+        $translations=$this->make_translations(
+            $project,
+            'front_module_taxo',
+            array(
+                'project'=>$project,
+                'collection'=>$collection,
+                'module'=>$module
+            )
+        );
+        //
         $projects=$this->database_list();
         if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
@@ -704,6 +799,7 @@ class TaxoController extends Controller
             'nb_images'=>$nb_images,
             'nb_locations'=>$nb_locations,
             'display'=>$display,
+            'translations'=>$translations,
             'current'=>'collection',
             'current_display'=>'locations'
         ));
