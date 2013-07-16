@@ -351,6 +351,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         if($last_non_valid->getHaschildren()){
                             $last_valid->setHaschildren(true);
                         }
+                        $last_valid->setHassynonyms(true);
                         $dm->persist($last_non_valid);
                         $dm->persist($last_valid);
                         //

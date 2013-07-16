@@ -107,6 +107,11 @@ class Taxon
     /**
      * @MongoDB\Boolean
      */
+    private $hassynonyms;
+
+    /**
+     * @MongoDB\Boolean
+     */
     private $haslocations;
 
     /**
@@ -449,6 +454,26 @@ class Taxon
     public function getHasimages()
     {
         return $this->hasimages;
+    }
+
+    /**
+     * Set hassynonyms
+     *
+     * @param boolean $hassynonyms
+     */
+    public function setHassynonyms($hassynonyms)
+    {
+        $this->hassynonyms = $hassynonyms;
+    }
+
+    /**
+     * Get hassynonyms
+     *
+     * @return boolean $hassynonyms
+     */
+    public function getHassynonyms()
+    {
+        return $this->hassynonyms;
     }
 
     /**

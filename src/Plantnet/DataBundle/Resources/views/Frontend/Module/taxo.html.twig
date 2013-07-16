@@ -125,7 +125,7 @@
                                 <i class="icon-minus"></i>
                                 {{ taxon.name }}
                             {% endif %}
-                            {% if taxon.synonyms|length > 0 %}
+                            {% if taxon.hassynonyms == true %}
                                 <small class="muted">
                                     {% set syns = [] %}
                                     {% for syn in taxon.synonyms %}
