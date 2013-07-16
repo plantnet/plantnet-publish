@@ -6,16 +6,26 @@
 			<span class="caret"></span>
 		</a>
 		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+			<li class="disabled">
+				<a tabindex="-1" href="#">
+					<em><strong>Default</strong></em>
+				</a>
+			</li>
 			<li>
 				<a href="{{ path('config_language_switch', { 'lang': default }) }}">
-					{{ default }}
+					{{ default|language }}
 				</a>
 			</li>
 			<li class="divider"></li>
+			<li class="disabled">
+				<a tabindex="-1" href="#">
+					<em><strong>Availables</strong></em>
+				</a>
+			</li>
 			{% for language in availables %}
 				<li>
 					<a href="{{ path('config_language_switch', { 'lang': language }) }}">
-						{{ language }}
+						{{ language|language }}
 					</a>
 				</li>
 			{% endfor %}

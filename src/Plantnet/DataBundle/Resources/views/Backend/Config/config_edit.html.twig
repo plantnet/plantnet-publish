@@ -22,11 +22,14 @@
 		</p>
 		<form action="{{ path('config_update') }}" method="post" {{ form_enctype(edit_form) }}>
 			{{ form_errors(edit_form) }}
+			{#
 			<div class="field-form rd_chk">
 				{{ form_label(edit_form.defaultlanguage) }}
 				{{ form_errors(edit_form.defaultlanguage) }}
 				{{ form_widget(edit_form.defaultlanguage, {'attr': {'class': 'span1'}}) }}
 			</div>
+			#}
+			<p><strong>Default language:</strong> {{ entity.defaultlanguage|language }}</p>
 			<div class="field-form rd_chk">
 				{{ form_label(edit_form.availablelanguages) }}
 				<br />
@@ -38,7 +41,7 @@
 				<p>
 					Current available languages:
 					{% for language in entity.availablelanguages %}
-						<strong>{{ language }} </strong>
+						<strong>{{ language|language }} </strong>
 					{% endfor %}
 				</p>
 			{% endif %}

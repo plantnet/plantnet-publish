@@ -11,6 +11,7 @@ class TwigPregExtension extends \Twig_Extension
             'basename'=>new \Twig_Filter_Method($this,'basename'),
             'round'=>new \Twig_Filter_Method($this,'round'),
             'replace'=>new \Twig_Filter_Method($this,'replace'),
+            'language'=>new \Twig_Filter_Method($this,'language'),
         );
     }
 
@@ -37,6 +38,11 @@ class TwigPregExtension extends \Twig_Extension
     public function replace($var,$search,$replace)
     {
         return str_replace($search,$replace,$var);
+    }
+
+    public function language($var)
+    {
+        return \Locale::getDisplayName($var);
     }
 
     public function getName()

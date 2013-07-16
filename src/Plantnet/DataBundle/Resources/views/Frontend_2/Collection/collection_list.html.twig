@@ -1,0 +1,53 @@
+{% set first = true %}
+{% for collection in collections if collection.deleting != true %}
+	{% if first == false %}
+		<li class="divider"></li>
+	{% endif %}
+	{% set first = false %}
+	<li class="disabled">
+		<a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">
+			{{ collection.name }}
+		</a>
+	</li>
+	{% for module in collection.modules if module.deleting != true %}
+		<li class="dropdown-submenu">
+			<a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+				{{ module.name }}
+			</a>
+			<ul class="dropdown-menu">
+				{% if module.children|length > 0 %}
+						{% for child in module.children if (child.type == 'image' and child.deleting != true) %}
+							<li>
+								<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
+									<i class="icon-camera"></i>
+									{{ child.name }}
+								</a>
+							</li>
+						{% endfor %}
+						{% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
+							<li>
+								<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
+									<i class="icon-map-marker"></i>
+									{{ child.name }}
+								</a>
+							</li>
+						{% endfor %}
+				{% endif %}
+				{% if module.taxonomy == true %}
+					<li>
+						<a href="{{ path('front_module_taxo', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+							<i class="icon-tasks"></i>
+							{{ "line-taxonomy"|trans|capitalize }}
+						</a>
+					</li>
+				{% endif %}
+				<li>
+					<a href="{{ path('front_module_search', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+						<i class="icon-search"></i>
+						{{ "line-search-in"|trans|capitalize }} {{ module.name }}
+					</a>
+				</li>
+			</ul>
+		</li>
+	{% endfor %}
+{% endfor %}

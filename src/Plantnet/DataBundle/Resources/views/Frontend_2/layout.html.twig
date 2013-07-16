@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html class="ie6"> <![endif]-->
+<!--[if IE 7 ]> <html class="ie7"> <![endif]-->
+<!--[if IE 8 ]> <html class="ie8"> <![endif]-->
+<!--[if IE 9 ]> <html class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html> <!--<![endif]-->
+<head>
+	{% block head %}
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+		<meta name="description" content=""/>
+		<meta name="author" content="Barbe Julien (AMAP), Affouard Antoine (AMAP)"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+		<!--[if lt IE 9]>
+			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<link type="image/x-icon" rel="shortcut icon" href="{{ asset('bundles/plantnetdata/images/favicon.ico') }}" />
+		<title>{% block title %}Pl@ntnet{% endblock %}</title>
+		{% block stylesheets %}
+			{% stylesheets
+				filter='less,cssrewrite,?yui_css'
+				output='css/publish.css'
+				debug=false
+				'bundles/plantnetdata/bootstrap/css/less/bootstrap.less'
+				'bundles/plantnetdata/css/frontend_2/styles.less'
+				'bundles/plantnetdata/css/frontend_2/map.less'
+				'bundles/plantnetdata/bootstrap/css/less/responsive.less'
+				'bundles/plantnetdata/css/frontend_2/styles-responsive.less'
+			%}
+			<link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
+			{% endstylesheets %}
+			{% if config.filepath %}
+				<style type="text/css">
+					#banner{
+						background-image:url(/{{ config.filepath }});
+					}
+				</style>
+			{% endif %}
+		{% endblock %}
+	{% endblock %}
+</head>
+<body>
+	{% block topbar %}
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+					</button>
+					<a class="brand" href="{{ path('front_project', {'project': project}) }}"></a>
+					<div class="nav-collapse collapse">
+						<ul class="nav">
+							{% if current is not defined %}
+								{% set current = '#' %}
+							{% endif %}
+							<li{% if current == 'project' %} class="active" {% endif %}>
+								<a href="{{ path('front_project', {'project': project}) }}">
+									{{ "tab-home"|trans|capitalize }}
+								</a>
+							</li>
+							<li class="dropdown{% if current == 'collection' %} active {% endif %}">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans|capitalize }} <span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+									{% render controller("PlantnetDataBundle:Frontend\\Data:collection_list", {'project': project}) %}
+								</ul>
+							</li>
+						</ul>
+					</div>
+					{% if translations is defined %}
+						<div class="pull-right">
+							<ul class="nav">
+								<li class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										{% for translation in translations if translation.active == 1 %}
+											{{ translation.language|capitalize }}
+										{% endfor %}
+										<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+										{% for translation in translations if translation.active == 0 %}
+											<li>
+												<a href="{{ translation.link }}">
+													{{ translation.language|capitalize }}
+												</a>
+											</li>
+										{% endfor %}
+									</ul>
+								</li>
+							</ul>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	{% endblock %}
+	<div class="container">
+		<div class="content">
+			{% if config.filepath %}
+				<div id="banner"{% if current != 'project' %} class="mini"{% endif %}>
+			{% endif %}
+			<div class="page-header">
+				{% block header %}{% endblock %}
+			</div>
+			{% if config.filepath %}
+				</div>
+			{% endif %}
+			<div class="row">
+				<div class="span12">
+					{% block breadcrumb %}{% endblock %}
+					{% block row %}
+						<div class="row">
+							<div class="span3">
+								{% block side %}{% endblock %}
+							</div>
+							<div class="span9" id="data-load">
+								{% block main %}{% endblock %}
+							</div>
+						</div>
+					{% endblock %}
+				</div>
+			</div>
+		</div>
+	</div>
+	<footer id="footer">
+		<div class="container">
+			{% block footer %}
+				<ul>
+					<li class="logofoot">
+						<a href="http://www.plantnet-project.org" target="_blank">
+							<img src="{{ asset('bundles/plantnetdata/images/footPlantnet.png') }}" alt="Projet Plantnet"></a>
+					</li>
+					<li class="logofoot">
+						<a href="http://www.agropolis-fondation.fr/" target="_blank">
+							<img src="{{ asset('bundles/plantnetdata/images/footAF.png') }}" alt="Agropolis Fondation"></a>
+					</li>
+				</ul>
+				<nav id="mention">
+					<ul>
+						<li class="liens">
+							<a href="{{ path('front_credits', {'project': project}) }}" class="btn btn-small">
+								{{ "footer-credits"|trans|capitalize }}
+							</a>
+						</li>
+						<li class="liens">
+							<a href="{{ path('front_mentions', {'project': project}) }}" class="btn btn-small">
+								{{ "footer-legal"|trans|capitalize }}
+							</a>
+						</li>
+						<li class="liens">
+							<a href="{{ path('front_contacts', {'project': project}) }}" class="btn btn-small">
+								{{ "footer-contacts"|trans|capitalize }}
+							</a>
+						</li>
+						<li class="liens">
+							<a href="#" class="btn btn-small">
+								{{ "footer-sitemap"|trans|capitalize }}
+							</a>
+						</li>
+					</ul>
+				</nav>
+			{% endblock %}
+		</div>
+	</footer>
+	{% block javascripts %}
+		{% javascripts
+			'bundles/plantnetdata/js/jquery-1.7.min.js'
+			'bundles/plantnetdata/bootstrap/js/bootstrap.min.js'
+			'bundles/plantnetdata/js/spin.min.js'
+			filter='?yui_js' output="js/publish.js" debug=false %}
+			<script src="{{ asset_url }}"></script>
+		{% endjavascripts %}
+		<script type="text/javascript" src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+		<script type="text/javascript" src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+		{#
+		<script type="text/javascript" src="{{ asset('bundles/bazingaexposetranslation/js/translator.min.js') }}"></script>
+		<script type="text/javascript" src="{{ path('bazinga_exposetranslation_js') }}"></script>
+		#}
+		<script type="text/javascript">
+			$.ajaxSetup({
+				cache: false
+			});
+			function ajaxLoader(){
+				var opts={
+					lines:10, // The number of lines to draw
+					length:3, // The length of each line
+					width:2, // The line thickness
+					radius:5, // The radius of the inner circle
+					color:'#333333', // #rgb or #rrggbb
+					speed:1.2, // Rounds per second
+					trail:50, // Afterglow percentage
+					shadow:false // Whether to render a shadow
+				};
+				var target=document.getElementById("page-loading");
+				var spinner=new Spinner(opts).spin(target);
+			}
+		</script>
+	{% endblock %}
+</body>
+</html>

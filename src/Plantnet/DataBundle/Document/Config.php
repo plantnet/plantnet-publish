@@ -41,6 +41,11 @@ class Config
     protected $filepath;
 
     /**
+     * @MongoDB\String
+     */
+    protected $template;
+
+    /**
      * @MongoDB\Boolean
      */
     private $islocked;
@@ -173,6 +178,26 @@ class Config
     public function getFilepath()
     {
         return $this->filepath;
+    }
+
+    /**
+     * Set template
+     *
+     * @param string $template
+     */
+    public function setTemplate($template)
+    {
+        $this->template = $template;
+    }
+
+    /**
+     * Get template
+     *
+     * @return string $template
+     */
+    public function getTemplate()
+    {
+        return $this->template;
     }
 
     /**

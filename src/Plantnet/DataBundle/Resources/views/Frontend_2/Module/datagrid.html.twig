@@ -1,0 +1,170 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
+{% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - Pl@ntnet' %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
+{% endblock %}
+{% block main %}
+    {% if module.description %}
+        <div class="description">
+            {% autoescape false %}
+                {{ module.description }}
+            {% endautoescape %}
+        </div>
+    {% endif %}
+    <div class="results">
+        {% if paginator|length > 0 %}
+            {% if paginator.haveToPaginate() %}
+                <div class="pagerfanta">
+                    {% if sortby != 'null' and sortorder != 'null' %}
+                        <form method="get" action="{{ path('front_module_paginated_sorted', { 'project': project, 'collection': collection.url, 'module': module.url, 'page': page, 'sortby': sortby, 'sortorder': sortorder }) }}">
+                            <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
+                        </form>
+                    {% else %}
+                        <form method="get" action="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+                            <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
+                        </form>
+                    {% endif %}
+                    {% if sortby != 'null' and sortorder != 'null' %}
+                        {{ pagerfanta(
+                            paginator,
+                            'twitter_bootstrap_translated',
+                            {
+                                'proximity': 2,
+                                'prev_message': '←',
+                                'next_message': '→',
+                                'routeName': 'front_module_paginated_sorted',
+                                'routeParams': {
+                                    'project': project,
+                                    'collection': collection.url,
+                                    'module': module.url,
+                                    'sortby': sortby,
+                                    'sortorder': sortorder,
+                                }
+                            }
+                        ) }}
+                    {% else %}
+                        {{ pagerfanta(
+                            paginator,
+                            'twitter_bootstrap_translated',
+                            {
+                                'proximity': 2,
+                                'prev_message': '←',
+                                'next_message': '→',
+                                'routeName': 'front_module_paginated',
+                                'routeParams': {
+                                    'project': project,
+                                    'collection': collection.url,
+                                    'module': module.url
+                                }
+                            }
+                        ) }}
+                    {% endif %}
+                </div>
+            {% endif %}
+             <table class="table table-striped table-hover tr-link dot">
+                <thead>
+                    <tr>
+                        <th class="fixe">
+                            <i class="icon-camera"></i>
+                        </th>
+                        <th class="fixe">
+                            <i class="icon-map-marker"></i>
+                        </th>
+                        {% for property in module.properties if property.id in display %}
+                            <th>
+                                <span class="dot" data-title="{{ property.name }}" data-toggle="tooltip">{{ property.name }}</span>
+                                <span class="nowrap">
+                                    <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/page1/sort-{{ property.id }}/order-asc">
+                                        <i class="icon-circle-arrow-up"></i></a>
+                                    <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/page1/sort-{{ property.id }}/order-desc">
+                                        <i class="icon-circle-arrow-down"></i></a>
+                                </span>
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plantunit in paginator %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.identifier }) }}">
+                                    {% if plantunit.hasimages > 0 %}
+                                        <i class="icon-camera"></i>
+                                    {% endif %}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.identifier }) }}">
+                                    {% if plantunit.haslocations > 0 %}
+                                        <i class="icon-map-marker"></i>
+                                    {% endif %}
+                                </a>
+                            </td>
+                            {% for field in display %}
+                                <td>
+                                    <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.identifier }) }}">
+                                        {{ plantunit.attributes[field] }}
+                                    </a>
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if paginator.haveToPaginate() %}
+                <div class="pagerfanta">
+                    {% if sortby != 'null' and sortorder != 'null' %}
+                        {{ pagerfanta(
+                            paginator,
+                            'twitter_bootstrap_translated',
+                            {
+                                'proximity': 2,
+                                'prev_message': '←',
+                                'next_message': '→',
+                                'routeName': 'front_module_paginated_sorted',
+                                'routeParams': {
+                                    'project': project,
+                                    'collection': collection.url,
+                                    'module': module.url,
+                                    'sortby': sortby,
+                                    'sortorder': sortorder,
+                                }
+                            }
+                        ) }}
+                    {% else %}
+                        {{ pagerfanta(
+                            paginator,
+                            'twitter_bootstrap_translated',
+                            {
+                                'proximity': 2,
+                                'prev_message': '←',
+                                'next_message': '→',
+                                'routeName': 'front_module_paginated',
+                                'routeParams': {
+                                    'project': project,
+                                    'collection': collection.url,
+                                    'module': module.url
+                                }
+                            }
+                        ) }}
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('span.dot').each(function(){
+                if($(this)[0].offsetWidth<$(this)[0].scrollWidth){
+                    $(this).tooltip();
+                }
+            });
+        });
+    </script>
+{% endblock %}
