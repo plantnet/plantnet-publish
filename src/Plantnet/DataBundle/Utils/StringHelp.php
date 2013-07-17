@@ -9,6 +9,11 @@ class StringHelp
 
 	static public function accentToRegex($text)
 	{
+		$tmp=utf8_decode($text);
+		if(utf8_encode($tmp)!=$text){
+			return $text;
+		}
+		unset($tmp);
 		$from=str_split(utf8_decode(self::ACCENT_STRINGS));
 		$to=str_split(strtolower(self::NO_ACCENT_STRINGS));
 		$text=utf8_decode($text);
