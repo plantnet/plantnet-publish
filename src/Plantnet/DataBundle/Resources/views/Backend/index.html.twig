@@ -10,14 +10,14 @@
 			<a href="#" id="title_edit" class="btn btn-small">
 				<i class="icon-edit"></i>
 			</a>
-			<small class="muted right">Language: {{ config.defaultlanguage }}</small>
+			<small class="muted right">Language: {{ config.defaultlanguage|language }}</small>
 		</h4>
 		<div id="modal-update" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 					<i class="icon-remove-sign"></i>
 				</button>
-				<h3 id="myModalLabel">Project name</h3>
+				<h3 id="myModalLabel">Project name ({{ config.defaultlanguage|language }})</h3>
 			</div>
 			<div class="modal-body">
 				<form action="{{ path('config_update_name') }}" method="post" {{ form_enctype(edit_form) }}>
