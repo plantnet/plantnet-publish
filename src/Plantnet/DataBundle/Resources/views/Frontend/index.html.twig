@@ -14,7 +14,7 @@
 				{% if project.children|length > 0 %}
 					{% for child in project.children if child.enable == true %}
 						<a href="{{ path('front_project', {'project': child.link}) }}" class="btn">
-							[{{ child.language }}]
+							[{{ child.language|language }}]
 						</a>
 					{% endfor %}
 				{% endif %}
