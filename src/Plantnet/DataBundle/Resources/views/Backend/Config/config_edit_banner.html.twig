@@ -42,7 +42,7 @@
 	{% endif %}
 	<form action="{{ path('config_update_banner') }}" method="post" {{ form_enctype(edit_form) }}>
 		{{ form_errors(edit_form) }}
-		<div class="field-form rd_chk">
+		<div class="field-form">
 			{{ form_label(edit_form.file) }}
 			{{ form_errors(edit_form.file) }}
 			{{ form_widget(edit_form.file) }}

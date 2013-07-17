@@ -13,31 +13,20 @@
 			The default language will be displayed by default to users and will be applied to each default element created on this dashboard (collections, modules, ...).
 			<br />
 			<br />
-			Other available languages ​​will be used to create additional elements in these languages.
+			Other available languages ​​will be used to create additional databases in these languages.
 			<br />
 			Then, they will be available as translation on the website.
+			<br />
+			<br />
+			The front office interface is only available in english, french and spanish, for other languages, interface's elements will be displayed in english.
 			<br />
 			<br />
 			<strong class="text-error">After the initial configuration, it is recommended to not change these settings.</strong>
 		</p>
 		<form action="{{ path('config_update') }}" method="post" {{ form_enctype(edit_form) }}>
 			{{ form_errors(edit_form) }}
-			{#
-			<div class="field-form rd_chk">
-				{{ form_label(edit_form.defaultlanguage) }}
-				{{ form_errors(edit_form.defaultlanguage) }}
-				{{ form_widget(edit_form.defaultlanguage, {'attr': {'class': 'span1'}}) }}
-			</div>
-			#}
 			<p><strong>Default language:</strong> {{ entity.defaultlanguage|language }}</p>
-			<div class="field-form rd_chk">
-				{{ form_label(edit_form.availablelanguages) }}
-				<br />
-				{{ form_errors(edit_form.availablelanguages) }}
-				{{ form_widget(edit_form.availablelanguages) }}
-			</div>
 			{% if entity.availablelanguages|length > 0 %}
-				<br />
 				<p>
 					Current available languages:
 					{% for language in entity.availablelanguages %}
@@ -45,6 +34,18 @@
 					{% endfor %}
 				</p>
 			{% endif %}
+			<div class="field-form rd_chk">
+				{{ form_label(edit_form.availablelanguages) }}:
+				{{ form_errors(edit_form.availablelanguages) }}
+				<br />
+				<br />
+				{% for child in edit_form.availablelanguages %}
+					<div>
+						{{ form_widget(child) }}
+						{{ form_label(child) }}
+					</div>
+				{% endfor %}
+			</div>
 			{{ form_rest(edit_form) }}
 			<br />
 			<button type="submit" class="btn">Update</button>

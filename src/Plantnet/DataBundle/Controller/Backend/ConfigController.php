@@ -244,6 +244,7 @@ class ConfigController extends Controller
         if(!$database){
             throw $this->createNotFoundException('Unable to find Database entity.');
         }
+        $default_link=$database->getLink();
         $children=$database->getChildren();
         if(count($children)){
             foreach($children as $child){
@@ -271,8 +272,8 @@ class ConfigController extends Controller
                 $new_name=$default_db.'_'.$language;
                 $new_database=new Database();
                 $new_database->setName($new_name);
-                $new_database->setDisplayedname(ucfirst($user->getDbNameUq()).' '.$language);
-                $new_database->setLink($user->getDbNameUq().'_'.$language);
+                $new_database->setDisplayedname(ucfirst($default_link).' '.$language);
+                $new_database->setLink($default_link.'_'.$language);
                 $new_database->setLanguage($language);
                 $new_database->setEnable(true);
                 $new_database->setParent($database);
@@ -307,7 +308,7 @@ class ConfigController extends Controller
                     'islocked'=>true,
                     'originaldb'=>$default_db,
                     'defaultlanguage'=>$language,
-                    'name'=>ucfirst($user->getDbNameUq()).' '.$language
+                    'name'=>ucfirst($default_link).' '.$language
                 ));
             }
         }
