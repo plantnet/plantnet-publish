@@ -9,7 +9,7 @@
 		{% for project in projects %}
 			<div class="btn-group">
 				<a href="{{ path('front_project', {'project': project.link}) }}" class="btn">
-					{{ project.displayedname }}
+					{{ project.displayedname }} [{{ project.language|language }}]
 				</a>
 				{% if project.children|length > 0 %}
 					{% for child in project.children if child.enable == true %}
