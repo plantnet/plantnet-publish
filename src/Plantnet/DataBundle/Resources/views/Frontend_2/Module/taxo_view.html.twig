@@ -1,9 +1,9 @@
-{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_2:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_2:datatypes.html.twig" %}
 {% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
 {% block stylesheets %}
     {{ parent() }}
     {% if current_display == 'locations' %}
-        {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_2:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
 {% block header %}<h1>{{ module.name }} - {{ "line-taxonomy"|trans|capitalize }} - {{ taxon.name }}</h1>{% endblock %}
@@ -52,7 +52,7 @@
     </ul>
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
+    {% include "PlantnetDataBundle:Frontend_2:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     <div class="results">
@@ -305,7 +305,7 @@
                         <div class="gallery">
                             <ul class="thumbnails per3">
                                 {% for image in paginator %}
-                                    {% include "PlantnetDataBundle:Frontend\\Image:item.html.twig" with { image: image } %}
+                                    {% include "PlantnetDataBundle:Frontend_2\\Image:item.html.twig" with { image: image } %}
                                 {% endfor %}
                             </ul>
                         </div>
@@ -346,7 +346,7 @@
 {% block javascripts %}
     {{ parent() }}
     {% if current_display == 'locations' %}
-        {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_2:leaflet.js.html.twig' %}
     {% endif %}
     <script type="text/javascript">
         $(document).ready(function(){

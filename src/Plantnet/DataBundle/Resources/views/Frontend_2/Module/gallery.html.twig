@@ -1,10 +1,10 @@
-{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_2:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_2:datatypes.html.twig" %}
 {% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - Pl@ntnet' %}
 {% block stylesheets %}
     {{ parent() }}
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module_parent } %}
+    {% include "PlantnetDataBundle:Frontend_2:side.html.twig" with { module: module_parent } %}
 {% endblock %}
 {% block main %}
 	<div class="results">
@@ -35,7 +35,7 @@
 			<div class="gallery">
 				<ul class="thumbnails per3">
 					{% for image in paginator %}
-						{% include "PlantnetDataBundle:Frontend\\Image:item.html.twig" with { image: image } %}
+						{% include "PlantnetDataBundle:Frontend_2\\Image:item.html.twig" with { image: image } %}
 					{% endfor %}
 				</ul>
 			</div>

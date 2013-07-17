@@ -164,8 +164,10 @@ class DataController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        return $this->render('PlantnetDataBundle:Frontend:project.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').':project.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'page'=>$page,
             'collections'=>$collections,
@@ -184,8 +186,10 @@ class DataController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collections=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
-        return $this->render('PlantnetDataBundle:Frontend\Collection:collection_list.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Collection:collection_list.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collections'=>$collections
         ));
@@ -217,8 +221,10 @@ class DataController extends Controller
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
-        return $this->render('PlantnetDataBundle:Frontend\Collection:collection.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Collection:collection.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
             'translations'=>$translations,
@@ -323,8 +329,10 @@ class DataController extends Controller
         catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
             throw $this->createNotFoundException('Page not found.');
         }
-        return $this->render('PlantnetDataBundle:Frontend\Module:datagrid.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:datagrid.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
             'module'=>$module,
@@ -447,8 +455,10 @@ class DataController extends Controller
                 catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
                     throw $this->createNotFoundException('Page not found.');
                 }
-                return $this->render('PlantnetDataBundle:Frontend\Module:gallery.html.twig',array(
-                    'config'=>$this->get_config($project),
+                $config=$this->get_config($project);
+                $tpl=$config->getTemplate();
+                return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:gallery.html.twig',array(
+                    'config'=>$config,
                     'project'=>$project,
                     'collection'=>$collection,
                     'module_parent'=>$module_parent,
@@ -463,8 +473,10 @@ class DataController extends Controller
                 $locations=array();
                 $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
-                return $this->render('PlantnetDataBundle:Frontend\Module:map.html.twig',array(
-                    'config'=>$this->get_config($project),
+                $config=$this->get_config($project);
+                $tpl=$config->getTemplate();
+                return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:map.html.twig',array(
+                    'config'=>$config,
                     'project'=>$project,
                     'collection'=>$collection,
                     'module'=>$module,
@@ -702,8 +714,10 @@ class DataController extends Controller
         }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
-        return $this->render('PlantnetDataBundle:Frontend\Plantunit:details.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Plantunit:details.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
             'module'=>$module,
@@ -775,8 +789,10 @@ class DataController extends Controller
         if($start+$max_per_page>=count($images)){
             $next=-1;
         }
-        return $this->render('PlantnetDataBundle:Frontend\Plantunit:details_gallery.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Plantunit:details_gallery.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
             'module'=>$module,
@@ -813,8 +829,10 @@ class DataController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        return $this->render('PlantnetDataBundle:Frontend\Pages:credits.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Pages:credits.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'page'=>$page,
             'translations'=>$translations,
@@ -849,8 +867,10 @@ class DataController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        return $this->render('PlantnetDataBundle:Frontend\Pages:mentions.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Pages:mentions.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'page'=>$page,
             'translations'=>$translations,
@@ -885,8 +905,10 @@ class DataController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        return $this->render('PlantnetDataBundle:Frontend\Pages:contacts.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Pages:contacts.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'page'=>$page,
             'translations'=>$translations,

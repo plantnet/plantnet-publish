@@ -1,4 +1,4 @@
-{% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
+{% extends "PlantnetDataBundle:Frontend_2:layout.html.twig" %}
 {% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
 {% block stylesheets %}
 	{{ parent() }}
@@ -51,7 +51,7 @@
     </ul>
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
+    {% include "PlantnetDataBundle:Frontend_2:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     <div id="taxo">

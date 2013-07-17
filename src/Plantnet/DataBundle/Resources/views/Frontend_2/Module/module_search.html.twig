@@ -1,8 +1,8 @@
-{% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
+{% extends "PlantnetDataBundle:Frontend_2:layout.html.twig" %}
 {% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-search"|trans|capitalize %}
 {% block stylesheets %}
 	{{ parent() }}
-    {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
+    {% include 'PlantnetDataBundle:Frontend_2:leaflet.css.html.twig' %}
 {% endblock %}
 {% block header %}<h1>{{ module.name }} - {{ "tab-search"|trans|capitalize }}</h1>{% endblock %}
 {% block breadcrumb %}
@@ -25,7 +25,7 @@
     </ul>
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
+    {% include "PlantnetDataBundle:Frontend_2:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     <div class="row">
@@ -51,7 +51,7 @@
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
-    {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
+    {% include 'PlantnetDataBundle:Frontend_2:leaflet.js.html.twig' %}
     <script type="text/javascript">
         $(document).ready(function(){
             $('input[type=text]').attr('autocomplete','off');

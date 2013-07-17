@@ -10,7 +10,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Plantnet\DataBundle\Document\Database,
     Plantnet\DataBundle\Document\Config,
     Plantnet\DataBundle\Form\Type\ConfigType,
-    Plantnet\DataBundle\Form\Type\ConfigImageType;
+    Plantnet\DataBundle\Form\Type\ConfigImageType,
+    Plantnet\DataBundle\Form\Type\ConfigTemplateType;
 
 /**
  * Config controller.
@@ -386,5 +387,81 @@ class ConfigController extends Controller
         }
         $userManager->updateUser($user);
         return $this->redirect($this->generateUrl('admin_index'));
+    }
+
+    private function template_list()
+    {
+        $templates=array();
+        $dir=__DIR__.'/../../Resources/views';
+        if(file_exists($dir)&&is_dir($dir)){
+            $files=scandir($dir);
+            foreach($files as $file){
+                if($file!='.'&&$file!='..'&&is_dir($dir.'/'.$file)&&substr_count($file,'Frontend')==1){
+                    $templates[$file]=$file;
+                }
+            }
+        }
+        return $templates;
+    }
+
+    /**
+     * Displays a form to edit Config entity.
+     *
+     * @Route("/edit_template", name="config_edit_template")
+     * @Template()
+     */
+    public function config_edit_templateAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        $templates=$this->template_list();
+        $editForm=$this->createForm(new ConfigTemplateType(),$config,array('templates'=>$templates));
+        return $this->render('PlantnetDataBundle:Backend\Config:config_edit_template.html.twig',array(
+            'entity'=>$config,
+            'views'=>$templates,
+            'edit_form'=>$editForm->createView(),
+            'current'=>'config'
+        ));
+    }
+
+    /**
+     * Edits Config entity.
+     *
+     * @Route("/update_template", name="config_update_template")
+     * @Method("post")
+     * @Template()
+     */
+    public function config_update_templateAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        $templates=$this->template_list();
+        $editForm=$this->createForm(new ConfigTemplateType(),$config,array('templates'=>$templates));
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $editForm->bind($request);
+            $dm->persist($config);
+            $dm->flush();
+        }
+        return $this->render('PlantnetDataBundle:Backend\Config:config_edit_template.html.twig',array(
+            'entity'=>$config,
+            'views'=>$templates,
+            'edit_form'=>$editForm->createView(),
+            'current'=>'config'
+        ));
     }
 }

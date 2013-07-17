@@ -1,4 +1,4 @@
-{% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
+{% extends "PlantnetDataBundle:Frontend_2:layout.html.twig" %}
 {% block title config.name ~ ' - Pl@ntnet' %}
 {% block header %}<h1>{{ config.name }}</h1>{% endblock %}
 {% block row %}
@@ -9,7 +9,7 @@
 	</div>
 	<div>
 		{% for collection in collections if collection.deleting != true %}
-			{% include "PlantnetDataBundle:Frontend\\Collection:collection_presentation.html.twig" %}
+			{% include "PlantnetDataBundle:Frontend_2\\Collection:collection_presentation.html.twig" %}
 		{% endfor %}
 	</div>
 {% endblock %}

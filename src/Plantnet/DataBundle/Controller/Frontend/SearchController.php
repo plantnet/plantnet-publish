@@ -220,8 +220,10 @@ class SearchController extends Controller
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers_search.xml',0,true);
         $form=$this->createModuleSearchForm($fields,$module);
-        return $this->render('PlantnetDataBundle:Frontend\Module:module_search.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:module_search.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
             'module'=>$module,
@@ -433,8 +435,10 @@ class SearchController extends Controller
                             ->execute()
                             ->count();
                     }
-                    return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig',array(
-                        'config'=>$this->get_config($project),
+                    $config=$this->get_config($project);
+                    $tpl=$config->getTemplate();
+                    return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:module_result.html.twig',array(
+                        'config'=>$config,
                         'project'=>$project,
                         'collection'=>$collection,
                         'module'=>$module,
@@ -514,8 +518,10 @@ class SearchController extends Controller
                             ->execute()
                             ->count();
                     }
-                    return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig',array(
-                        'config'=>$this->get_config($project),
+                    $config=$this->get_config($project);
+                    $tpl=$config->getTemplate();
+                    return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:module_result.html.twig',array(
+                        'config'=>$config,
                         'project'=>$project,
                         'collection'=>$collection,
                         'module_parent'=>$module,
@@ -586,8 +592,10 @@ class SearchController extends Controller
                     }
                     $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                     $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
-                    return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig',array(
-                        'config'=>$this->get_config($project),
+                    $config=$this->get_config($project);
+                    $tpl=$config->getTemplate();
+                    return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:module_result.html.twig',array(
+                        'config'=>$config,
                         'project'=>$project,
                         'collection'=>$collection,
                         'module_parent'=>$module,
@@ -613,8 +621,10 @@ class SearchController extends Controller
                 'module'=>$module,
             )));
         }
-        return $this->render('PlantnetDataBundle:Frontend\Module:module_result.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:module_result.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
             'module'=>$module,

@@ -1,4 +1,4 @@
-{% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
+{% extends "PlantnetDataBundle:Frontend_2:layout.html.twig" %}
 {% block title config.name ~ ' - ' ~ collection.name ~ ' - Pl@ntnet' %}
 {% block stylesheets %}
 	{{ parent() }}
@@ -29,7 +29,7 @@
             {% endif %}
             {% for module in collection.modules if module.deleting != true %}
                 <div class="span{{ item_size }}">
-                     {% include "PlantnetDataBundle:Frontend\\Module:module_presentation.html.twig" %}
+                     {% include "PlantnetDataBundle:Frontend_2\\Module:module_presentation.html.twig" %}
                 </div>
             {% endfor %}
         </div>

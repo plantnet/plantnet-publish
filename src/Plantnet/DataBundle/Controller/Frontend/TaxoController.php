@@ -205,8 +205,10 @@ class TaxoController extends Controller
                 ->getQuery()
                 ->execute();
         }
-        return $this->render('PlantnetDataBundle:Frontend\Module:taxo.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:taxo.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
             'module'=>$module,
@@ -273,8 +275,10 @@ class TaxoController extends Controller
             ->sort('name','asc')
             ->getQuery()
             ->execute();
-        return $this->render('PlantnetDataBundle:Frontend\Module:taxo_children.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:taxo_children.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
             'module'=>$module,
@@ -512,8 +516,10 @@ class TaxoController extends Controller
         //count to display
         $nb_images=($taxon->getHasimages())?1:0;
         $nb_locations=($taxon->getHaslocations())?1:0;
-        return $this->render('PlantnetDataBundle:Frontend\Module:taxo_view.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:taxo_view.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
             'module'=>$module,
@@ -663,8 +669,10 @@ class TaxoController extends Controller
         //count to display
         $nb_images=1;
         $nb_locations=($taxon->getHaslocations())?1:0;
-        return $this->render('PlantnetDataBundle:Frontend\Module:taxo_view.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:taxo_view.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
             'module_parent'=>$module,
@@ -786,8 +794,10 @@ class TaxoController extends Controller
         $nb_locations=1;
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
-        return $this->render('PlantnetDataBundle:Frontend\Module:taxo_view.html.twig',array(
-            'config'=>$this->get_config($project),
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:taxo_view.html.twig',array(
+            'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
             'module_parent'=>$module,

@@ -1,11 +1,11 @@
-{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend:datatypes.html.twig" %}
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_2:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_2:datatypes.html.twig" %}
 {% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - Pl@ntnet' %}
 {% block stylesheets %}
 	{{ parent() }}
-	{% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
+	{% include 'PlantnetDataBundle:Frontend_2:leaflet.css.html.twig' %}
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module_parent } %}
+    {% include "PlantnetDataBundle:Frontend_2:side.html.twig" with { module: module_parent } %}
 {% endblock %}
 {% block main %}
     <div>
@@ -19,5 +19,5 @@
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
-	{% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
+	{% include 'PlantnetDataBundle:Frontend_2:leaflet.js.html.twig' %}
 {% endblock %}

@@ -1,11 +1,11 @@
-{% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
+{% extends "PlantnetDataBundle:Frontend_2:layout.html.twig" %}
 {% block title plantunit.title1 ~ ' - ' ~ plantunit.title2 %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.css') }}" type="text/css" />
     {% if plantunit.haslocations == true %}
-        {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_2:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
 {% block header %}<h1>{{ plantunit.title1 }} - {{ plantunit.title2 }}</h1>{% endblock %}
@@ -31,7 +31,7 @@
     </ul>
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
+    {% include "PlantnetDataBundle:Frontend_2:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     <section id="details">
@@ -239,6 +239,6 @@
     </script>
     {% if plantunit.haslocations == true %}
         {% set locations = plantunit.locations %}
-        {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_2:leaflet.js.html.twig' %}
     {% endif %}
 {% endblock %}

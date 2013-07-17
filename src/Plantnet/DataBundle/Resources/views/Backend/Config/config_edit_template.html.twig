@@ -1,0 +1,51 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+	{{ parent() }}
+{% endblock %}
+{% block form %}
+	<div id="title-form">
+		<h4 class="text-info">
+			<em>Config template</em> > Edit
+		</h4>
+	</div>
+	<form action="{{ path('config_update_template') }}" method="post" {{ form_enctype(edit_form) }}>
+		{{ form_errors(edit_form) }}
+		<div class="field-form rd_chk">
+			{{ form_label(edit_form.template) }}
+			{{ form_errors(edit_form.template) }}
+			{{ form_widget(edit_form.template) }}
+		</div>
+		{{ form_rest(edit_form) }}
+		<br />
+		<button type="submit" class="btn">Update</button>
+	</form>
+	<div class="row">
+		{% for view in views %}
+			<div class="span3">
+				<h5>{{ view }}</h5>
+				{% set img = '/bundles/plantnetdata/images/' ~ view ~ '.png' %}
+				<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ view }}">
+					<img src="{{ asset(img) | imagine_filter('thumb_template') }}" alt="{{ view }}" />
+				</a>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$("a.grouped_elements").fancybox({
+				'scrolling':'yes',
+				'autoScale':false,
+				'transitionIn':'elastic',
+				'transitionOut':'elastic',
+				'speedIn':200,
+				'speedOut':200,
+				'enableEscapeButton':true,
+				'hideOnContentClick':true,
+				'titlePosition':'inside'
+			});
+		});
+	</script>
+{% endblock %}
