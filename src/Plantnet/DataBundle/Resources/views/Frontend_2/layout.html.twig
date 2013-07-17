@@ -22,7 +22,7 @@
 		{% block stylesheets %}
 			{% stylesheets
 				filter='less,cssrewrite,?yui_css'
-				output='css/publish.css'
+				output='css/publish_2.css'
 				debug=false
 				'bundles/plantnetdata/bootstrap/css/less/bootstrap.less'
 				'bundles/plantnetdata/css/frontend_2/styles.less'
@@ -43,60 +43,65 @@
 	{% endblock %}
 </head>
 <body>
-	{% block topbar %}
-		<div class="navbar navbar-inverse navbar-fixed-top">
-			<div class="navbar-inner">
-				<div class="container">
-					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-						<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
-					</button>
+	<div class="container">
+		{% block topbar %}
+			<div class="masthead">
+				<header>
 					<a class="brand" href="{{ path('front_project', {'project': project}) }}"></a>
-					<div class="nav-collapse collapse">
-						<ul class="nav">
-							{% if current is not defined %}
-								{% set current = '#' %}
-							{% endif %}
-							<li{% if current == 'project' %} class="active" {% endif %}>
-								<a href="{{ path('front_project', {'project': project}) }}">
-									{{ "tab-home"|trans|capitalize }}
-								</a>
-							</li>
-							<li class="dropdown{% if current == 'collection' %} active {% endif %}">
-								<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans|capitalize }} <span class="caret"></span></a>
-								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-									{% render controller("PlantnetDataBundle:Frontend\\Data:collection_list", {'project': project}) %}
+					<h3 class="muted">{{ config.name }}</h3>
+				</header>
+				<div class="navbar">
+					<div class="navbar-inner">
+						<div class="container">
+							<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+								<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+							</button>
+							<div class="nav-collapse collapse">
+								<ul class="nav">
+									{% if current is not defined %}
+										{% set current = '#' %}
+									{% endif %}
+									<li{% if current == 'project' %} class="active" {% endif %}>
+										<a href="{{ path('front_project', {'project': project}) }}">
+											{{ "tab-home"|trans|capitalize }}
+										</a>
+									</li>
+									<li class="dropdown{% if current == 'collection' %} active {% endif %}">
+										<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans|capitalize }} <span class="caret"></span></a>
+										<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+											{% render controller("PlantnetDataBundle:Frontend\\Data:collection_list", {'project': project}) %}
+										</ul>
+									</li>
 								</ul>
-							</li>
-						</ul>
-					</div>
-					{% if translations is defined %}
-						<div class="pull-right">
-							<ul class="nav">
-								<li class="dropdown">
-									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-										{% for translation in translations if translation.active == 1 %}
-											{{ translation.language|capitalize }}
-										{% endfor %}
-										<span class="caret"></span>
-									</a>
-									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-										{% for translation in translations if translation.active == 0 %}
-											<li>
-												<a href="{{ translation.link }}">
+							</div>
+							{% if translations is defined %}
+								<div class="pull-right">
+									<ul class="nav">
+										<li class="dropdown">
+											<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+												{% for translation in translations if translation.active == 1 %}
 													{{ translation.language|capitalize }}
-												</a>
-											</li>
-										{% endfor %}
+												{% endfor %}
+												<span class="caret"></span>
+											</a>
+											<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+												{% for translation in translations if translation.active == 0 %}
+													<li>
+														<a href="{{ translation.link }}">
+															{{ translation.language|capitalize }}
+														</a>
+													</li>
+												{% endfor %}
+											</ul>
+										</li>
 									</ul>
-								</li>
-							</ul>
+								</div>
+							{% endif %}
 						</div>
-					{% endif %}
+					</div>
 				</div>
 			</div>
-		</div>
-	{% endblock %}
-	<div class="container">
+		{% endblock %}
 		<div class="content">
 			{% if config.filepath %}
 				<div id="banner"{% if current != 'project' %} class="mini"{% endif %}>

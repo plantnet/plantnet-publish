@@ -20,9 +20,6 @@ html{
 html,body{
 	background-color:#EEE;
 }
-body{
-	padding-top:@top_bar_height; // @top_bar_height to make the container go all the way to the bottom of the topbar
-}
 div.clear{
 	clear:both;
 }
@@ -32,12 +29,21 @@ span.nowrap{
 .navbar-inverse .navbar-inner, .navbar-inverse .nav .active > a, .navbar-inverse .nav .active > a:hover, .navbar-inverse .nav .active > a:focus, .navbar-inverse .nav li.dropdown.open > .dropdown-toggle, .navbar-inverse .nav li.dropdown.active > .dropdown-toggle, .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle{
 	background-image:url(../../images/overlay.png);
 }
-.brand{
-	height:16px;
-	width:169px;
-	padding-left:20px;
-	padding-right:20px;
-	background:url(../../images/plantnet.png) no-repeat;
+.masthead .navbar{
+	margin-bottom:10px;
+	margin-left:-@content_padding; // negative indent the amount of the padding to maintain the grid system
+	margin-right:-@content_padding; // negative indent the amount of the padding to maintain the grid system
+}
+header .brand{
+	background:url("../../images/plantnet.png") no-repeat scroll 0 0 transparent;
+	display:inline-block;
+	height:38px;
+    width:200px;
+    margin:10px 0;
+}
+header h3{
+    display:inline;
+    float:right;
 }
 .container > .content{
 	background-color:#FFF;
@@ -46,9 +52,9 @@ span.nowrap{
 	margin-left:-@content_padding; // negative indent the amount of the padding to maintain the grid system
 	margin-right:-@content_padding; // negative indent the amount of the padding to maintain the grid system
 	margin-bottom:@top_bar_height;
-	-webkit-border-radius:0 0 12px 12px;
-	   -moz-border-radius:0 0 12px 12px;
-	        border-radius:0 0 12px 12px;
+	-webkit-border-radius:4px 4px 12px 12px;
+	   -moz-border-radius:4px 4px 12px 12px;
+	        border-radius:4px 4px 12px 12px;
 	-webkit-box-shadow:0 2px 4px rgba(0,0,0,.15);
 	   -moz-box-shadow:0 2px 4px rgba(0,0,0,.15);
 	        box-shadow:0 2px 4px rgba(0,0,0,.15);
@@ -74,6 +80,9 @@ span.nowrap{
 	padding-right:20px;
 	padding-top:4px;
 	padding-bottom:4px;
+	-webkit-border-radius:4px 4px 0 0;
+	   -moz-border-radius:4px 4px 0 0;
+	        border-radius:4px 4px 0 0;
 }
 #banner.mini{
 	height:120px;
