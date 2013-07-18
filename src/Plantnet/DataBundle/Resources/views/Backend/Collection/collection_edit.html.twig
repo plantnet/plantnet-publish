@@ -21,6 +21,11 @@
 			{{ form_widget(edit_form.url) }}
 		</div>
 		<div class="field-form">
+            {{ form_label(edit_form.isglossary, 'Enable glossary', {'label_attr': {'class': 'inline'}}) }}
+            {{ form_errors(edit_form.isglossary) }}
+            {{ form_widget(edit_form.isglossary) }}
+        </div>
+		<div class="field-form">
 			{{ form_label(edit_form.description) }}
 			{{ form_errors(edit_form.description) }}
 			{{ form_widget(edit_form.description, { 'attr': {'class': 'textarea'} }) }}

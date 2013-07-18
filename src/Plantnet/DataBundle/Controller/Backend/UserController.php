@@ -290,6 +290,8 @@ class UserController extends Controller
                         //collections
                         $db->createCollection('Collection');
                         $db->createCollection('Config');
+                        $db->createCollection('Definition');
+                        $db->createCollection('Glossary');
                         $db->createCollection('Image');
                         $db->createCollection('Location');
                         $db->createCollection('Other');

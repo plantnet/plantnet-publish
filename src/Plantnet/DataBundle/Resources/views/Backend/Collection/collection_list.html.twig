@@ -17,6 +17,14 @@
                     Edit
                 </a>
             </li>
+            {% if collection.isglossary == true %}
+                <li>
+                    <a href="#" class="ajax">
+                        <i class="icon-book"></i>
+                        Glossary
+                    </a>
+                </li>
+            {% endif %}
         </ul>
     </li>
     {% for module in collection.modules if module.deleting != true %}

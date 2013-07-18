@@ -54,6 +54,20 @@ class Collection
     private $deleting;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $isglossary;
+
+    /**
+     * @MongoDB\ReferenceOne(
+     *      targetDocument="Glossary",
+     *      mappedBy="collection",
+     *      cascade={"remove"}
+     *  )
+     */
+    private $glossary = array();
+
+    /**
      * To String
      *
      * @return string
@@ -206,5 +220,45 @@ class Collection
     public function getDeleting()
     {
         return $this->deleting;
+    }
+
+    /**
+     * Set isglossary
+     *
+     * @param boolean $isglossary
+     */
+    public function setIsglossary($isglossary)
+    {
+        $this->isglossary = $isglossary;
+    }
+
+    /**
+     * Get isglossary
+     *
+     * @return boolean $isglossary
+     */
+    public function getIsglossary()
+    {
+        return $this->isglossary;
+    }
+
+    /**
+     * Set glossary
+     *
+     * @param Plantnet\DataBundle\Document\Glossary $glossary
+     */
+    public function setGlossary(\Plantnet\DataBundle\Document\Glossary $glossary)
+    {
+        $this->glossary = $glossary;
+    }
+
+    /**
+     * Get glossary
+     *
+     * @return Plantnet\DataBundle\Document\Glossary $glossary
+     */
+    public function getGlossary()
+    {
+        return $this->glossary;
     }
 }

@@ -13,6 +13,9 @@ class CollectionType extends AbstractType
         $builder
             ->add('name')
             ->add('url')
+            ->add('isglossary', 'checkbox', array(
+                'required'=>false
+            ))
             ->add('description', 'textarea', array('required'=>false))
         ;
     }
