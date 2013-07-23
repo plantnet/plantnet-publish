@@ -211,6 +211,15 @@
 					</div>
 					<div class="span8">
 						<div id="content" class="well wellcontent">
+							<div id="alert-box">
+								{% for message in app.session.flashbag.get('msg_success') %}
+									<div class="alert alert-success alert-box-content">
+										<button type="button" class="close" data-dismiss="alert">&times;</button>
+										<strong>Done:</strong>
+										{{ message }}
+									</div>
+								{% endfor %}
+							</div>
 							{% block content %}{% endblock %}
 						</div>
 					</div>
@@ -292,6 +301,13 @@
 			$(document).ready(function(){
 				if($('.modal_db_error').length>0){
 					$('.modal_db_error').modal();
+				}
+				if($('.alert-box-content').length>0){
+					window.setTimeout(function(){
+						$('.alert-box-content').hide(300,function(){
+							$('.alert-box-content').remove();
+						});
+					},4000);
 				}
 				$('a.ajax').live('click',function(e){
 					var $url=$(this).attr('href');

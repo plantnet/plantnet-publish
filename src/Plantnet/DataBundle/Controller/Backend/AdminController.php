@@ -134,6 +134,7 @@ class AdminController extends Controller
                     $dm->flush();
                 }
                 $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                $this->get('session')->getFlashBag()->add('msg_success','Project name updated');
                 return $this->redirect($this->generateUrl('admin_index'));
             }
         }
@@ -442,6 +443,7 @@ class AdminController extends Controller
             if($editForm->isValid()){
                 $dm->persist($page);
                 $dm->flush();
+                $this->get('session')->getFlashBag()->add('msg_success','Page updated');
                 return $this->redirect($this->generateUrl('page_edit',array('alias'=>$alias)));
             }
         }

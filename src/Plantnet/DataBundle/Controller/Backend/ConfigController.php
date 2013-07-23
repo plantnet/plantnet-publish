@@ -107,6 +107,7 @@ class ConfigController extends Controller
             $config->setFilepath('banners/'.$new_name);
             $dm->persist($config);
             $dm->flush();
+            $this->get('session')->getFlashBag()->add('msg_success','Banner updated');
         }
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit_banner.html.twig',array(
             'entity'=>$config,
@@ -151,6 +152,7 @@ class ConfigController extends Controller
                     unlink($this->get('kernel')->getRootDir().'/../web/'.$old_banner);
                     $dm->persist($config);
                     $dm->flush();
+                    $this->get('session')->getFlashBag()->add('msg_success','Banner deleted');
                 }
             }
         }
@@ -222,6 +224,7 @@ class ConfigController extends Controller
                 }
                 $dm->persist($config);
                 $dm->flush();
+                $this->get('session')->getFlashBag()->add('msg_success','Languages updated');
             }
         }
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit.html.twig',array(
@@ -389,6 +392,7 @@ class ConfigController extends Controller
             }
         }
         $userManager->updateUser($user);
+        $this->get('session')->getFlashBag()->add('msg_success','Switched to '.\Locale::getDisplayName($lang).' content');
         return $this->redirect($this->generateUrl('admin_index'));
     }
 
@@ -459,6 +463,7 @@ class ConfigController extends Controller
             $editForm->bind($request);
             $dm->persist($config);
             $dm->flush();
+            $this->get('session')->getFlashBag()->add('msg_success','Template updated');
         }
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit_template.html.twig',array(
             'entity'=>$config,

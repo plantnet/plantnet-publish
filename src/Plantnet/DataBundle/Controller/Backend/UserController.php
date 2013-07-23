@@ -192,6 +192,7 @@ class UserController extends Controller
                 if(in_array('ROLE_SUPER_ADMIN',$roles)&&$username==$this->container->get('security.context')->getToken()->getUser()->getUsernameCanonical()){
                     $user->setDbName($form->get('dbs')->getData());
                     $userManager->updateUser($user);
+                    $this->get('session')->getFlashBag()->add('msg_success','Switched to '.$form->get('dbs')->getData().' database');
                 }
             }
         }
@@ -232,6 +233,7 @@ class UserController extends Controller
                         $user->setSuper(false);
                         $user->addRole('ROLE_SUPER_ADMIN');
                         $userManager->updateUser($user);
+                        $this->get('session')->getFlashBag()->add('msg_success','Role Super Admin granted');
                     }
                     else{
                         echo 'Error...';
@@ -332,6 +334,7 @@ class UserController extends Controller
                             ),'text/html')
                         ;
                         $this->container->get('mailer')->send($message);
+                        $this->get('session')->getFlashBag()->add('msg_success','Role Admin granted');
                     }
                     else{
                         echo 'Error...';
@@ -371,6 +374,7 @@ class UserController extends Controller
                 $roles=$user->getRoles();
                 if(!in_array('ROLE_ADMIN',$roles)&&!in_array('ROLE_SUPER_ADMIN',$roles)){
                     $userManager->deleteUser($user);
+                    $this->get('session')->getFlashBag()->add('msg_success','User deleted');
                 }
             }
         }

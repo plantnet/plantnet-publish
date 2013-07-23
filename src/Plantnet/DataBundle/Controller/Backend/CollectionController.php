@@ -101,6 +101,7 @@ class CollectionController extends Controller
                         $document->setDeleting(false);
                         $dm->persist($document);
                         $dm->flush();
+                        $this->get('session')->getFlashBag()->add('msg_success','Collection created');
                         return $this->redirect($this->generateUrl('module_new',array(
                             'id'=>$document->getId(),
                             'type'=>'module'
@@ -177,6 +178,7 @@ class CollectionController extends Controller
                 if($editForm->isValid()){
                     $dm->persist($collection);
                     $dm->flush();
+                    $this->get('session')->getFlashBag()->add('msg_success','Collection updated');
                     return $this->redirect($this->generateUrl('collection_edit',array('id'=>$id)));
                 }
             }
@@ -216,6 +218,7 @@ class CollectionController extends Controller
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
+                $this->get('session')->getFlashBag()->add('msg_success','Collection deleted');
             }
         }
         return $this->redirect($this->generateUrl('admin_index'));

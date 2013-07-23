@@ -246,6 +246,7 @@ class ModulesController extends Controller
                             $module->setDeleting(false);
                             $dm->persist($module);
                             $dm->flush();
+                            $this->get('session')->getFlashBag()->add('msg_success','Module created');
                             return $this->redirect($this->generateUrl('fields_type',array('id'=>$collection->getId(),'idmodule'=>$module->getId())));
                         }
                     }
@@ -666,6 +667,7 @@ class ModulesController extends Controller
                         $dm->persist($module);
                         $dm->flush();
                         $this->update_indexes($module);
+                        $this->get('session')->getFlashBag()->add('msg_success','Module updated');
                         return $this->redirect($this->generateUrl('module_edit',array('id'=>$id)));
                     }
                 }
@@ -747,6 +749,7 @@ class ModulesController extends Controller
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
+                $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
                 return $this->redirect($this->generateUrl('module_edit_taxo',array('id'=>$id)));
             }
         }
@@ -827,6 +830,7 @@ class ModulesController extends Controller
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
+                $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
                 return $this->redirect($this->generateUrl('module_syn',array('id'=>$module->getId())));
             }
         }
@@ -854,6 +858,7 @@ class ModulesController extends Controller
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
+                $this->get('session')->getFlashBag()->add('msg_success','Module deleted');
             }
         }
         return $this->redirect($this->generateUrl('admin_index'));
