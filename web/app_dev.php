@@ -21,6 +21,10 @@ require_once __DIR__.'/../app/AppKernel.php';
 
 $kernel = new AppKernel('dev', true);
 $kernel->loadClassCache();
+
+//prevent varnish 8080 redirect
+$_SERVER['SERVER_PORT'] = 80;
+
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();
