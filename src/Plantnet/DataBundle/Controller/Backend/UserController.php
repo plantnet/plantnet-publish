@@ -320,6 +320,18 @@ class UserController extends Controller
                         $user->setDbName($dbName);
                         $user->addRole('ROLE_ADMIN');
                         $userManager->updateUser($user);
+                        //send mail
+                        $message=\Swift_Message::newInstance()
+                            ->setSubject('Publish : account enabled')
+                            ->setFrom($this->container->getParameter('from_email_adress'))
+                            ->setTo($user->getEmail())
+                            ->setBody($this->container->get('templating')->render(
+                                'PlantnetDataBundle:Backend\Mail:enable.txt.twig',array(
+                                    'url'=>$this->get('router')->generate('admin_index',array(),true)
+                                )
+                            ),'text/html')
+                        ;
+                        $this->container->get('mailer')->send($message);
                     }
                     else{
                         echo 'Error...';

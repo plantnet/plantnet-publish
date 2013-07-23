@@ -77,90 +77,156 @@
 <body>
 	{% block body %}
 		<div class="container">
-			<div class="masthead">
-				{% block header %}
-					<header>
-						<a title="Back to Homepage" href="{{ path('admin_index') }}"></a>
-						<h3 class="muted">
-							{% if app.user.dbName %}
-								[Publish - {% render controller("PlantnetDataBundle:Backend/Admin:displayTitle") %}]
-							{% else %}
-								[Publish]
-							{% endif %}
-						</h3>
-					</header>
-				{% endblock %}
+			{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') %}
+				<div class="masthead">
+					{% block header %}
+						<header>
+							<a title="Back to Homepage" href="{{ path('admin_index') }}"></a>
+							<h3 class="muted">
+								{% if app.user.dbName %}
+									[Publish - {% render controller("PlantnetDataBundle:Backend/Admin:displayTitle") %}]
+								{% else %}
+									[Publish]
+								{% endif %}
+							</h3>
+						</header>
+					{% endblock %}
+					<div class="navbar">
+						<div class="navbar-inner">
+							<div class="container">
+								<ul id="menu" class="nav">
+									{% if current is not defined %}
+										{% set current = '#' %}
+									{% endif %}
+									<li{% if current == 'index' %} class="active"{% endif %}>
+										<a href="{{ path('admin_index') }}">
+											<i class="icon-home"></i>
+											Home
+										</a>
+									</li>
+									{% if app.user.dbName %}
+										<li class="dropdown{% if current == 'pages' %} active{% endif %}">
+											<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+												<i class="icon-edit"></i>
+												Edit pages
+												<span class="caret"></span>
+											</a>
+											<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+												{% render controller("PlantnetDataBundle:Backend/Admin:page_list") %}
+											</ul>
+										</li>
+										<li class="dropdown{% if current == 'config' %} active{% endif %}">
+											<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+												<i class="icon-wrench"></i>
+												Settings
+												<span class="caret"></span>
+											</a>
+											<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+												<li>
+													<a class="edit ajax" href="{{ path('config_edit') }}">
+														<i class="icon-globe"></i>
+											            Languages
+											        </a>
+												</li>
+												<li>
+													<a class="edit ajax" href="{{ path('config_edit_banner') }}">
+														<i class="icon-picture"></i>
+														Banner
+													</a>
+												</li>
+												<li>
+													<a class="edit ajax" href="{{ path('config_edit_template') }}">
+														<i class="icon-eye-open"></i>
+														Template
+													</a>
+												</li>
+											</ul>
+										</li>
+										{% render controller("PlantnetDataBundle:Backend/Config:language_list") %}
+									{% endif %}
+									{% if is_granted('ROLE_SUPER_ADMIN') %}
+										<li{% if current == 'users' %} class="active"{% endif %}>
+											<a title="Users" href="{{ path('admin_users_list') }}">
+												<i class="icon-user"></i>
+												Users
+												{% render controller("PlantnetDataBundle:Backend/User:displayNew") %}
+											</a>
+										</li>
+									{% endif %}
+									<li>
+										<a title="Public Website" href="{{ path('front_index') }}">
+											<i class="icon-leaf"></i>
+											View website
+										</a>
+									</li>
+								</ul>
+								<ul class="nav pull-right">
+									<li class="dropdown{% if current == 'settings' %} active{% endif %}">
+										<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+											<i class="icon-user"></i>
+											{{ app.user.username }}
+											<span class="caret"></span>
+										</a>
+										<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+											<li class="disabled">
+												<a tabindex="-1" href="#">
+													<em><strong>Administrator</strong></em>
+												</a>
+											</li>
+											{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+												{% block user_panel %}
+													<li>
+														<a title="Account Settings and Profile Page" href="{{ path('fos_user_profile_show') }}" class="ajax">
+															<i class="icon-wrench"></i>
+															Settings
+														</a>
+													</li>
+													<li class="divider"></li>
+													<li>
+														<a title="Logout" href="{{ path('fos_user_security_logout') }}">
+															<i class="icon-off"></i>
+															{{ 'layout.logout'|trans([], 'FOSUserBundle')|capitalize }}
+														</a>
+													</li>
+												{% endblock %}
+											{% endif %}
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="span4">
+						{% block sidebar %}
+							<div class="well wellnav">
+								{% if app.user.dbName %}
+									<ul id="left-menu" class="nav nav-list">
+										{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
+									</ul>
+								{% endif %}
+							</div>
+						{% endblock %}
+					</div>
+					<div class="span8">
+						<div id="content" class="well wellcontent">
+							{% block content %}{% endblock %}
+						</div>
+					</div>
+				</div>
+			{% else %}
+				<header>
+					<a title="Back to Homepage" href="{{ path('admin_index') }}"></a>
+					<h3 class="muted">
+						[Publish]
+					</h3>
+				</header>
 				<div class="navbar">
 					<div class="navbar-inner">
 						<div class="container">
-							<ul id="menu" class="nav">
-								{% if current is not defined %}
-									{% set current = '#' %}
-								{% endif %}
-								<li{% if current == 'index' %} class="active"{% endif %}>
-									<a href="{{ path('admin_index') }}">
-										<i class="icon-home"></i>
-										Home
-									</a>
-								</li>
-								{% if app.user.dbName %}
-									<li class="dropdown{% if current == 'pages' %} active{% endif %}">
-										<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-											<i class="icon-edit"></i>
-											Edit pages
-											<span class="caret"></span>
-										</a>
-										<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-											{% render controller("PlantnetDataBundle:Backend/Admin:page_list") %}
-										</ul>
-									</li>
-									<li class="dropdown{% if current == 'config' %} active{% endif %}">
-										<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-											<i class="icon-wrench"></i>
-											Settings
-											<span class="caret"></span>
-										</a>
-										<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-											<li>
-												<a class="edit ajax" href="{{ path('config_edit') }}">
-													<i class="icon-globe"></i>
-										            Languages
-										        </a>
-											</li>
-											<li>
-												<a class="edit ajax" href="{{ path('config_edit_banner') }}">
-													<i class="icon-picture"></i>
-													Banner
-												</a>
-											</li>
-											<li>
-												<a class="edit ajax" href="{{ path('config_edit_template') }}">
-													<i class="icon-eye-open"></i>
-													Template
-												</a>
-											</li>
-										</ul>
-									</li>
-									{% render controller("PlantnetDataBundle:Backend/Config:language_list") %}
-								{% endif %}
-								{% if is_granted('ROLE_SUPER_ADMIN') %}
-									<li{% if current == 'users' %} class="active"{% endif %}>
-										<a title="Users" href="{{ path('admin_users_list') }}">
-											<i class="icon-user"></i>
-											Users
-											{% render controller("PlantnetDataBundle:Backend/User:displayNew") %}
-										</a>
-									</li>
-								{% endif %}
-								<li>
-									<a title="Public Website" href="{{ path('front_index') }}">
-										<i class="icon-leaf"></i>
-										View website
-									</a>
-								</li>
-							</ul>
 							<ul class="nav pull-right">
-								<li class="dropdown{% if current == 'settings' %} active{% endif %}">
+								<li class="dropdown">
 									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
 										<i class="icon-user"></i>
 										{{ app.user.username }}
@@ -173,21 +239,12 @@
 											</a>
 										</li>
 										{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-											{% block user_panel %}
-												<li>
-													<a title="Account Settings and Profile Page" href="{{ path('fos_user_profile_show') }}" class="ajax">
-														<i class="icon-wrench"></i>
-														Settings
-													</a>
-												</li>
-												<li class="divider"></li>
-												<li>
-													<a title="Logout" href="{{ path('fos_user_security_logout') }}">
-														<i class="icon-off"></i>
-														{{ 'layout.logout'|trans([], 'FOSUserBundle')|capitalize }}
-													</a>
-												</li>
-											{% endblock %}
+											<li>
+												<a title="Logout" href="{{ path('fos_user_security_logout') }}">
+													<i class="icon-off"></i>
+													{{ 'layout.logout'|trans([], 'FOSUserBundle')|capitalize }}
+												</a>
+											</li>
 										{% endif %}
 									</ul>
 								</li>
@@ -195,25 +252,14 @@
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="span4">
-					{% block sidebar %}
-						<div class="well wellnav">
-							{% if app.user.dbName %}
-								<ul id="left-menu" class="nav nav-list">
-									{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
-								</ul>
-							{% endif %}
-						</div>
-					{% endblock %}
+				<div class="well">
+					<p class="text-error">
+						This account must be validated by an administrator.
+						<br />
+						You will receive an email to confirm this validation.
+					</p>
 				</div>
-				<div class="span8">
-					<div id="content" class="well wellcontent">
-						{% block content %}{% endblock %}
-					</div>
-				</div>
-			</div>
+			{% endif %}
 		</div>
 		{% for flashMessage in app.session.flashbag.get('db_error') %}
 			<div class="modal hide fade modal_db_error">

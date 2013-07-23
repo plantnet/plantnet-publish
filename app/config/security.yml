@@ -59,5 +59,10 @@ security:
         # Change these rules to adapt them to your needs
         # /!\ Use DESC order /!\
         - { path: ^/admin/users/, role: ROLE_SUPER_ADMIN }
-        - { path: ^/admin/, role: ROLE_ADMIN }
+        - { path: ^/admin/module/, role: ROLE_ADMIN }
+        - { path: ^/admin/export/, role: ROLE_ADMIN }
+        - { path: ^/admin/config/, role: ROLE_ADMIN }
+        - { path: ^/admin/collection/, role: ROLE_ADMIN }
+        - { path: ^/admin/page/, role: ROLE_ADMIN }
+        - { path: ^/admin/, role: ROLE_USER }
         - { path: ^/.*, role: IS_AUTHENTICATED_ANONYMOUSLY }
