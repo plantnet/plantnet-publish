@@ -31,6 +31,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             ->setDescription('create taxons entities')
             ->addArgument('id',InputArgument::REQUIRED,'Specify the ID of the module entity')
             ->addArgument('dbname',InputArgument::REQUIRED,'Specify a database name')
+            ->addArgument('usermail',InputArgument::REQUIRED,'Specify a user e-mail')
         ;
     }
 
@@ -38,12 +39,13 @@ class TaxonomizeCommand extends ContainerAwareCommand
     {
         $id=$input->getArgument('id');
         $dbname=$input->getArgument('dbname');
-        if($id&&$dbname){
-            $this->taxonomize($dbname,$id);
+        $usermail=$input->getArgument('usermail');
+        if($id&&$dbname&&$usermail){
+            $this->taxonomize($dbname,$id,$usermail);
         }
     }
 
-    private function taxonomize($dbname,$id_module)
+    private function taxonomize($dbname,$id_module,$usermail)
     {
         $error='';
         $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
@@ -402,6 +404,22 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $module->setUpdating(false);
             $dm->persist($module);
             $dm->flush();
+            $message=$error;
+            if(empty($message)){
+                $message='Taxa were created successfully.';
+            }
+            $message_mail=\Swift_Message::newInstance()
+                ->setSubject('Publish : task ended')
+                ->setFrom($this->getContainer()->getParameter('from_email_adress'))
+                ->setTo($usermail)
+                ->setBody($message.$this->getContainer()->get('templating')->render(
+                    'PlantnetDataBundle:Backend\Mail:task.txt.twig'
+                ))
+            ;
+            $this->getContainer()->get('mailer')->send($message_mail);
+            $spool=$this->getContainer()->get('mailer')->getTransport()->getSpool();
+            $transport=$this->getContainer()->get('swiftmailer.transport.real');
+            $spool->flushQueue($transport);
         }
     }
 

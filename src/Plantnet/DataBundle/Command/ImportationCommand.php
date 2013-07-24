@@ -340,6 +340,9 @@ class ImportationCommand extends ContainerAwareCommand
                 ))
             ;
             $this->getContainer()->get('mailer')->send($message_mail);
+            $spool=$this->getContainer()->get('mailer')->getTransport()->getSpool();
+            $transport=$this->getContainer()->get('swiftmailer.transport.real');
+            $spool->flushQueue($transport);
         }
     }
 
