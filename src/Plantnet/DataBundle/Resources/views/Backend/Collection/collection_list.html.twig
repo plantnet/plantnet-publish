@@ -17,12 +17,14 @@
                     Edit
                 </a>
             </li>
+            {% if collection.glossary is not empty %}
             <li>
-                <a href="#" class="ajax">
+                <a href="{{ path('glossary_edit', { 'id': collection.glossary.id }) }}" class="ajax">
                     <i class="icon-book"></i>
                     Glossary
                 </a>
             </li>
+            {% endif %}
         </ul>
     </li>
     {% for module in collection.modules if module.deleting != true %}
@@ -112,6 +114,14 @@
             <a href="{{ path('module_new', { 'id': collection.id, 'type': 'submodule' }) }}" class="muted ajax">
                 <i class="icon-plus"></i>
                 Add Sub-module
+            </a>
+        </li>
+    {% endif %}
+    {% if collection.glossary is empty %}
+        <li>
+            <a href="{{ path('glossary_new', { 'id': collection.id }) }}" class="muted ajax">
+                <i class="icon-plus"></i>
+                Add Glossary
             </a>
         </li>
     {% endif %}

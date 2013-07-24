@@ -1,0 +1,35 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block form %}
+    <div id="title-form">
+        <h4 class="text-info">
+            <em>Collection: {{ collection.name }}</em> > Add glossary
+        </h4>
+    </div>
+    <p>
+        Glossary will be linked to the collection and it will be available for each modules and sub-modules under this collection.
+        <br />
+        <br />
+        File reading starts at the second line, so first one must contain column heads.
+        <br />
+        CSV file should contain three columns (keyword(s), definition, path of the associated image file).
+        <br />
+        Content of the keyword column must be unique to be used as identifier.
+    </p>
+    <form id="add_glossary" action="{{ path('glossary_create', { 'id': collection.id }) }}" method="post" {{ form_enctype(form) }}>
+        {{ form_errors(form) }}
+        <div class="field-form">
+            {{ form_label(form.file, 'CSV data') }}
+            {{ form_errors(form.file) }}
+            {{ form_widget(form.file) }}
+        </div>
+        {{ form_rest(form) }}
+        <br />
+        <button type="submit" class="btn">Import structure</button>
+    </form>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

@@ -2,6 +2,7 @@
 namespace Plantnet\DataBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\GlossaryRepository")
@@ -19,6 +20,17 @@ class Glossary
     private $uploaddir;
 
     /**
+     * 
+     * @Assert\File(maxSize = "60M")
+     */
+    protected $file;
+
+    /**
+     * @MongoDB\EmbedMany(targetDocument="Property")
+     */
+    protected $properties;
+
+    /**
      * @MongoDB\ReferenceMany(
      *      targetDocument="Definition",
      *      sort={"name"="asc"},
@@ -26,7 +38,7 @@ class Glossary
      *      cascade={"remove"}
      *  )
      */
-    protected $definitions;
+    protected $definitions = array();
 
     /**
      * @MongoDB\ReferenceOne(
@@ -38,6 +50,7 @@ class Glossary
 
     public function __construct()
     {
+        $this->properties = new \Doctrine\Common\Collections\ArrayCollection();
         $this->definitions = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -69,6 +82,66 @@ class Glossary
     public function getUploaddir()
     {
         return $this->uploaddir;
+    }
+
+    /**
+     * Set File
+     *
+     * @param text $file
+     */
+    public function setFile($file)
+    {
+        $this->file = $file;
+    }
+
+    /**
+     * Get File
+     *
+     * @return text $file
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    /**
+     * Add properties
+     *
+     * @param Plantnet\DataBundle\Document\Property $properties
+     */
+    public function addPropertie(\Plantnet\DataBundle\Document\Property $properties)
+    {
+        $this->properties[] = $properties;
+    }
+
+    /**
+    * Remove properties
+    *
+    * @param <variableType$properties
+    */
+    public function removePropertie(\Plantnet\DataBundle\Document\Property $properties)
+    {
+        $this->properties->removeElement($properties);
+    }
+
+    /**
+     * Add properties
+     *
+     * @param Plantnet\DataBundle\Document\Property $properties
+     */
+    public function addProperties(\Plantnet\DataBundle\Document\Property $properties)
+    {
+        $this->properties[] = $properties;
+    }
+
+    /**
+     * Get properties
+     *
+     * @return Doctrine\Common\Collections\Collection $properties
+     */
+    public function getProperties()
+    {
+        return $this->properties;
     }
 
     /**

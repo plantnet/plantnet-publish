@@ -1,0 +1,49 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block form %}
+    <div id="title-form">
+        <h4 class="text-info">
+            <em>Glossary</em> > Properties configuration
+        </h4>
+    </div>
+    <form action="{{ path('glossary_save_fields', { 'id': collection.id }) }}" method="post" {{ form_enctype(form) }}>
+        {{ form_errors(form) }}
+        {% for flashmessage in app.session.flashbag.get('error') %}
+            <div class="flash-error">
+                <p class="text-error">
+                    {{ flashmessage }}
+                </p>
+            </div>
+        {% endfor %}
+        <table id="table-form" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th class="middle">Field</th>
+                    <th class="middle">Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for property in form.properties %}
+                    <tr>
+                        <td>
+                            {{ form_errors(property.name) }}
+                            {{ form_widget(property.name) }}
+                        </td>
+                        <td class="middle">
+                            {{ form_errors(property.type) }}
+                            {{ form_widget(property.type) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {{ form_rest(form) }}
+        <br />
+        <button type="submit" class="btn">Save</button>
+    </form>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block form %}
+	<div id="title-form">
+		<h4 class="text-info">
+			<em>Glossary</em> > Import data
+		</h4>
+	</div>
+	<form id="import_data" action="{{ path('glossary_import_data', { 'id': collection.id }) }}" method="post" {{ form_enctype(form) }}>
+		<button id="import-button" type="submit" class="btn">Import data<div class="loading"></div></button>
+	</form>
+	<div id="data">
+		{% include 'PlantnetDataBundle:Backend\\Glossary:glossary_import_glossarydata.html.twig' with {'importCount' : importCount } %}
+	</div>
+	<table class="table table-bordered table-condensed table-hover">
+		<thead>
+			<tr>
+				<td>Field</td>
+				<td>Type</td>
+			</tr>
+		</thead>
+		<tbody>
+			{% for property in glossary.properties %}
+				<tr>
+					<td>{{ property.name }}</td>
+					<td>{{ property.type }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$(".loading").hide();
+			$("#import_data").submit(function(){
+				$(".loading").show();
+				$('#import-button').attr("disabled",true);
+				var glossary = $('#glossary_name').val();
+				$(".loading").show();
+				var DATA = 'glossary=' + glossary;
+				$.ajax({
+					type: "POST",
+					url: "{{ path('glossary_importation', { 'id': collection.id }) }}",
+					data: DATA,
+					cache: false,
+					success: function(data){
+						$('#data').html(data);
+						$(".loading").hide();
+					}
+				});
+				return false;
+			});
+		});
+	</script>
+{% endblock %}

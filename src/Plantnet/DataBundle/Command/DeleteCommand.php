@@ -39,12 +39,15 @@ class DeleteCommand extends ContainerAwareCommand
         $type=$input->getArgument('type');
         $id=$input->getArgument('id');
         $dbname=$input->getArgument('dbname');
-        if($type&&$id&&($type=='collection'||$type=='module')&&$dbname){
+        if($type&&$id&&($type=='collection'||$type=='module'||$type=='glossary')&&$dbname){
             if($type=='module'){
                 $this->delete_module($dbname,$id);
             }
             elseif($type=='collection'){
                 $this->delete_collection($dbname,$id);
+            }
+            elseif($type=='glossary'){
+                $this->delete_glossary($dbname,$id);
             }
         }
     }
@@ -365,6 +368,35 @@ class DeleteCommand extends ContainerAwareCommand
         * Remove Collection + Cascade
         */
         $dm->remove($collection);
+        $dm->flush();
+    }
+
+    private function delete_glossary($dbname,$id)
+    {
+        $error='';
+        $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($dbname);
+        $configuration=$dm->getConnection()->getConfiguration();
+        $configuration->setLoggerCallable(null);
+        \MongoCursor::$timeout=-1;
+        $glossary=$dm->getRepository('PlantnetDataBundle:Glossary')
+            ->findOneBy(array(
+                'id'=>$id
+            ));
+        if(!$glossary){
+            $error='Unable to find Glossary entity.';
+        }
+        /*
+        * Remove csv directory (and files)
+        */
+        $file=__DIR__.'/../Resources/uploads/'.$glossary->getCollection()->getAlias().'/glossary.csv';
+        if(file_exists($file)){
+            unlink($file);
+        }
+        /*
+        * Remove Glossary + Cascade
+        */
+        $dm->remove($glossary);
         $dm->flush();
     }
 }

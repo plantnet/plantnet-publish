@@ -1,0 +1,47 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block form %}
+    <div id="title-form">
+        <h4 class="text-info">
+            <em>Glossary</em> > Edit
+        </h4>
+    </div>
+    <form id="form-delete" action="{{ path('glossary_delete', { 'id': entity.id }) }}" method="post">
+        {{ form_widget(delete_form) }}
+        <button id="btn-delete-1" type="submit" class="btn"><i class="icon-trash"></i> Delete</button>
+    </form>
+    <div id="modal-delete" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                <i class="icon-remove-sign"></i>
+            </button>
+            <h3 id="myModalLabel">Delete ?</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-error">
+                <i class="icon-warning-sign"></i> Delete this glossary and its associated data ?
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">No</button>
+            <button class="btn" id="btn-delete-2"><i class="icon-trash"></i> Yes</button>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#btn-delete-1').click(function(event){
+                event.preventDefault();
+                $('#modal-delete').modal();
+                return false;
+            });
+            $('#btn-delete-2').click(function(){
+                $('#form-delete').submit();
+            });
+        });
+    </script>
+{% endblock %}
