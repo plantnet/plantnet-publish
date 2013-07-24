@@ -352,6 +352,13 @@ class DeleteCommand extends ContainerAwareCommand
             }
         }
         /*
+        * Remove Glossary
+        */
+        $glossary=$collection->getGlossary();
+        if($glossary){
+            $this->delete_glossary($dbname,$glossary->getId());
+        }
+        /*
         * Remove csv directory (and files)
         */
         $dir=__DIR__.'/../Resources/uploads/'.$collection->getAlias();
@@ -392,6 +399,51 @@ class DeleteCommand extends ContainerAwareCommand
         $file=__DIR__.'/../Resources/uploads/'.$glossary->getCollection()->getAlias().'/glossary.csv';
         if(file_exists($file)){
             unlink($file);
+        }
+        /*
+        * Remove upload directory
+        */
+        $dir=$glossary->getUploaddir();
+        $del_dir=true;
+        $nb_equal_dirs=0;
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if($config){
+            $original_db=$config->getOriginaldb();
+            if($original_db){
+                $connection=new \MongoClient();
+                $dbs_array=array();
+                $dbs=$connection->admin->command(array(
+                    'listDatabases'=>1
+                ));
+                foreach($dbs['databases'] as $db){
+                    $db_name=$db['name'];
+                    if(substr_count($db_name,$original_db)){
+                        $dbs_array[]=$db_name;
+                    }
+                }
+                if(count($dbs_array)>1){
+                    foreach($dbs_array as $chk_db){
+                        $nb_equal_dirs+=$connection->$chk_db->Glossary->find(array('uploaddir'=>$dir))->count();
+                    }
+                }
+            }
+        }
+        if($nb_equal_dirs>1){
+            $del_dir=false;
+        }
+        if($dir&&$del_dir){
+            $dir=__DIR__.'/../../../../web/uploads/'.$dir;
+            if(file_exists($dir)&&is_dir($dir)){
+                $files=scandir($dir);
+                foreach($files as $file){
+                    if($file!='.'&&$file!='..'){
+                        unlink($dir.'/'.$file);
+                    }
+                }
+                rmdir($dir);
+            }
         }
         /*
         * Remove Glossary + Cascade
