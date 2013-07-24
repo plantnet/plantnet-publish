@@ -4,7 +4,7 @@ namespace Plantnet\DataBundle\Document;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
 /**
- * @MongoDB\EmbeddedDocument
+ * @MongoDB\Document(repositoryClass="Plantnet\DataBundle\Repository\DefinitionRepository")
  */
 class Definition
 {

@@ -19,9 +19,11 @@ class Glossary
     private $uploaddir;
 
     /**
-     * @MongoDB\EmbedMany(
+     * @MongoDB\ReferenceMany(
      *      targetDocument="Definition",
-     *      sort={"name"="asc"}
+     *      sort={"name"="asc"},
+     *      mappedBy="glossary",
+     *      cascade={"remove"}
      *  )
      */
     protected $definitions;
