@@ -130,8 +130,12 @@
         <target state="new">synonymes :</target>
       </trans-unit>
       <trans-unit id="30" resname="line-valid-taxon">
-        <source>line--valid-taxon</source>
+        <source>line-valid-taxon</source>
         <target state="new">taxon valide :</target>
+      </trans-unit>
+      <trans-unit id="31" resname="line-glossary">
+        <source>line-glossary</source>
+        <target state="new">glossaire</target>
       </trans-unit>
     </body>
   </file>

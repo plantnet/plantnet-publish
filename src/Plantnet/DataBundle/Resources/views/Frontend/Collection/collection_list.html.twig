@@ -50,4 +50,11 @@
 			</ul>
 		</li>
 	{% endfor %}
+	{% if collection.glossary is not empty %}
+		<li>
+			<a href="{{ path('front_glossary', { 'project': project, 'collection': collection.url }) }}">
+				{{ "line-glossary"|trans|capitalize }}
+			</a>
+		</li>
+	{% endif %}
 {% endfor %}

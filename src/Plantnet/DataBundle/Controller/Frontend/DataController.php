@@ -803,6 +803,48 @@ class DataController extends Controller
     }
 
     /**
+     * @Route("/project/{project}/collection/{collection}/glossary/terms", name="front_glossary")
+     * @Template()
+     */
+    public function glossaryAction($project,$collection)
+    {
+        $translations=$this->make_translations(
+            $project,
+            $this->container->get('request')->get('_route'),
+            array(
+                'project'=>$project,
+                'collection'=>$collection
+            )
+        );
+        //
+        $projects=$this->database_list();
+        if(!in_array($project,$projects)){
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneBy(array('url'=>$collection));
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $glossary=$collection->getGlossary();
+        if(!$glossary){
+            throw $this->createNotFoundException('Unable to find Glossary entity.');
+        }
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').':glossary.html.twig',array(
+            'config'=>$config,
+            'project'=>$project,
+            'collection'=>$collection,
+            'glossary'=>$glossary,
+            'translations'=>$translations,
+            'current'=>'collection'
+        ));
+    }
+
+    /**
      * @Route("/project/{project}/credits", name="front_credits")
      * @Template()
      */
