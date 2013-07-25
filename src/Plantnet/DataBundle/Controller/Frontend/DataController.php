@@ -129,7 +129,7 @@ class DataController extends Controller
             ->findBy(array(
                 'parent'=>null
             ));
-        return $this->render('PlantnetDataBundle:Frontend:index.html.twig',array(
+        return $this->render('PlantnetDataBundle:Root:index.html.twig',array(
             'projects'=>$projects,
             'current'=>'index'
         ));
