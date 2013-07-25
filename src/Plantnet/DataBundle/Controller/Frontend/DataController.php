@@ -164,6 +164,74 @@ class DataController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
+
+
+
+        // ------- -------
+        $s=microtime(true);
+        $terms=array();
+        foreach($collections as $collection){
+            if($collection->getGlossary()){
+                $tmp=$dm->createQueryBuilder('PlantnetDataBundle:Definition')
+                    ->field('glossary')->references($collection->getGlossary())
+                    ->select('name')
+                    ->hydrate(false)
+                    ->getQuery()
+                    ->toArray();
+                foreach($tmp as $term){
+                    $terms[]=$term['name'];
+                }
+                echo '<pre>';
+                print_r($terms);
+                echo '</pre>';
+            }
+        }
+        // ------- -------
+        /*
+         * Si les termes du glossaire de la collection ne sont pas en session
+            charger les termes du glossaire pour la collection
+            les sauvegarder en session
+         * Charger les termes du glossaire de la collection depuis la session
+         * Charger la chaine à examiner
+            charger sa version DOM
+            en extraire les mots
+            ne concerver que les mots présents dans le terms
+            * Si il y a des mots présents
+                les encadrer d'une balise et les remplacer dans le chaine à examiner
+                replacer le chaine modifiée dans le DOM
+         * Retourner la chaine modifiée
+        */
+        // ------- -------
+        $d=new \DOMDocument;
+        $d->loadHTML($page->getContent());
+        $x=new \DOMXPath($d);
+        foreach($x->query('//text()') as $node){
+            $tmp_str=$node->nodeValue;
+            $words=str_word_count($node->nodeValue,2);
+            echo '<pre>';
+            print_r($words);
+            echo '</pre>';
+            $valid_words=array_intersect($words,$terms);
+            echo '<pre>';
+            print_r($valid_words);
+            echo '</pre>';
+            $added_char=0;
+            foreach($valid_words as $pos=>$word){
+                if(in_array($word,$terms)){
+                    $tmp_str=substr_replace($tmp_str,'<strong>'.$word.'</strong>',$pos+$added_char,strlen($word));
+                    $added_char+=8+9;
+                }
+            }
+            $node->nodeValue=$tmp_str;
+        }
+        $new_content=preg_replace('~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i','',$d->saveHTML());
+        $page->setContent(htmlspecialchars_decode($new_content));
+        $e=microtime(true);
+        echo $e-$s;
+        // ------- -------
+
+
+
         $config=$this->get_config($project);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').':project.html.twig',array(
