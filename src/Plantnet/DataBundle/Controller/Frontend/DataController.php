@@ -118,6 +118,24 @@ class DataController extends Controller
         return $tab_links;
     }
 
+    private function glossarize($dm,$collection,$string)
+    {
+        if($collection->getGlossary()){
+            $terms=array();
+            $tmp=$dm->createQueryBuilder('PlantnetDataBundle:Definition')
+                ->field('glossary')->references($collection->getGlossary())
+                ->select('name')
+                ->hydrate(false)
+                ->getQuery()
+                ->toArray();
+            foreach($tmp as $term){
+                $terms[]=$term['name'];
+            }
+            return StringHelp::glossary_highlight($collection->getUrl(),$terms,$string);
+        }
+        return $string;
+    }
+
     /**
      * @Route("/", name="front_index")
      * @Template()
@@ -164,28 +182,14 @@ class DataController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-
-
+        //
         $coll=null;
-        $terms=array();
         foreach($collections as $collection){
+            $collection->setDescription($this->glossarize($dm,$collection,$collection->getDescription()));
             $coll=$collection;
-            if($collection->getGlossary()){
-                $tmp=$dm->createQueryBuilder('PlantnetDataBundle:Definition')
-                    ->field('glossary')->references($collection->getGlossary())
-                    ->select('name')
-                    ->hydrate(false)
-                    ->getQuery()
-                    ->toArray();
-                foreach($tmp as $term){
-                    $terms[]=$term['name'];
-                }
-            }
         }
-        $page->setContent(StringHelp::glossary_highlight($coll->getUrl(),$terms,$page->getContent()));
-
-
-
+        $page->setContent($this->glossarize($dm,$coll,$page->getContent()));
+        //
         $config=$this->get_config($project);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').':project.html.twig',array(
@@ -243,6 +247,13 @@ class DataController extends Controller
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
+        //
+        $collection->setDescription($this->glossarize($dm,$collection,$collection->getDescription()));
+        $modules=$collection->getModules();
+        foreach($modules as $module){
+            $module->setDescription($this->glossarize($dm,$collection,$module->getDescription()));
+        }
+        //
         $config=$this->get_config($project);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Collection:collection.html.twig',array(
@@ -318,6 +329,9 @@ class DataController extends Controller
         if(!$module||$module->getType()!='text'){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
+        //
+        $module->setDescription($this->glossarize($dm,$collection,$module->getDescription()));
+        //
         $display=array();
         $order=array();
         $field=$module->getProperties();
@@ -705,6 +719,13 @@ class DataController extends Controller
         if(!$plantunit){
             throw $this->createNotFoundException('Unable to find Plantunit entity.');
         }
+        //
+        $attributes=$plantunit->getAttributes();
+        foreach($attributes as $key=>$attribute){
+            $attributes[$key]=$this->glossarize($dm,$collection,$attribute);
+        }
+        $plantunit->setAttributes($attributes);
+        //
         $others=$plantunit->getOthers();
         $tab_others_groups=array();
         if(count($others)){

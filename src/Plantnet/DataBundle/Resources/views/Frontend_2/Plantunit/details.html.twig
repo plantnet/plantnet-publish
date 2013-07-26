@@ -63,7 +63,7 @@
                        <span class="text-info">{{ property.name }}</span>
                     </div>
                     <div class="span6 break">
-                        {{ plantunit.attributes[property.id]|nl2br }}
+                        {% autoescape false %}{{ plantunit.attributes[property.id] }}{% endautoescape %}
                     </div>
                 </div>
             {% endfor %}

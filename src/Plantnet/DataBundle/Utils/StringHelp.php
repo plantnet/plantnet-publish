@@ -65,6 +65,7 @@ class StringHelp
         $x=new \DOMXPath($d);
         foreach($x->query('//text()') as $node){
             $string=$node->nodeValue;
+            $string=nl2br($string);
             // ne prend pas les accents et les caractères non alphanumériques (hindi, urdu, ...)
             // $words=str_word_count($node->nodeValue,2);
             if(preg_match_all(self::WORD_COUNT_MASK,$node->nodeValue,$matches,PREG_OFFSET_CAPTURE)){
