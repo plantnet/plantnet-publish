@@ -17,6 +17,9 @@
         CSV file should contain three columns (keyword(s), definition, path of the associated image file).
         <br />
         Content of the keyword column must be unique to be used as identifier.
+        <br />
+        <br />
+        Keywords must start by a lowercase char.
     </p>
     <form id="add_glossary" action="{{ path('glossary_create', { 'id': collection.id }) }}" method="post" {{ form_enctype(form) }}>
         {{ form_errors(form) }}

@@ -202,6 +202,46 @@
 				var target=document.getElementById("page-loading");
 				var spinner=new Spinner(opts).spin(target);
 			}
+			$(document).ready(function(){
+				if($('span.glossary_term').length>0){
+					$('span.glossary_term').mouseenter(function(){
+						var item=$(this);
+						var item_content=item.data('content');
+						var term=item.data('term');
+						if(item_content=='0'){
+							var coll_id=item.data('parent');
+							var link='{{ path('front_glossary_query_path', {'project': project, 'collection': 'z~7'}) }}';
+							item.popover({
+								placement:'bottom',
+								trigger:'hover',
+								html:true,
+								title:'<strong>'+term+'</strong>',
+								content:'<span class="glossary_loader"></span>'
+							});
+							item.popover('show');
+							$.getJSON(link.replace('z~7',coll_id)+'/'+term,function(data){
+								$.each(data,function(key,val){
+									if(key=='definition'){
+										item.next('div.popover').children('div.popover-content').first().html('<div class="glossary_loaded">'+val+'</div>');
+										item.data('content',val);
+									}
+								});
+							});
+						}
+						else{
+							item.popover('destroy');
+							item.popover({
+								placement:'bottom',
+								trigger:'hover',
+								html:true,
+								title:'<strong>'+term+'</strong>',
+								content:'<div class="glossary_loaded">'+item_content+'</div>'
+							});
+							item.popover('show');
+						}
+					});
+				}
+			});
 		</script>
 	{% endblock %}
 </body>

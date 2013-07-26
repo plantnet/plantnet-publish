@@ -166,11 +166,10 @@ class DataController extends Controller
         }
 
 
-
-        // ------- -------
-        $s=microtime(true);
+        $coll=null;
         $terms=array();
         foreach($collections as $collection){
+            $coll=$collection;
             if($collection->getGlossary()){
                 $tmp=$dm->createQueryBuilder('PlantnetDataBundle:Definition')
                     ->field('glossary')->references($collection->getGlossary())
@@ -181,54 +180,9 @@ class DataController extends Controller
                 foreach($tmp as $term){
                     $terms[]=$term['name'];
                 }
-                echo '<pre>';
-                print_r($terms);
-                echo '</pre>';
             }
         }
-        // ------- -------
-        /*
-         * Si les termes du glossaire de la collection ne sont pas en session
-            charger les termes du glossaire pour la collection
-            les sauvegarder en session
-         * Charger les termes du glossaire de la collection depuis la session
-         * Charger la chaine à examiner
-            charger sa version DOM
-            en extraire les mots
-            ne concerver que les mots présents dans le terms
-            * Si il y a des mots présents
-                les encadrer d'une balise et les remplacer dans le chaine à examiner
-                replacer le chaine modifiée dans le DOM
-         * Retourner la chaine modifiée
-        */
-        // ------- -------
-        $d=new \DOMDocument;
-        $d->loadHTML($page->getContent());
-        $x=new \DOMXPath($d);
-        foreach($x->query('//text()') as $node){
-            $tmp_str=$node->nodeValue;
-            $words=str_word_count($node->nodeValue,2);
-            echo '<pre>';
-            print_r($words);
-            echo '</pre>';
-            $valid_words=array_intersect($words,$terms);
-            echo '<pre>';
-            print_r($valid_words);
-            echo '</pre>';
-            $added_char=0;
-            foreach($valid_words as $pos=>$word){
-                if(in_array($word,$terms)){
-                    $tmp_str=substr_replace($tmp_str,'<strong>'.$word.'</strong>',$pos+$added_char,strlen($word));
-                    $added_char+=8+9;
-                }
-            }
-            $node->nodeValue=$tmp_str;
-        }
-        $new_content=preg_replace('~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i','',$d->saveHTML());
-        $page->setContent(htmlspecialchars_decode($new_content));
-        $e=microtime(true);
-        echo $e-$s;
-        // ------- -------
+        $page->setContent(StringHelp::glossary_highlight($coll->getUrl(),$terms,$page->getContent()));
 
 
 
@@ -1024,5 +978,61 @@ class DataController extends Controller
             'translations'=>$translations,
             'current'=>'contacts'
         ));
+    }
+
+    /**
+     * @Route(
+     *      "/project/{project}/collection/{collection}/glossary/term",
+     *      defaults={"term"="null"},
+     *      name="front_glossary_query_path"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/glossary/term/{term}",
+     *      name="front_glossary_query"
+     *  )
+     * @Template()
+     */
+    public function glossary_queryAction($project,$collection,$term)
+    {
+        if($term=='null'){
+            $response=new Response(json_encode(array()));
+            $response->headers->set('Content-Type','application/json');
+            return $response;
+            exit;
+        }
+        $projects=$this->database_list();
+        if(!in_array($project,$projects)){
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneBy(array('url'=>$collection));
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $glossary=$collection->getGlossary();
+        if(!$glossary){
+            throw $this->createNotFoundException('Unable to find Glossary entity.');
+        }
+        $definition=$dm->createQueryBuilder('PlantnetDataBundle:Definition')
+            ->hydrate(false)
+            ->select('definition','path')
+            ->field('glossary')->references($glossary)
+            ->field('name')->equals($term)
+            ->getQuery()
+            ->getSingleResult();
+        $result=array(
+            'definition'=>'',
+            'path'=>''
+        );
+        if($definition){
+            $result['definition']=$definition['definition'];
+            $result['path']=$definition['path'];
+        }
+        $response=new Response(json_encode($result));
+        $response->headers->set('Content-Type','application/json');
+        return $response;
+        exit;
     }
 }
