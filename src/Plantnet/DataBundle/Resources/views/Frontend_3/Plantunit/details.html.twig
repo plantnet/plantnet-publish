@@ -1,11 +1,11 @@
-{% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
+{% extends "PlantnetDataBundle:Frontend_3:layout.html.twig" %}
 {% block title plantunit.title1 ~ ' - ' ~ plantunit.title2 %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.css') }}" type="text/css" />
     {% if plantunit.haslocations == true %}
-        {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_3:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
 {% block header %}<h1>{{ plantunit.title1 }} - {{ plantunit.title2 }}</h1>{% endblock %}
@@ -31,7 +31,7 @@
     </ul>
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend:side.html.twig" with { module: module } %}
+    {% include "PlantnetDataBundle:Frontend_3:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     <section id="details">
@@ -59,10 +59,10 @@
             <h5>{{ "line-details"|trans|capitalize }}</h5>
             {% for property in module.properties if property.id in display %}
                 <div class="row">
-                    <div class="span3 break">
+                    <div class="span4 break">
                        <span class="text-info">{{ property.name }}</span>
                     </div>
-                    <div class="span6 break">
+                    <div class="span8 break">
                         {% autoescape false %}{{ plantunit.attributes[property.id] }}{% endautoescape %}
                     </div>
                 </div>
@@ -115,7 +115,7 @@
         {% if plantunit.hasimages == true %}
             <div class="gallery">
                 <h5>{{ "line-gallery"|trans|capitalize }}</h5>
-                <ul id="list_gallery" class="thumbnails per3">
+                <ul id="list_gallery" class="thumbnails per4">
                     <li>
                         <a href="#" class="end_of_gallery_load"></a>
                     </li>
@@ -228,7 +228,12 @@
                         });
                          $('.gallery img.new').removeClass('new');
                         $('a.html-box').removeClass('html-box');
-                        $('div.thumbnail').popover({
+                        $('div.pop_right').popover({
+                            html:true,
+                            placement:'right',
+                            trigger:'hover'
+                        });
+                        $('div.pop_left').popover({
                             html:true,
                             placement:'left',
                             trigger:'hover'
@@ -240,6 +245,6 @@
     </script>
     {% if plantunit.haslocations == true %}
         {% set locations = plantunit.locations %}
-        {% include 'PlantnetDataBundle:Frontend:leaflet.js.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_3:leaflet.js.html.twig' %}
     {% endif %}
 {% endblock %}

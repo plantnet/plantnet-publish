@@ -1,0 +1,299 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_3:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_3:datatypes.html.twig" %}
+{% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-result"|trans|capitalize %}
+{% block stylesheets %}
+    {{ parent() }}
+    {% if current_display == 'locations' %}
+        {% include 'PlantnetDataBundle:Frontend_3:leaflet.css.html.twig' %}
+    {% endif %}
+{% endblock %}
+{% block header %}<h1>{{ module.name }} - {{ "tab-result"|trans|capitalize }}</h1>{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">{{ collection.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('front_collection', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">{{ module.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('front_module_search', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+                {{ "tab-search"|trans|capitalize }}
+            </a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ "tab-result"|trans|capitalize }}
+            <span class="divider">></span>
+            {% if nbResults == 0 %}
+                {{ "line-no-result"|trans }}
+            {% else %}
+                <span class="badge">{{ nbResults }}</span> {{ "line-row"|trans }}{% if nbResults >= 2 %}s{% endif %}
+            {% endif %}
+        </li>
+    </ul>
+{% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend_3:side.html.twig" with { module: module } %}
+{% endblock %}
+{% block main %}
+    <div class="results">
+        <ul class="nav nav-tabs">
+            <li{% if current_display == 'grid' %} class="active"{% endif %}>
+                <a href="{{ path('front_module_result', {'project': project, 'collection': collection.url, 'module': module.url}) }}?{{ url }}">
+                    <i class="icon-list"></i>
+                    {{ "line-grid"|trans|capitalize }}
+                </a>
+            </li>
+            <li{% if current_display == 'images' %} class="active"{% endif %}>
+                {% if nb_images > 0 %}
+                    <a href="{{ path('front_module_result_mode', {'project': project, 'collection': collection.url, 'module': module.url, 'mode': 'images'}) }}?{{ url }}">
+                        <i class="icon-camera"></i>
+                        {{ "line-images"|trans|capitalize }}
+                    </a>
+                {% else %}
+                    <a href="#" class="muted">
+                        <i class="icon-camera"></i>
+                        {{ "line-images"|trans|capitalize }}
+                    </a>
+                {% endif %}
+            </li>
+            <li{% if current_display == 'locations' %} class="active"{% endif %}>
+                {% if nb_locations > 0 %}
+                    <a href="{{ path('front_module_result_mode', {'project': project, 'collection': collection.url, 'module': module.url, 'mode': 'locations'}) }}?{{ url }}">
+                        <i class="icon-map-marker"></i>
+                        {{ "line-locations"|trans|capitalize }}
+                    </a>
+                {% else %}
+                    <a href="#" class="muted">
+                        <i class="icon-map-marker"></i>
+                        {{ "line-locations"|trans|capitalize }}
+                    </a>
+                {% endif %}
+            </li>
+        </ul>
+        <div>
+            <div class="tab-pane{% if current_display == 'grid' %} active{% endif %}" id="grid-tab">
+                {% if current_display == 'grid' %}
+                    {% if paginator|length > 0 %}
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
+                                <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
+                                    {% set array_form = app.request.query.all() %}
+                                    {% for form,values in array_form if values is iterable %}
+                                        {% for k,v in values if (k != '_token' and k != 'page') %}
+                                            <input type="hidden" name="{{ form }}[{{ k }}]" value="{{ v }}" />
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% if sortby != 'null' and sortorder != 'null' %}
+                                        <input type="hidden" name="sort" value="{{ sortby }}" />
+                                        <input type="hidden" name="order" value="{{ sortorder }}" />
+                                    {% endif %}
+                                    <input type="number" name="page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
+                                </form>
+                                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2, 'prev_message': '←', 'next_message': '→',}) }}
+                            </div>
+                        {% endif %}
+                        <table class="table table-striped table-hover tr-link dot">
+                            <thead>
+                                <tr>
+                                    <th class="fixe">
+                                        <i class="icon-camera"></i>
+                                    </th>
+                                    <th class="fixe">
+                                        <i class="icon-map-marker"></i>
+                                    </th>
+                                    {% set array_form = app.request.query.all() %}
+                                    {% for property in module.properties if property.id in display %}
+                                        <th>
+                                            <span class="dot" data-title="{{ property.name }}" data-toggle="tooltip">{{ property.name }}</span>
+                                            <span class="nowrap">
+                                                <a href="{{ path('front_module_result', {'project': project, 'collection': collection.url, 'module': module.url}) }}?{{ url }}&sort={{ property.id }}&order=asc">
+                                                    <i class="icon-circle-arrow-up"></i></a></a>
+                                                <a href="{{ path('front_module_result', {'project': project, 'collection': collection.url, 'module': module.url}) }}?{{ url }}&sort={{ property.id }}&order=desc">
+                                                    <i class="icon-circle-arrow-down"></i></a></a>
+                                            </span>
+                                        </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for plantunit in paginator %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.identifier }) }}">
+                                                {% if plantunit.hasimages > 0 %}
+                                                    <i class="icon-camera"></i>
+                                                {% endif %}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.identifier }) }}">
+                                                {% if plantunit.haslocations > 0 %}
+                                                    <i class="icon-map-marker"></i>
+                                                {% endif %}
+                                            </a>
+                                        </td>
+                                        {% for field in display %}
+                                            <td>
+                                                <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.identifier }) }}">
+                                                    {{ plantunit.attributes[field] }}
+                                                </a>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
+                                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2, 'prev_message': '←', 'next_message': '→',}) }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="tab-pane{% if current_display == 'images' %} active{% endif %}" id="images-tab">
+                {% if current_display == 'images' %}
+                    {% if paginator|length > 0 %}
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
+                                <form method="get" action="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) }}">
+                                    {% set array_form = app.request.query.all() %}
+                                    {% for form,values in array_form if values is iterable %}
+                                        {% for k,v in values if (k != '_token' and k != 'page') %}
+                                            <input type="hidden" name="{{ form }}[{{ k }}]" value="{{ v }}" />
+                                        {% endfor %}
+                                    {% endfor %}
+                                    <input type="number" name="page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
+                                </form>
+                                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2, 'prev_message': '←', 'next_message': '→',}) }}
+                            </div>
+                        {% endif %}
+                        <div class="gallery">
+                            <ul class="thumbnails per4">
+                                {% set pos = 1 %}
+                                {% for image in paginator %}
+                                    {% if pos == 5 %}
+                                        {% set pos = 1 %}
+                                    {% endif %}
+                                    {% include "PlantnetDataBundle:Frontend_3\\Image:item.html.twig" with { image: image } %}
+                                    {% set pos = pos + 1 %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% if paginator.haveToPaginate() %}
+                            <div class="pagerfanta">
+                                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2, 'prev_message': '←', 'next_message': '→',}) }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="tab-pane{% if current_display == 'locations' %} active{% endif %}" id="map-tab">
+                {% if current_display == 'locations' %}
+                    <div>
+                        {# LEAFLET MAP #}
+                        <div id="map"></div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% if current_display == 'locations' %}
+        {% include 'PlantnetDataBundle:Frontend_3:leaflet.js.html.twig' %}
+    {% endif %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('span.dot').each(function(){
+                if($(this)[0].offsetWidth<$(this)[0].scrollWidth){
+                    $(this).tooltip();
+                }
+            });
+            $('.pop-tooltip').tooltip();
+            /* Apply fancybox to multiple items */
+            $('a.grouped_elements').fancybox({
+                'transitionIn':'elastic',
+                'transitionOut':'elastic',
+                'speedIn':200,
+                'speedOut':200,
+                'enableEscapeButton':true,
+                'hideOnContentClick':true,
+                'titlePosition':'inside',
+                'overlayShow':true,
+                'titleFromAlt':true
+            });
+            $('a.html-box').fancybox({
+                onStart:function(){
+                    var width=$(window).width();
+                    var height=$(window).height();
+                    $('.viewer').width(Math.round(width*85/100));
+                    $('.viewer').height(Math.round(height*75/100));
+                },
+                onComplete:function(){
+                    var id=$(this).attr('href');
+                    var img_src=$(id).attr('data-src');
+                    id=id.replace('#','v_');
+                    var iv=$('#'+id).iviewer({
+                        src:img_src,
+                        ui_disabled:true,
+                        zoom:'fit',
+                        zoom_min:25,
+                        zoom_max:1000,
+                        onAfterZoom:function(ev,new_zoom){
+                            $('#'+id+'_percent').val(Math.round(new_zoom));
+                        }
+                    });
+                    $('#'+id+'_in').click(function(event){
+                        event.preventDefault();
+                        iv.iviewer('zoom_by',1);
+                    });
+                    $('#'+id+'_out').click(function(event){
+                        event.preventDefault();
+                        iv.iviewer('zoom_by',-1);
+                    });
+                    $('#'+id+'_orig').click(function(event){
+                        event.preventDefault();
+                        iv.iviewer('set_zoom',100);
+                    });
+                    $('#'+id+'_fit').click(function(event){
+                        event.preventDefault();
+                        iv.iviewer('fit');
+                    });
+                    $('#'+id+'_right').click(function(event){
+                        event.preventDefault();
+                        iv.iviewer('angle',90,false);
+                    });
+                }
+            });
+            $('.gallery img').addClass('blind');
+            $('.gallery img').one('load',function(){
+                var img=$(this);
+                img.fadeTo(200,1);
+            }).each(function(){
+                if(this.complete)
+                {
+                    $(this).load();
+                }
+            });
+            $('div.pop_right').popover({
+                html:true,
+                placement:'right',
+                trigger:'hover'
+            });
+            $('div.pop_left').popover({
+                html:true,
+                placement:'left',
+                trigger:'hover'
+            });
+        });
+    </script>
+{% endblock %}

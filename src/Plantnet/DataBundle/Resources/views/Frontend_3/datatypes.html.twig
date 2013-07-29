@@ -1,0 +1,68 @@
+{% extends "PlantnetDataBundle:Frontend_3:layout.html.twig" %}
+{% block title %}{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.css') }}" type="text/css" />
+{% endblock %}
+{% block header %}<h1>{{ module.name }}</h1>{% endblock %}
+{% block breadcrumb %}
+	<ul class="breadcrumb">
+		<li>
+            <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
+            <span class="divider">/</span>
+        </li>
+		<li>
+			<a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">{{ collection.name }}</a>
+			<span class="divider">/</span>
+		</li>
+		{% if module_parent is defined %}
+			<li>
+				<a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module_parent.url }) }}">{{ module_parent.name }}</a>
+				<span class="divider">/</span>
+			</li>
+		{% endif %}
+		<li class="active">
+			{{ module.name }}
+			<span class="divider">></span>
+			{{ module.nbrows }} {{ "line-entities"|trans }}
+		</li>
+		
+	</ul>
+{% endblock %}
+{% block main %}{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-ui-1.9.2.custom.min.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.min.js') }}"></script>
+	<script type="text/javascript">
+		$('.pagerfanta').first().on('click','a', function(event){
+			event.preventDefault();
+			if($(this).attr('href').length&&$(this).attr('href')!='#'&&!$(this).parent('li').first().hasClass('active')){
+				var $url=$(this).attr('href');
+				$('.pagerfanta ul').first().append('<li class="disabled"><a href="#">&nbsp;<div id="page-loading"></div>&nbsp;</a></li>');
+				ajaxLoader();
+				$('#data-load').load($url,function(){
+					$('#page-loading').empty();
+				});
+			}
+		});
+		$('.pagerfanta').last().on('click','a', function(event){
+            event.preventDefault();
+            if($(this).attr('href').length&&$(this).attr('href')!='#'&&!$(this).parent('li').first().hasClass('active')){
+                var $url=$(this).attr('href');
+                $('.pagerfanta ul').first().append('<li class="disabled"><a href="#">&nbsp;<div id="page-loading"></div>&nbsp;</a></li>');
+                ajaxLoader();
+                $('html, body').animate({
+	                scrollTop:0
+	            },'slow').promise().done(function(){
+	            	$('#data-load').load($url,function(){
+	                    $('#page-loading').empty();
+	                });
+	            });
+            }
+        });
+	</script>
+{% endblock %}

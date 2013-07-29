@@ -1,0 +1,66 @@
+{% set imgspe = image.path|basename %}
+{% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+<li class="span3">
+	{% set content = '' %}
+	{% for property in module_parent.properties if property.id in display %}
+		{% set content = content ~ '<strong>' ~ property.name ~ '</strong> : ' ~ image.plantunit.attributes[property.id] ~ '<br />' %}
+	{% endfor %}
+	{% for property in image.module.properties if property.details == true %}
+		{% set content = content ~ '<br />' ~ '<u>' ~ property.name ~ '</u>' %}
+		{% set content = content ~ ': ' ~ image.property[property.id]|replace(',',', ') %}
+	{% endfor %}
+	{% set pos_class = 'right' %}
+	{% if pos == 3 or pos == 4 %}
+		{% set pos_class = 'left' %}
+	{% endif %}
+	<div class="thumbnail pop_{{ pos_class }}" data-title="<strong>{{ image.title1 }} - {{ image.title2 }}</strong>" data-content="{{ content }}">
+		<a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
+			{% set img_data = '<strong>' ~ image.title1 ~ ' - ' ~ image.title2 ~ '</strong><br />' ~ image.copyright %}
+			<img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid" alt="{{ img_data }}" />
+		</a>
+		<h5>
+			{{ image.title1 }}<br />{{ image.title2 }}
+		</h5>
+		{% if image.copyright is not empty %}
+			<p>
+				{{ image.copyright }}
+			</p>
+		{% endif %}
+		<div class="access">
+			<a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': image.plantunit.module.url, 'id': image.plantunit.identifier }) }}">
+				<i class="icon-list pop-tooltip" data-toggle="tooltip" title="{{ "line-details"|trans|capitalize }}"></i>
+			</a>
+			<a class="html-box" href="#data_{{ image.id }}">
+				<i class="icon-eye-open pop-tooltip" data-toggle="tooltip" title="Zoom"></i>
+			</a>
+			<div style="display:none">
+				<div id="data_{{ image.id }}" data-src="{{ asset(img) }}">
+					<div id="v_data_{{ image.id }}" class="viewer"></div>
+					<div class="control-panel">
+						<div class="btn-group">
+							<a id="v_data_{{ image.id }}_in" href="#" class="btn">
+								<i class="icon-plus-sign"></i>
+							</a>
+							<a id="v_data_{{ image.id }}_out" href="#" class="btn">
+								<i class="icon-minus-sign"></i>
+							</a>
+							<a id="v_data_{{ image.id }}_orig" href="#" class="btn">
+								<i class="icon-fullscreen"></i>
+							</a>
+							<a id="v_data_{{ image.id }}_fit" href="#" class="btn">
+								<i class="icon-screenshot"></i>
+							</a>
+							<a id="v_data_{{ image.id }}_right" href="#" class="btn">
+								<i class="icon-retweet"></i>
+							</a>
+						</div>
+						<div class="input-append">
+							<input type="text" id="v_data_{{ image.id }}_percent" value="100" class="input-mini uneditable-input" readonly="readonly" />
+							<span class="add-on"><strong>%</strong></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</li>

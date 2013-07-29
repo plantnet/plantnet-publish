@@ -1,0 +1,246 @@
+{% extends "PlantnetDataBundle:Frontend_3:layout.html.twig" %}
+{% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
+{% block stylesheets %}
+	{{ parent() }}
+{% endblock %}
+{% block header %}<h1>{{ module.name }} - {{ "line-taxonomy"|trans|capitalize }}{% if taxon != 'null' %} - {{ taxon.name }}{% endif %}</h1>{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">{{ collection.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">{{ module.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        {% if taxon != 'null' %}
+            <li>
+                <a href="{{ path('front_module_taxo', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">{{ "line-taxonomy"|trans|capitalize }}</a>
+                <span class="divider">/</span>
+            </li>
+            {% macro bc_taxon(taxon,project,collection,module) %}
+                {% if taxon.parent and taxon.parent.chosen %}
+                    {{ _self.bc_taxon(taxon.parent.chosen,project,collection,module) }}
+                    <li>
+                        <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.parent.chosen.identifier }) }}">{{ taxon.parent.chosen.name }}</a>
+                        <span class="divider">/</span>
+                    </li>
+                {% elseif taxon.parent %}
+                    {{ _self.bc_taxon(taxon.parent,project,collection,module) }}
+                    <li>
+                        <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.parent.identifier }) }}">{{ taxon.parent.name }}</a>
+                        <span class="divider">/</span>
+                    </li>
+                {% endif %}
+            {% endmacro %}
+            {% import _self as macros %}
+            {{ macros.bc_taxon(taxon,project,collection,module) }}
+            <li class="active">
+                {{ taxon.name }}
+            </li>
+        {% else %}
+            <li class="active">
+                {{ "line-taxonomy"|trans|capitalize }}
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend_3:side.html.twig" with { module: module } %}
+{% endblock %}
+{% block main %}
+    <div id="taxo">
+        <form method="get" action="{{ path('front_module_taxo', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+            <div class="input-append">
+                <input type="text" name="taxon" id="typeahead" class="span4" placeholder="{{ "line-taxon"|trans|capitalize }}" autocomplete="off" data-provide="typeahead">
+                <button class="btn" type="submit">{{ "tab-search"|trans|capitalize }}</button>
+            </div>
+            <input type="hidden" name="form_identifier" id="form_identifier" />
+        </form>
+        {% if taxon != 'null' and taxon.chosen %}
+            <p>
+                {{ "line-valid-taxon"|trans|capitalize }}
+                {% macro valid_taxonomy(taxon,project,collection,module) %}
+                    {% if taxon.parent and taxon.parent.chosen %}
+                        {{ _self.valid_taxonomy(taxon.parent.chosen,project,collection,module) }}
+                        <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.parent.chosen.identifier }) }}">
+                            {{ taxon.parent.chosen.name }}</a>
+                    {% elseif taxon.parent %}
+                        {{ _self.valid_taxonomy(taxon.parent,project,collection,module) }}
+                        <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.parent.identifier }) }}">
+                            {{ taxon.parent.name }}</a>
+                    {% endif %}
+                {% endmacro %}
+                {% import _self as macros2 %}
+                {{ macros2.valid_taxonomy(taxon.chosen,project,collection,module) }}
+                <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.chosen.identifier }) }}">
+                    {{ taxon.chosen.name }}</a>
+            </p>
+        {% endif %}
+        {% if taxon != 'null' and taxon.synonyms|length > 0 %}
+            <p>
+                {% if taxon.synonyms|length >= 2 %}
+                    {{ "line-synonyms"|trans|capitalize }}
+                {% else %}
+                    {{ "line-synonym"|trans|capitalize }}
+                {% endif %}
+            </p>
+            <ul>
+                {% for syn in taxon.synonyms %}
+                    <li>
+                        <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': syn.identifier }) }}">
+                            {{ syn.identifier }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <table class="table table-hover table-condensed">
+            <tr>
+                <th>
+                    {{ "line-taxon"|trans|capitalize }}
+                </th>
+                <th class="span2 middle">
+                    {{ "line-specimens"|trans|capitalize }}
+                </th>
+                <th class="span2 middle">
+                    {{ "line-views"|trans|capitalize }}
+                </th>
+            </tr>
+            {% for taxon in taxons %}
+                <tr>
+                    <td>
+                        <span>
+                            {% if taxon.haschildren == true %}
+                                <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" id="t{{ taxon.id }}" class="display-sub{% if taxon.issynonym == true %} muted{% endif %}">
+                                    <i class="arrow icon-chevron-right"></i>
+                                    {{ taxon.name }}
+                                </a>
+                            {% else %}
+                                <i class="icon-minus"></i>
+                                {{ taxon.name }}
+                            {% endif %}
+                            {% if taxon.hassynonyms == true %}
+                                <small class="muted">
+                                    {% set syns = [] %}
+                                    {% for syn in taxon.synonyms %}
+                                        {% set syns = syns|merge([syn.identifier]) %}
+                                    {% endfor %}
+                                    {{ syns|join(', ') }}
+                                </small>
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td class="span2 middle">
+                        <span class="badge">
+                            {{ taxon.nbpunits }}
+                            <i class="icon-leaf"></i>
+                        </span>
+                    </td>
+                    <td class="span2 middle">
+                        <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" id="t{{ taxon.id }}">
+                            <i class="icon-list"></i></a>
+                        {% if taxon.hasimages %}
+                            <a href="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" id="t{{ taxon.id }}">
+                                <i class="icon-camera"></i></a>
+                        {% endif %}
+                        {% if taxon.haslocations %}
+                            <a href="{{ path('front_module_taxo_view_map', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" id="t{{ taxon.id }}">
+                                <i class="icon-map-marker"></i></a>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td id="sub-{{ taxon.id }}" colspan="3" class="sub-content"></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#typeahead').typeahead({
+                source:function(query,process){
+                    return $.get('{{ path('front_module_taxo_query_path', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/'+query,function(data){
+                        var list=data.map(function(item){
+                            var tmp_item={name:item.name,label:item.label,identifier:item.identifier,issynonym:item.issynonym};
+                            return JSON.stringify(tmp_item);
+                        });
+                        return process(list);
+                    });
+                },
+                highlighter:function (tmp_item){
+                    var item=JSON.parse(tmp_item);
+                    var query=this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g,'\\$&');
+                    if(item.issynonym){
+                        return '<span class="muted">'+item.name.replace(new RegExp('('+query+')','ig'),function($1,match){
+                            return '<strong>'+match+'</strong>';
+                        })+' ['+item.identifier+']</span>';
+                    }
+                    return item.name.replace(new RegExp('('+query+')','ig'),function($1,match){
+                        return '<strong>'+match+'</strong>';
+                    })+' ['+item.identifier+']';
+                },
+                updater:function(tmp_item){
+                    var item=JSON.parse(tmp_item);
+                    $('#form_identifier').val(item.identifier);
+                    if(item.issynonym){
+                        return item.name+' ['+item.identifier+']';
+                    }
+                    return item.name+' ['+item.identifier+']';
+                },
+                items:10
+            });
+            $(document).on('click','.display-sub',function(event){
+                event.preventDefault();
+                var parent=$(this);
+                var loaded=parent.hasClass('loaded');
+                if(!loaded){
+                    parent.addClass('loaded');
+                }
+                var id=parent.attr('id').substring(1);
+                if(!loaded){
+                    parent.parent('span').append('<span class="taxo_load"></span>');
+                    $.ajax({
+                        url:'{{ path('front_module_taxo_children', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/'+id
+                    }).done(function(data){
+                        $('#sub-'+id).html(data);
+                        parent.parent('span').children('.taxo_load').remove();
+                        if(parent.children('.arrow').hasClass('icon-chevron-right')){
+                            parent.children('.arrow').removeClass('icon-chevron-right');
+                        }
+                        if(parent.children('.arrow').hasClass('icon-chevron-down')){
+                            parent.children('.arrow').removeClass('icon-chevron-down');
+                        }
+                        parent.children('.arrow').addClass('icon-chevron-down');
+                        $('#sub-'+id).show();
+                    });
+                }
+                else{
+                    $('#sub-'+id).toggle(0,function(){
+                        if(parent.children('.arrow').hasClass('icon-chevron-right')){
+                            parent.children('.arrow').removeClass('icon-chevron-right');
+                        }
+                        if(parent.children('.arrow').hasClass('icon-chevron-down')){
+                            parent.children('.arrow').removeClass('icon-chevron-down');
+                        }
+                        if($(this).is(':visible')){
+                            parent.children('.arrow').addClass('icon-chevron-down');
+                        }
+                        else{
+                            parent.children('.arrow').addClass('icon-chevron-right');
+                        }
+                    });
+                }
+                return false;
+            });
+        });
+    </script>
+{% endblock %}
