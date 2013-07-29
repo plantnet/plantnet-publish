@@ -118,7 +118,7 @@ class DataController extends Controller
         return $tab_links;
     }
 
-    private function glossarize($dm,$collection,$string)
+    private function glossarize($dm,$collection,$string,$nl2br=false)
     {
         if($collection->getGlossary()){
             $terms=array();
@@ -131,7 +131,7 @@ class DataController extends Controller
             foreach($tmp as $term){
                 $terms[]=$term['name'];
             }
-            return StringHelp::glossary_highlight($collection->getUrl(),$terms,$string);
+            return StringHelp::glossary_highlight($collection->getUrl(),$terms,$string,$nl2br);
         }
         return $string;
     }
@@ -722,7 +722,7 @@ class DataController extends Controller
         //
         $attributes=$plantunit->getAttributes();
         foreach($attributes as $key=>$attribute){
-            $attributes[$key]=$this->glossarize($dm,$collection,$attribute);
+            $attributes[$key]=$this->glossarize($dm,$collection,$attribute,true);
         }
         $plantunit->setAttributes($attributes);
         //
