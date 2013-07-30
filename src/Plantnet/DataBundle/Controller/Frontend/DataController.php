@@ -120,7 +120,7 @@ class DataController extends Controller
 
     private function glossarize($dm,$collection,$string,$nl2br=false)
     {
-        if($collection->getGlossary()){
+        if($$collection&&$collection->getGlossary()){
             $terms=array();
             $tmp=$dm->createQueryBuilder('PlantnetDataBundle:Definition')
                 ->field('glossary')->references($collection->getGlossary())
