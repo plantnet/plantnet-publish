@@ -1,9 +1,9 @@
-{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_3:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_3:datatypes.html.twig" %}
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_4:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_4:datatypes.html.twig" %}
 {% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
 {% block stylesheets %}
     {{ parent() }}
     {% if current_display == 'locations' %}
-        {% include 'PlantnetDataBundle:Frontend_3:leaflet.css.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_4:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
 {% block header %}<h1>{{ module.name }} - {{ "line-taxonomy"|trans|capitalize }} - {{ taxon.name }}</h1>{% endblock %}
@@ -52,7 +52,7 @@
     </ul>
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend_3:side.html.twig" with { module: module } %}
+    {% include "PlantnetDataBundle:Frontend_4:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     <div class="results">
@@ -309,7 +309,7 @@
                                     {% if pos == 5 %}
                                         {% set pos = 1 %}
                                     {% endif %}
-                                    {% include "PlantnetDataBundle:Frontend_3\\Image:item.html.twig" with { image: image } %}
+                                    {% include "PlantnetDataBundle:Frontend_4\\Image:item.html.twig" with { image: image } %}
                                     {% set pos = pos + 1 %}
                                 {% endfor %}
                             </ul>
@@ -351,7 +351,7 @@
 {% block javascripts %}
     {{ parent() }}
     {% if current_display == 'locations' %}
-        {% include 'PlantnetDataBundle:Frontend_3:leaflet.js.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_4:leaflet.js.html.twig' %}
     {% endif %}
     <script type="text/javascript">
         $(document).ready(function(){

@@ -1,0 +1,424 @@
+//
+// Custom Styles
+// --------------------------------------------------
+
+
+// Values
+// --------------------------------------------------
+@top_bar_height:	40px;
+@content_padding:	20px;
+
+
+// Styles
+// --------------------------------------------------
+a,a:hover,a:active,a:focus{
+   outline:0;
+}
+html{
+	overflow-y:scroll;
+}
+html,body{
+	background-color:#EEE;
+}
+body{
+	padding-top:@top_bar_height; // @top_bar_height to make the container go all the way to the bottom of the topbar
+}
+div.clear{
+	clear:both;
+}
+span.nowrap{
+	white-space:nowrap;
+}
+.navbar-inverse .navbar-inner, .navbar-inverse .nav .active > a, .navbar-inverse .nav .active > a:hover, .navbar-inverse .nav .active > a:focus, .navbar-inverse .nav li.dropdown.open > .dropdown-toggle, .navbar-inverse .nav li.dropdown.active > .dropdown-toggle, .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle{
+	background-image:url(../../images/overlay.png);
+}
+.brand{
+	height:16px;
+	width:169px;
+	padding-left:20px;
+	padding-right:20px;
+	background:url(../../images/plantnet.png) no-repeat;
+}
+.container > .content{
+	background-color:#FFF;
+	padding:@content_padding;
+	margin-top:0;
+	margin-left:-@content_padding; // negative indent the amount of the padding to maintain the grid system
+	margin-right:-@content_padding; // negative indent the amount of the padding to maintain the grid system
+	margin-bottom:@top_bar_height;
+	-webkit-border-radius:0 0 12px 12px;
+	   -moz-border-radius:0 0 12px 12px;
+	        border-radius:0 0 12px 12px;
+	-webkit-box-shadow:0 2px 4px rgba(0,0,0,.15);
+	   -moz-box-shadow:0 2px 4px rgba(0,0,0,.15);
+	        box-shadow:0 2px 4px rgba(0,0,0,.15);
+}
+.page-header{
+	background-color:#F5F5F5;
+	margin:-@content_padding -@content_padding @content_padding -@content_padding;
+	padding-top:4px;
+	padding-left:20px;
+	padding-right:20px;
+	padding-bottom:4px;
+}
+.page-header h1{
+	font-size:27px;
+	line-height:30px;
+}
+#banner{
+	height:200px;
+	background-repeat:no-repeat;
+	background-size:1210px 208px;
+	margin:-@content_padding -@content_padding @content_padding -@content_padding;
+	padding-left:20px;
+	padding-right:20px;
+	padding-top:4px;
+	padding-bottom:4px;
+}
+#banner.mini{
+	height:120px;
+}
+#banner .page-header{
+	margin:0;
+	margin-top:@content_padding;
+	display:inline-block;
+	opacity:0.7;
+	-webkit-border-radius:4px;
+	   -moz-border-radius:4px;
+	        border-radius:4px;
+	-webkit-box-shadow:0 2px 4px rgba(0,0,0,.15);
+	   -moz-box-shadow:0 2px 4px rgba(0,0,0,.15);
+	        box-shadow:0 2px 4px rgba(0,0,0,.15);
+}
+#banner .page-header h1{
+	display:inline-block;
+}
+#page-loading{
+	float:left;
+	margin-top:10px;
+	margin-left:6px;
+}
+table.dot{
+	width:100%;
+	table-layout:fixed;
+}
+table.dot td{
+	word-wrap:break-word;
+	overflow-wrap:break-word;
+}
+table.dot .fixe{
+	width:14px;
+	vertical-align:top;
+}
+table.dot span.dot{
+	white-space:nowrap;
+	display:block;
+	overflow:hidden;
+	text-overflow:ellipsis;
+}
+div.description{
+	margin-bottom:20px;
+}
+table.tr-link tbody > tr:hover{
+	cursor:pointer;
+}
+table.tr-link td{
+	padding:0px;
+}
+table.tr-link td a{
+	padding:8px;
+	display:block;
+	text-decoration:none;
+	color:#333333;
+}
+span.empty-media{
+	display:inline-block;
+	width:130px;
+	height:75px;
+	background:#DDDDDD;
+}
+span.glossary_term{
+	color:#468847;
+}
+span.glossary_loader{
+	display:inline-block;
+	width:254px;
+	height:11px;
+	background:url(../../images/page-loader.gif) no-repeat;
+}
+div.glossary_loaded{
+	display:block;
+	width:254px;
+}
+
+
+// Bootstrap : Custom
+// --------------------------------------------------
+span.pop-tooltip{
+	cursor:default;
+}
+.results .pagerfanta:first-child .pagination{
+	margin-top:0;
+}
+.results .pagerfanta:last-child .pagination{
+	margin-bottom:0;
+}
+.breadcrumb{
+	border:solid 1px #EEE;
+	font-size:12px;
+}
+.breadcrumb .badge{
+	font-size:10px;
+}
+div.navbar-fixed-top{
+	margin-bottom:0px;
+}
+.nav-stacked li.child{
+	padding-left:30px;
+}
+.pagerfanta form,.pagerfanta input{
+	display:inline;
+	margin:0;
+	padding:0;
+}
+.pagerfanta form{
+	float:right;
+	line-height:20px;
+	padding-top:2px;
+	padding-bottom:2px;
+}
+.pagerfanta input{
+	height:24px;
+	text-align:center;
+}
+ul.nav-tabs a.muted{
+	cursor:default;
+}
+div.popover-content{
+	word-wrap:break-word;
+	overflow-wrap:break-word;
+}
+.carousel-caption p{
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+}
+div.tooltip-inner{
+	word-wrap:break-word;
+}
+
+
+// Collection : Presentation
+// --------------------------------------------------
+.collection_presentation{
+	margin-top:20px;
+}
+.collection_presentation h4{
+	border-bottom:solid 1px #E3E3E3;
+}
+.collection_presentation h5{
+	margin-bottom:2px;
+	margin-top:15px;
+}
+.collection_presentation .images{
+	background-color:rgba(0, 0, 0, 0.2);
+	margin-top:0px;
+	max-width:370px;
+	max-height:210px;
+}
+.collection_presentation .details{
+	padding-top:21px;
+}
+
+
+// Module : Presentation
+// --------------------------------------------------
+.module_presentation{
+	margin-top:20px;
+}
+.module_presentation h4,.module_presentation h5{
+	margin:0px;
+	display:inline;
+}
+.module_presentation .img-polaroid{
+	margin-bottom:5px;
+}
+
+
+// Details
+// --------------------------------------------------
+div.break{
+	word-wrap:break-word;
+	overflow-wrap:break-word;
+	border-top:1px solid #DDDDDD;
+	padding:4px 0px;
+}
+#details div:first-child h5{
+	margin-top:0px;
+}
+
+
+// Gallery
+// --------------------------------------------------
+.gallery a.thumbn{
+	display:inline-block;
+	background-color:rgba(0, 0, 0, 0.2);
+}
+.gallery a.thumbn > img{
+	width:180px;
+	height:120px;
+}
+.gallery a.thumbn > img.blind{
+	opacity:0;
+}
+ul.thumbnails.per3 > li:nth-child(3n+1){
+	clear:left;
+}
+div.thumbnail{
+	text-align:center;
+	border-color:#EEE;
+	background-color:#F5F5F5;
+	padding:8px;
+}
+div.thumbnail:hover{
+	border-color:#DDD;
+	background-color:#EEE;
+	-webkit-box-shadow: 0px 3px 6px rgba(0,0,0,.15);
+	   -moz-box-shadow: 0px 3px 6px rgba(0,0,0,.15);
+	        box-shadow: 0px 3px 6px rgba(0,0,0,.15);
+}
+div.thumbnail h5, div.thumbnail p{
+	margin:0;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	-o-text-overflow:ellipsis;
+	white-space:nowrap;
+	width:100%;
+}
+div.thumbnail h5{
+	font-size:12px;
+	line-height:15px;
+}
+div.thumbnail p{
+	font-size:11px;
+	line-height:14px;
+}
+div.thumbnail .access{
+	margin-top:8px;
+	padding-top:8px;
+	padding-right:8px;
+	border-top:solid 1px #EEE;
+	text-align:right;
+}
+div.thumbnail:hover .access{
+	border-color:#DDD;
+}
+.viewer
+{
+	width:500px;
+	height:400px;
+	border:1px solid #DDD;
+	position:relative;
+	-webkit-border-radius:8px;
+	   -moz-border-radius:8px;
+	        border-radius:8px;
+}
+.wrapper
+{
+	overflow:hidden;
+}
+#fancybox-content .control-panel{
+	text-align:center;
+	padding-top:5px;
+}
+#fancybox-content .input-append, #fancybox-content .btn-group{
+	margin:0;
+}
+.end_of_gallery_load{
+	display:block;
+	width:16px;
+	height:11px;
+	background:url(../../images/page-loader.gif);
+}
+
+
+// Search Form
+// --------------------------------------------------
+#search_form > div > div{
+	margin-bottom:10px;
+	padding-bottom:10px;
+}
+#search_form label{
+	background-color:#F5F5F5;
+	border:1px solid #EEEEEE;
+	padding-left:5px;
+	padding-right:5px;
+	-webkit-border-radius:4px;
+	   -moz-border-radius:4px;
+	        border-radius:4px;
+}
+#search_form a.add-btn{
+	float:right;
+	margin-top:3px;
+	line-height:10px;
+}
+
+
+// Taxonomy
+// --------------------------------------------------
+#taxo table.embedded{
+	margin:0px;
+}
+#taxo td.sub-content{
+	padding:0px;
+	border:none;
+}
+#taxo td.middle,#taxo th.middle{
+	text-align:center;
+}
+span.taxo-2{
+	margin-left:20px;
+}
+span.taxo-3{
+	margin-left:40px;
+}
+span.taxo-4{
+	margin-left:60px;
+}
+span.taxo-5{
+	margin-left:80px;
+}
+span.taxo-6{
+	margin-left:100px;
+}
+.taxo_load{
+	display:inline-block;
+	width:16px;
+	height:11px;
+	margin-left:10px;
+	background:url(../../images/page-loader.gif);
+}
+
+
+// Footer
+// --------------------------------------------------
+#footer{
+	height:79px;
+}
+#footer ul{
+	list-style-type:none;
+	float:left;
+	margin:0;
+}
+#footer li{
+	display:inline;
+	margin-right:@content_padding;
+}
+#mention ul{
+	float:right;
+	margin-top:25px;
+}
+#mention li{
+	margin-right:0;
+	margin-left:@content_padding;
+}

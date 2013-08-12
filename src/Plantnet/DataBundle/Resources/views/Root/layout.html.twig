@@ -22,13 +22,13 @@
 		{% block stylesheets %}
 			{% stylesheets
 				filter='less,cssrewrite,?yui_css'
-				output='css/publish.css'
+				output='css/publish_root.css'
 				debug=false
 				'bundles/plantnetdata/bootstrap/css/less/bootstrap.less'
-				'bundles/plantnetdata/css/frontend/styles.less'
-				'bundles/plantnetdata/css/frontend/map.less'
+				'bundles/plantnetdata/css/root/styles.less'
+				'bundles/plantnetdata/css/root/map.less'
 				'bundles/plantnetdata/bootstrap/css/less/responsive.less'
-				'bundles/plantnetdata/css/frontend/styles-responsive.less'
+				'bundles/plantnetdata/css/root/styles-responsive.less'
 			%}
 			<link href="{{ asset_url }}" type="text/css" rel="stylesheet" />
 			{% endstylesheets %}

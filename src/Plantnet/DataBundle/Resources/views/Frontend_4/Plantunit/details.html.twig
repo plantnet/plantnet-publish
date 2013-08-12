@@ -1,0 +1,250 @@
+{% extends "PlantnetDataBundle:Frontend_4:layout.html.twig" %}
+{% block title plantunit.title1 ~ ' - ' ~ plantunit.title2 %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.css') }}" type="text/css" />
+    {% if plantunit.haslocations == true %}
+        {% include 'PlantnetDataBundle:Frontend_4:leaflet.css.html.twig' %}
+    {% endif %}
+{% endblock %}
+{% block header %}<h1>{{ plantunit.title1 }} - {{ plantunit.title2 }}</h1>{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">{{ collection.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">{{ module.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ plantunit.title1 }} - {{ plantunit.title2 }}
+            <span class="divider">></span>
+            {{ "line-details"|trans }}
+        </li>
+    </ul>
+{% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend_4:side.html.twig" with { module: module } %}
+{% endblock %}
+{% block main %}
+    <section id="details">
+        {% if plantunit.taxon %}
+            <div>
+                <h5>{{ "line-taxonomy"|trans|capitalize }}</h5>
+                {% macro pa_taxon(taxon,project,collection,module) %}
+                    {% if taxon.parent %}
+                        {{ _self.pa_taxon(taxon.parent,project,collection,module) }}
+                    {% endif %}
+                    <div class="row">
+                        <div class="span2">{{ taxon.label }}</div>
+                        <div class="span7">
+                            <a href="{{ path('front_module_taxo_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
+                                {{ taxon.name }}
+                            </a>
+                        </div>
+                    </div>
+                {% endmacro %}
+                {% import _self as macros %}
+                {{ macros.pa_taxon(plantunit.taxon,project,collection,module) }}
+            </div>
+        {% endif %}
+        <div>
+            <h5>{{ "line-details"|trans|capitalize }}</h5>
+            {% for property in module.properties if property.id in display %}
+                <div class="row">
+                    <div class="span4 break">
+                       <span class="text-info">{{ property.name }}</span>
+                    </div>
+                    <div class="span8 break">
+                        {% autoescape false %}{{ plantunit.attributes[property.id] }}{% endautoescape %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {% if tab_others_groups|length > 0 %}
+            <br />
+            {% for group in tab_others_groups %}
+                <div class="accordion other" id="accordion{{ group.0.id }}">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion{{ group.0.id }}" href="#collapse{{ group.0.id }}">
+                                {{ group.0.name }}
+                            </a>
+                        </div>
+                        <div id="collapse{{ group.0.id }}" class="accordion-body collapse">
+                            <div class="accordion-inner">
+                                <table class="table table-striped table-hover">
+                                    {% set not_display = [] %}
+                                    <tr>
+                                        {% for property in group.0.properties %}
+                                            {% if property.details == true %}
+                                                <td>
+                                                    {{ property.name }}
+                                                </td>
+                                            {% else %}
+                                                {% set hidden = loop.index %}
+                                                {% set not_display = not_display|merge([hidden]) %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                    {% for other in group.1 %}
+                                        <tr>
+                                            {% for prop in other.property %}
+                                                {% if loop.index not in not_display %}
+                                                    <td>
+                                                        {{ prop }}
+                                                    </td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% if plantunit.hasimages == true %}
+            <div class="gallery">
+                <h5>{{ "line-gallery"|trans|capitalize }}</h5>
+                <ul id="list_gallery" class="thumbnails per4">
+                    <li>
+                        <a href="#" class="end_of_gallery_load"></a>
+                    </li>
+                    <li>
+                        <a href="{{ path('front_details_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}/page0" id="end_of_gallery"></a>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+        {% if plantunit.haslocations == true %}
+            <div>
+                <h5>{{ "line-map"|trans|capitalize }}</h5>
+                {# LEAFLET MAP #}
+                <div id="map"></div>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-ui-1.9.2.custom.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.min.js') }}"></script>
+    <script type="text/javascript">
+        function isOnScreen(elem)
+        {
+            var docViewTop=$(window).scrollTop();
+            var docViewBottom=docViewTop+$(window).height();
+            var elemTop=$(elem).offset().top;
+            return ((elemTop<=docViewBottom)&&(elemTop>=docViewTop));
+        }
+        $(document).ready(function(){
+            $(window).scroll(function(){
+                if($('#end_of_gallery').length>0&&isOnScreen($('#end_of_gallery')))
+                {
+                    var data_url=$('#end_of_gallery').attr('href');
+                    $('#end_of_gallery').parents('li').remove();
+                    $.ajax({
+                        url:data_url
+                    }).done(function(data){
+                        $('.end_of_gallery_load').parents('li').remove();
+                        $('#list_gallery').append(data);
+                        $('.pop-tooltip').tooltip();
+                        /* Apply fancybox to multiple items */
+                        $('a.grouped_elements').fancybox({
+                            'transitionIn':'elastic',
+                            'transitionOut':'elastic',
+                            'speedIn':200,
+                            'speedOut':200,
+                            'enableEscapeButton':true,
+                            'hideOnContentClick':true,
+                            'titlePosition':'inside',
+                            'overlayShow':true,
+                            'titleFromAlt':true
+                        });
+                        $('a.grouped_elements').removeClass('grouped_elements');
+                        $('a.html-box').fancybox({
+                            onStart:function(){
+                                var width=$(window).width();
+                                var height=$(window).height();
+                                $('.viewer').width(Math.round(width*85/100));
+                                $('.viewer').height(Math.round(height*75/100));
+                            },
+                            onComplete:function(){
+                                var id=$(this).attr('href');
+                                var img_src=$(id).attr('data-src');
+                                id=id.replace('#','v_');
+                                var iv=$('#'+id).iviewer({
+                                    src:img_src,
+                                    ui_disabled:true,
+                                    zoom:'fit',
+                                    zoom_min:25,
+                                    zoom_max:1000,
+                                    onAfterZoom:function(ev,new_zoom){
+                                        $('#'+id+'_percent').val(Math.round(new_zoom));
+                                    }
+                                });
+                                $('#'+id+'_in').click(function(event){
+                                    event.preventDefault();
+                                    iv.iviewer('zoom_by',1);
+                                });
+                                $('#'+id+'_out').click(function(event){
+                                    event.preventDefault();
+                                    iv.iviewer('zoom_by',-1);
+                                });
+                                $('#'+id+'_orig').click(function(event){
+                                    event.preventDefault();
+                                    iv.iviewer('set_zoom',100);
+                                });
+                                $('#'+id+'_fit').click(function(event){
+                                    event.preventDefault();
+                                    iv.iviewer('fit');
+                                });
+                                $('#'+id+'_right').click(function(event){
+                                    event.preventDefault();
+                                    iv.iviewer('angle',90,false);
+                                });
+                            }
+                        });
+                        $('.gallery img.new').addClass('blind');
+                        $('.gallery img.new').one('load',function(){
+                            var img=$(this);
+                            img.fadeTo(200,1);
+                        }).each(function(){
+                            if(this.complete)
+                            {
+                                $(this).load();
+                            }
+                        });
+                         $('.gallery img.new').removeClass('new');
+                        $('a.html-box').removeClass('html-box');
+                        $('div.pop_right').popover({
+                            html:true,
+                            placement:'right',
+                            trigger:'hover'
+                        });
+                        $('div.pop_left').popover({
+                            html:true,
+                            placement:'left',
+                            trigger:'hover'
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+    {% if plantunit.haslocations == true %}
+        {% set locations = plantunit.locations %}
+        {% include 'PlantnetDataBundle:Frontend_4:leaflet.js.html.twig' %}
+    {% endif %}
+{% endblock %}
