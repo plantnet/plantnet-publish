@@ -247,6 +247,13 @@ class ConfigController extends Controller
         if(!$database){
             throw $this->createNotFoundException('Unable to find Database entity.');
         }
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        $default_template=$config->getTemplate();
         $default_link=$database->getLink();
         $children=$database->getChildren();
         if(count($children)){
@@ -313,7 +320,8 @@ class ConfigController extends Controller
                     'islocked'=>true,
                     'originaldb'=>$default_db,
                     'defaultlanguage'=>$language,
-                    'name'=>ucfirst($default_link).' '.$language
+                    'name'=>ucfirst($default_link).' '.$language,
+                    'template'=>$default_template
                 ));
             }
         }
@@ -463,6 +471,7 @@ class ConfigController extends Controller
             $editForm->bind($request);
             $dm->persist($config);
             $dm->flush();
+            $this->config_update_templates($config->getTemplate());
             $this->get('session')->getFlashBag()->add('msg_success','Template updated');
         }
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit_template.html.twig',array(
@@ -471,5 +480,37 @@ class ConfigController extends Controller
             'edit_form'=>$editForm->createView(),
             'current'=>'config'
         ));
+    }
+
+    private function config_update_templates($tpl)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase());
+        $database=$dm->getRepository('PlantnetDataBundle:Database')
+            ->findOneBy(array(
+                'name'=>$user->getDbName()
+            ));
+        if(!$database){
+            throw $this->createNotFoundException('Unable to find Database entity.');
+        }
+        $parent=$database->getParent();
+        if($parent){
+            $database=$parent;
+        }
+        $dbs=array();
+        $dbs[]=$database->getName();
+        $children=$database->getChildren();
+        if(count($children)){
+            foreach($children as $child){
+                $dbs[]=$child->getName();
+            }
+        }
+        foreach($dbs as $db){
+            $connection=new \MongoClient();
+            $db=$connection->$db;
+            $db->Config->update(array(),array('$set'=>array('template'=>$tpl)));
+        }
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
     }
 }

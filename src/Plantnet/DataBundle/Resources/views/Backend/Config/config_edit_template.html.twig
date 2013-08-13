@@ -8,6 +8,9 @@
 			<em>Config template</em> > Edit
 		</h4>
 	</div>
+	<p>
+		The template will be applied for each available language.
+	</p>
 	<form action="{{ path('config_update_template') }}" method="post" {{ form_enctype(edit_form) }}>
 		{{ form_errors(edit_form) }}
 		<div class="field-form">
