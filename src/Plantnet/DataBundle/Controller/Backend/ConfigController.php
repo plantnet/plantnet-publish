@@ -437,10 +437,21 @@ class ConfigController extends Controller
             throw $this->createNotFoundException('Unable to find Config entity.');
         }
         $templates=$this->template_list();
+        $descriptions=array();
+        foreach($templates as $tpl){
+            $desc=__DIR__.'/../../Resources/views/'.$tpl.'/description.txt';
+            if(file_exists($desc)){
+                $descriptions[$tpl]=file_get_contents($desc);
+            }
+            else{
+                $descriptions[$tpl]='';
+            }
+        }
         $editForm=$this->createForm(new ConfigTemplateType(),$config,array('templates'=>$templates));
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit_template.html.twig',array(
             'entity'=>$config,
             'views'=>$templates,
+            'descriptions'=>$descriptions,
             'edit_form'=>$editForm->createView(),
             'current'=>'config'
         ));

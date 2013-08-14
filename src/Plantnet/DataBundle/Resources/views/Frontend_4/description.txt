@@ -1,0 +1,3 @@
+• White navbar
+• Horizontal submenu (display further columns)
+• Custom banner

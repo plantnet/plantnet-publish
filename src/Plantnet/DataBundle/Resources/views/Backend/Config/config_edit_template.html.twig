@@ -28,7 +28,7 @@
 				<h5>{{ view }}</h5>
 				{% set img = '/bundles/plantnetdata/images/' ~ view ~ '.png' %}
 				<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ view }}">
-					<img src="{{ asset(img) | imagine_filter('thumb_template') }}" alt="{{ view }}" />
+					<img src="{{ asset(img) | imagine_filter('thumb_template') }}" alt="{{ view }}" data-title="<strong>Description</strong>" data-content="{{ descriptions[view]|nl2br }}" class="tpl-popover" />
 				</a>
 			</div>
 		{% endfor %}
@@ -48,6 +48,11 @@
 				'enableEscapeButton':true,
 				'hideOnContentClick':true,
 				'titlePosition':'inside'
+			});
+			$('.tpl-popover').popover({
+				html:true,
+				placement:'left',
+				trigger:'hover'
 			});
 		});
 	</script>
