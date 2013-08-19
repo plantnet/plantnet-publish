@@ -88,7 +88,7 @@
 											<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 												{% for translation in translations if translation.active == 0 %}
 													<li>
-														<a href="{{ translation.link }}">
+														<a href="{{ translation.link }}" class="i18n_link">
 															{{ translation.language|capitalize }}
 														</a>
 													</li>
@@ -202,6 +202,14 @@
 				var spinner=new Spinner(opts).spin(target);
 			}
 			$(document).ready(function(){
+				if($('a.i18n_link').length>0){
+					$('a.i18n_link').each(function(){
+						var i18n_node=$(this);
+						$.get($(this).attr('href')).fail(function(){
+							i18n_node.parent('li').remove();
+						});
+					});
+				}
 				if($('span.glossary_term').length>0){
 					$('span.glossary_term').mouseenter(function(){
 						var item=$(this);
