@@ -82,7 +82,7 @@
 									</a>
 									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 										{% for translation in translations if translation.active == 0 %}
-											<li>
+											<li class="i18n_line">
 												<a href="{{ translation.link }}" class="i18n_link">
 													{{ translation.language|capitalize }}
 												</a>
@@ -200,12 +200,14 @@
 			}
 			$(document).ready(function(){
 				if($('a.i18n_link').length>0){
-					$('a.i18n_link').each(function(){
+					$('a.i18n_link').first().parent('li').parent('ul').prepend('<li class="i18n_load"><span></span></li>');
+					$('a.i18n_link').each(function(index){
 						var i18n_node=$(this);
-						$.get($(this).attr('href')).fail(function(){
-							i18n_node.parent('li').remove();
+						$.get($(this).attr('href')).done(function(){
+							i18n_node.parent('li').removeClass('i18n_line');
 						});
 					});
+					$('.i18n_load').remove();
 				}
 				if($('span.glossary_term').length>0){
 					$('span.glossary_term').mouseenter(function(){
