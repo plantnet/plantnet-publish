@@ -131,6 +131,7 @@ class DataController extends Controller
             foreach($tmp as $term){
                 $terms[]=$term['name'];
             }
+            unset($tmp);
             return StringHelp::glossary_highlight($collection->getUrl(),$terms,$string,$nl2br);
         }
         return $string;
