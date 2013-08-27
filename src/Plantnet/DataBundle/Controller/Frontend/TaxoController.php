@@ -782,7 +782,7 @@ class TaxoController extends Controller
         else{
             $locations->field('taxonsrefs')->references($tab_ref[key($tab_ref)]);
         }
-        $locations->getQuery()
+        $locations=$locations->getQuery()
             ->execute();
         // // version 1
         // $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')

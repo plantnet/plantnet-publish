@@ -330,6 +330,7 @@ class GlossaryController extends Controller
                     switch($fields[$c]->getType()){
                         case 'keyword':
                             $definition->setName($value);
+                            $definition->setDisplayedname($value);
                             break;
                         case 'definition':
                             $definition->setDefinition($value);

@@ -21,6 +21,11 @@ class Definition
     /**
      * @MongoDB\String
      */
+    protected $displayedname;
+
+    /**
+     * @MongoDB\String
+     */
     protected $definition;
 
     /**
@@ -104,6 +109,26 @@ class Definition
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set displayedname
+     *
+     * @param string $displayedname
+     */
+    public function setDisplayedname($displayedname)
+    {
+        $this->displayedname = $displayedname;
+    }
+
+    /**
+     * Get displayedname
+     *
+     * @return string $displayedname
+     */
+    public function getDisplayedname()
+    {
+        return $this->displayedname;
     }
 
     /**
