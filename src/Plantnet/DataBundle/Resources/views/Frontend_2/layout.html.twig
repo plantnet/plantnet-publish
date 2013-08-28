@@ -231,12 +231,17 @@
 							});
 							item.popover('show');
 							$.getJSON(link.replace('z~7',coll_id)+'/'+term,function(data){
-								$.each(data,function(key,val){
-									if(key=='definition'){
-										item.next('div.popover').children('div.popover-content').first().html('<div class="glossary_loaded">'+val+'</div>');
-										item.data('content',val);
-									}
-								});
+								var data_definition=data.definition;
+								var data_path=data.path;
+								var data_dir=data.dir;
+								if(data_path!=''&&data_dir!=''){
+									data_content='<div class="media"><a href="#" class="pull-left"><img class="media-object" width="75" src="/media/cache/thumb_100_100/uploads/'+data_dir+'/'+data_path+'" / ></a><div class="media-body">'+data_definition+'</div></div>';
+								}
+								else{
+									data_content=data_definition;
+								}
+								item.next('div.popover').children('div.popover-content').first().html('<div class="glossary_loaded">'+data_content+'</div>');
+								item.data('content',data_content);
 							});
 						}
 						else{

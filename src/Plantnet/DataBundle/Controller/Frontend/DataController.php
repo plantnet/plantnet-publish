@@ -1046,11 +1046,13 @@ class DataController extends Controller
             ->getSingleResult();
         $result=array(
             'definition'=>'',
-            'path'=>''
+            'path'=>'',
+            'dir'=>''
         );
         if($definition){
             $result['definition']=$definition['definition'];
             $result['path']=$definition['path'];
+            $result['dir']=$glossary->getUploaddir();
         }
         $response=new Response(json_encode($result));
         $response->headers->set('Content-Type','application/json');
