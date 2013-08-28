@@ -190,6 +190,7 @@ class TaxoController extends Controller
             if(!$taxon){
                 throw $this->createNotFoundException('Unable to find Taxon entity.');
             }
+            /*
             $tab_id=array($taxon->getId());
             $syns=$taxon->getSynonyms();
             if(count($syns)){
@@ -204,6 +205,8 @@ class TaxoController extends Controller
                 ->sort('name','asc')
                 ->getQuery()
                 ->execute();
+            */
+            $taxons=array($taxon);
         }
         $config=$this->get_config($project);
         $tpl=$config->getTemplate();
