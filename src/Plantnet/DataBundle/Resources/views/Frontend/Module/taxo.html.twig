@@ -126,13 +126,11 @@
                                 {{ taxon.name }}
                             {% endif %}
                             {% if taxon.hassynonyms == true %}
-                                <small class="muted">
-                                    {% set syns = [] %}
-                                    {% for syn in taxon.synonyms %}
-                                        {% set syns = syns|merge([syn.identifier]) %}
-                                    {% endfor %}
-                                    {{ syns|join(', ') }}
-                                </small>
+                                {% set syns = [] %}
+                                {% for syn in taxon.synonyms %}
+                                    {% set syns = syns|merge([syn.identifier]) %}
+                                {% endfor %}
+                                <span class="icon-random syn-pop" data-original-title="<strong>{% if taxon.synonyms|length >= 2 %}{{ "line-synonyms"|trans|capitalize }}{% else %}{{ "line-synonym"|trans|capitalize }}{% endif %}</strong>" data-content="<div class='syn-pop-content'><ul><li>{{ syns|join('</li><li>') }}</li></ul></div>"></span>
                             {% endif %}
                         </span>
                     </td>
@@ -166,6 +164,12 @@
 	{{ parent() }}
     <script type="text/javascript">
         $(document).ready(function(){
+            if($('.syn-pop').length>0){
+                $('body').popover({
+                    selector:'.syn-pop',
+                    html:true
+                });
+            }
             $('#typeahead').typeahead({
                 source:function(query,process){
                     return $.get('{{ path('front_module_taxo_query_path', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/'+query,function(data){
