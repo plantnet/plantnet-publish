@@ -115,7 +115,7 @@
       </trans-unit>
       <trans-unit id="26" resname="line-specimens">
         <source>line-specimens</source>
-        <target state="new">especímenes</target>
+        <target state="new">documentos</target>
       </trans-unit>
       <trans-unit id="27" resname="line-views">
         <source>line-views</source>
