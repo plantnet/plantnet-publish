@@ -360,7 +360,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         $has_images=$last_non_valid->getHasimages();
                         $has_locations=$last_non_valid->getHaslocations();
                         $nb_to_switch=$last_non_valid->getNbpunits();
-                        $last_non_valid->setNbpunits($last_non_valid->getNbpunits()-$nb_to_switch);
+                        //$last_non_valid->setNbpunits($last_non_valid->getNbpunits()-$nb_to_switch);
                         $dm->persist($last_non_valid);
                         $parent_tmp=$last_non_valid->getParent();
                         while($parent_tmp){
