@@ -39,8 +39,8 @@ sensio_framework_extra:
 twig:
     debug: %kernel.debug%
     strict_variables: %kernel.debug%
-    # globals:
-    #     locales: %locales%
+    globals:
+        mdb_base: %mdb_base%
 
 # Assetic Configuration
 assetic:
