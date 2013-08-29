@@ -37,6 +37,11 @@ class User extends BaseUser
      */
     private $super;
 
+    /**
+     * @MongoDB\Hash
+     */
+    protected $dblist = null;
+
     public function __construct()
     {
         parent::__construct();
@@ -121,5 +126,25 @@ class User extends BaseUser
     public function getSuper()
     {
         return $this->super;
+    }
+
+    /**
+     * Set dblist
+     *
+     * @param hash $dblist
+     */
+    public function setDblist($dblist)
+    {
+        $this->dblist = $dblist;
+    }
+
+    /**
+     * Get dblist
+     *
+     * @return hash $dblist
+     */
+    public function getDblist()
+    {
+        return $this->dblist;
     }
 }

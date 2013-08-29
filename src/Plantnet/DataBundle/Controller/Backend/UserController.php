@@ -320,6 +320,7 @@ class UserController extends Controller
                         ));
                         //update user account
                         $user->setDbName($dbName);
+                        $user->setDblist(array($dbName));
                         $user->addRole('ROLE_ADMIN');
                         $userManager->updateUser($user);
                         //send mail

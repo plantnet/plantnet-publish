@@ -34,8 +34,7 @@ class RegistrationFormType extends BaseType
             $dbNameUq=$form->get('dbNameUq');
             $defaultlanguage=$form->get('defaultlanguage');
             $super=$form->get('super')->getData();
-            if(!$super)
-            {
+            if(!$super){
                 if(!is_null($dbNameUq->getData())){
                     if(!ctype_lower($dbNameUq->getData())){
                         $dbNameUq->addError(new FormError("This field is not valid (only letters)"));

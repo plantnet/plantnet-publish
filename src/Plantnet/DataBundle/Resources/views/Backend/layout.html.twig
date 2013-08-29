@@ -208,6 +208,28 @@
 								{% endif %}
 							</div>
 						{% endblock %}
+						<a href="#new_db" data-toggle="modal" class="btn btn-success btn-block">
+							<i class="icon-briefcase"></i>
+							Create new database
+						</a>
+						<div class="modal hide fade" id="new_db">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+								<h3>Create new database</h3>
+							</div>
+							<div class="modal-body">
+								<p>
+									Create a new database will create an independant data set with its own configurations and its own Web interface.
+									<br />
+									<i class="icon-warning-sign"></i>
+									<strong class="text-error">This action can not be undone</strong>
+								</p>
+							</div>
+							<div class="modal-footer">
+								<button class="btn" data-dismiss="modal" aria-hidden="true">No</button>
+								<a href="#" class="btn btn-primary">Create</a>
+							</div>
+						</div>
 					</div>
 					<div class="span8">
 						<div id="content" class="well wellcontent">
