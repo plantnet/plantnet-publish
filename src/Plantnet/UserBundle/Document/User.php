@@ -41,7 +41,6 @@ class User extends BaseUser
     {
         parent::__construct();
         // your own logic
-        $this->dbs = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
