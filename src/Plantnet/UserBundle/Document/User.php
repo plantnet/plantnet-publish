@@ -28,11 +28,6 @@ class User extends BaseUser
     protected $dbName;
 
     /**
-     * @MongoDB\Hash
-     */
-    protected $dbs;
-
-    /**
      * @MongoDB\String
      */
     protected $defaultlanguage;
@@ -87,26 +82,6 @@ class User extends BaseUser
     public function getDbName()
     {
         return $this->dbName;
-    }
-
-    /**
-     * Set dbs
-     *
-     * @param hash $dbs
-     */
-    public function setDbs($dbs)
-    {
-        $this->dbs = $dbs;
-    }
-
-    /**
-     * Get dbs
-     *
-     * @return hash $dbs
-     */
-    public function getDbs()
-    {
-        return $this->dbs;
     }
     
     /**
