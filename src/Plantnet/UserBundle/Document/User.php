@@ -28,6 +28,11 @@ class User extends BaseUser
     protected $dbName;
 
     /**
+     * @MongoDB\Hash
+     */
+    protected $dbs;
+
+    /**
      * @MongoDB\String
      */
     protected $defaultlanguage;
@@ -41,6 +46,7 @@ class User extends BaseUser
     {
         parent::__construct();
         // your own logic
+        $this->dbs = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -83,6 +89,26 @@ class User extends BaseUser
         return $this->dbName;
     }
 
+    /**
+     * Set dbs
+     *
+     * @param hash $dbs
+     */
+    public function setDbs($dbs)
+    {
+        $this->dbs = $dbs;
+    }
+
+    /**
+     * Get dbs
+     *
+     * @return hash $dbs
+     */
+    public function getDbs()
+    {
+        return $this->dbs;
+    }
+    
     /**
      * Set defaultlanguage
      *
