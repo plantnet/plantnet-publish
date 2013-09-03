@@ -251,3 +251,6 @@ liip_imagine:
         thumb_130_75:
             filters:
                 thumbnail: { size: [130, 75], mode: outbound }
+        thumb_max_width_100:
+            filters:
+                relative_resize: { widen: 100 }
