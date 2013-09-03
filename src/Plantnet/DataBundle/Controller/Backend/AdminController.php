@@ -74,6 +74,7 @@ class AdminController extends Controller
     public function indexAction()
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
+        $this->updateDbList($user);
         $config=null;
         $editForm=null;
         if($user->getDbName()){
@@ -92,6 +93,23 @@ class AdminController extends Controller
             'edit_form'=>($editForm!=null)?$editForm->createView():null,
             'current'=>'index'
         ));
+    }
+
+    private function updateDbList($user)
+    {
+        $roles=$user->getRoles();
+        if(in_array('ROLE_ADMIN',$roles)&&!in_array('ROLE_SUPER_ADMIN',$roles)){
+            $dbs=$user->getDblist();
+            if(empty($dbs)){
+                $db=$user->getDbName();
+                if($db){
+                    $userManager=$this->get('fos_user.user_manager');
+                    $dbList=array($db);
+                    $user->setDblist($dbList);
+                    $userManager->updateUser($user);
+                }
+            }
+        }
     }
 
     /**
