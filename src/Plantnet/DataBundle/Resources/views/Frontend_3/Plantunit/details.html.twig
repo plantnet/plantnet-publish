@@ -77,7 +77,8 @@
                     <div class="accordion-group">
                         <div class="accordion-heading">
                             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion{{ group.0.id }}" href="#collapse{{ group.0.id }}">
-                                {{ group.0.name }}
+                                <i class="icon-chevron-right"></i>
+                                <strong>{{ group.0.name }}</strong>
                             </a>
                         </div>
                         <div id="collapse{{ group.0.id }}" class="accordion-body collapse">
@@ -151,6 +152,11 @@
             return ((elemTop<=docViewBottom)&&(elemTop>=docViewTop));
         }
         $(document).ready(function(){
+            $('.collapse').on('show',function(){
+                $(this).parent().find('.icon-chevron-right').removeClass('icon-chevron-right').addClass('icon-chevron-down');
+            }).on('hide',function(){
+                $(this).parent().find('.icon-chevron-down').removeClass('icon-chevron-down').addClass('icon-chevron-right');
+            });
             $(window).scroll(function(){
                 if($('#end_of_gallery').length>0&&isOnScreen($('#end_of_gallery')))
                 {
