@@ -619,4 +619,27 @@ class AdminController extends Controller
             'form'=>$form->createView()
         ));
     }
+
+    /**
+     * @Route("/database_switch/{database}", name="database_switch")
+     * @Template()
+     */
+    public function database_switchAction($database)
+    {
+        $userManager=$this->get('fos_user.user_manager');
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase());
+        $db=$dm->getRepository('PlantnetDataBundle:Database')
+            ->findOneBy(array(
+                'name'=>$database
+            ));
+        if(!$db){
+            throw $this->createNotFoundException('Unable to find Database entity.');
+        }
+        $user->setDbName($database);
+        $userManager->updateUser($user);
+        $this->get('session')->getFlashBag()->add('msg_success','Switched to '.str_replace($this->get_prefix(),'',$database).' project');
+        return $this->redirect($this->generateUrl('admin_index'));
+    }
 }
