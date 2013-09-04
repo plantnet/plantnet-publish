@@ -637,6 +637,10 @@ class AdminController extends Controller
         if(!$db){
             throw $this->createNotFoundException('Unable to find Database entity.');
         }
+        $db_list=$user->getDblist();
+        if(!in_array($database,$db_list)){
+            throw $this->createNotFoundException('Unable to switch.');
+        }
         $user->setDbName($database);
         $userManager->updateUser($user);
         $this->get('session')->getFlashBag()->add('msg_success','Switched to '.str_replace($this->get_prefix(),'',$database).' project');
