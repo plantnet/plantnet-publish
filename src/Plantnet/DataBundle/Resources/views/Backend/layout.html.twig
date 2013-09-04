@@ -206,6 +206,14 @@
 															Settings
 														</a>
 													</li>
+													{% if is_granted('ROLE_SUPER_ADMIN') %}
+														<li>
+															<a title="Change working project" href="{{ path('admin_users_edit', { 'username': app.user.usernameCanonical }) }}" class="ajax">
+																<i class="icon-briefcase"></i>
+																Working project
+															</a>
+														</li>
+													{% endif %}
 													<li class="divider"></li>
 													<li>
 														<a title="Logout" href="{{ path('fos_user_security_logout') }}">
