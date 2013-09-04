@@ -1,8 +1,14 @@
 {% extends "PlantnetDataBundle:Frontend_3:layout.html.twig" %}
 {% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-search"|trans|capitalize %}
+{% set hasmap = false %}
+{% for child in module.children if (child.deleting != true and child.type == 'locality') %}
+    {% set hasmap = true %}
+{% endfor %}
 {% block stylesheets %}
 	{{ parent() }}
-    {% include 'PlantnetDataBundle:Frontend_3:leaflet.css.html.twig' %}
+    {% if hasmap %}
+        {% include 'PlantnetDataBundle:Frontend_3:leaflet.css.html.twig' %}
+    {% endif %}
 {% endblock %}
 {% block header %}<h1>{{ module.name }} - {{ "tab-search"|trans|capitalize }}</h1>{% endblock %}
 {% block breadcrumb %}
@@ -41,17 +47,21 @@
                 </form>
             </div>
         </div>
-        <div class="span8">
-            <div>
-                {# LEAFLET MAP #}
-                <div id="map"></div>
+        {% if hasmap %}
+            <div class="span8">
+                <div>
+                    {# LEAFLET MAP #}
+                    <div id="map"></div>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
-    {% include 'PlantnetDataBundle:Frontend_3:leaflet.js.html.twig' %}
+    {% if hasmap %}
+        {% include 'PlantnetDataBundle:Frontend_3:leaflet.js.html.twig' %}
+    {% endif %}
     <script type="text/javascript">
         $(document).ready(function(){
             $('input[type=text]').attr('autocomplete','off');
