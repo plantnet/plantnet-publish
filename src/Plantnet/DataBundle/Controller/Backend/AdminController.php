@@ -9,6 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\FormError;
 
 use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
@@ -24,6 +26,7 @@ use Plantnet\DataBundle\Document\Plantunit;
 use Plantnet\DataBundle\Document\Image;
 use Plantnet\DataBundle\Document\Location;
 use Plantnet\DataBundle\Document\Other;
+use Plantnet\DataBundle\Document\Database;
 
 /**
  * Admin controller.
@@ -32,6 +35,29 @@ use Plantnet\DataBundle\Document\Other;
  */
 class AdminController extends Controller
 {
+    private function database_list()
+    {
+        //display databases without prefix
+        $prefix=$this->get_prefix();
+        $dbs_array=array();
+        $connection=new \MongoClient();
+        $dbs=$connection->admin->command(array(
+            'listDatabases'=>1
+        ));
+        foreach($dbs['databases'] as $db){
+            $db_name=$db['name'];
+            if(substr_count($db_name,$prefix)){
+                $dbs_array[]=str_replace($prefix,'',$db_name);
+            }
+        }
+        return $dbs_array;
+    }
+
+    private function get_prefix()
+    {
+        return $this->container->getParameter('mdb_base').'_';
+    }
+
     private function getDataBase($user=null,$dm=null)
     {
         if($user){
@@ -469,6 +495,128 @@ class AdminController extends Controller
             'page'=>$page,
             'edit_form'=>$editForm->createView(),
             'current'=>'pages'
+        ));
+    }
+
+    private function createDatabaseNewForm()
+    {
+        //not null, ctype_lower (only letters), 3-50 chars
+        return $this->createFormBuilder()
+            ->add('dbname','text',array(
+                'required'=>true,
+                'label'=>'Database name (only letters):'
+            ))
+            ->add('defaultlanguage','language',array(
+                'label'=>'Default language:',
+                'required'=>true
+            ))
+            ->getForm();
+    }
+
+    /**
+     * Displays a form to create a new Database.
+     *
+     * @Route("/database/new", name="database_new")
+     * @Template()
+     */
+    public function database_newAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $form=$this->createDatabaseNewForm();
+        return $this->render('PlantnetDataBundle:Backend\Admin:database_new.html.twig',array(
+            'form'=>$form->createView()
+        ));
+    }
+
+    /**
+     * Creates a new Database.
+     *
+     * @Route("/database/create", name="database_create")
+     * @Method("post")
+     * @Template()
+     */
+    public function collection_createAction(Request $request)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $form=$this->createDatabaseNewForm();
+        $roles=$user->getRoles();
+        if($request->isMethod('POST')){
+            $form->bind($request);
+            if(in_array('ROLE_ADMIN',$roles)&&!in_array('ROLE_SUPER_ADMIN',$roles)){
+                $dbName=$form->get('dbname');
+                $language=$form->get('defaultlanguage');
+                if(!is_null($dbName->getData())){
+                    if(!ctype_lower($dbName->getData())){
+                        $dbName->addError(new FormError("This field is not valid (only letters)"));
+                    }
+                    if(strlen($dbName->getData())<3||strlen($dbName->getData())>50){
+                        $dbName->addError(new FormError("This field must contain 3 to 50 letters"));
+                    }
+                }
+                else{
+                    $dbName->addError(new FormError("This field must not be empty"));
+                }
+                $dbs=$this->database_list();
+                if(in_array($dbName->getData(),$dbs)){
+                   $dbName->addError(new FormError('This value is already used.'));
+                }
+                if($form->isValid()){
+                    $new_db=$this->get_prefix().$dbName->getData();
+                    //add Database entity
+                    $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                    $database=new Database();
+                    $database->setName($new_db);
+                    $database->setDisplayedname(ucfirst($dbName->getData()));
+                    $database->setLink($dbName->getData());
+                    $database->setLanguage($language->getData());
+                    $dm->persist($database);
+                    $dm->flush();
+                    //create new database
+                    $connection=new \MongoClient();
+                    $db=$connection->$new_db;
+                    $db->listCollections();
+                    //collections
+                    $db->createCollection('Collection');
+                    $db->createCollection('Config');
+                    $db->createCollection('Definition');
+                    $db->createCollection('Glossary');
+                    $db->createCollection('Image');
+                    $db->createCollection('Location');
+                    $db->createCollection('Other');
+                    $db->createCollection('Module');
+                    $db->createCollection('Plantunit');
+                    $db->createCollection('Taxon');
+                    $db->createCollection('Page');
+                    //indexes
+                    $db->Image->ensureIndex(array("title1"=>1,"title2"=>1));
+                    $db->Location->ensureIndex(array("coordinates"=>"2d"));
+                    // $db->Plantunit->ensureIndex(array("attributes"=>"text"));
+                    $db->Taxon->ensureIndex(array("name"=>1));
+                    //pages data
+                    $db->Page->insert(array('name'=>'Home','alias'=>'home','order'=>1));
+                    $db->Page->insert(array('name'=>'Mentions','alias'=>'mentions','order'=>2));
+                    $db->Page->insert(array('name'=>'Credits','alias'=>'credits','order'=>3));
+                    $db->Page->insert(array('name'=>'Contacts','alias'=>'contacts','order'=>4));
+                    //init config
+                    $db->Config->insert(array(
+                        'defaultlanguage'=>$language->getData(),
+                        'islocked'=>false,
+                        'originaldb'=>$new_db,
+                        'name'=>ucfirst($dbName->getData())
+                    ));
+                    //update user account
+                    $userManager=$this->get('fos_user.user_manager');
+                    $db_list=$user->getDblist();
+                    $db_list[]=$new_db;
+                    $user->setDblist($db_list);
+                    $userManager->updateUser($user);
+                    $this->get('session')->getFlashBag()->add('msg_success','Database created');
+                    return $this->redirect($this->generateUrl('admin_index'));
+                }
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Admin:database_new.html.twig',array(
+            'form'=>$form->createView()
         ));
     }
 }

@@ -1,0 +1,25 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block form %}
+    <div id="title-form">
+        <h4 class="text-info">
+			Database creation
+		</h4>
+    </div>
+    <form action="{{ path('database_create') }}" method="post" {{ form_enctype(form) }}>
+    	{{ form_errors(form) }}
+		<div class="field-form">
+			{{ form_label(form.dbname) }}
+			{{ form_errors(form.dbname) }}
+			{{ form_widget(form.dbname) }}
+		</div>
+		{{ form_rest(form) }}
+		<br />
+		<button type="submit" class="btn">Create</button>
+    </form>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
