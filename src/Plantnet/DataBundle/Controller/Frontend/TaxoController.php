@@ -173,13 +173,26 @@ class TaxoController extends Controller
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         if($taxon=='null'){
-            $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
-                ->field('module')->references($module)
-                ->field('parent')->equals(null)
-                ->field('issynonym')->equals(false)
-                ->sort('name','asc')
-                ->getQuery()
-                ->execute();
+            $search_taxon=$request->query->get('taxon');
+            if(!empty($search_taxon)){
+                $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                    ->field('module')->references($module)
+                    ->field('identifier')->in(array(
+                        new \MongoRegex('/.*'.StringHelp::accentToRegex($search_taxon).'.*/i')
+                    ))
+                    ->sort('name','asc')
+                    ->getQuery()
+                    ->execute();
+            }
+            else{
+                $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                    ->field('module')->references($module)
+                    ->field('parent')->equals(null)
+                    ->field('issynonym')->equals(false)
+                    ->sort('name','asc')
+                    ->getQuery()
+                    ->execute();
+            }
         }
         else{
             $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
