@@ -127,10 +127,10 @@ class AdminController extends Controller
         if(in_array('ROLE_ADMIN',$roles)&&!in_array('ROLE_SUPER_ADMIN',$roles)){
             $dbs=$user->getDblist();
             if(empty($dbs)){
-                $db=$user->getDbName();
+                $db=$user->getDbNameUq();
                 if($db){
                     $userManager=$this->get('fos_user.user_manager');
-                    $dbList=array($db);
+                    $dbList=array($this->get_prefix().$db);
                     $user->setDblist($dbList);
                     $userManager->updateUser($user);
                 }
