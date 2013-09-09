@@ -44,6 +44,11 @@ security:
                 path: fos_user_security_logout
                 target: /admin
             anonymous: true
+            remember_me:
+                key: leenkeden
+                lifetime: 2592000
+                path: /
+                domain: ~
 
 
     access_control:
