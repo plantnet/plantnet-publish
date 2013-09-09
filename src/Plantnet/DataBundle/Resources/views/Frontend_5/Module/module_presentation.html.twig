@@ -1,0 +1,81 @@
+{% set imgs = [] %}
+{% set nb_img = 9 %}
+{% for child in module.children if (child.type == 'image' and child.deleting != true and imgs|length < nb_img) %}
+    {% if child.nbrows > 0 and imgs|length < nb_img %}
+        {% for image in child.images if imgs|length < nb_img %}
+            {% set imgs = imgs|merge([image]) %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+<div class="module_presentation">
+    <div class="well well-small">
+        <h4>
+            <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module':module.url }) }}">
+                {{ module.name }}
+            </a>
+        </h4>
+        <small class="muted">
+            {{ module.nbrows }} {{ "line-entities"|trans }}
+        </small>
+    </div>
+    <div class="row">
+        {% if imgs|length > 0 %}
+            <div class="span6">
+        {% else %}
+            <div class="span12">
+        {% endif %}
+            <div class="row">
+                {% if imgs|length > 0 %}
+                    <div class="span6">
+                {% else %}
+                    <div class="span9">
+                {% endif %}
+                    {% autoescape false %}
+                        {{ module.description }}
+                    {% endautoescape %}
+                    <br />
+                </div>
+                <div class="span3">
+                    {% for child in module.children if (child.type == 'image' and child.deleting != true) %}
+                        <div>
+                            <i class="icon-camera"></i>
+                            <h5>{{ child.name }}</h5>
+                            <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-images"|trans }}">
+                                {{ child.nbrows }}
+                            </span>
+                        </div>
+                    {% endfor %}
+                    {% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
+                        <div>
+                            <i class="icon-map-marker"></i>
+                            <h5>{{ child.name }}</h5>
+                            <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-locations"|trans }}">
+                                {{ child.nbrows }}
+                            </span>
+                        </div>
+                    {% endfor %}
+                    {% if module.taxonomy == true %}
+                        <div>
+                            <i class="icon-tasks"></i>
+                            <h5>{{ "line-taxonomy"|trans|capitalize }}</h5>
+                        </div>
+                    {% endif %}
+                    <br />
+                </div>
+            </div>
+        </div>
+        {% if imgs|length > 0 %}
+            <div class="span6">
+                <div class="row">
+                    {% for image in imgs %}
+                        {% set imgspe = image.path|basename %}
+                        {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+                        <div class="span2">
+                            <img src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ image.copyright }}" class="img-polaroid img-tooltip img_module" data-toggle="tooltip" title="{{ image.title1 }} {{ image.title2 }}" />
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>

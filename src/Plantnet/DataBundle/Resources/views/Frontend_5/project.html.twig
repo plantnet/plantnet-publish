@@ -1,0 +1,26 @@
+{% extends "PlantnetDataBundle:Frontend_5:layout.html.twig" %}
+{% block title config.name ~ ' - Pl@ntnet' %}
+{% block header %}<h1>{{ config.name }}</h1>{% endblock %}
+{% block row %}
+	<div>
+		{% autoescape false %}
+			{{ page.content }}
+		{% endautoescape %}
+	</div>
+	<div>
+		{% for collection in collections if collection.deleting != true %}
+			{% include "PlantnetDataBundle:Frontend_5\\Collection:collection_presentation.html.twig" %}
+		{% endfor %}
+	</div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+        	$('.carousel').carousel({
+        		interval:4000
+        	});
+        	$('.pop-tooltip').tooltip();
+        });
+    </script>
+{% endblock %}

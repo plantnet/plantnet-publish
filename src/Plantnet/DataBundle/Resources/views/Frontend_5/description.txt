@@ -1,0 +1,4 @@
+• Dark navbar
+• Vertical submenu
+• Custom banner
+• Collection level not used

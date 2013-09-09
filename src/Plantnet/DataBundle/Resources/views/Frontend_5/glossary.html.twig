@@ -1,0 +1,57 @@
+{% extends "PlantnetDataBundle:Frontend_5:layout.html.twig" %}
+{% block title config.name ~ ' - ' ~ "line-glossary"|trans|capitalize ~ ' - Pl@ntnet' %}
+{% block stylesheets %}
+	{{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
+{% endblock %}
+{% block header %}<h1>{{ "line-glossary"|trans|capitalize }}</h1>{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ "line-glossary"|trans|capitalize }}
+        </li>
+    </ul>
+{% endblock %}
+{% block row %}
+    {% for def in glossary.definitions %}
+        <div class="media">
+            {% if def.path is not empty %}
+                {% set imgspe = def.path|basename %}
+                {% set img = ['uploads/'~glossary.uploaddir~'/', imgspe]|join('') %}
+                <a class="pull-left grouped_elements" href="{{ asset(img) }}" rel="group">
+                    <img class="media-object img-polaroid" src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ def.name }}" width="130" height="75">
+                </a>
+            {% else %}
+                <span class="pull-left empty-media img-polaroid"></span>
+            {% endif %}
+            <div class="media-body">
+                <h4 class="media-heading">{{ def.displayedname }}</h4>
+                {{ def.definition }}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('a.grouped_elements').fancybox({
+                'transitionIn':'elastic',
+                'transitionOut':'elastic',
+                'speedIn':200,
+                'speedOut':200,
+                'enableEscapeButton':true,
+                'hideOnContentClick':true,
+                'titlePosition':'inside',
+                'overlayShow':true,
+                'titleFromAlt':true
+            });
+        });
+    </script>
+{% endblock %}

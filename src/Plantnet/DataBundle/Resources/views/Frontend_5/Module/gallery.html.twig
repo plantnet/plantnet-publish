@@ -1,0 +1,142 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_5:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_5:datatypes.html.twig" %}
+{% block title config.name ~ ' - ' ~ module.name ~ ' - Pl@ntnet' %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend_5:side.html.twig" with { module: module_parent } %}
+{% endblock %}
+{% block main %}
+	<div class="results">
+		{% if paginator|length > 0 %}
+			{% if paginator.haveToPaginate() %}
+				<div class="pagerfanta">
+                    <form method="get" action="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'submodule': module.url }) }}">
+                        <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
+                    </form>
+					{{ pagerfanta(
+						paginator,
+						'twitter_bootstrap_translated',
+						{
+							'proximity': 2,
+							'prev_message': '←',
+	                        'next_message': '→',
+							'routeName': 'front_submodule_paginated',
+	                        'routeParams': {
+	                            'project': project,
+	                            'collection': collection.url,
+	                            'module': module_parent.url,
+	                            'submodule': module.url
+	                        }
+						}
+					) }}
+				</div>
+			{% endif %}
+			<div class="gallery">
+				<ul class="thumbnails per3">
+					{% for image in paginator %}
+						{% include "PlantnetDataBundle:Frontend_5\\Image:item.html.twig" with { image: image } %}
+					{% endfor %}
+				</ul>
+			</div>
+			{% if paginator.haveToPaginate() %}
+				<div class="pagerfanta">
+					{{ pagerfanta(
+						paginator,
+						'twitter_bootstrap_translated',
+						{
+							'proximity': 2,
+							'prev_message': '←',
+	                        'next_message': '→',
+							'routeName': 'front_submodule_paginated',
+	                        'routeParams': {
+	                            'project': project,
+	                            'collection': collection.url,
+	                            'module': module_parent.url,
+	                            'submodule': module.url
+	                        }
+						}
+					) }}
+				</div>
+			{% endif %}
+		{% endif %}
+	</div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('.pop-tooltip').tooltip();
+			/* Apply fancybox to multiple items */
+			$('a.grouped_elements').fancybox({
+				'transitionIn':'elastic',
+				'transitionOut':'elastic',
+				'speedIn':200,
+				'speedOut':200,
+				'enableEscapeButton':true,
+				'hideOnContentClick':true,
+				'titlePosition':'inside',
+				'overlayShow':true,
+				'titleFromAlt':true
+			});
+			$('a.html-box').fancybox({
+				onStart:function(){
+					var width=$(window).width();
+					var height=$(window).height();
+					$('.viewer').width(Math.round(width*85/100));
+					$('.viewer').height(Math.round(height*75/100));
+				},
+				onComplete:function(){
+					var id=$(this).attr('href');
+					var img_src=$(id).attr('data-src');
+					id=id.replace('#','v_');
+					var iv=$('#'+id).iviewer({
+						src:img_src,
+						ui_disabled:true,
+						zoom:'fit',
+						zoom_min:25,
+						zoom_max:1000,
+						onAfterZoom:function(ev,new_zoom){
+							$('#'+id+'_percent').val(Math.round(new_zoom));
+						}
+					});
+					$('#'+id+'_in').click(function(event){
+						event.preventDefault();
+						iv.iviewer('zoom_by',1);
+					});
+					$('#'+id+'_out').click(function(event){
+						event.preventDefault();
+						iv.iviewer('zoom_by',-1);
+					});
+					$('#'+id+'_orig').click(function(event){
+						event.preventDefault();
+						iv.iviewer('set_zoom',100);
+					});
+					$('#'+id+'_fit').click(function(event){
+						event.preventDefault();
+						iv.iviewer('fit');
+					});
+					$('#'+id+'_right').click(function(event){
+						event.preventDefault();
+						iv.iviewer('angle',90,false);
+					});
+				}
+			});
+			$('.gallery img').addClass('blind');
+			$('.gallery img').one('load',function(){
+				var img=$(this);
+				img.fadeTo(200,1);
+			}).each(function(){
+				if(this.complete)
+				{
+					$(this).load();
+				}
+			});
+			$('div.thumbnail').popover({
+				html:true,
+				placement:'left',
+				trigger:'hover'
+			});
+		});
+	</script>
+{% endblock %}

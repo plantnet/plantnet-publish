@@ -188,6 +188,10 @@ class DataController extends Controller
         foreach($collections as $collection){
             $collection->setDescription($this->glossarize($dm,$collection,$collection->getDescription()));
             $coll=$collection;
+            $modules=$collection->getModules();
+            foreach($modules as $module){
+                $module->setDescription($this->glossarize($dm,$collection,$module->getDescription()));
+            }
         }
         $page->setContent($this->glossarize($dm,$coll,$page->getContent()));
         //
@@ -1058,5 +1062,46 @@ class DataController extends Controller
         $response->headers->set('Content-Type','application/json');
         return $response;
         exit;
+    }
+
+    /**
+     * @Route("/project/{project}/sitemap", name="front_sitemap")
+     * @Template()
+     */
+    public function sitemapAction($project)
+    {
+        $translations=$this->make_translations(
+            $project,
+            $this->container->get('request')->get('_route'),
+            array(
+                'project'=>$project
+            )
+        );
+        //
+        $projects=$this->database_list();
+        if(!in_array($project,$projects)){
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $collections=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findAll();
+        $page=$dm->getRepository('PlantnetDataBundle:Page')
+            ->findOneBy(array(
+                'alias'=>'home'
+            ));
+        if(!$page){
+            throw $this->createNotFoundException('Unable to find Page entity.');
+        }
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Pages:sitemap.html.twig',array(
+            'config'=>$config,
+            'project'=>$project,
+            'page'=>$page,
+            'collections'=>$collections,
+            'translations'=>$translations,
+            'current'=>'contacts'
+        ));
     }
 }
