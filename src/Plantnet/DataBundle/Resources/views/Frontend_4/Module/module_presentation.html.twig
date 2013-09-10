@@ -7,75 +7,90 @@
         {% endfor %}
     {% endif %}
 {% endfor %}
-<div class="module_presentation">
-    <div class="well well-small">
-        <h4>
-            <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module':module.url }) }}">
-                {{ module.name }}
+<h3>
+    <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module':module.url }) }}">
+        {{ module.name }}
+    </a>
+    <small class="muted">
+        {{ module.nbrows }} {{ "line-entities"|trans }}
+    </small>
+</h3>
+<div class="media">
+    {% if imgs|length > 0 %}
+        <div class="pull-right">
+            {% for image in imgs %}
+                {% set imgspe = image.path|basename %}
+                {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+                <img src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ image.copyright }}" class="img-polaroid img-tooltip img_module" data-toggle="tooltip" title="{{ image.title1 }} {{ image.title2 }}" width="130" height="75" />
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="media-body txt">
+        <div class="well">
+            <div>
+                {% autoescape false %}
+                    {{ module.description }}
+                {% endautoescape %}
+            </div>
+            <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module':module.url }) }}" class="btn btn-small pull-right">
+                {{ "line-details"|trans|capitalize }}
             </a>
-        </h4>
-        <small class="muted">
-            {{ module.nbrows }} {{ "line-entities"|trans }}
-        </small>
-    </div>
-    <div class="row">
-        {% if imgs|length > 0 %}
-            <div class="span6">
-        {% else %}
-            <div class="span12">
-        {% endif %}
-            <div class="row">
-                {% if imgs|length > 0 %}
-                    <div class="span6">
-                {% else %}
-                    <div class="span9">
+            <div class="clear"></div>
+            <div>
+                {% for child in module.children if (child.type == 'image' and child.deleting != true) %}
+                    <div>
+                        <i class="icon-camera"></i>
+                        <h5>
+                            <a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
+                                {{ child.name }}
+                            </a>
+                        </h5>
+                        <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-images"|trans }}">
+                            {{ child.nbrows }}
+                        </span>
+                    </div>
+                {% endfor %}
+                {% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
+                    <div>
+                        <i class="icon-map-marker"></i>
+                        <h5>
+                            <a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
+                                {{ child.name }}
+                            </a>
+                        </h5>
+                        <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-locations"|trans }}">
+                            {{ child.nbrows }}
+                        </span>
+                    </div>
+                {% endfor %}
+                {% if module.taxonomy == true %}
+                    <div>
+                        <i class="icon-tasks"></i>
+                        <h5>
+                            <a href="{{ path('front_module_taxo', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+                                {{ "line-taxonomy"|trans|capitalize }}
+                            </a>
+                        </h5>
+                    </div>
                 {% endif %}
-                    {% autoescape false %}
-                        {{ module.description }}
-                    {% endautoescape %}
-                    <br />
+                <div>
+                    <h5>
+                        <a href="{{ path('front_module_search', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+                            <i class="icon-search"></i>
+                            {{ "tab-search"|trans|capitalize }}
+                        </a>
+                    </h5>
                 </div>
-                <div class="span3">
-                    {% for child in module.children if (child.type == 'image' and child.deleting != true) %}
-                        <div>
-                            <i class="icon-camera"></i>
-                            <h5>{{ child.name }}</h5>
-                            <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-images"|trans }}">
-                                {{ child.nbrows }}
-                            </span>
-                        </div>
-                    {% endfor %}
-                    {% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
-                        <div>
-                            <i class="icon-map-marker"></i>
-                            <h5>{{ child.name }}</h5>
-                            <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-locations"|trans }}">
-                                {{ child.nbrows }}
-                            </span>
-                        </div>
-                    {% endfor %}
-                    {% if module.taxonomy == true %}
-                        <div>
-                            <i class="icon-tasks"></i>
-                            <h5>{{ "line-taxonomy"|trans|capitalize }}</h5>
-                        </div>
-                    {% endif %}
-                    <br />
-                </div>
+                {% if collection.glossary is not empty %}
+                    <div>
+                        <h5>
+                            <a href="{{ path('front_glossary', { 'project': project, 'collection': collection.url }) }}">
+                                {{ "line-glossary"|trans|capitalize }}
+                            </a>
+                        </h5>
+                    </div>
+                {% endif %}
             </div>
         </div>
-        {% if imgs|length > 0 %}
-            <div class="span6">
-                <div class="row">
-                    {% for image in imgs %}
-                        {% set imgspe = image.path|basename %}
-                        {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
-                        <div class="span2">
-                            <img src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ image.copyright }}" class="img-polaroid img-tooltip img_module" data-toggle="tooltip" title="{{ image.title1 }} {{ image.title2 }}" />
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endif %}
     </div>
 </div>
