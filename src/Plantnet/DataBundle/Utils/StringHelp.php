@@ -59,7 +59,7 @@ class StringHelp
 		}
 		$d=new \DOMDocument;
 		//single word
-        $d->loadHTML('<?xml encoding="UTF-8">'.$html_string);
+        @$d->loadHTML('<?xml encoding="UTF-8">'.$html_string);
         foreach($d->childNodes as $item){
         	if($item->nodeType==XML_PI_NODE){
         		$d->removeChild($item);
