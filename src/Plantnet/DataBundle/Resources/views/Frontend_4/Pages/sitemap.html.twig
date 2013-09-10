@@ -1,0 +1,75 @@
+{% extends "PlantnetDataBundle:Frontend_4:layout.html.twig" %}
+{% block title "Pl@ntnet - " ~ config.name ~ ' - ' ~ "footer-sitemap"|trans|capitalize %}
+{% block header %}<h1>{{ config.name }} - {{ "footer-sitemap"|trans|capitalize }}</h1>{% endblock %}
+{% block row %}
+	<div>
+		<a href="{{ path('front_project', {'project': project}) }}" class="lead">
+			{{ config.name }}
+		</a>
+		<ul>
+			{% for collection in collections if collection.deleting != true %}
+				<li>
+					<a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">
+						<strong>{{ collection.name }}</strong>
+					</a>
+					{% if collection.modules|length > 0 %}
+						<ul>
+							{% for module in collection.modules if module.deleting != true %}
+								<li>
+									<a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+										<i class="icon-list"></i>
+										<strong>{{ module.name }}</strong>
+										<span class="badge">{{ module.nbrows }}</span>
+									</a>
+									<ul>
+										{% if module.children|length > 0 %}
+											{% for child in module.children if (child.type == 'image' and child.deleting != true) %}
+												<li>
+													<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
+														<i class="icon-camera"></i>
+														{{ child.name }}
+														<span class="badge">{{ child.nbrows }}</span>
+													</a>
+												</li>
+											{% endfor %}
+											{% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
+												<li>
+													<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
+														<i class="icon-map-marker"></i>
+														{{ child.name }}
+														<span class="badge">{{ child.nbrows }}</span>
+													</a>
+												</li>
+											{% endfor %}
+											{% if module.taxonomy == true %}
+												<li>
+													<a href="{{ path('front_module_taxo', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+														<i class="icon-tasks"></i>
+														{{ "line-taxonomy"|trans|capitalize }}
+													</a>
+												</li>
+											{% endif %}
+											<li>
+												<a href="{{ path('front_module_search', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+													<i class="icon-search"></i>
+													{{ "line-search-in"|trans|capitalize }} {{ module.name }}
+												</a>
+											</li>
+										{% endif %}
+									</ul>
+								</li>
+							{% endfor %}
+							{% if collection.glossary is not empty %}
+								<li>
+									<a href="{{ path('front_glossary', { 'project': project, 'collection': collection.url }) }}">
+										{{ "line-glossary"|trans|capitalize }}
+									</a>
+								</li>
+							{% endif %}
+						</ul>
+					{% endif %}
+				</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endblock %}
