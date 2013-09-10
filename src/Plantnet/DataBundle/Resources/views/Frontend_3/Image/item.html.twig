@@ -27,10 +27,10 @@
 			</p>
 		{% endif %}
 		<div class="access">
-			<a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': image.plantunit.module.url, 'id': image.plantunit.identifier }) }}">
+			<a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': image.plantunit.module.url, 'id': image.plantunit.identifier }) }}" class="btn btn-mini">
 				<i class="icon-list pop-tooltip" data-toggle="tooltip" title="{{ "line-details"|trans|capitalize }}"></i>
 			</a>
-			<a class="html-box" href="#data_{{ image.id }}">
+			<a class="html-box btn btn-mini" href="#data_{{ image.id }}">
 				<i class="icon-eye-open pop-tooltip" data-toggle="tooltip" title="Zoom"></i>
 			</a>
 			<div style="display:none">

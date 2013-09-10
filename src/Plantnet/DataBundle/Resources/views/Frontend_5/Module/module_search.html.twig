@@ -31,7 +31,7 @@
 {% endblock %}
 {% block main %}
     <div class="row">
-        <div class="span3">
+        <div class="span4">
             <div>
             	<form action="{{ path('front_module_result', {'project': project, 'collection': collection.url, 'module': module.url}) }}" method="get" {{ form_enctype(form) }} id="search_form">
                     {{ form_widget(form.y_lat_1_bottom_left, {'id':'y_lat_1_bottom_left','attr':{'class':'coords'}}) }}
@@ -44,7 +44,7 @@
             </div>
         </div>
         {% if hasmap %}
-            <div class="span6">
+            <div class="span5">
                 <div>
                     {# LEAFLET MAP #}
                     <div id="map"></div>

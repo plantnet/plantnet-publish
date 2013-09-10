@@ -7,7 +7,7 @@
 			{{ page.content }}
 		{% endautoescape %}
 	</div>
-	<div>
+	<div id="presentation">
 		{% for collection in collections if collection.deleting != true %}
 			{% include "PlantnetDataBundle:Frontend_4\\Collection:collection_presentation.html.twig" %}
 		{% endfor %}

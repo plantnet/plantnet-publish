@@ -141,14 +141,14 @@
                         </span>
                     </td>
                     <td class="span2 middle">
-                        <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" id="t{{ taxon.id }}">
+                        <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" id="t{{ taxon.id }}" class="btn btn-mini">
                             <i class="icon-list"></i></a>
                         {% if taxon.hasimages %}
-                            <a href="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" id="t{{ taxon.id }}">
+                            <a href="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" id="t{{ taxon.id }}" class="btn btn-mini">
                                 <i class="icon-camera"></i></a>
                         {% endif %}
                         {% if taxon.haslocations %}
-                            <a href="{{ path('front_module_taxo_view_map', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" id="t{{ taxon.id }}">
+                            <a href="{{ path('front_module_taxo_view_map', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" id="t{{ taxon.id }}" class="btn btn-mini">
                                 <i class="icon-map-marker"></i></a>
                         {% endif %}
                     </td>

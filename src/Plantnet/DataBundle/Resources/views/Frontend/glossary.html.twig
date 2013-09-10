@@ -27,13 +27,13 @@
                 {% set imgspe = def.path|basename %}
                 {% set img = ['uploads/'~glossary.uploaddir~'/', imgspe]|join('') %}
                 <a class="pull-left grouped_elements" href="{{ asset(img) }}" rel="group">
-                    <img class="media-object img-polaroid" src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ def.name }}">
+                    <img class="media-object img-polaroid" src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ def.name }}" width="130" height="75">
                 </a>
             {% else %}
                 <span class="pull-left empty-media img-polaroid"></span>
             {% endif %}
             <div class="media-body">
-                <h4 class="media-heading">{{ def.displayedname }}</h4>
+                <h4 class="media-heading">{{ def.displayedname|capitalize }}</h4>
                 {{ def.definition }}
             </div>
         </div>

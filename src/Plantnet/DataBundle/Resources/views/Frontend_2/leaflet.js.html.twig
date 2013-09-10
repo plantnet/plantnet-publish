@@ -149,7 +149,7 @@
 			marker_{{ location.id }}.bindPopup('<b>{{ title1|escape('js') }}</b><br /><b>{{ title2|escape('js') }}</b>'
 				+'<br />{{ loc_data|escape('js') }}'
 				{% if current_display is defined %}
-					+'<br /><br /><a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'id': location.plantunit.id }) }}">{{ "line-details"|trans|capitalize }}</a>'
+					+'<br /><br /><a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'id': location.plantunit.id }) }}" class="btn btn-small">{{ "line-details"|trans|capitalize }}</a>'
 				{% endif %}
 			);
 			markers.addLayer(marker_{{ location.id }});
@@ -228,7 +228,7 @@
 						+feature.properties.title2+'<br />'
 						+'<br />'
 						+feature.properties.loc_data.replace(new RegExp('\n','g'),'<br />')+'<br />'
-						+'<a href="'+feature.properties.punit+'">{{ "line-details"|trans|capitalize }}</a>');
+						+'<a href="'+feature.properties.punit+'" class="btn btn-small">{{ "line-details"|trans|capitalize }}</a>');
 				}
 			});
 			if(data.next!=-1)
