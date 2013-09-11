@@ -39,6 +39,13 @@
 		</ul>
 		<div class="pull-right">
 			<ul class="nav">
+				{% if collection.glossary is not empty %}
+					<li>
+						<a href="{{ path('front_glossary', { 'project': project, 'collection': collection.url }) }}">
+				            {{ "line-glossary"|trans|capitalize }}
+				        </a>
+					</li>
+				{% endif %}
 				<li>
 					<a href="{{ path('front_module_search', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
 						<i class="icon-search zz"></i>

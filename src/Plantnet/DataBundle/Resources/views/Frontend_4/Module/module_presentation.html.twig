@@ -35,6 +35,11 @@
             <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module':module.url }) }}" class="btn btn-small pull-right">
                 {{ "line-details"|trans|capitalize }}
             </a>
+            {% if collection.glossary is not empty %}
+                <a href="{{ path('front_glossary', { 'project': project, 'collection': collection.url }) }}" class="btn btn-small pull-right">
+                    {{ "line-glossary"|trans|capitalize }}
+                </a>
+            {% endif %}
             <div class="clear"></div>
             <div>
                 {% for child in module.children if (child.type == 'image' and child.deleting != true) %}
@@ -81,15 +86,6 @@
                         </a>
                     </h5>
                 </div>
-                {% if collection.glossary is not empty %}
-                    <div>
-                        <h5>
-                            <a href="{{ path('front_glossary', { 'project': project, 'collection': collection.url }) }}">
-                                {{ "line-glossary"|trans|capitalize }}
-                            </a>
-                        </h5>
-                    </div>
-                {% endif %}
             </div>
         </div>
     </div>

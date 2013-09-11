@@ -48,6 +48,11 @@
 					<a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}" class="btn btn-small pull-right">
                 		{{ "line-details"|trans|capitalize }}
                 	</a>
+                	{% if collection.glossary is not empty %}
+						<a href="{{ path('front_glossary', { 'project': project, 'collection': collection.url }) }}" class="btn btn-small pull-right">
+							{{ "line-glossary"|trans|capitalize }}
+						</a>
+					{% endif %}
 				</div>
 			</div>
 		</div>

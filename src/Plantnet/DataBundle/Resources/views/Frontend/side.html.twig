@@ -41,3 +41,12 @@
 		</a>
 	</li>
 </ul>
+{% if collection.glossary is not empty %}
+	<ul class="nav nav-tabs nav-stacked">
+		<li>
+			<a href="{{ path('front_glossary', { 'project': project, 'collection': collection.url }) }}">
+	            {{ "line-glossary"|trans|capitalize }}
+	        </a>
+		</li>
+	</ul>
+{% endif %}
