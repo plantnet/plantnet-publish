@@ -51,21 +51,6 @@
                 {{ macros.pa_taxon(plantunit.taxon,project,collection,module) }}
             </div>
         {% endif %}
-        <div>
-            <h5>{{ "line-details"|trans|capitalize }}</h5>
-            <table class="table table-striped table-bordered table-hover table-condensed table-width-fix">
-                {% for property in module.properties if property.id in display %}
-                    <tr>
-                        <td class="first">
-                            <span class="text-info">{{ property.name }}</span>
-                        </td>
-                        <td class="second">
-                            {% autoescape false %}{{ plantunit.attributes[property.id] }}{% endautoescape %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
         {% if tab_others_groups|length > 0 %}
             <br />
             {% for group in tab_others_groups %}
@@ -111,6 +96,21 @@
                 </div>
             {% endfor %}
         {% endif %}
+        <div>
+            <h5>{{ "line-details"|trans|capitalize }}</h5>
+            <table class="table table-striped table-bordered table-hover table-condensed table-width-fix">
+                {% for property in module.properties if property.id in display %}
+                    <tr>
+                        <td class="first">
+                            <span class="text-info">{{ property.name }}</span>
+                        </td>
+                        <td class="second">
+                            {% autoescape false %}{{ plantunit.attributes[property.id] }}{% endautoescape %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
         {% if plantunit.hasimages == true %}
             <div class="gallery">
                 <h5>{{ "line-gallery"|trans|capitalize }}</h5>
