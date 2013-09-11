@@ -137,6 +137,14 @@
         <source>line-glossary</source>
         <target state="new">glossaire</target>
       </trans-unit>
+      <trans-unit id="32" resname="line-only-map-search">
+        <source>line-only-map-search</source>
+        <target state="new">seule la recherche géographique est activée</target>
+      </trans-unit>
+      <trans-unit id="33" resname="line-no-search">
+        <source>line-no-search</source>
+        <target state="new">la recherche est désactivée</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

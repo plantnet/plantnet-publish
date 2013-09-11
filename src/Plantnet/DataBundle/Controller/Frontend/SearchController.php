@@ -229,6 +229,7 @@ class SearchController extends Controller
             'module'=>$module,
             'layers'=>$layers,
             'form'=>$form->createView(),
+            'nb_fields'=>count($fields),
             'translations'=>$translations,
             'current'=>'collection'
         ));
