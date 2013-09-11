@@ -3,7 +3,7 @@
 {% block stylesheets %}
 	{{ parent() }}
 {% endblock %}
-{% block header %}<h1>{{ collection.name }}</h1>{% endblock %}
+{% block header %}<h1>{{ config.name }} - {{ collection.name }}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
