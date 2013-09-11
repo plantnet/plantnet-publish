@@ -500,11 +500,11 @@ class AdminController extends Controller
 
     private function createDatabaseNewForm()
     {
-        //not null, ctype_lower (only letters), 3-50 chars
+        //not null, ctype_lower (only lower case letters), 3-50 chars
         return $this->createFormBuilder()
             ->add('dbname','text',array(
                 'required'=>true,
-                'label'=>'Database name (only letters):'
+                'label'=>'Database name (only lower case letters):'
             ))
             ->add('defaultlanguage','language',array(
                 'label'=>'Default language:',
@@ -547,10 +547,10 @@ class AdminController extends Controller
                 $language=$form->get('defaultlanguage');
                 if(!is_null($dbName->getData())){
                     if(!ctype_lower($dbName->getData())){
-                        $dbName->addError(new FormError("This field is not valid (only letters)"));
+                        $dbName->addError(new FormError("This field is not valid (only lower case letters)"));
                     }
                     if(strlen($dbName->getData())<3||strlen($dbName->getData())>50){
-                        $dbName->addError(new FormError("This field must contain 3 to 50 letters"));
+                        $dbName->addError(new FormError("This field must contain 3 to 50 lower case letters"));
                     }
                 }
                 else{

@@ -21,7 +21,7 @@ class RegistrationFormType extends BaseType
             'required'=>false
         ));
         $builder->add('dbNameUq','text',array(
-            'label'=>'Database name (only letters):',
+            'label'=>'Database name (only lower case letters):',
             'required'=>false
         ));
         $builder->add('defaultlanguage','language',array(
@@ -37,10 +37,10 @@ class RegistrationFormType extends BaseType
             if(!$super){
                 if(!is_null($dbNameUq->getData())){
                     if(!ctype_lower($dbNameUq->getData())){
-                        $dbNameUq->addError(new FormError("This field is not valid (only letters)"));
+                        $dbNameUq->addError(new FormError("This field is not valid (only lower case letters)"));
                     }
                     if(strlen($dbNameUq->getData())<3||strlen($dbNameUq->getData())>50){
-                        $dbNameUq->addError(new FormError("This field must contain 3 to 50 letters"));
+                        $dbNameUq->addError(new FormError("This field must contain 3 to 50 lower case letters"));
                     }
                 }
                 else{
