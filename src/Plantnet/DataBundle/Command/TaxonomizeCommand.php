@@ -430,6 +430,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $transport=$this->getContainer()->get('swiftmailer.transport.real');
             $spool->flushQueue($transport);
         }
+        $module->setUpdating(false);
+        $dm->persist($module);
+        $dm->flush();
     }
 
     private function data_encode($data)
