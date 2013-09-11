@@ -710,9 +710,15 @@ class ModulesController extends Controller
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $editForm=$this->get('form.factory')->create(new ModulesTaxoType(),$module);
+        $deleteSynForm=false;
+        $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
+        if(file_exists($csv)){
+            $deleteSynForm=$this->createDeleteSynForm($id);
+        }
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_taxo.html.twig',array(
             'entity'=>$module,
             'edit_form'=>$editForm->createView(),
+            'delete_syn_form'=>($deleteSynForm!=false)?$deleteSynForm->createView():false
         ));
     }
 
@@ -757,6 +763,13 @@ class ModulesController extends Controller
             'entity'=>$module,
             'edit_form'=>$editForm->createView(),
         ));
+    }
+
+    private function createDeleteSynForm($id)
+    {
+        return $this->createFormBuilder(array('id'=>$id))
+            ->add('id','hidden')
+            ->getForm();
     }
     
     /**
@@ -838,6 +851,49 @@ class ModulesController extends Controller
             'module'=>$module,
             'form'=>$form->createView()
         ));
+    }
+
+    /**
+     * Deletes syn from Module entity.
+     *
+     * @Route("/{id}/syn_delete", name="module_syn_delete")
+     * @Method("post")
+     */
+    public function module_syn_deleteAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
+        if(!file_exists($csv)){
+            throw $this->createNotFoundException('Unable to find Syn entity.');
+        }
+        $form=$this->createDeleteSynForm($id);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $form->bind($request);
+            if($form->isValid()){
+                if(unlink($csv)){
+                    $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                    $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                    $module->setUpdating(true);
+                    $dm->persist($module);
+                    $dm->flush();
+                    //command
+                    $kernel=$this->get('kernel');
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                    $process=new \Symfony\Component\Process\Process($command);
+                    $process->start();
+                    $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
+                }
+            }
+        }
+        return $this->redirect($this->generateUrl('module_edit_taxo',array('id'=>$id)));
     }
 
     /**
