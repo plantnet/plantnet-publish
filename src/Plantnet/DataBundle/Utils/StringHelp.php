@@ -91,12 +91,15 @@ class StringHelp
         }
         $html_string=preg_replace('~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i','',$d->saveHTML());
         //compound word
-        $d->loadHTML('<?xml encoding="UTF-8">'.$html_string);
+        @$d->loadHTML('<?xml encoding="UTF-8">'.$html_string);
         foreach($d->childNodes as $item){
         	if($item->nodeType==XML_PI_NODE){
         		$d->removeChild($item);
         	}
         }
+        usort($glossary_terms,function($a,$b){
+    		return strlen($b)-strlen($a);
+    	});
         $x=new \DOMXPath($d);
         foreach($x->query('//text()') as $node){
         	$string=$node->nodeValue;
