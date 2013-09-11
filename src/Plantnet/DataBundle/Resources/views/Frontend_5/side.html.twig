@@ -3,7 +3,7 @@
 		<a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
 			<i class="icon-list"></i>
 			{{ module.name }}
-			<small class="muted">{{ module.nbrows }} {{ "line-entities"|trans }}</small>
+			<small class="muted">{{ module.nbrows }}&nbsp;{{ "line-entities"|trans }}</small>
 		</a>
 	</li>
 	{% if module.children|length > 0 %}
@@ -12,7 +12,7 @@
 				<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
 					<i class="icon-camera"></i>
 					{{ child.name }}
-					<small class="muted">{{ child.nbrows }} {{ "line-entities"|trans }}</small>
+					<small class="muted">{{ child.nbrows }}&nbsp;{{ "line-entities"|trans }}</small>
 				</a>
 			</li>
 		{% endfor %}
@@ -21,7 +21,7 @@
 				<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
 					<i class="icon-map-marker"></i>
 					{{ child.name }}
-					<small class="muted">{{ child.nbrows }} {{ "line-entities"|trans }}</small>
+					<small class="muted">{{ child.nbrows }}&nbsp;{{ "line-entities"|trans }}</small>
 				</a>
 			</li>
 		{% endfor %}
