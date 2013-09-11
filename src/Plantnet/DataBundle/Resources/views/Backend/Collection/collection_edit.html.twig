@@ -8,6 +8,11 @@
 			<em>Collection: {{ entity.name }}</em> > edit
 		</h4>
 	</div>
+	<p>
+		URL field represents the value which is used in the URL to access this resource.
+		<br />
+		It is recomended to not update this value: it could broken some external links to the resource.
+	</p>
 	<form action="{{ path('collection_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
 		{{ form_errors(edit_form) }}
 		<div class="field-form">

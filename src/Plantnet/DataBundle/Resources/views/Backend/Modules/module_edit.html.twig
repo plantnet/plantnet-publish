@@ -19,6 +19,11 @@
             "Sort order" allows to set the sort order that will be applied for data display. To sort first on the colum "X" and secondly on the colum "Y", you must specify "X" : 1 and "Y" : 2.
         </p>
     {% endif %}
+    <p>
+        URL field represents the value which is used in the URL to access this resource.
+        <br />
+        It is recomended to not update this value: it could broken some external links to the resource.
+    </p>
     <form action="{{ path('module_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
         {{ form_errors(edit_form) }}
         <div class="field-form">

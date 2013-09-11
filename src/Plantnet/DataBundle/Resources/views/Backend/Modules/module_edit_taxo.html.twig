@@ -56,11 +56,39 @@
                 </table>
             {% endif %}
             {{ form_rest(edit_form) }}
-            <a href="{{ path('module_syn', { 'id': entity.id }) }}" class="btn">Add synonymy</a>
-            <br />
-            <br />
             <button type="submit" class="btn">Update</button>
         </form>
+        <p>
+            Synonymy file must contain two columns by taxonomic level.
+            <br />
+            One for the existing taxons with current taxon's label at the top (Ex: "Family").
+            <br />
+            An other for the valid taxons with current taxon's label plus "_valid" at the top (Ex: "Family_valid").
+            <br />
+            <br />
+            Example:
+        </p>
+        <table class="table table-bordered table-condensed">
+            <tr>
+                <th>Family</th>
+                <th>Species</th>
+                <th>Family_valid</th>
+                <th>Species_valid</th>
+            </tr>
+            <tr>
+                <td>Family 1</td>
+                <td></td>
+                <td>Family 2</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Family 3</td>
+                <td>Species 1</td>
+                <td>Family 3</td>
+                <td>Species 2</td>
+            </tr>
+        </table>
+        <a href="{{ path('module_syn', { 'id': entity.id }) }}" class="btn">Add synonymy</a>
     {% endif %}
 {% endblock %}
 {% block javascripts %}

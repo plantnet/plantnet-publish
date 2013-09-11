@@ -31,7 +31,7 @@
                 <br />
                 Each line of the file must contain a unique identifier.
                 <br />
-                Columns must be in desired order display.
+                Columns must be in desired display order.
                 <br />
                 If you choose to enable the taxonomic browser, you will need to enter applying rules in the module's options after data importation.
             </p>
@@ -43,9 +43,14 @@
                 <br />
                 If this reference does not exist, the corresponding line will be ignored.
                 <br />
-                Columns must be in desired order display.
+                Columns must be in desired display order.
             </p>
         {% endif %}
+        <p>
+            URL field represents the value which is used in the URL to access this resource.
+            <br />
+            It is recomended to not update this value: it could broken some external links to the resource.
+        </p>
         <form id="add_module" action="{{ path('module_create', { 'id': collection.id, 'type': type }) }}" method="post" {{ form_enctype(form) }}>
             {{ form_errors(form) }}
             <div class="field-form">
