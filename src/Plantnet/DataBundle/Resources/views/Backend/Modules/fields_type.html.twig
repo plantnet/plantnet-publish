@@ -36,6 +36,8 @@
                     <th class="middle">Type</th>
                     {% if module.type == 'text' %}
                         <th colspan="3" class="middle">Display</th>
+                    {% elseif module.type != 'locality' and module.type != 'image' %}
+                        <th colspan="2" class="middle">Display</th>
                     {% else %}
                         <th colspan="1" class="middle">Display</th>
                     {% endif %}
@@ -48,6 +50,9 @@
                     <th></th>
                     {% if module.type == 'text' %}
                         <th class="middle">Main</th>
+                        <th class="middle">Details</th>
+                        <th class="middle">Search</th>
+                    {% elseif module.type != 'locality' and module.type != 'image' %}
                         <th class="middle">Details</th>
                         <th class="middle">Search</th>
                     {% else %}
@@ -74,6 +79,15 @@
                                 {{ form_errors(property.main) }}
                                 {{ form_widget(property.main) }}
                             </td>
+                            <td class="middle">
+                                {{ form_errors(property.details) }}
+                                {{ form_widget(property.details) }}
+                            </td>
+                            <td class="middle">
+                                {{ form_errors(property.search) }}
+                                {{ form_widget(property.search) }}
+                            </td>
+                        {% elseif module.type != 'locality' and module.type != 'image' %}
                             <td class="middle">
                                 {{ form_errors(property.details) }}
                                 {{ form_widget(property.details) }}

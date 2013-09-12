@@ -86,7 +86,7 @@
                     +'<button class="btn rm-btn" type="button"><i class="icon-minus"></i></button>'
                     +'</div>'
                     +'</div>');
-                var col_name=$(this).parent('label').first().parent('div').first().next('input').val();
+                var col_name=encodeURIComponent($(this).parent('label').first().parent('div').first().next('input').val());
                 $(this).parent('label').first().parent('div').first().children('div').last().children('div').last().children('input').first().typeahead({
                     source:function(query,process){
                         return $.get('{{ path('front_module_search_query_path', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/'+col_name+'/'+query,function(data){
@@ -115,7 +115,7 @@
                 });
             });
             $('input.str').each(function(){
-                var col_name=$(this).parent('div').next('input').val();
+                var col_name=encodeURIComponent($(this).parent('div').next('input').val());
                 $(this).typeahead({
                     source:function(query,process){
                         return $.get('{{ path('front_module_search_query_path', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/'+col_name+'/'+query,function(data){

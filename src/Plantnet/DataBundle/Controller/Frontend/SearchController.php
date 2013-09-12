@@ -118,7 +118,7 @@ class SearchController extends Controller
         return $tab_links;
     }
 
-    private function createModuleSearchForm($fields,$module)
+    private function createModuleSearchForm($fields,$module,$sub_fields)
     {
         $properties=$module->getProperties();
         $tab_prop=array();
@@ -163,6 +163,38 @@ class SearchController extends Controller
                 )
             ));
             $field_num++;
+        }
+        if(count($sub_fields)){
+            foreach($sub_fields as $sub_ids=>$sub_module){
+                $sub_properties=$sub_module->getProperties();
+                $tab_prop=array();
+                foreach($sub_properties as $prop){
+                    $tab_prop[$prop->getId()]=$prop;
+                }
+                unset($sub_properties);
+                $field=$sub_ids;
+                $field=substr($field,strpos($field,'#')+1);
+                $prop=$tab_prop[$field];
+                $form->add('field_'.$field_num,'text',array(
+                    'required'=>false,
+                    'label'=>$prop->getName(),
+                    'attr'=>array(
+                        'class'=>'str str_'.$field_num
+                    )
+                ));
+                $form->add('name_field_'.$field_num,'hidden',array(
+                    'required'=>true,
+                    'data'=>$sub_ids
+                ));
+                $form->add('field_'.$field_num.'_string','hidden',array(
+                    'required'=>false,
+                    'label'=>false,
+                    'attr'=>array(
+                        'class'=>'string_str_'.$field_num
+                    )
+                ));
+                $field_num++;
+            }
         }
         $form=$form->getForm();
         return $form;
@@ -217,9 +249,23 @@ class SearchController extends Controller
                 $fields[]=$row->getId();
             }
         }
+        $sub_fields=array();
+        $children=$module->getChildren();
+        if(count($children)){
+            foreach($children as $child){
+                if($child->getType()=='other'){
+                    $sub_field=$child->getProperties();
+                    foreach($sub_field as $row){
+                        if($row->getSearch()==true){
+                            $sub_fields[$child->getId().'#'.$row->getId()]=$child;
+                        }
+                    }
+                }
+            }
+        }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers_search.xml',0,true);
-        $form=$this->createModuleSearchForm($fields,$module);
+        $form=$this->createModuleSearchForm($fields,$module,$sub_fields);
         $config=$this->get_config($project);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:module_search.html.twig',array(
@@ -229,7 +275,7 @@ class SearchController extends Controller
             'module'=>$module,
             'layers'=>$layers,
             'form'=>$form->createView(),
-            'nb_fields'=>count($fields),
+            'nb_fields'=>count($fields)+count($sub_fields),
             'translations'=>$translations,
             'current'=>'collection'
         ));
@@ -301,14 +347,28 @@ class SearchController extends Controller
                 $display[]=$row->getId();
             }
         }
-        $form=$this->createModuleSearchForm($fields,$module);
+        $sub_fields=array();
+        $children=$module->getChildren();
+        if(count($children)){
+            foreach($children as $child){
+                if($child->getType()=='other'){
+                    $sub_field=$child->getProperties();
+                    foreach($sub_field as $row){
+                        if($row->getSearch()==true){
+                            $sub_fields[$child->getId().'#'.$row->getId()]=$child;
+                        }
+                    }
+                }
+            }
+        }
+        $form=$this->createModuleSearchForm($fields,$module,$sub_fields);
         if($request->isMethod('GET')){
             $form->bind($request);
             $data=$form->getData();
             $dm=$this->get('doctrine.odm.mongodb.document_manager');
             $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-            $ids_punit=array();
             // Location Filters
+            $ids_punit=array();
             if(isset($data['x_lng_1_bottom_left'])&&!empty($data['x_lng_1_bottom_left'])){
                 $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
                     ->field('coordinates')->withinBox(
@@ -324,17 +384,79 @@ class SearchController extends Controller
                 }
                 unset($locations);
             }
-            // Field Filters
+            $ids_punit=array_unique($ids_punit);
+            // Field (and sub-field) Filters
             $fields=array();
+            $sub_fields=array();
             foreach($data as $key=>$val){
                 if(substr_count($key,'name_field_')){
                     if(isset($data[str_replace('name_','',$key).'_string'])&&!empty($data[str_replace('name_','',$key).'_string'])){
-                        $fields[$val]=explode('~|~',$data[str_replace('name_','',$key).'_string']);
+                        if(substr_count($val,'#')===0){
+                            $fields[$val]=explode('~|~',$data[str_replace('name_','',$key).'_string']);
+                        }
+                        else{
+                            $sub_fields[$val]=explode('~|~',$data[str_replace('name_','',$key).'_string']);
+                        }
                     }
                     elseif(isset($data[str_replace('name_','',$key)])&&!empty($data[str_replace('name_','',$key)])){
-                        $fields[$val]=$data[str_replace('name_','',$key)];
+                        if(substr_count($val,'#')===0){
+                            $fields[$val]=$data[str_replace('name_','',$key)];
+                        }
+                        else{
+                            $sub_fields[$val]=$data[str_replace('name_','',$key)];
+                        }
                     }
                 }
+            }
+            // Sub-field Filters
+            $ids_other=array();
+            if(count($sub_fields)){
+                foreach($sub_fields as $sub_ids=>$value){
+                    $sub_module_id=substr($sub_ids,0,strpos($sub_ids,'#'));
+                    $sub_attribute_id=substr($sub_ids,strpos($sub_ids,'#')+1);
+                    $sub_module=$dm->getRepository('PlantnetDataBundle:Module')
+                        ->findOneBy(array(
+                            'id'=>$sub_module_id,
+                            'parent.id'=>$module->getId()
+                        ));
+                    if(!$sub_module){
+                        throw $this->createNotFoundException('Unable to find Module entity.');
+                    }
+                    $others=$dm->createQueryBuilder('PlantnetDataBundle:Other')
+                        ->hydrate(false)
+                        ->field('module')->references($sub_module);
+                    if(is_array($value)){
+                        for($i=0;$i<count($value);$i++){
+                            $value[$i]=new \MongoRegex('/.*'.StringHelp::accentToRegex($value[$i]).'.*/i');
+                        }
+                        $others->field('property.'.$sub_attribute_id)->in(
+                            $value
+                        );
+                    }
+                    else{
+                        $others->field('property.'.$sub_attribute_id)->in(
+                            array(
+                                new \MongoRegex('/.*'.StringHelp::accentToRegex($value).'.*/i')
+                            )
+                        );
+                    }
+                    $others=$others->getQuery()
+                        ->execute();
+                    $tmp_ids_other=array();
+                    foreach($others as $other){
+                        $tmp_ids_other[]=$other['plantunit']['$id']->{'$id'};
+                    }
+                    unset($others);
+                    $ids_other=array_merge($ids_other,$tmp_ids_other);
+                }
+            }
+            $ids_other=array_unique($ids_other);
+            // $ids_punit x $ids_other
+            if(!count($ids_punit)){
+                $ids_punit=$ids_other;
+            }
+            elseif(count($ids_other)){
+                $ids_punit=array_intersect($ids_punit,$ids_other);
             }
             // Filters to URL
             $url='';
@@ -343,7 +465,12 @@ class SearchController extends Controller
                 if($url!=''){
                     $url.='&';
                 }
-                $url.=$form->getName().'['.$key.']='.$val;
+                if(substr_count($val,'#')===0){
+                    $url.=$form->getName().'['.$key.']='.$val;
+                }
+                else{
+                    $url.=$form->getName().'['.$key.']='.urlencode($val);
+                }
             }
             // Search
             switch($mode){
@@ -668,24 +795,50 @@ class SearchController extends Controller
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        if(!$module){
-            throw $this->createNotFoundException('Unable to find Module entity.');
-        }
-        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-            ->hydrate(false)
-            ->distinct('attributes.'.$attribute)
-            ->select('attributes.'.$attribute)
-            ->field('module')->references($module)
-            ->field('attributes.'.$attribute)->in(array(
-                new \MongoRegex('/.*'.StringHelp::accentToRegex($query).'.*/i')
-            ))
-            ->sort('attributes.'.$attribute,'asc')
-            ->limit(10)
-            ->getQuery()
-            ->execute();
         $results=array();
-        foreach($plantunits as $punit){
-            $results[]=$punit;
+        if(substr_count($attribute,'#')==1){
+            $sub_module_id=substr($attribute,0,strpos($attribute,'#'));
+            $sub_attribute_id=substr($attribute,strpos($attribute,'#')+1);
+            $sub_module=$dm->getRepository('PlantnetDataBundle:Module')
+                ->findOneBy(array(
+                    'id'=>$sub_module_id,
+                    'parent.id'=>$module->getId()
+                ));
+            if(!$sub_module){
+                throw $this->createNotFoundException('Unable to find Module entity.');
+            }
+            $others=$dm->createQueryBuilder('PlantnetDataBundle:Other')
+                ->hydrate(false)
+                ->distinct('property.'.$sub_attribute_id)
+                ->select('property.'.$sub_attribute_id)
+                ->field('module')->references($sub_module)
+                ->field('property.'.$sub_attribute_id)->in(array(
+                    new \MongoRegex('/.*'.StringHelp::accentToRegex($query).'.*/i')
+                ))
+                ->sort('property.'.$sub_attribute_id,'asc')
+                ->limit(10)
+                ->getQuery()
+                ->execute();
+            foreach($others as $other){
+               $results[]=$other;
+            }
+        }
+        else{
+            $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                ->hydrate(false)
+                ->distinct('attributes.'.$attribute)
+                ->select('attributes.'.$attribute)
+                ->field('module')->references($module)
+                ->field('attributes.'.$attribute)->in(array(
+                    new \MongoRegex('/.*'.StringHelp::accentToRegex($query).'.*/i')
+                ))
+                ->sort('attributes.'.$attribute,'asc')
+                ->limit(10)
+                ->getQuery()
+                ->execute();
+            foreach($plantunits as $punit){
+                $results[]=$punit;
+            }
         }
         $response=new Response(json_encode($results));
         $response->headers->set('Content-Type','application/json');

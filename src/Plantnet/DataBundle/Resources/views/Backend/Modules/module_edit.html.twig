@@ -56,6 +56,8 @@
                     <th style="display:none;">Type</th>
                     {% if entity.type == 'text' %}
                         <th colspan="3" class="middle">Display</th>
+                    {% elseif entity.type != 'locality' and entity.type != 'image' %}
+                        <th colspan="2" class="middle">Display</th>
                     {% else %}
                         <th colspan="1" class="middle">Display</th>
                     {% endif %}
@@ -68,6 +70,9 @@
                     <th style="display:none;"></th>
                     {% if entity.type == 'text' %}
                         <th class="middle">Main</th>
+                        <th class="middle">Details</th>
+                        <th class="middle">Search</th>
+                    {% elseif entity.type != 'locality' and entity.type != 'image' %}
                         <th class="middle">Details</th>
                         <th class="middle">Search</th>
                     {% else %}
@@ -94,6 +99,15 @@
                                 {{ form_errors(property.main) }}
                                 {{ form_widget(property.main) }}
                             </td>
+                            <td class="middle">
+                                {{ form_errors(property.details) }}
+                                {{ form_widget(property.details) }}
+                            </td>
+                            <td class="middle">
+                                {{ form_errors(property.search) }}
+                                {{ form_widget(property.search) }}
+                            </td>
+                        {% elseif entity.type != 'locality' and entity.type != 'image' %}
                             <td class="middle">
                                 {{ form_errors(property.details) }}
                                 {{ form_widget(property.details) }}
