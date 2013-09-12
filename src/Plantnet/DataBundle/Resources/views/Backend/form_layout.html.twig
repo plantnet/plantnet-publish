@@ -6,9 +6,11 @@
 	<div class="well wellnav">
 		{% if app.user.dbName %}
 			<ul id="left-menu" class="nav nav-list">
-				<li class="text-success">
-					Project:
-					{% render controller("PlantnetDataBundle:Backend/Admin:displayTitle") %}
+				<li>
+					<span class="label">
+						Project:
+						{% render controller("PlantnetDataBundle:Backend/Admin:displayTitle") %}
+					</span>
 				</li>
 				<li class="divider"></li>
 				{% render controller("PlantnetDataBundle:Backend/Collection:collection_list") %}
