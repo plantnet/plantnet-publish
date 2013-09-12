@@ -103,14 +103,16 @@ class StringHelp
         $x=new \DOMXPath($d);
         foreach($x->query('//text()') as $node){
         	$string=$node->nodeValue;
-        	foreach($glossary_terms as $compound){
-        		if(preg_match('/\s/',$compound)==1){
-        			$start_tag='<span class="glossary_term" data-term="'.$compound.'" data-parent="'.$collection_id.'" data-content="0">';
-        			$end_tag='</span>';
-        			$string=str_replace($compound,$start_tag.$compound.$end_tag,$string);
-        			$string=str_replace(ucfirst($compound),$start_tag.ucfirst($compound).$end_tag,$string);
-        			$node->nodeValue=$string;
-        		}
+        	if(strlen($string)==strlen(strip_tags($string))){
+        		foreach($glossary_terms as $compound){
+	        		if(preg_match('/\s/',$compound)==1){
+	        			$start_tag='<span class="glossary_term" data-term="'.$compound.'" data-parent="'.$collection_id.'" data-content="0">';
+	        			$end_tag='</span>';
+	        			$string=str_replace($compound,$start_tag.$compound.$end_tag,$string);
+	        			$string=str_replace(ucfirst($compound),$start_tag.ucfirst($compound).$end_tag,$string);
+	        			$node->nodeValue=$string;
+	        		}
+	        	}
         	}
         }
         $html_string=preg_replace('~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i','',$d->saveHTML());
