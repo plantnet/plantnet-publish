@@ -61,6 +61,11 @@ class Database
     private $enable;
 
     /**
+     * @MongoDB\String
+     */
+    protected $description;
+
+    /**
      * To String
      *
      * @return string
@@ -233,5 +238,30 @@ class Database
     public function getEnable()
     {
         return $this->enable;
+    }
+
+
+
+
+
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string $description
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 }

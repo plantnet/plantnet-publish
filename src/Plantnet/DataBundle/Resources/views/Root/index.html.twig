@@ -2,20 +2,41 @@
 {% block title "Pl@ntnet - " ~ "line-introduction"|trans|capitalize %}
 {% block header %}<h1>{{ "line-projects"|trans|capitalize }}</h1>{% endblock %}
 {% block row %}
-	<div>
+	<div id="root">
 		<h5>
-			{{ "line-projects-list"|trans|capitalize }}
+			{{ "line-projects-list"|trans }}
 		</h5>
 		{% for project in projects %}
-			<div>
-				<a href="{{ path('front_project', {'project': project.link}) }}">
-					{{ project.displayedname }}</a>
-				{% if project.children|length > 0 %}
-
-					{% for child in project.children if child.enable == true %}
-						{{ child.language|language }}
-					{% endfor %}
-				{% endif %}
+			<div class="website">
+				<h4>
+					<a href="{{ path('front_project', {'project': project.link}) }}">
+						{{ project.displayedname }}
+					</a>
+				</h4>
+				<div class="btn-group pull-right languages">
+					<a href="{{ path('front_project', {'project': project.link}) }}" class="btn btn-small">
+						{{ project.language|language }}
+					</a>
+					{% if project.children|length > 0 %}
+						<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							{% for child in project.children if child.enable == true %}
+								<li>
+									<a href="{{ path('front_project', {'project': child.link}) }}">
+										{{ child.language|language }}
+									</a>
+								</li>
+							{% endfor %}
+						</ul>
+					{% endif %}
+				</div>
+				<div class="well">
+					<div lang="{{ project.language }}" class="description">
+						{{ project.description|truncate(330) }}
+					</div>
+				</div>
 			</div>
 		{% endfor %}
 	</div>

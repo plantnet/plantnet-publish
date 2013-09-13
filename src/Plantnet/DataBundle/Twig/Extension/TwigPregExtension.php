@@ -12,6 +12,7 @@ class TwigPregExtension extends \Twig_Extension
             'round'=>new \Twig_Filter_Method($this,'round'),
             'replace'=>new \Twig_Filter_Method($this,'replace'),
             'language'=>new \Twig_Filter_Method($this,'language'),
+            'truncate'=>new \Twig_Filter_Method($this,'truncate'),
         );
     }
 
@@ -43,6 +44,15 @@ class TwigPregExtension extends \Twig_Extension
     public function language($var)
     {
         return \Locale::getDisplayName($var);
+    }
+
+    public function truncate($var,$length)
+    {
+        if(strlen($var)>$length){
+            $var=substr($var,0,$length);
+            return substr($var,0,strrpos($var,' ')).'...';
+        }
+        return $var;
     }
 
     public function getName()

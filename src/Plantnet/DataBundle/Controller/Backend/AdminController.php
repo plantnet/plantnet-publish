@@ -487,6 +487,30 @@ class AdminController extends Controller
             if($editForm->isValid()){
                 $dm->persist($page);
                 $dm->flush();
+                if($page->getAlias()=='home'){
+                    $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+                        ->getQuery()
+                        ->getSingleResult();
+                    if($config){
+                        $name=$config->getOriginaldb();
+                        $description=$page->getContent();
+                        $language=$config->getDefaultlanguage();
+                        $dm->getConfiguration()->setDefaultDB($this->getDataBase());
+                        $database=$dm->getRepository('PlantnetDataBundle:Database')
+                            ->findOneBy(array(
+                                'name'=>$name,
+                                'language'=>$language
+                            ));
+                        if($database){
+                            $description=trim(strip_tags($description));
+                            $description=preg_replace('/\s+/',' ',$description);
+                            $database->setDescription($description);
+                            $dm->persist($database);
+                            $dm->flush();
+                        }
+                        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                    }
+                }
                 $this->get('session')->getFlashBag()->add('msg_success','Page updated');
                 return $this->redirect($this->generateUrl('page_edit',array('alias'=>$alias)));
             }

@@ -23,7 +23,7 @@
       </trans-unit>
       <trans-unit id="3" resname="line-projects-list">
         <source>line-projects-list</source>
-        <target state="new">"publish v2" projects:</target>
+        <target state="new">"Publish v2" projects:</target>
       </trans-unit>
       <trans-unit id="4" resname="tab-search">
         <source>tab-search</source>

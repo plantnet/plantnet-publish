@@ -155,8 +155,13 @@
 							</a>
 						</li>
 						<li class="liens">
-							<a href="#" class="btn btn-small">
+							<a href="{{ path('front_sitemap', {'project': project}) }}" class="btn btn-small">
 								{{ "footer-sitemap"|trans|capitalize }}
+							</a>
+						</li>
+						<li class="liens">
+							<a href="{{ path('front_index') }}" class="btn btn-small">
+								Publish
 							</a>
 						</li>
 					</ul>
