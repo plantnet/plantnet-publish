@@ -25,6 +25,22 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class DataController extends Controller
 {
+    private function check_enable_project($project)
+    {
+        $prefix=substr($this->get_prefix(),0,-1);
+        $connection=new \MongoClient();
+        $db=$connection->$prefix->Database->findOne(array(
+            'link'=>$project
+        ),array(
+            'enable'=>1
+        ));
+        if($db){
+            if(isset($db['enable'])&&$db['enable']===false){
+                throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+            }
+        }
+    }
+    
     private function database_list()
     {
         //display databases without prefix
@@ -160,6 +176,7 @@ class DataController extends Controller
      */
     public function projectAction($project)
     {
+        $this->check_enable_project($project);
         $translations=$this->make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -209,6 +226,7 @@ class DataController extends Controller
 
     public function collection_listAction($project)
     {
+        $this->check_enable_project($project);
         $projects=$this->database_list();
         if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
@@ -232,6 +250,7 @@ class DataController extends Controller
      */
     public function collectionAction($project,$collection)
     {
+        $this->check_enable_project($project);
         $translations=$this->make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -292,6 +311,7 @@ class DataController extends Controller
      */
     public function moduleAction($project,$collection,$module,$page,$sortby,$sortorder,Request $request)
     {
+        $this->check_enable_project($project);
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;
@@ -403,6 +423,7 @@ class DataController extends Controller
      */
     public function submoduleAction($project,$collection,$module,$submodule,$page,Request $request)
     {
+        $this->check_enable_project($project);
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;
@@ -546,6 +567,7 @@ class DataController extends Controller
      */
     public function datamapAction($project,$collection,$module,$submodule,$page)
     {
+        $this->check_enable_project($project);
         $max_per_page=5000;
         $start=$page*$max_per_page;
         $projects=$this->database_list();
@@ -664,6 +686,7 @@ class DataController extends Controller
      */
     public function detailsAction($project,$collection,$module,$id)
     {
+        $this->check_enable_project($project);
         $translations=$this->make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -793,6 +816,7 @@ class DataController extends Controller
      */
     public function details_galleryAction($project,$collection,$module,$id,$page)
     {
+        $this->check_enable_project($project);
         $max_per_page=9;
         $start=$page*$max_per_page;
         $projects=$this->database_list();
@@ -856,6 +880,7 @@ class DataController extends Controller
      */
     public function glossaryAction($project,$collection)
     {
+        $this->check_enable_project($project);
         $translations=$this->make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -898,6 +923,7 @@ class DataController extends Controller
      */
     public function creditsAction($project)
     {
+        $this->check_enable_project($project);
         $translations=$this->make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -936,6 +962,7 @@ class DataController extends Controller
      */
     public function mentionsAction($project)
     {
+        $this->check_enable_project($project);
         $translations=$this->make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -974,6 +1001,7 @@ class DataController extends Controller
      */
     public function contactsAction($project)
     {
+        $this->check_enable_project($project);
         $translations=$this->make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -1020,6 +1048,7 @@ class DataController extends Controller
      */
     public function glossary_queryAction($project,$collection,$term)
     {
+        $this->check_enable_project($project);
         if($term=='null'){
             $response=new Response(json_encode(array()));
             $response->headers->set('Content-Type','application/json');
@@ -1070,6 +1099,7 @@ class DataController extends Controller
      */
     public function sitemapAction($project)
     {
+        $this->check_enable_project($project);
         $translations=$this->make_translations(
             $project,
             $this->container->get('request')->get('_route'),

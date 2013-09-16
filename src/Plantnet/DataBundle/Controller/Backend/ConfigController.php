@@ -216,12 +216,10 @@ class ConfigController extends Controller
                             unset($availables[$key]);
                         }
                     }
-                    if(count($availables)){
-                        $availables=array_values($availables);
-                        $this->check_databases($availables,$user,$default);
-                    }
-                    $config->setAvailablelanguages($availables);
                 }
+                $availables=array_values($availables);
+                $this->check_databases($availables,$user,$default);
+                $config->setAvailablelanguages($availables);
                 $dm->persist($config);
                 $dm->flush();
                 $this->get('session')->getFlashBag()->add('msg_success','Languages updated');
@@ -269,60 +267,62 @@ class ConfigController extends Controller
             }
             $dm->flush();
         }
-        foreach($languages as $language){
-            $exists=false;
-            if(count($children)){
-                foreach($children as $child){
-                    if($language==$child->getLanguage()){
-                        $exists=true;
+        if(count($languages)){
+            foreach($languages as $language){
+                $exists=false;
+                if(count($children)){
+                    foreach($children as $child){
+                        if($language==$child->getLanguage()){
+                            $exists=true;
+                        }
                     }
                 }
-            }
-            if(!$exists){
-                $new_name=$default_db.'_'.$language;
-                $new_database=new Database();
-                $new_database->setName($new_name);
-                $new_database->setDisplayedname(ucfirst($default_link).' '.$language);
-                $new_database->setLink($default_link.'_'.$language);
-                $new_database->setLanguage($language);
-                $new_database->setEnable(true);
-                $new_database->setParent($database);
-                $dm->persist($new_database);
-                $dm->flush();
-                //create new database
-                $connection=new \MongoClient();
-                $db=$connection->$new_name;
-                $db->listCollections();
-                //collections
-                $db->createCollection('Collection');
-                $db->createCollection('Config');
-                $db->createCollection('Definition');
-                $db->createCollection('Glossary');
-                $db->createCollection('Image');
-                $db->createCollection('Location');
-                $db->createCollection('Other');
-                $db->createCollection('Module');
-                $db->createCollection('Plantunit');
-                $db->createCollection('Taxon');
-                $db->createCollection('Page');
-                //indexes
-                $db->Image->ensureIndex(array("title1"=>1,"title2"=>1));
-                $db->Location->ensureIndex(array("coordinates"=>"2d"));
-                // $db->Plantunit->ensureIndex(array("attributes"=>"text"));
-                $db->Taxon->ensureIndex(array("name"=>1));
-                //pages data
-                $db->Page->insert(array('name'=>'Home','alias'=>'home','order'=>1));
-                $db->Page->insert(array('name'=>'Mentions','alias'=>'mentions','order'=>2));
-                $db->Page->insert(array('name'=>'Credits','alias'=>'credits','order'=>3));
-                $db->Page->insert(array('name'=>'Contacts','alias'=>'contacts','order'=>4));
-                //init config
-                $db->Config->insert(array(
-                    'islocked'=>true,
-                    'originaldb'=>$default_db,
-                    'defaultlanguage'=>$language,
-                    'name'=>ucfirst($default_link).' '.$language,
-                    'template'=>$default_template
-                ));
+                if(!$exists){
+                    $new_name=$default_db.'_'.$language;
+                    $new_database=new Database();
+                    $new_database->setName($new_name);
+                    $new_database->setDisplayedname(ucfirst($default_link).' '.$language);
+                    $new_database->setLink($default_link.'_'.$language);
+                    $new_database->setLanguage($language);
+                    $new_database->setEnable(true);
+                    $new_database->setParent($database);
+                    $dm->persist($new_database);
+                    $dm->flush();
+                    //create new database
+                    $connection=new \MongoClient();
+                    $db=$connection->$new_name;
+                    $db->listCollections();
+                    //collections
+                    $db->createCollection('Collection');
+                    $db->createCollection('Config');
+                    $db->createCollection('Definition');
+                    $db->createCollection('Glossary');
+                    $db->createCollection('Image');
+                    $db->createCollection('Location');
+                    $db->createCollection('Other');
+                    $db->createCollection('Module');
+                    $db->createCollection('Plantunit');
+                    $db->createCollection('Taxon');
+                    $db->createCollection('Page');
+                    //indexes
+                    $db->Image->ensureIndex(array("title1"=>1,"title2"=>1));
+                    $db->Location->ensureIndex(array("coordinates"=>"2d"));
+                    // $db->Plantunit->ensureIndex(array("attributes"=>"text"));
+                    $db->Taxon->ensureIndex(array("name"=>1));
+                    //pages data
+                    $db->Page->insert(array('name'=>'Home','alias'=>'home','order'=>1));
+                    $db->Page->insert(array('name'=>'Mentions','alias'=>'mentions','order'=>2));
+                    $db->Page->insert(array('name'=>'Credits','alias'=>'credits','order'=>3));
+                    $db->Page->insert(array('name'=>'Contacts','alias'=>'contacts','order'=>4));
+                    //init config
+                    $db->Config->insert(array(
+                        'islocked'=>true,
+                        'originaldb'=>$default_db,
+                        'defaultlanguage'=>$language,
+                        'name'=>ucfirst($default_link).' '.$language,
+                        'template'=>$default_template
+                    ));
+                }
             }
         }
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));

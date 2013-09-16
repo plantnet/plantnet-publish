@@ -25,6 +25,22 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class TaxoController extends Controller
 {
+    private function check_enable_project($project)
+    {
+        $prefix=substr($this->get_prefix(),0,-1);
+        $connection=new \MongoClient();
+        $db=$connection->$prefix->Database->findOne(array(
+            'link'=>$project
+        ),array(
+            'enable'=>1
+        ));
+        if($db){
+            if(isset($db['enable'])&&$db['enable']===false){
+                throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+            }
+        }
+    }
+
     private function database_list()
     {
         //display databases without prefix
@@ -133,6 +149,7 @@ class TaxoController extends Controller
      */
     public function module_taxoAction($project,$collection,$module,$taxon,Request $request)
     {
+        $this->check_enable_project($project);
         $form_identifier=$request->query->get('form_identifier');
         if($this->container->get('request')->get('_route')=='front_module_taxo'&&!empty($form_identifier)){
             return $this->redirect($this->generateUrl('front_module_taxo_details',array(
@@ -250,6 +267,7 @@ class TaxoController extends Controller
      */
     public function module_taxo_childrenAction($project,$collection,$module,$parent)
     {
+        $this->check_enable_project($project);
         $projects=$this->database_list();
         if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
@@ -317,6 +335,7 @@ class TaxoController extends Controller
      */
     public function module_taxo_queryAction($project,$collection,$module,$query)
     {
+        $this->check_enable_project($project);
         if($query=='null'){
             $response=new Response(json_encode(array()));
             $response->headers->set('Content-Type','application/json');
@@ -390,6 +409,7 @@ class TaxoController extends Controller
      */
     public function module_taxo_viewAction($project,$collection,$module,$taxon,$page,$sortby,$sortorder,Request $request)
     {
+        $this->check_enable_project($project);
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;
@@ -570,6 +590,7 @@ class TaxoController extends Controller
      */
     public function module_taxo_view_galleryAction($project,$collection,$module,$taxon,$page,Request $request)
     {
+        $this->check_enable_project($project);
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;
@@ -715,6 +736,7 @@ class TaxoController extends Controller
      */
     public function module_taxo_view_mapAction($project,$collection,$module,$taxon)
     {
+        $this->check_enable_project($project);
         $translations=$this->make_translations(
             $project,
             'front_module_taxo',

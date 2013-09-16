@@ -18,18 +18,24 @@
 						{{ project.language|language }}
 					</a>
 					{% if project.children|length > 0 %}
-						<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">
-							<span class="caret"></span>
-						</a>
-						<ul class="dropdown-menu">
-							{% for child in project.children if child.enable == true %}
-								<li>
-									<a href="{{ path('front_project', {'project': child.link}) }}">
-										{{ child.language|language }}
-									</a>
-								</li>
-							{% endfor %}
-						</ul>
+						{% set i18n = false %}
+						{% for child in project.children if child.enable == true %}
+							{% set i18n = true %}
+						{% endfor %}
+						{% if i18n %}
+							<a class="btn btn-small dropdown-toggle" data-toggle="dropdown">
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								{% for child in project.children if child.enable == true %}
+									<li>
+										<a href="{{ path('front_project', {'project': child.link}) }}">
+											{{ child.language|language }}
+										</a>
+									</li>
+								{% endfor %}
+							</ul>
+						{% endif %}
 					{% endif %}
 				</div>
 				<div class="well">

@@ -25,6 +25,22 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class SearchController extends Controller
 {
+    private function check_enable_project($project)
+    {
+        $prefix=substr($this->get_prefix(),0,-1);
+        $connection=new \MongoClient();
+        $db=$connection->$prefix->Database->findOne(array(
+            'link'=>$project
+        ),array(
+            'enable'=>1
+        ));
+        if($db){
+            if(isset($db['enable'])&&$db['enable']===false){
+                throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+            }
+        }
+    }
+
     private function database_list()
     {
         //display databases without prefix
@@ -206,6 +222,7 @@ class SearchController extends Controller
      */
     public function module_searchAction($project,$collection,$module)
     {
+        $this->check_enable_project($project);
         $translations=$this->make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -297,6 +314,7 @@ class SearchController extends Controller
      */
     public function module_resultAction($project,$collection,$module,$mode,Request $request)
     {
+        $this->check_enable_project($project);
         $translations=$this->make_translations(
             $project,
             'front_module_search',
@@ -776,6 +794,7 @@ class SearchController extends Controller
      */
     public function module_search_queryAction($project,$collection,$module,$attribute,$query)
     {
+        $this->check_enable_project($project);
         $projects=$this->database_list();
         if(!in_array($project,$projects)){
             throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
