@@ -208,11 +208,24 @@ class CollectionController extends Controller
      */
     public function collection_deleteAction($id)
     {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneBy(array(
+                'id'=>$id
+            ));
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
         $form=$this->createDeleteForm($id);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
             $form->bind($request);
             if($form->isValid()){
+                $collection->setDeleting(true);
+                $dm->persist($collection);
+                $dm->flush();
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' &> /dev/null &';

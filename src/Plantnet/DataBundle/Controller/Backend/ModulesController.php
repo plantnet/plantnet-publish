@@ -904,11 +904,22 @@ class ModulesController extends Controller
      */
     public function module_deleteAction($id)
     {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
         $form=$this->createDeleteForm($id);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
             $form->bind($request);
             if($form->isValid()){
+                $module->setDeleting(true);
+                $dm->persist($module);
+                $dm->flush();
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' &> /dev/null &';
