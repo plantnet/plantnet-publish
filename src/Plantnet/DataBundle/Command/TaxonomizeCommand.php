@@ -150,60 +150,62 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     }
                     $last_taxon=null;
                     foreach($tab_taxo as $level=>$data){
-                        $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
-                            ->findOneBy(array(
-                                'module.id'=>$module->getId(),
-                                'identifier'=>$data[1],
-                                'level'=>$level
-                            ));
-                        if($taxon){
-                            $taxon->setNbpunits($taxon->getNbpunits()+1);
-                            if($level==$last_level){
-                                $punit->setTaxon($taxon);
-                            }
-                        }
-                        else{
-                            $taxon=new Taxon();
-                            $taxon->setIdentifier($data[1]);
-                            $taxon->setName($data[2]);
-                            $taxon->setLabel($data[0]);
-                            $taxon->setLevel($level);
-                            $taxon->setModule($module);
-                            $taxon->setNbpunits(1);
-                            $taxon->setIssynonym(false);
-                            if($level==$last_level){
-                                $punit->setTaxon($taxon);
-                            }
-                            if($last_taxon){
-                                $taxon->setParent($last_taxon);
-                                if($last_taxon->getHaschildren()!=true){
-                                    $last_taxon->setHaschildren(true);
-                                    $dm->persist($last_taxon);
+                        if(!empty($data[2])){
+                            $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
+                                ->findOneBy(array(
+                                    'module.id'=>$module->getId(),
+                                    'identifier'=>$data[1],
+                                    'level'=>$level
+                                ));
+                            if($taxon){
+                                $taxon->setNbpunits($taxon->getNbpunits()+1);
+                                if($level==$last_level){
+                                    $punit->setTaxon($taxon);
                                 }
                             }
-                        }
-                        $punit->addTaxonsref($taxon);
-                        $dm->persist($punit);
-                        if($punit->getHasimages()===true){
-                            $taxon->setHasimages(true);
-                            $images=$punit->getImages();
-                            foreach($images as $img){
-                                $img->addTaxonsref($taxon);
-                                $dm->persist($img);
+                            else{
+                                $taxon=new Taxon();
+                                $taxon->setIdentifier($data[1]);
+                                $taxon->setName($data[2]);
+                                $taxon->setLabel($data[0]);
+                                $taxon->setLevel($level);
+                                $taxon->setModule($module);
+                                $taxon->setNbpunits(1);
+                                $taxon->setIssynonym(false);
+                                if($level==$last_level){
+                                    $punit->setTaxon($taxon);
+                                }
+                                if($last_taxon){
+                                    $taxon->setParent($last_taxon);
+                                    if($last_taxon->getHaschildren()!=true){
+                                        $last_taxon->setHaschildren(true);
+                                        $dm->persist($last_taxon);
+                                    }
+                                }
                             }
-                        }
-                        if($punit->getHaslocations()===true){
-                            $taxon->setHaslocations(true);
-                            $locations=$punit->getLocations();
-                            foreach($locations as $loc){
-                                $loc->addTaxonsref($taxon);
-                                $dm->persist($loc);
+                            $punit->addTaxonsref($taxon);
+                            $dm->persist($punit);
+                            if($punit->getHasimages()===true){
+                                $taxon->setHasimages(true);
+                                $images=$punit->getImages();
+                                foreach($images as $img){
+                                    $img->addTaxonsref($taxon);
+                                    $dm->persist($img);
+                                }
                             }
+                            if($punit->getHaslocations()===true){
+                                $taxon->setHaslocations(true);
+                                $locations=$punit->getLocations();
+                                foreach($locations as $loc){
+                                    $loc->addTaxonsref($taxon);
+                                    $dm->persist($loc);
+                                }
+                            }
+                            $dm->persist($taxon);
+                            //flush pour avoir un ID ...
+                            $dm->flush();
+                            $last_taxon=$taxon;
                         }
-                        $dm->persist($taxon);
-                        //flush pour avoir un ID ...
-                        $dm->flush();
-                        $last_taxon=$taxon;
                     }
                 }
                 if(($size%$batch_size)==0){

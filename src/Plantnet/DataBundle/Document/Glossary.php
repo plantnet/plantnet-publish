@@ -21,7 +21,7 @@ class Glossary
 
     /**
      * 
-     * @Assert\File(maxSize = "60M")
+     * @Assert\File(maxSize = "75M")
      */
     protected $file;
 
