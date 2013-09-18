@@ -166,6 +166,11 @@
 	{{ parent() }}
     <script type="text/javascript">
         $(document).ready(function(){
+            $(document).on('click','a.btn.disabled',function(event){
+                event.preventDefault();
+                alert('ok');
+                return false;
+            });
             if($('.syn-pop').length>0){
                 $('body').popover({
                     selector:'.syn-pop',

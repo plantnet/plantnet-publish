@@ -715,8 +715,15 @@ class ModulesController extends Controller
         if(file_exists($csv)){
             $deleteSynForm=$this->createDeleteSynForm($id);
         }
+        $nb_taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+            ->field('module')->references($module)
+            ->field('parent')->equals(null)
+            ->field('issynonym')->equals(false)
+            ->getQuery()
+            ->count();
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_taxo.html.twig',array(
             'entity'=>$module,
+            'nb_taxons'=>$nb_taxons,
             'edit_form'=>$editForm->createView(),
             'delete_syn_form'=>($deleteSynForm!=false)?$deleteSynForm->createView():false
         ));

@@ -88,7 +88,11 @@
                 <td>Species 2</td>
             </tr>
         </table>
-        <a href="{{ path('module_syn', { 'id': entity.id }) }}" class="btn">Add or update synonymy</a>
+        {% if nb_taxons > 0 %}
+            <a href="{{ path('module_syn', { 'id': entity.id }) }}" class="btn">Add or update synonymy</a>
+        {% else %}
+            <a href="#" class="btn disabled">Add or update synonymy</a>
+        {% endif %}
         {% if delete_syn_form != false %}
             <br />
             <br />
@@ -128,6 +132,12 @@
             $('#btn-delete-2').click(function(){
                 $('#form-delete').submit();
             });
+            if($('a.btn.disabled').length>0){
+                $('a.btn.disabled').click(function(e){
+                    e.preventDefault();
+                    return false;
+                });
+            }
         });
     </script>
 {% endblock %}
