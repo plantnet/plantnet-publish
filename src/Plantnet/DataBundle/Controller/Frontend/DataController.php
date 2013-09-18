@@ -469,7 +469,8 @@ class DataController extends Controller
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($module)
                     ->sort('title1','asc')
-                    ->sort('title2','asc');
+                    ->sort('title2','asc')
+                    ->sort('title3','asc');
                 /*
                 // pour trouver les images manquantes avant export IDAO
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
@@ -596,7 +597,8 @@ class DataController extends Controller
                 'plantunit'=>1,
                 'property'=>1,
                 'title1'=>1,
-                'title2'=>1
+                'title2'=>1,
+                'title3'=>1
             )
         )->sort(array('_id'=>1))->limit($max_per_page)->skip($start);
         foreach($c_locations as $id=>$l){
@@ -614,8 +616,12 @@ class DataController extends Controller
                 'punit'=>'',
                 'title1'=>$l['title1'],
                 'title2'=>$l['title2'],
+                'title3'=>'',
                 'loc_data'=>''
             );
+            if(isset($l['title3'])&&!empty($l['title3'];)){
+                $loc['properties']['title3']=$l['title3'];
+            }
             $loc['properties']['punit']=$this->get('router')->generate('front_details',array(
                 'project'=>$project,
                 'collection'=>$collection->getUrl(),

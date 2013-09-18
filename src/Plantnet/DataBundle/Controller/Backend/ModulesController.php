@@ -510,6 +510,9 @@ class ModulesController extends Controller
                                 case 'title2':
                                     $plantunit->setTitle2($value);
                                     break;
+                                case 'title3':
+                                    $plantunit->setTitle3($value);
+                                    break;
                             }
                         }
                         $plantunit->setAttributes($attributes);

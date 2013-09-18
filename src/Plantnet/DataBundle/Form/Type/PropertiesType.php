@@ -16,7 +16,8 @@ class PropertiesType extends AbstractType
 				'choices' => array(
 					'idmodule' => 'Id',
 					'title1' => 'Title 1',
-					'title2' => 'Title 2'
+					'title2' => 'Title 2',
+					'title3' => 'Title 3'
 				),
 				'multiple' => false,
 				'required' => false
