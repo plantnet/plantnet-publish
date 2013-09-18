@@ -193,19 +193,19 @@
                     if(item.issynonym){
                         return '<span class="muted">'+item.name.replace(new RegExp('('+query+')','ig'),function($1,match){
                             return '<strong>'+match+'</strong>';
-                        })+' ['+item.identifier+']</span>';
+                        })+' ['+item.label+']</span>';
                     }
                     return item.name.replace(new RegExp('('+query+')','ig'),function($1,match){
                         return '<strong>'+match+'</strong>';
-                    })+' ['+item.identifier+']';
+                    })+' ['+item.label+']';
                 },
                 updater:function(tmp_item){
                     var item=JSON.parse(tmp_item);
                     $('#form_identifier').val(item.identifier);
                     if(item.issynonym){
-                        return item.name+' ['+item.identifier+']';
+                        return item.name+' ['+item.label+']';
                     }
-                    return item.name+' ['+item.identifier+']';
+                    return item.name+' ['+item.label+']';
                 },
                 items:10
             });
