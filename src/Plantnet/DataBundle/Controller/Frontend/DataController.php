@@ -618,7 +618,7 @@ class DataController extends Controller
                 'title3'=>'',
                 'loc_data'=>''
             );
-            if(isset($l['title3'])&&!empty($l['title3'];)){
+            if(isset($l['title3'])&&!empty($l['title3'])){
                 $loc['properties']['title3']=$l['title3'];
             }
             $loc['properties']['punit']=$this->get('router')->generate('front_details',array(
