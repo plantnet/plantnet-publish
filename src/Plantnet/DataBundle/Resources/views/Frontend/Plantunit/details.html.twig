@@ -1,5 +1,9 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
-{% block title plantunit.title1 ~ ' - ' ~ plantunit.title2 %}
+{% set tmp_title = '' %}
+{% if plantunit.title3 is defined and plantunit.title3 is not null %}
+    {% set tmp_title = ' - ' ~ plantunit.title3 %}
+{% endif %}
+{% block title plantunit.title1 ~ ' - ' ~ plantunit.title2 ~ tmp_title %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
@@ -8,7 +12,7 @@
         {% include 'PlantnetDataBundle:Frontend:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
-{% block header %}<h1>{{ config.name }} - {{ plantunit.title1 }} - {{ plantunit.title2 }}</h1>{% endblock %}
+{% block header %}<h1>{{ config.name }} - {{ plantunit.title1 }} - {{ plantunit.title2 }}{% if plantunit.title3 is defined and plantunit.title3 is not null %} - {{ plantunit.title3 }}{% endif %}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
@@ -24,7 +28,7 @@
             <span class="divider">/</span>
         </li>
         <li class="active">
-            {{ plantunit.title1 }} - {{ plantunit.title2 }}
+            {{ plantunit.title1 }} - {{ plantunit.title2 }}{% if plantunit.title3 is defined and plantunit.title3 is not null %} - {{ plantunit.title3 }}{% endif %}
             <span class="divider">></span>
             {{ "line-details"|trans }}
         </li>

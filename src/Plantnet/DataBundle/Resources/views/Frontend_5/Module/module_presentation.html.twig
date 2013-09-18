@@ -71,7 +71,7 @@
                         {% set imgspe = image.path|basename %}
                         {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
                         <div class="span2">
-                            <img src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ image.copyright }}" class="img-polaroid img-tooltip img_module" data-toggle="tooltip" title="{{ image.title1 }} {{ image.title2 }}" />
+                            <img src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ image.copyright }}" class="img-polaroid img-tooltip img_module" data-toggle="tooltip" title="{{ image.title1 }} {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} {{ image.title3 }}{% endif %}" />
                         </div>
                     {% endfor %}
                 </div>

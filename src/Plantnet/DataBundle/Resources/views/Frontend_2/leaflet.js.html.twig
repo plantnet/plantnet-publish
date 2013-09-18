@@ -138,6 +138,10 @@
 			{% if location.title2 is defined %}
 				{% set title2 = location.title2 %}
 			{% endif %}
+			{% set title3 = '' %}
+			{% if location.title3 is defined and location.title3 is not null %}
+				{% set title3 = '<br />' ~ location.title3 %}
+			{% endif %}
 			{% set loc_data = '' %}
 			{% if location.module.properties is defined %}
 				{% for property in location.module.properties if property.details == true %}
@@ -146,7 +150,7 @@
 		        {% endfor %}
 	        {% endif %}
 			var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
-			marker_{{ location.id }}.bindPopup('<b>{{ title1|escape('js') }}</b><br /><b>{{ title2|escape('js') }}</b>'
+			marker_{{ location.id }}.bindPopup('<b>{{ title1|escape('js') }}</b><br /><b>{{ title2|escape('js') }}</b>{{ title3 }}'
 				+'<br />{{ loc_data|escape('js') }}'
 				{% if current_display is defined %}
 					+'<br /><br /><a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'id': location.plantunit.id }) }}" class="btn btn-small">{{ "line-details"|trans|capitalize }}</a>'
@@ -226,6 +230,7 @@
 				{
 					layer.bindPopup('<b>'+feature.properties.title1+'</b><br />'
 						+feature.properties.title2+'<br />'
+						+feature.properties.title3+'<br />'
 						+'<br />'
 						+feature.properties.loc_data.replace(new RegExp('\n','g'),'<br />')+'<br />'
 						+'<a href="'+feature.properties.punit+'" class="btn btn-small">{{ "line-details"|trans|capitalize }}</a>');
