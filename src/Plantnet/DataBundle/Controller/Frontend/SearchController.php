@@ -636,8 +636,7 @@ class SearchController extends Controller
                         $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
                             ->field('plantunit.id')->in($ids_tab)
                             ->sort('title1','asc')
-                            ->sort('title2','asc')
-                            ->sort('title3','asc');
+                            ->sort('title2','asc');
                         $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($images));
                         try{
                             $paginator->setMaxPerPage(15);

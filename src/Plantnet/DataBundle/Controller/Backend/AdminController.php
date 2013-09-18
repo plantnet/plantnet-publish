@@ -349,7 +349,8 @@ class AdminController extends Controller
                         'longitude'=>1,
                         'plantunit'=>1,
                         'title1'=>1,
-                        'title2'=>1
+                        'title2'=>1,
+                        'title3'=>1
                     )
                 );
                 foreach($c_locations as $id=>$l){
@@ -359,6 +360,7 @@ class AdminController extends Controller
                     $loc['longitude']=$l['longitude'];
                     $loc['title1']=$l['title1'];
                     $loc['title2']=$l['title2'];
+                    $loc['title3']=(isset($l['title3'])&&!empty($l['title3']))?$l['title3']:'';
                     // if(array_key_exists($l['plantunit']['$id']->{'$id'},$plantunits))
                     // {
                     //     if(isset($plantunits[$l['plantunit']['$id']->{'$id'}]['title1']))

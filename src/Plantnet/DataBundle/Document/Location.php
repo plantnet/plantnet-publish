@@ -30,6 +30,11 @@ class Location
     protected $title2;
 
     /**
+     * @MongoDB\String
+     */
+    protected $title3;
+
+    /**
      * @MongoDB\Hash
      */
     protected $property;
@@ -148,6 +153,26 @@ class Location
     public function getTitle2()
     {
         return $this->title2;
+    }
+
+    /**
+     * Set title3
+     *
+     * @param string $title3
+     */
+    public function setTitle3($title3)
+    {
+        $this->title3 = $title3;
+    }
+
+    /**
+     * Get title3
+     *
+     * @return string $title3
+     */
+    public function getTitle3()
+    {
+        return $this->title3;
     }
     
     /**

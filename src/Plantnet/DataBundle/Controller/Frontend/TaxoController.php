@@ -670,7 +670,6 @@ class TaxoController extends Controller
         }
         $images->sort('title1','asc');
         $images->sort('title2','asc');
-        $images->sort('title3','asc');
         // // version 1
         // $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
         //     ->field('taxonsrefs')->references($taxon)

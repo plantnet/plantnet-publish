@@ -469,8 +469,7 @@ class DataController extends Controller
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($module)
                     ->sort('title1','asc')
-                    ->sort('title2','asc')
-                    ->sort('title3','asc');
+                    ->sort('title2','asc');
                 /*
                 // pour trouver les images manquantes avant export IDAO
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')

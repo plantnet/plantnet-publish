@@ -119,6 +119,7 @@ class ImportationCommand extends ContainerAwareCommand
                             $image->setPlantunit($parent);
                             $image->setTitle1($parent->getTitle1());
                             $image->setTitle2($parent->getTitle2());
+                            $image->setTitle3($parent->getTitle3());
                             $dm->persist($image);
                             $parent->setHasimages(true);
                             $dm->persist($parent);
@@ -207,6 +208,7 @@ class ImportationCommand extends ContainerAwareCommand
                             $location->setPlantunit($parent);
                             $location->setTitle1($parent->getTitle1());
                             $location->setTitle2($parent->getTitle2());
+                            $location->setTitle3($parent->getTitle3());
                             $dm->persist($location);
                             $parent->setHaslocations(true);
                             $dm->persist($parent);
@@ -249,6 +251,7 @@ class ImportationCommand extends ContainerAwareCommand
                             $plantunit->setIdentifier($location->getIdentifier());
                             $plantunit->setTitle1($location->getTitle1());
                             $plantunit->setTitle2($location->getTitle2());
+                            $plantunit->setTitle3($location->getTitle3());
                             $dm->persist($plantunit);
                             $location->setPlantunit($plantunit);
                             $dm->persist($location);
