@@ -39,6 +39,10 @@ class DataController extends Controller
                 throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
             }
         }
+        $projects=$this->database_list();
+        if(!in_array($project,$projects)){
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
     }
     
     private function database_list()
@@ -66,10 +70,6 @@ class DataController extends Controller
 
     private function get_config($project)
     {
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
@@ -185,10 +185,6 @@ class DataController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collections=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -227,10 +223,6 @@ class DataController extends Controller
     public function collection_listAction($project)
     {
         $this->check_enable_project($project);
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collections=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -260,10 +252,6 @@ class DataController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -335,10 +323,6 @@ class DataController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -449,10 +433,6 @@ class DataController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -570,10 +550,6 @@ class DataController extends Controller
         $this->check_enable_project($project);
         $max_per_page=5000;
         $start=$page*$max_per_page;
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -698,10 +674,6 @@ class DataController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -819,10 +791,6 @@ class DataController extends Controller
         $this->check_enable_project($project);
         $max_per_page=9;
         $start=$page*$max_per_page;
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -890,10 +858,6 @@ class DataController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -932,10 +896,6 @@ class DataController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $page=$dm->getRepository('PlantnetDataBundle:Page')
@@ -971,10 +931,6 @@ class DataController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $page = $dm->getRepository('PlantnetDataBundle:Page')
@@ -1010,10 +966,6 @@ class DataController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $page = $dm->getRepository('PlantnetDataBundle:Page')
@@ -1054,10 +1006,6 @@ class DataController extends Controller
             $response->headers->set('Content-Type','application/json');
             return $response;
             exit;
-        }
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
@@ -1108,10 +1056,6 @@ class DataController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collections=$dm->getRepository('PlantnetDataBundle:Collection')

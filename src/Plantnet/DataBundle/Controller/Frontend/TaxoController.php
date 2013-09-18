@@ -39,6 +39,10 @@ class TaxoController extends Controller
                 throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
             }
         }
+        $projects=$this->database_list();
+        if(!in_array($project,$projects)){
+            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
+        }
     }
 
     private function database_list()
@@ -66,10 +70,6 @@ class TaxoController extends Controller
 
     private function get_config($project)
     {
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
@@ -170,10 +170,6 @@ class TaxoController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -268,10 +264,6 @@ class TaxoController extends Controller
     public function module_taxo_childrenAction($project,$collection,$module,$parent)
     {
         $this->check_enable_project($project);
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -341,10 +333,6 @@ class TaxoController extends Controller
             $response->headers->set('Content-Type','application/json');
             return $response;
             exit;
-        }
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
         }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
@@ -434,10 +422,6 @@ class TaxoController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -615,10 +599,6 @@ class TaxoController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -747,10 +727,6 @@ class TaxoController extends Controller
             )
         );
         //
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
