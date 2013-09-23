@@ -45,6 +45,136 @@ class TaxonomizeCommand extends ContainerAwareCommand
         }
     }
 
+    /*
+    private function populate($dm,$module,$taxo,$level,$filter=array(),$identifier='')
+    {
+        $values=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            ->hydrate(false)
+            ->distinct('attributes.'.$taxo[$level][0])
+            ->select('attributes.'.$taxo[$level][0])
+            ->field('module')->references($module);
+        foreach($filter as $k=>$v){
+            $values->field('attributes.'.$k)->equals($v);
+        }
+        $values=$values->getQuery()
+            ->execute();
+        $tab_tax=array();
+        foreach($values as $val){
+            $tmp_identifier=$identifier;
+            $tab_tax[$val]=array(
+                'column'=>$taxo[$level][0],
+                'value'=>$val,
+                'label'=>$taxo[$level][1],
+                'level'=>$level,
+                'identifier'=>'',
+                'child'=>null
+            );
+            if($level!=1){
+                $tmp_identifier.=' - ';
+            }
+            $tmp_identifier.=$val;
+            $tab_tax[$val]['identifier']=$tmp_identifier;
+            if(isset($taxo[$level+1])){
+                $tab_tax[$val]['child']=$this->populate($dm,$module,$taxo,$level+1,array_merge($filter,array($taxo[$level][0]=>$val)),$tmp_identifier);
+            }
+        }
+        return $tab_tax;
+    }
+
+    private function save($dm,$module,$tab_taxons,$parent=null)
+    {
+        foreach($tab_taxons as $tax_name=>$tax_data){
+            $taxon=new Taxon();
+            $taxon->setIdentifier($tax_data['identifier']);
+            $taxon->setName($tax_data['value']);
+            $taxon->setLabel($tax_data['label']);
+            $taxon->setLevel($tax_data['level']);
+            $taxon->setModule($module);
+            $taxon->setNbpunits(0);
+            $taxon->setIssynonym(false);
+            if($parent){
+                $taxon->setParent($parent);
+            }
+            if(!empty($tax_data['child'])){
+                $taxon->setHaschildren(true);
+                $dm->persist($taxon);
+                $dm->flush();
+                $this->save($dm,$module,$tax_data['child'],$taxon);
+            }
+            else{
+                $dm->persist($taxon);
+            }
+        }
+        $dm->flush();
+    }
+
+    private function meta($dm,$module,$taxo,$tab_tax,$filter=array())
+    {
+        foreach($tab_tax as $tax_name=>$tax_data){
+            $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
+                ->findOneBy(array(
+                    'module.id'=>$module->getId(),
+                    'identifier'=>$tax_data['identifier'],
+                    'level'=>$tax_data['level']
+                ));
+            if($taxon){
+                // Punit number
+                $nb_punit=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                    ->field('attributes.'.$taxo[$taxon->getLevel()][0])->equals($taxon->getName())
+                    ->field('module')->references($module)
+                    ->getQuery()
+                    ->execute()
+                    ->count();
+                if($nb_punit>0){
+                    $taxon->setNbpunits($nb_punit);
+                }
+                // Punit with img number
+                $nb_punit_img=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                    ->field('attributes.'.$taxo[$taxon->getLevel()][0])->equals($taxon->getName())
+                    ->field('module')->references($module)
+                    ->field('hasimages')->equals(true)
+                    ->getQuery()
+                    ->execute()
+                    ->count();
+                if($nb_punit_img>0){
+                    $taxon->setHasimages(true);
+                }
+                // Punit with loc number
+                $nb_punit_loc=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                    ->field('attributes.'.$taxo[$taxon->getLevel()][0])->equals($taxon->getName())
+                    ->field('module')->references($module)
+                    ->field('haslocations')->equals(true)
+                    ->getQuery()
+                    ->execute()
+                    ->count();
+                if($nb_punit_loc>0){
+                    $taxon->setHaslocations(true);
+                }
+                // Children
+                if(!empty($tax_data['child'])){
+                    $dm->persist($taxon);
+                    $dm->flush();
+                    $this->meta($dm,$module,$taxo,$tax_data['child'],array_merge($filter,array($taxo[$taxon->getLevel()][0],$taxon->getName())));
+                }
+                else{
+                    $dm->persist($taxon);
+                }
+            }
+        }
+        $dm->flush();
+    }
+    */
+
+
+
+
+
+
+
+
+
+
+
     private function taxonomize($dbname,$id_module,$usermail)
     {
         $error='';
@@ -108,9 +238,22 @@ class TaxonomizeCommand extends ContainerAwareCommand
         }
         if(count($taxo)){
             ksort($taxo);
+            $first_level=key($taxo);
             end($taxo);
             $last_level=key($taxo);
             reset($taxo);
+            //populate
+            // $tab_tax=$this->populate($dm,$module,$taxo,$first_level);
+            //save
+            // $this->save($dm,$module,$tab_tax);
+            // $dm->clear();
+            // gc_collect_cycles();
+            // $module=$dm->getRepository('PlantnetDataBundle:Module')
+            //     ->findOneBy(array(
+            //         'id'=>$id_module
+            //     ));
+            //meta
+            // $this->meta($dm,$module,$taxo,$tab_tax);
             // chargement des punits du module
             $ids_punit=array();
             $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
@@ -180,17 +323,20 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                     if($last_taxon->getHaschildren()!=true){
                                         $last_taxon->setHaschildren(true);
                                         $dm->persist($last_taxon);
+                                        $size++;
                                     }
                                 }
                             }
                             $punit->addTaxonsref($taxon);
                             $dm->persist($punit);
+                            $size++;
                             if($punit->getHasimages()===true){
                                 $taxon->setHasimages(true);
                                 $images=$punit->getImages();
                                 foreach($images as $img){
                                     $img->addTaxonsref($taxon);
                                     $dm->persist($img);
+                                    $size++;
                                 }
                             }
                             if($punit->getHaslocations()===true){
@@ -199,17 +345,20 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 foreach($locations as $loc){
                                     $loc->addTaxonsref($taxon);
                                     $dm->persist($loc);
+                                    $size++;
                                 }
                             }
                             $dm->persist($taxon);
+                            $size++;
                             //flush pour avoir un ID ...
                             $dm->flush();
                             $last_taxon=$taxon;
                         }
                     }
                 }
-                if(($size%$batch_size)==0){
+                if(($size>=$batch_size)){
                     $dm->clear();
+                    gc_collect_cycles();
                     $module=$dm->getRepository('PlantnetDataBundle:Module')
                         ->findOneBy(array(
                             'id'=>$id_module
@@ -401,6 +550,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             $dm->flush();
                         }
                         $dm->clear();
+                        gc_collect_cycles();
                         $module=$dm->getRepository('PlantnetDataBundle:Module')
                             ->findOneBy(array(
                                 'id'=>$id_module
