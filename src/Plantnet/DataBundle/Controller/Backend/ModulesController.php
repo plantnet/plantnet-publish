@@ -762,7 +762,7 @@ class ModulesController extends Controller
                 $dm->flush();
                 //command
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -850,7 +850,7 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon syn '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -896,7 +896,7 @@ class ModulesController extends Controller
                     $dm->flush();
                     //command
                     $kernel=$this->get('kernel');
-                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
                     $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');

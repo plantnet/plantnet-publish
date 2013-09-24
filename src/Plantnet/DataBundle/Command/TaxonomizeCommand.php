@@ -29,6 +29,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
         $this
             ->setName('publish:taxon')
             ->setDescription('create taxons entities')
+            ->addArgument('action',InputArgument::REQUIRED,'Specify the action (taxo or syn)')
             ->addArgument('id',InputArgument::REQUIRED,'Specify the ID of the module entity')
             ->addArgument('dbname',InputArgument::REQUIRED,'Specify a database name')
             ->addArgument('usermail',InputArgument::REQUIRED,'Specify a user e-mail')
@@ -37,12 +38,16 @@ class TaxonomizeCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input,OutputInterface $output)
     {
+        $action=$input->getArgument('action');
         $id=$input->getArgument('id');
         $dbname=$input->getArgument('dbname');
         $usermail=$input->getArgument('usermail');
-        if($id&&$dbname&&$usermail){
-            $this->taxonomize($dbname,$id,$usermail);
+        if($action&&($action=='taxo'||$action=='syn')){
+            if($id&&$dbname&&$usermail){
+                $this->taxonomize($action,$dbname,$id,$usermail);
+            }
         }
+        
     }
 
     private function populate($dm,$module,$taxo,$level,$filter=array(),$identifier='')
@@ -149,7 +154,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
         $dm->flush();
     }
 
-    private function taxonomize($dbname,$id_module,$usermail)
+    private function taxonomize($action,$dbname,$id_module,$usermail)
     {
         $error='';
         $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
@@ -163,40 +168,42 @@ class TaxonomizeCommand extends ContainerAwareCommand
         if(!$module){
             $error='Unable to find Module entity.';
         }
-        // suppression des anciens taxons
-        $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
-            ->remove()
-            ->field('module')->references($module)
-            ->getQuery()
-            ->execute();
-        // suppression des références des anciens taxons
-        $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-            ->update()
-            ->multiple(true)
-            ->field('module')->references($module)
-            ->field('taxon')->unsetField()
-            ->field('taxonsrefs')->unsetField()
-            ->getQuery()
-            ->execute();
-        $sub_modules=$module->getChildren();
-        foreach($sub_modules as $sub){
-            if($sub->getType()=='image'){
-                $dm->createQueryBuilder('PlantnetDataBundle:Image')
-                    ->update()
-                    ->multiple(true)
-                    ->field('module')->references($sub)
-                    ->field('taxonsrefs')->unsetField()
-                    ->getQuery()
-                    ->execute();
-            }
-            elseif($sub->getType()=='locality'){
-                $dm->createQueryBuilder('PlantnetDataBundle:Location')
-                    ->update()
-                    ->multiple(true)
-                    ->field('module')->references($sub)
-                    ->field('taxonsrefs')->unsetField()
-                    ->getQuery()
-                    ->execute();
+        if($action=='taxo'){
+            // suppression des anciens taxons
+            $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                ->remove()
+                ->field('module')->references($module)
+                ->getQuery()
+                ->execute();
+            // suppression des références des anciens taxons
+            $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                ->update()
+                ->multiple(true)
+                ->field('module')->references($module)
+                ->field('taxon')->unsetField()
+                ->field('taxonsrefs')->unsetField()
+                ->getQuery()
+                ->execute();
+            $sub_modules=$module->getChildren();
+            foreach($sub_modules as $sub){
+                if($sub->getType()=='image'){
+                    $dm->createQueryBuilder('PlantnetDataBundle:Image')
+                        ->update()
+                        ->multiple(true)
+                        ->field('module')->references($sub)
+                        ->field('taxonsrefs')->unsetField()
+                        ->getQuery()
+                        ->execute();
+                }
+                elseif($sub->getType()=='locality'){
+                    $dm->createQueryBuilder('PlantnetDataBundle:Location')
+                        ->update()
+                        ->multiple(true)
+                        ->field('module')->references($sub)
+                        ->field('taxonsrefs')->unsetField()
+                        ->getQuery()
+                        ->execute();
+                }
             }
         }
         // chargement des données taxo
@@ -216,316 +223,125 @@ class TaxonomizeCommand extends ContainerAwareCommand
             end($taxo);
             $last_level=key($taxo);
             reset($taxo);
-            /*
-            //populate
-            $s=microtime(true);
-            $tab_tax=$this->populate($dm,$module,$taxo,$first_level);
-            //save
-            $this->save($dm,$module,$taxo,$tab_tax);
-            $dm->clear();
-            gc_collect_cycles();
-            $module=$dm->getRepository('PlantnetDataBundle:Module')
-                ->findOneBy(array(
-                    'id'=>$id_module
-                ));
-            $e=microtime(true);
-            echo $e-$s;
-            */
-            // chargement des punits du module
-            $ids_punit=array();
-            $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->hydrate(false)
-                ->select('_id')
-                ->field('module')->references($module)
-                ->getQuery()
-                ->execute();
-            foreach($punits as $id){
-                $ids_punit[]=$id['_id']->{'$id'};
-            }
-            unset($punits);
-            $batch_size=100;
-            $size=0;
-            foreach($ids_punit as $id_punit){
-                $size++;
-                $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+            if($action=='taxo'){
+                /*
+                //populate
+                $s=microtime(true);
+                $tab_tax=$this->populate($dm,$module,$taxo,$first_level);
+                //save
+                $this->save($dm,$module,$taxo,$tab_tax);
+                $dm->clear();
+                gc_collect_cycles();
+                $module=$dm->getRepository('PlantnetDataBundle:Module')
                     ->findOneBy(array(
-                        'id'=>$id_punit
+                        'id'=>$id_module
                     ));
-                if($punit){
-                    $attributes=$punit->getAttributes();
-                    $tab_taxo=array();
-                    $identifier='';
-                    foreach($taxo as $level=>$t){
-                        if(isset($attributes[$t[0]])){
-                            if(!empty($identifier)){
-                                $identifier.=' - ';
+                $e=microtime(true);
+                echo $e-$s;
+                */
+                // chargement des punits du module
+                $ids_punit=array();
+                $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                    ->hydrate(false)
+                    ->select('_id')
+                    ->field('module')->references($module)
+                    ->getQuery()
+                    ->execute();
+                foreach($punits as $id){
+                    $ids_punit[]=$id['_id']->{'$id'};
+                }
+                unset($punits);
+                $batch_size=100;
+                $size=0;
+                foreach($ids_punit as $id_punit){
+                    $size++;
+                    $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+                        ->findOneBy(array(
+                            'id'=>$id_punit
+                        ));
+                    if($punit){
+                        $attributes=$punit->getAttributes();
+                        $tab_taxo=array();
+                        $identifier='';
+                        foreach($taxo as $level=>$t){
+                            if(isset($attributes[$t[0]])){
+                                if(!empty($identifier)){
+                                    $identifier.=' - ';
+                                }
+                                $identifier.=$attributes[$t[0]];
+                                $tab_taxo[$level]=array(
+                                    $t[1],
+                                    $identifier,
+                                    $attributes[$t[0]]
+                                );
                             }
-                            $identifier.=$attributes[$t[0]];
-                            $tab_taxo[$level]=array(
-                                $t[1],
-                                $identifier,
-                                $attributes[$t[0]]
-                            );
                         }
-                    }
-                    $last_taxon=null;
-                    foreach($tab_taxo as $level=>$data){
-                        if(!empty($data[2])){
-                            $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
-                                ->findOneBy(array(
-                                    'module.id'=>$module->getId(),
-                                    'identifier'=>$data[1],
-                                    'level'=>$level
-                                ));
-                            if($taxon){
-                                $taxon->setNbpunits($taxon->getNbpunits()+1);
-                                if($level==$last_level){
-                                    $punit->setTaxon($taxon);
+                        $last_taxon=null;
+                        foreach($tab_taxo as $level=>$data){
+                            if(!empty($data[2])){
+                                $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
+                                    ->findOneBy(array(
+                                        'module.id'=>$module->getId(),
+                                        'identifier'=>$data[1],
+                                        'level'=>$level
+                                    ));
+                                if($taxon){
+                                    $taxon->setNbpunits($taxon->getNbpunits()+1);
+                                    if($level==$last_level){
+                                        $punit->setTaxon($taxon);
+                                    }
                                 }
-                            }
-                            else{
-                                $taxon=new Taxon();
-                                $taxon->setIdentifier($data[1]);
-                                $taxon->setName($data[2]);
-                                $taxon->setLabel($data[0]);
-                                $taxon->setLevel($level);
-                                $taxon->setModule($module);
-                                $taxon->setNbpunits(1);
-                                $taxon->setIssynonym(false);
-                                if($level==$last_level){
-                                    $punit->setTaxon($taxon);
+                                else{
+                                    $taxon=new Taxon();
+                                    $taxon->setIdentifier($data[1]);
+                                    $taxon->setName($data[2]);
+                                    $taxon->setLabel($data[0]);
+                                    $taxon->setLevel($level);
+                                    $taxon->setModule($module);
+                                    $taxon->setNbpunits(1);
+                                    $taxon->setIssynonym(false);
+                                    if($level==$last_level){
+                                        $punit->setTaxon($taxon);
+                                    }
+                                    if($last_taxon){
+                                        $taxon->setParent($last_taxon);
+                                        if($last_taxon->getHaschildren()!=true){
+                                            $last_taxon->setHaschildren(true);
+                                            $dm->persist($last_taxon);
+                                            $size++;
+                                        }
+                                    }
                                 }
-                                if($last_taxon){
-                                    $taxon->setParent($last_taxon);
-                                    if($last_taxon->getHaschildren()!=true){
-                                        $last_taxon->setHaschildren(true);
-                                        $dm->persist($last_taxon);
+                                $punit->addTaxonsref($taxon);
+                                $dm->persist($punit);
+                                $size++;
+                                if($punit->getHasimages()===true){
+                                    $taxon->setHasimages(true);
+                                    $images=$punit->getImages();
+                                    foreach($images as $img){
+                                        $img->addTaxonsref($taxon);
+                                        $dm->persist($img);
                                         $size++;
                                     }
                                 }
-                            }
-                            $punit->addTaxonsref($taxon);
-                            $dm->persist($punit);
-                            $size++;
-                            if($punit->getHasimages()===true){
-                                $taxon->setHasimages(true);
-                                $images=$punit->getImages();
-                                foreach($images as $img){
-                                    $img->addTaxonsref($taxon);
-                                    $dm->persist($img);
-                                    $size++;
-                                }
-                            }
-                            if($punit->getHaslocations()===true){
-                                $taxon->setHaslocations(true);
-                                $locations=$punit->getLocations();
-                                foreach($locations as $loc){
-                                    $loc->addTaxonsref($taxon);
-                                    $dm->persist($loc);
-                                    $size++;
-                                }
-                            }
-                            $dm->persist($taxon);
-                            $size++;
-                            //flush pour avoir un ID ...
-                            $dm->flush();
-                            $last_taxon=$taxon;
-                        }
-                    }
-                }
-                if(($size>=$batch_size)){
-                    $dm->clear();
-                    gc_collect_cycles();
-                    $module=$dm->getRepository('PlantnetDataBundle:Module')
-                        ->findOneBy(array(
-                            'id'=>$id_module
-                        ));
-                }
-            }
-            // gestion de la synonymie
-            $csv=__DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
-            if(file_exists($csv)){
-                $cols=array();
-                $syns=array();
-                $handle=fopen($csv,"r");
-                $field=fgetcsv($handle,0,";");
-                foreach($field as $col){
-                    $col_name='';
-                    $cur_encoding=mb_detect_encoding($col);
-                    if($cur_encoding=="UTF-8"&&mb_check_encoding($col,"UTF-8")){
-                        $col_name=$col;
-                    }
-                    else{
-                        $col_name=utf8_encode($col);
-                    }
-                    $cols[]=$col_name;
-                }
-                $csv_error=false;
-                foreach($taxo as $level=>$data){
-                    $syns[$level]=array(
-                        'col_non_valid'=>'',
-                        'col_valid'=>''
-                    );
-                    foreach($cols as $key=>$col){
-                        if($col==$data[1]){
-                            $syns[$level]['col_non_valid']=$key;
-                        }
-                        if($col!=$data[1]&&strlen($col)>=strlen($data[1])&&substr_count($col,$data[1],0,strlen($data[1]))){
-                            $syns[$level]['col_valid']=$key;
-                        }
-                    }
-                    if(empty($syns[$level]['col_non_valid'])&&$syns[$level]['col_non_valid']!=0){
-                        $csv_error=true;
-                    }
-                    if(empty($syns[$level]['col_valid'])&&$syns[$level]['col_valid']!=0){
-                        $csv_error=true;
-                    }
-                }
-                if(!$csv_error){
-                    while(($data=fgetcsv($handle,0,';'))!==false){
-                        $non_valid_identifier='';
-                        $valid_identifier='';
-                        $non_valid=array();
-                        $valid=array();
-                        foreach($syns as $level=>$tab){
-                            $string_non_valid=isset($data[$tab['col_non_valid']])?trim($data[$tab['col_non_valid']]):'';
-                            $string_valid=isset($data[$tab['col_valid']])?trim($data[$tab['col_valid']]):'';
-                            if($non_valid_identifier&&!empty($string_non_valid)){
-                                $non_valid_identifier.=' - ';
-                            }
-                            $non_valid_identifier.=$string_non_valid;
-                            if($valid_identifier&&!empty($string_valid)){
-                                $valid_identifier.=' - ';
-                            }
-                            $valid_identifier.=$string_valid;
-                            $non_valid[$level]=null;
-                            if(!empty($string_non_valid)){
-                                $non_valid[$level]=array(
-                                    'name'=>$string_non_valid,
-                                    'identifier'=>$non_valid_identifier,
-                                    'level'=>$level,
-                                    'label'=>$cols[$tab['col_non_valid']]
-                                );
-                            }
-                            $valid[$level]=null;
-                            if(!empty($string_valid)){
-                                $valid[$level]=array(
-                                    'name'=>$string_valid,
-                                    'identifier'=>$valid_identifier,
-                                    'level'=>$level,
-                                    'label'=>$cols[$tab['col_non_valid']]
-                                );
-                            }
-                        }
-                        $last_non_valid=null;
-                        foreach($non_valid as $lvl=>$check_taxon){
-                            if($check_taxon){
-                                $tax=$dm->getRepository('PlantnetDataBundle:Taxon')
-                                    ->findOneBy(array(
-                                        'module.id'=>$module->getId(),
-                                        'identifier'=>$check_taxon['identifier']
-                                    ));
-                                if(!$tax){
-                                    $tax=new Taxon();
-                                    $tax->setIdentifier($check_taxon['identifier']);
-                                    $tax->setName($check_taxon['name']);
-                                    $tax->setLabel($check_taxon['label']);
-                                    $tax->setLevel($check_taxon['level']);
-                                    $tax->setModule($module);
-                                    $tax->setNbpunits(0);
-                                    $tax->setIssynonym(false);
-                                    if($last_non_valid){
-                                        $tax->setParent($last_non_valid);
-                                        if($last_non_valid->getHaschildren()!=true){
-                                            $last_non_valid->setHaschildren(true);
-                                            $dm->persist($last_non_valid);
-                                        }
+                                if($punit->getHaslocations()===true){
+                                    $taxon->setHaslocations(true);
+                                    $locations=$punit->getLocations();
+                                    foreach($locations as $loc){
+                                        $loc->addTaxonsref($taxon);
+                                        $dm->persist($loc);
+                                        $size++;
                                     }
-                                    $dm->persist($tax);
-                                    $dm->flush();
                                 }
-                                $last_non_valid=$tax;
+                                $dm->persist($taxon);
+                                $size++;
+                                //flush pour avoir un ID ...
+                                $dm->flush();
+                                $last_taxon=$taxon;
                             }
                         }
-                        $last_valid=null;
-                        foreach($valid as $lvl=>$check_taxon){
-                            if($check_taxon){
-                                $tax=$dm->getRepository('PlantnetDataBundle:Taxon')
-                                    ->findOneBy(array(
-                                        'module.id'=>$module->getId(),
-                                        'identifier'=>$check_taxon['identifier']
-                                    ));
-                                if(!$tax){
-                                    $tax=new Taxon();
-                                    $tax->setIdentifier($check_taxon['identifier']);
-                                    $tax->setName($check_taxon['name']);
-                                    $tax->setLabel($check_taxon['label']);
-                                    $tax->setLevel($check_taxon['level']);
-                                    $tax->setModule($module);
-                                    $tax->setNbpunits(0);
-                                    $tax->setIssynonym(false);
-                                    if($last_valid){
-                                        $tax->setParent($last_valid);
-                                        if($last_valid->getHaschildren()!=true){
-                                            $last_valid->setHaschildren(true);
-                                            $dm->persist($last_valid);
-                                        }
-                                    }
-                                    $dm->persist($tax);
-                                    $dm->flush();
-                                }
-                                $last_valid=$tax;
-                            }
-                        }
-                        $exists=false;
-                        if($last_non_valid->getIssynonym()&&$last_non_valid->getChosen()){
-                            if($last_non_valid->getChosen()->getId()==$last_valid->getId()){
-                                $exists=true;
-                            }
-                        }
-                        if(!$exists&&$last_valid&&$last_non_valid&&$last_valid->getIdentifier()!=$last_non_valid->getIdentifier()){
-                            $last_non_valid->setIssynonym(true);
-                            $last_non_valid->setChosen($last_valid);
-                            if($last_non_valid->getHaschildren()){
-                                $last_valid->setHaschildren(true);
-                            }
-                            $last_valid->setHassynonyms(true);
-                            $dm->persist($last_non_valid);
-                            $dm->persist($last_valid);
-                            //
-                            $has_images=$last_non_valid->getHasimages();
-                            $has_locations=$last_non_valid->getHaslocations();
-                            $nb_to_switch=$last_non_valid->getNbpunits();
-                            //$last_non_valid->setNbpunits($last_non_valid->getNbpunits()-$nb_to_switch);
-                            $dm->persist($last_non_valid);
-                            $parent_tmp=$last_non_valid->getParent();
-                            while($parent_tmp){
-                                $parent_tmp->setNbpunits($parent_tmp->getNbpunits()-$nb_to_switch);
-                                $dm->persist($parent_tmp);
-                                $parent_tmp=$parent_tmp->getParent();
-                            }
-                            $last_valid->setNbpunits($last_valid->getNbpunits()+$nb_to_switch);
-                            if($has_images){
-                                $last_valid->setHasimages(true);
-                            }
-                            if($has_locations){
-                                $last_valid->setHaslocations(true);
-                            }
-                            $dm->persist($last_valid);
-                            $parent_tmp=$last_valid->getParent();
-                            while($parent_tmp){
-                                $parent_tmp->setNbpunits($parent_tmp->getNbpunits()+$nb_to_switch);
-                                if($has_images){
-                                    $parent_tmp->setHasimages(true);
-                                }
-                                if($has_locations){
-                                    $parent_tmp->setHaslocations(true);
-                                }
-                                $dm->persist($parent_tmp);
-                                $parent_tmp=$parent_tmp->getParent();
-                            }
-                            $dm->flush();
-                        }
+                    }
+                    if(($size>=$batch_size)){
                         $dm->clear();
                         gc_collect_cycles();
                         $module=$dm->getRepository('PlantnetDataBundle:Module')
@@ -535,6 +351,205 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     }
                 }
             }
+            elseif($action=='syn'){
+                // gestion de la synonymie
+                $csv=__DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
+                if(file_exists($csv)){
+                    $cols=array();
+                    $syns=array();
+                    $handle=fopen($csv,"r");
+                    $field=fgetcsv($handle,0,";");
+                    foreach($field as $col){
+                        $col_name='';
+                        $cur_encoding=mb_detect_encoding($col);
+                        if($cur_encoding=="UTF-8"&&mb_check_encoding($col,"UTF-8")){
+                            $col_name=$col;
+                        }
+                        else{
+                            $col_name=utf8_encode($col);
+                        }
+                        $cols[]=$col_name;
+                    }
+                    $csv_error=false;
+                    foreach($taxo as $level=>$data){
+                        $syns[$level]=array(
+                            'col_non_valid'=>'',
+                            'col_valid'=>''
+                        );
+                        foreach($cols as $key=>$col){
+                            if($col==$data[1]){
+                                $syns[$level]['col_non_valid']=$key;
+                            }
+                            if($col!=$data[1]&&strlen($col)>=strlen($data[1])&&substr_count($col,$data[1],0,strlen($data[1]))){
+                                $syns[$level]['col_valid']=$key;
+                            }
+                        }
+                        if(empty($syns[$level]['col_non_valid'])&&$syns[$level]['col_non_valid']!=0){
+                            $csv_error=true;
+                        }
+                        if(empty($syns[$level]['col_valid'])&&$syns[$level]['col_valid']!=0){
+                            $csv_error=true;
+                        }
+                    }
+                    if(!$csv_error){
+                        while(($data=fgetcsv($handle,0,';'))!==false){
+                            $non_valid_identifier='';
+                            $valid_identifier='';
+                            $non_valid=array();
+                            $valid=array();
+                            foreach($syns as $level=>$tab){
+                                $string_non_valid=isset($data[$tab['col_non_valid']])?trim($data[$tab['col_non_valid']]):'';
+                                $string_valid=isset($data[$tab['col_valid']])?trim($data[$tab['col_valid']]):'';
+                                if($non_valid_identifier&&!empty($string_non_valid)){
+                                    $non_valid_identifier.=' - ';
+                                }
+                                $non_valid_identifier.=$string_non_valid;
+                                if($valid_identifier&&!empty($string_valid)){
+                                    $valid_identifier.=' - ';
+                                }
+                                $valid_identifier.=$string_valid;
+                                $non_valid[$level]=null;
+                                if(!empty($string_non_valid)){
+                                    $non_valid[$level]=array(
+                                        'name'=>$string_non_valid,
+                                        'identifier'=>$non_valid_identifier,
+                                        'level'=>$level,
+                                        'label'=>$cols[$tab['col_non_valid']]
+                                    );
+                                }
+                                $valid[$level]=null;
+                                if(!empty($string_valid)){
+                                    $valid[$level]=array(
+                                        'name'=>$string_valid,
+                                        'identifier'=>$valid_identifier,
+                                        'level'=>$level,
+                                        'label'=>$cols[$tab['col_non_valid']]
+                                    );
+                                }
+                            }
+                            $last_non_valid=null;
+                            foreach($non_valid as $lvl=>$check_taxon){
+                                if($check_taxon){
+                                    $tax=$dm->getRepository('PlantnetDataBundle:Taxon')
+                                        ->findOneBy(array(
+                                            'module.id'=>$module->getId(),
+                                            'identifier'=>$check_taxon['identifier']
+                                        ));
+                                    if(!$tax){
+                                        $tax=new Taxon();
+                                        $tax->setIdentifier($check_taxon['identifier']);
+                                        $tax->setName($check_taxon['name']);
+                                        $tax->setLabel($check_taxon['label']);
+                                        $tax->setLevel($check_taxon['level']);
+                                        $tax->setModule($module);
+                                        $tax->setNbpunits(0);
+                                        $tax->setIssynonym(false);
+                                        if($last_non_valid){
+                                            $tax->setParent($last_non_valid);
+                                            if($last_non_valid->getHaschildren()!=true){
+                                                $last_non_valid->setHaschildren(true);
+                                                $dm->persist($last_non_valid);
+                                            }
+                                        }
+                                        $dm->persist($tax);
+                                        $dm->flush();
+                                    }
+                                    $last_non_valid=$tax;
+                                }
+                            }
+                            $last_valid=null;
+                            foreach($valid as $lvl=>$check_taxon){
+                                if($check_taxon){
+                                    $tax=$dm->getRepository('PlantnetDataBundle:Taxon')
+                                        ->findOneBy(array(
+                                            'module.id'=>$module->getId(),
+                                            'identifier'=>$check_taxon['identifier']
+                                        ));
+                                    if(!$tax){
+                                        $tax=new Taxon();
+                                        $tax->setIdentifier($check_taxon['identifier']);
+                                        $tax->setName($check_taxon['name']);
+                                        $tax->setLabel($check_taxon['label']);
+                                        $tax->setLevel($check_taxon['level']);
+                                        $tax->setModule($module);
+                                        $tax->setNbpunits(0);
+                                        $tax->setIssynonym(false);
+                                        if($last_valid){
+                                            $tax->setParent($last_valid);
+                                            if($last_valid->getHaschildren()!=true){
+                                                $last_valid->setHaschildren(true);
+                                                $dm->persist($last_valid);
+                                            }
+                                        }
+                                        $dm->persist($tax);
+                                        $dm->flush();
+                                    }
+                                    $last_valid=$tax;
+                                }
+                            }
+                            $exists=false;
+                            if($last_non_valid->getIssynonym()&&$last_non_valid->getChosen()){
+                                if($last_non_valid->getChosen()->getId()==$last_valid->getId()){
+                                    $exists=true;
+                                }
+                            }
+                            if(!$exists&&$last_valid&&$last_non_valid&&$last_valid->getIdentifier()!=$last_non_valid->getIdentifier()){
+                                $last_non_valid->setIssynonym(true);
+                                $last_non_valid->setChosen($last_valid);
+                                if($last_non_valid->getHaschildren()){
+                                    $last_valid->setHaschildren(true);
+                                }
+                                $last_valid->setHassynonyms(true);
+                                $dm->persist($last_non_valid);
+                                $dm->persist($last_valid);
+                                //
+                                $has_images=$last_non_valid->getHasimages();
+                                $has_locations=$last_non_valid->getHaslocations();
+                                $nb_to_switch=$last_non_valid->getNbpunits();
+                                //$last_non_valid->setNbpunits($last_non_valid->getNbpunits()-$nb_to_switch);
+                                $dm->persist($last_non_valid);
+                                $parent_tmp=$last_non_valid->getParent();
+                                while($parent_tmp){
+                                    $parent_tmp->setNbpunits($parent_tmp->getNbpunits()-$nb_to_switch);
+                                    $dm->persist($parent_tmp);
+                                    $parent_tmp=$parent_tmp->getParent();
+                                }
+                                $last_valid->setNbpunits($last_valid->getNbpunits()+$nb_to_switch);
+                                if($has_images){
+                                    $last_valid->setHasimages(true);
+                                }
+                                if($has_locations){
+                                    $last_valid->setHaslocations(true);
+                                }
+                                $dm->persist($last_valid);
+                                $parent_tmp=$last_valid->getParent();
+                                while($parent_tmp){
+                                    $parent_tmp->setNbpunits($parent_tmp->getNbpunits()+$nb_to_switch);
+                                    if($has_images){
+                                        $parent_tmp->setHasimages(true);
+                                    }
+                                    if($has_locations){
+                                        $parent_tmp->setHaslocations(true);
+                                    }
+                                    $dm->persist($parent_tmp);
+                                    $parent_tmp=$parent_tmp->getParent();
+                                }
+                                $dm->flush();
+                            }
+                            $dm->clear();
+                            gc_collect_cycles();
+                            $module=$dm->getRepository('PlantnetDataBundle:Module')
+                                ->findOneBy(array(
+                                    'id'=>$id_module
+                                ));
+                        }
+                    }
+                }
+            }
+            $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
+            $dm->getConfiguration()->setDefaultDB($dbname);
+            $configuration=$dm->getConnection()->getConfiguration();
+            $configuration->setLoggerCallable(null);
             $module=$dm->getRepository('PlantnetDataBundle:Module')
                 ->findOneBy(array(
                     'id'=>$id_module
@@ -559,6 +574,14 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $transport=$this->getContainer()->get('swiftmailer.transport.real');
             $spool->flushQueue($transport);
         }
+        $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($dbname);
+        $configuration=$dm->getConnection()->getConfiguration();
+        $configuration->setLoggerCallable(null);
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'id'=>$id_module
+            ));
         $module->setUpdating(false);
         $dm->persist($module);
         $dm->flush();
