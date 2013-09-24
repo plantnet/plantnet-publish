@@ -12,6 +12,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Plantnet\FileManagerBundle\Entity\ZipData;
 use Plantnet\FileManagerBundle\Form\ZipForm;
 
+ini_set('memory_limit','-1');
+
 class DefaultController extends Controller
 {
     /**
@@ -31,6 +33,7 @@ class DefaultController extends Controller
     */
     public function uploadAction($name,Request $request)
     {
+        set_time_limit(0);
         $zipData=new ZipData();
         $form=$this->createForm(new ZipForm(),$zipData);
         if($request->getMethod()=='POST'){
