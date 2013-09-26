@@ -44,12 +44,21 @@ class StringHelp
 		return false;
 	}
 
-	static function cleanToPath($text)
+	static public function cleanToPath($text)
 	{
 		$text=trim(mb_strtolower($text,'UTF-8'));
         $text=eregi_replace("[ ]+",'-',strtolower($text));
         $text=preg_replace('/([^.a-z0-9]+)/i','_',$text);
         return $text;
+	}
+
+	static public function truncate($string,$length)
+	{
+		if(strlen($string)>$length){
+            $string=substr($string,0,$length);
+            return substr($string,0,strrpos($string,' ')).'...';
+        }
+        return $string;
 	}
 
 	static public function glossary_highlight($collection_id,$glossary_terms,$html_string,$nl2br=false)

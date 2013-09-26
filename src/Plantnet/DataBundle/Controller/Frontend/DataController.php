@@ -1036,7 +1036,7 @@ class DataController extends Controller
             'dir'=>''
         );
         if($definition){
-            $result['definition']=$definition['definition'];
+            $result['definition']=StringHelp::truncate($definition['definition'],200);
             $result['path']=$definition['path'];
             $result['dir']=$glossary->getUploaddir();
         }
