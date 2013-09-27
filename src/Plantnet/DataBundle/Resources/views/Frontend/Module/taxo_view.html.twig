@@ -356,7 +356,6 @@
                 }
             });
             $('.pop-tooltip').tooltip();
-            /* Apply fancybox to multiple items */
             $('a.grouped_elements').fancybox({
                 'transitionIn':'elastic',
                 'transitionOut':'elastic',
@@ -416,8 +415,7 @@
                 var img=$(this);
                 img.fadeTo(200,1);
             }).each(function(){
-                if(this.complete)
-                {
+                if(this.complete){
                     $(this).load();
                 }
             });

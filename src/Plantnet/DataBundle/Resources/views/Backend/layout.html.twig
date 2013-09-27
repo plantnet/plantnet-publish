@@ -8,8 +8,8 @@
 {% block head %}
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<!--[if IE]><![endif]-->
-	<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
-	Remove this if you use the .htaccess -->
+	{#<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+	Remove this if you use the .htaccess -->#}
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 	<meta name="description" content=""/>
 	<meta name="author" content="Barbe Julien (AMAP), Affouard Antoine (AMAP)"/>
@@ -378,8 +378,7 @@
 				}
 				$('a.ajax').live('click',function(e){
 					var $url=$(this).attr('href');
-					if($url!='#')
-					{
+					if($url!='#'){
 						e.preventDefault();
 						if(!$(this).hasClass('sub')){
 							$('#menu > li,#left-menu > li').each(function(){

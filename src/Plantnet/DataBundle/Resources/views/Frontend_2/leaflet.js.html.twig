@@ -181,23 +181,18 @@
 		map.on('draw:created',function(e){
 			var type=e.layerType;
 			var layer=e.layer;
-			if(type==='rectangle')
-			{
-				if(currentLayer!=null)
-				{
+			if(type==='rectangle'){
+				if(currentLayer!=null){
 					drawnItems.removeLayer(currentLayer);
 				}
 				currentLayer=layer;
 				var points=currentLayer.getLatLngs();
-				for(var i=0;i<points.length;i++)
-				{
-					if(i==0)
-					{
+				for(var i=0;i<points.length;i++){
+					if(i==0){
 						$('#y_lat_1_bottom_left').val(points[i].lat);
 						$('#x_lng_1_bottom_left').val(points[i].lng);
 					}
-					else if(i==2)
-					{
+					else if(i==2){
 						$('#y_lat_2_top_right').val(points[i].lat);
 						$('#x_lng_2_top_right').val(points[i].lng);
 					}
@@ -223,11 +218,9 @@
 	function load_markers(page)
 	{
 		map.removeLayer(markers);
-		$.getJSON('{{ path('front_datamap', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'submodule': module.url }) }}/page'+page+'',function(data)
-		{
+		$.getJSON('{{ path('front_datamap', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'submodule': module.url }) }}/page'+page+'',function(data){
 			var geoJsonLayer=L.geoJson(data,{
-				onEachFeature:function(feature,layer)
-				{
+				onEachFeature:function(feature,layer){
 					layer.bindPopup('<b>'+feature.properties.title1+'</b><br />'
 						+feature.properties.title2+'<br />'
 						+feature.properties.title3+'<br />'
@@ -236,13 +229,11 @@
 						+'<a href="'+feature.properties.punit+'" class="btn btn-small">{{ "line-details"|trans|capitalize }}</a>');
 				}
 			});
-			if(data.next!=-1)
-			{
+			if(data.next!=-1){
 				$('#map_bar .bar').css('width',data.done+'%');
 				load_markers(data.next)
 			}
-			else
-			{
+			else{
 				$('#map_bar').remove();
 			}
 			markers.addLayer(geoJsonLayer);
