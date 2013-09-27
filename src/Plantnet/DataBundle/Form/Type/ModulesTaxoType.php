@@ -8,14 +8,13 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ModulesTaxoType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder,array $options)
     {
         $module=$options['data'];
-        if($module->getType()=='text')
-        {
+        if($module->getType()=='text'){
             $builder
-                ->add('properties', 'collection', array(
-                    'type' => new PropertiesTaxoType(),
+                ->add('properties','collection',array(
+                    'type'=>new PropertiesTaxoType(),
                 ))
             ;
         }
@@ -24,14 +23,14 @@ class ModulesTaxoType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Plantnet\DataBundle\Document\Module',
+            'data_class'=>'Plantnet\DataBundle\Document\Module',
         ));
     }
 
     public function getDefaultOptions(array $options)
     {
         return array(
-            'data_class' => 'Plantnet\DataBundle\Document\Module',
+            'data_class'=>'Plantnet\DataBundle\Document\Module',
         );
     }
 

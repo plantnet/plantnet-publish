@@ -7,10 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
-
 use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Plantunit,
     Plantnet\DataBundle\Document\Property,
@@ -138,7 +136,7 @@ class ImportationCommand extends ContainerAwareCommand
                                     $parent_taxon=$parent_taxon->getParent();
                                 }
                                 $dm->persist($image);
-                                //maj taxo valide
+                                //update valid taxonomy
                                 if($taxon->getIssynonym()){
                                     $taxon_valid=$taxon->getChosen();
                                     $taxon_valid->setHasimages(true);
@@ -227,7 +225,7 @@ class ImportationCommand extends ContainerAwareCommand
                                     $parent_taxon=$parent_taxon->getParent();
                                 }
                                 $dm->persist($location);
-                                //maj taxo valide
+                                //update valid taxonomy
                                 if($taxon->getIssynonym()){
                                     $taxon_valid=$taxon->getChosen();
                                     $taxon_valid->setHaslocations(true);

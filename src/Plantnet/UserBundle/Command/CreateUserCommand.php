@@ -71,6 +71,7 @@ class CreateUserCommand extends BaseCommand
 			$connection=new \Mongo();
 	        $db=$connection->$dbName;
 	        $db->listCollections();
+	        /*
 	        //collections
 	        $db->createCollection('Collection');
 	        $db->createCollection('Config');
@@ -91,11 +92,11 @@ class CreateUserCommand extends BaseCommand
 	        $db->Page->insert(array('name'=>'mentions','order'=>2));
 	        $db->Page->insert(array('name'=>'credits','order'=>3));
 	        $db->Page->insert(array('name'=>'contacts','order'=>4));
+	        */
 		}
 		else{
 			$dbName=$this->get_prefix().$dbName;
 		}
-
 		//add new user
 		$user_manager=$this->getContainer()->get('fos_user.user_manager');
 		$user=$user_manager->createUser();

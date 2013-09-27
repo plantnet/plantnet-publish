@@ -9,6 +9,7 @@ class ZipData
 	public $zipFile;
 	public $zipPath;
 	private $mimeTypes;
+
 	public function __construct()
 	{
 		$this->mimeTypes=array(
@@ -18,6 +19,7 @@ class ZipData
 			'image/tiff',
 		);
 	}
+
 	public function extractTo($path)
 	{
 		$zip=new \ZipArchive;
@@ -28,6 +30,7 @@ class ZipData
             $this->removeZipFile();
         }
 	}
+
 	private function clean($root,$path)
 	{
 		$dels=array();
@@ -52,10 +55,12 @@ class ZipData
 			$this->remove($del);
 		}
 	}
+
 	private function removeZipFile()
 	{
 		$this->remove($this->zipPath);
 	}
+	
 	private function remove($path)
 	{
 		if(file_exists($path)){

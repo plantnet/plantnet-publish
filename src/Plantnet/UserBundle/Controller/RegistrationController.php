@@ -3,9 +3,7 @@
 namespace Plantnet\UserBundle\Controller;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
 use FOS\UserBundle\Controller\RegistrationController as BaseController;
-
 use Symfony\Component\HttpFoundation\Request;
 use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Event\UserEvent;

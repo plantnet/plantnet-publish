@@ -24,15 +24,10 @@ framework:
         enabled: true
         path: /_fragment
 
-# jms_i18n_routing:
-#     default_locale: %locale%
-#     locales: %locales%
-#     strategy: prefix_except_default
-
 sensio_framework_extra:
     router: { annotations: true }
     request: { converters: true }
-    view: { annotations: false }  # More info at https://github.com/FriendsOfSymfony/FOSRestBundle/issues/95
+    view: { annotations: false } # More info at https://github.com/FriendsOfSymfony/FOSRestBundle/issues/95
     cache: { annotations: true }
 
 # Twig Configuration
@@ -47,11 +42,8 @@ assetic:
     debug: %kernel.debug%
     use_controller: false
     bundles: [ PlantnetDataBundle ]
-    #java: /usr/bin/java
     filters:
         cssrewrite: ~
-        #closure:
-        #    jar: %kernel.root_dir%/Resources/java/compiler.jar
         yui_css:
             jar: "%kernel.root_dir%/Resources/java/yuicompressor-2.4.2.jar"
         yui_js:
@@ -73,8 +65,7 @@ doctrine:
         charset: UTF8
         # if using pdo_sqlite as your database driver, add the path in parameters.yml
         # e.g. database_path: %kernel.root_dir%/data/data.db3
-        # path:     %database_path%
-
+        # path: %database_path%
     orm:
         auto_generate_proxy_classes: %kernel.debug%
         auto_mapping: true
@@ -91,13 +82,6 @@ doctrine_mongodb:
             auto_mapping: true
             mappings:
                 StofDoctrineExtensionsBundle: false
-                # gedmo_translatable:
-                #     type: annotation
-                #     prefix: Gedmo\Translatable\Document
-                #     dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translatable/Document"
-                #     alias: GedmoTranslatable # this one is optional and will default to the name set for the mapping
-                #     is_bundle: false
-                #PlantnetBotaBundle: false
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -117,15 +101,6 @@ jms_translation:
             excluded_names: [*TestCase.php, *Test.php]
             excluded_dirs: [cache, data, logs]
             extractors: []
-
-# bazinga_expose_translation: ~
-
-# stof_doctrine_extensions:
-#     default_locale: %locale%
-#     translation_fallback: true
-#     mongodb:
-#         default:
-#             translatable: true
 
 fos_user:
     db_driver: mongodb
@@ -151,11 +126,9 @@ fos_user:
             enabled: true
             template: FOSUserBundle:Registration:email.txt.twig
         form:
-            # type: fos_user_registration
             type: plantnet_user_registration
             name: fos_user_registration_form
             validation_groups: [Registration]
-
     resetting:
         token_ttl: 86400
         email:
@@ -164,13 +137,11 @@ fos_user:
             type: fos_user_resetting
             name: fos_user_resetting_form
             validation_groups: [ResetPassword]
-
     service:
         mailer: fos_user.mailer.default
         email_canonicalizer: fos_user.util.canonicalizer.default
         username_canonicalizer: fos_user.util.canonicalizer.default
         user_manager: fos_user.user_manager.default
-
     template:
         engine: twig
 
@@ -190,9 +161,6 @@ fos_rest:
             json: fos_rest.decoder.json
     param_fetcher_listener: true
     allowed_methods_listener: true
-
-#nelmio_api_doc: 
-#    name:   Identify API documentation
 
 escape_wsse_authentication:
     authentication_provider_class: Escape\WSSEAuthenticationBundle\Security\Core\Authentication\Provider\Provider

@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\Options;
 
 class GlossaryFormType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder,array $options)
     {
         $builder->add('file','file');
     }
@@ -25,7 +25,7 @@ class GlossaryFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Plantnet\DataBundle\Document\Glossary',
+            'data_class'=>'Plantnet\DataBundle\Document\Glossary',
         ));
     }
 }

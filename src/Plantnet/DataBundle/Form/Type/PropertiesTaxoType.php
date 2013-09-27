@@ -8,14 +8,14 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class PropertiesTaxoType extends AbstractType
 {
-	public function buildForm(FormBuilderInterface $builder, array $options)
+	public function buildForm(FormBuilderInterface $builder,array $options)
 	{
 		$builder
-			->add('taxolevel', 'integer', array(
-				'required' => false
+			->add('taxolevel','integer',array(
+				'required'=>false
 			))
-			->add('taxolabel', 'text', array(
-				'required' => false
+			->add('taxolabel','text',array(
+				'required'=>false
 			))
 		;
 	}
@@ -23,14 +23,14 @@ class PropertiesTaxoType extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Plantnet\DataBundle\Document\Property',
+            'data_class'=>'Plantnet\DataBundle\Document\Property',
         ));
     }
 
 	public function getDefaultOptions(array $options)
 	{
 		return array(
-			'data_class' => 'Plantnet\DataBundle\Document\Property',
+			'data_class'=>'Plantnet\DataBundle\Document\Property',
 		);
 	}
 

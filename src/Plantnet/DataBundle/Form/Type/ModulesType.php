@@ -8,48 +8,44 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ModulesType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder,array $options)
     {
         $module=$options['data'];
         $builder
             ->add('name')
             ->add('url')
         ;
-        if($module->getType()=='text')
-        {
+        if($module->getType()=='text'){
             $builder
-                ->add('taxonomy', 'checkbox', array(
+                ->add('taxonomy','checkbox',array(
                     'required'=>false
                 ))
-                ->add('description', 'textarea', array(
+                ->add('description','textarea',array(
                     'required'=>false
                 ))
-                ->add('properties', 'collection', array(
-                    'type' => new PropertiesType(),
+                ->add('properties','collection',array(
+                    'type'=>new PropertiesType(),
                 ))
             ;
         }
-        elseif($module->getType()=='locality')
-        {
+        elseif($module->getType()=='locality'){
             $builder
-                ->add('properties', 'collection', array(
-                    'type' => new PropertiesLocalityType(),
+                ->add('properties','collection',array(
+                    'type'=>new PropertiesLocalityType(),
                 ))
             ;
         }
-        elseif($module->getType()=='image')
-        {
+        elseif($module->getType()=='image'){
             $builder
-                ->add('properties', 'collection', array(
-                    'type' => new PropertiesImageType(),
+                ->add('properties','collection',array(
+                    'type'=>new PropertiesImageType(),
                 ))
             ;
         }
-        else
-        {
+        else{
             $builder
-                ->add('properties', 'collection', array(
-                    'type' => new PropertiesOtherType(),
+                ->add('properties','collection',array(
+                    'type'=>new PropertiesOtherType(),
                 ))
             ;
         }
@@ -58,14 +54,14 @@ class ModulesType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Plantnet\DataBundle\Document\Module',
+            'data_class'=>'Plantnet\DataBundle\Document\Module',
         ));
     }
 
     public function getDefaultOptions(array $options)
     {
         return array(
-            'data_class' => 'Plantnet\DataBundle\Document\Module',
+            'data_class'=>'Plantnet\DataBundle\Document\Module',
         );
     }
 

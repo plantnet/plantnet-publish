@@ -7,10 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
-
 use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Plantunit,
     Plantnet\DataBundle\Document\Property,
@@ -294,7 +292,7 @@ class DeleteCommand extends ContainerAwareCommand
                         $dm->persist($parent_taxon);
                         $parent_taxon=$parent_taxon->getParent();
                     }
-                    //maj taxo valide
+                    //update valid taxonomy
                     if($taxon->getIssynonym()){
                         $taxon_valid=$taxon->getChosen();
                         if($img_bool){

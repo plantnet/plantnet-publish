@@ -12,15 +12,10 @@ use Symfony\Component\OptionsResolver\Options;
 
 class ConfigType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder,array $options)
     {
         $builder
-            // ->add('defaultlanguage', 'text', array(
-            //     'label'=>'Default language',
-            //     'required'=>true,
-            //     'read_only'=>true
-            // ))
-            ->add('availablelanguages', 'language', array(
+            ->add('availablelanguages','language',array(
                 'label'=>'Available languages',
                 'required'=>false,
                 'multiple'=>true,
@@ -32,7 +27,7 @@ class ConfigType extends AbstractType
     public function getDefaultOptions(array $options)
     {
         return array(
-            'data_class' => 'Plantnet\DataBundle\Document\Config',
+            'data_class'=>'Plantnet\DataBundle\Document\Config',
         );
     }
 
@@ -44,7 +39,7 @@ class ConfigType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Plantnet\DataBundle\Document\Config',
+            'data_class'=>'Plantnet\DataBundle\Document\Config',
         ));
     }
 }

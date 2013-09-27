@@ -21,26 +21,20 @@
         "jms/di-extra-bundle": "1.4.*",
         "jms/serializer-bundle": "0.12.*",
         "incenteev/composer-parameter-handler": "~2.0",
-
         "friendsofsymfony/jsrouting-bundle": "1.1.*",
         "doctrine/mongodb-odm-bundle": "dev-master",
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "white-october/pagerfanta-bundle": "dev-master",
-
         "friendsofsymfony/rest-bundle": "0.13.*",
         "guzzle/guzzle": "3.1.0",
-        
         "stof/doctrine-extensions-bundle": "dev-master",
         "jms/translation-bundle": "dev-master",
         "willdurand/expose-translation-bundle": "0.3.*",
         "escapestudios/wsse-authentication-bundle": "dev-master",
         "nelmio/api-doc-bundle": "2.2.*",
         "jms/i18n-routing-bundle": "dev-master",
-
         "raulfraile/ladybug-bundle": "dev-master",
-
         "liip/imagine-bundle": "dev-master"
-
     },
     "scripts": {
         "post-install-cmd": [

@@ -7,10 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
-
 use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Plantunit,
     Plantnet\DataBundle\Document\Property,
@@ -169,13 +167,13 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $error='Unable to find Module entity.';
         }
         if($action=='taxo'){
-            // suppression des anciens taxons
+            // remove old taxa
             $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
                 ->remove()
                 ->field('module')->references($module)
                 ->getQuery()
                 ->execute();
-            // suppression des références des anciens taxons
+            // remove old taxa' refs
             $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                 ->update()
                 ->multiple(true)
@@ -206,7 +204,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 }
             }
         }
-        // chargement des données taxo
+        // load taxonomy data
         $taxo=array();
         $fields=$module->getProperties();
         foreach($fields as $field){
@@ -239,7 +237,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 $e=microtime(true);
                 echo $e-$s;
                 */
-                // chargement des punits du module
+                // load module's punit
                 $ids_punit=array();
                 $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                     ->hydrate(false)
@@ -335,7 +333,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 }
                                 $dm->persist($taxon);
                                 $size++;
-                                //flush pour avoir un ID ...
+                                //flush to get an ID ...
                                 $dm->flush();
                                 $last_taxon=$taxon;
                             }
@@ -352,7 +350,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 }
             }
             elseif($action=='syn'){
-                // gestion de la synonymie
+                // synonymy management
                 $csv=__DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
                 if(file_exists($csv)){
                     $cols=array();

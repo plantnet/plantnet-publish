@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\Options;
 
 class ConfigTemplateType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder,array $options)
     {
         $builder
             ->add('template','choice',array(
@@ -25,7 +25,7 @@ class ConfigTemplateType extends AbstractType
     public function getDefaultOptions(array $options)
     {
         return array(
-            'data_class' => 'Plantnet\DataBundle\Document\Config',
+            'data_class'=>'Plantnet\DataBundle\Document\Config',
         );
     }
 
@@ -36,12 +36,12 @@ class ConfigTemplateType extends AbstractType
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $compound = function (Options $options) {
+        $compound=function (Options $options){
             return $options['templates'];
         };
         $resolver->setDefaults(array(
-            'templates' => $compound,
-            'data_class' => 'Plantnet\DataBundle\Document\Config',
+            'templates'=>$compound,
+            'data_class'=>'Plantnet\DataBundle\Document\Config',
         ));
     }
 }

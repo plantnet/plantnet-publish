@@ -8,25 +8,25 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class PageType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder,array $options)
     {
         $builder
             ->add('name')
-            ->add('content', 'textarea', array('required'=>false))
+            ->add('content','textarea',array('required'=>false))
         ;
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Plantnet\DataBundle\Document\Page',
+            'data_class'=>'Plantnet\DataBundle\Document\Page',
         ));
     }
 
     public function getDefaultOptions(array $options)
     {
         return array(
-            'data_class' => 'Plantnet\DataBundle\Document\Page',
+            'data_class'=>'Plantnet\DataBundle\Document\Page',
         );
     }
 

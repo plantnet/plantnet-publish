@@ -12,10 +12,10 @@ use Symfony\Component\OptionsResolver\Options;
 
 class ConfigNameType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder,array $options)
     {
         $builder
-            ->add('name', 'text', array(
+            ->add('name','text',array(
                 'label'=>'Project name',
                 'required'=>true
             ))
@@ -25,7 +25,7 @@ class ConfigNameType extends AbstractType
     public function getDefaultOptions(array $options)
     {
         return array(
-            'data_class' => 'Plantnet\DataBundle\Document\Config',
+            'data_class'=>'Plantnet\DataBundle\Document\Config',
         );
     }
 
@@ -37,7 +37,7 @@ class ConfigNameType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Plantnet\DataBundle\Document\Config',
+            'data_class'=>'Plantnet\DataBundle\Document\Config',
         ));
     }
 }

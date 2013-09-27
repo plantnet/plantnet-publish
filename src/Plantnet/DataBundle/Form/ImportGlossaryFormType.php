@@ -11,8 +11,8 @@ class ImportGlossaryFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('properties', 'collection', array(
-                'type' => new Type\PropertiesGlossaryType(),
+            ->add('properties','collection',array(
+                'type'=>new Type\PropertiesGlossaryType(),
             ))
         ;
     }
@@ -25,14 +25,14 @@ class ImportGlossaryFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Plantnet\DataBundle\Document\Glossary',
+            'data_class'=>'Plantnet\DataBundle\Document\Glossary',
         ));
     }
 
     public function getDefaultOptions(array $options)
     {
         return array(
-            'data_class' => 'Plantnet\DataBundle\Document\Glossary',
+            'data_class'=>'Plantnet\DataBundle\Document\Glossary',
         );
     }
 }

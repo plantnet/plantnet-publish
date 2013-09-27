@@ -12,12 +12,11 @@ use Symfony\Component\OptionsResolver\Options;
 
 class ModuleSynFormType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder,array $options)
     {
         $module=$options['data'];
-        if($module->getType()=='text')
-        {
-            $builder->add('synfile', 'file');
+        if($module->getType()=='text'){
+            $builder->add('synfile','file');
         }
     }
 
@@ -29,7 +28,7 @@ class ModuleSynFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Plantnet\DataBundle\Document\Module',
+            'data_class'=>'Plantnet\DataBundle\Document\Module',
         ));
     }
 }

@@ -1,45 +1,31 @@
 plantnet_file_manager:
     resource: "@PlantnetFileManagerBundle/Resources/config/routing.yml"
     prefix: /admin/
-    # options: { i18n: false }
 
 PlantnetDataBundle:
     resource: "@PlantnetDataBundle/Controller/"
     type: annotation
     prefix: /
 
-# _bazinga_exposetranslation:
-#     resource: "@BazingaExposeTranslationBundle/Resources/config/routing/routing.yml"
-
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"
     prefix: /admin/
-    # options: { i18n: false }
 
 fos_user_profile:
     resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
     prefix: /admin/profile
-    # options: { i18n: false }
 
 fos_user_change_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
     prefix: /admin/profile
-    # options: { i18n: false }
 
 fos_user_register:
     resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
     prefix: /admin/register
-    # options: { i18n: false }
 
 fos_user_resetting:
     resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
     prefix: /admin/resetting
-    # options: { i18n: false }
-
-# fos_user_group:
-#     resource: "@FOSUserBundle/Resources/config/routing/group.xml"
-#     prefix: /admin/group
-#     options: { i18n: false }
 
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
@@ -47,13 +33,11 @@ fos_js_routing:
 plantnet_securityrest:
     resource: Plantnet\UserBundle\Controller\WsseSecurityController
     type: rest
-    # options: { i18n: false }
 
 plantnet_userrest:
     resource: "@PlantnetUserBundle/Resources/config/routing.yml"
     type: rest
     prefix: /api
-    # options: { i18n: false }
 
 _imagine:
     resource: .

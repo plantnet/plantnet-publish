@@ -11,6 +11,7 @@ class ZipForm extends AbstractType
     {
         $builder->add('zipFile','file',array('label'=>'Zip file (.zip) - Max file size: 300M'));
     }
+    
     public function getName()
     {
     	$namespace=explode('\\',get_class($this));
