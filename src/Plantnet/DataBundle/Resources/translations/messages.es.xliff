@@ -153,6 +153,14 @@
         <source>text-google-mentions</source>
         <target state="new">Esta página web utiliza Google Analytics, un servicio analítico de web prestado por Google, Inc. ("Google"). Google Analytics utiliza "cookies", que son archivos de texto ubicados en su ordenador, para ayudar al sitio web a analizar cómo los usuarios utilizan el sitio. La información que genera la cookie acerca de su uso del website (incluyendo su dirección IP) será directamente transmitida y archivada por Google en los servidores de Estados Unidos. Google usará esta información con el propósito de evaluar su uso del website, recopilando informes de la actividad del website y prestando otros servicios relacionados con la actividad del website y el uso de Internet. Google podrá transmitir dicha información a terceros cuando así lo requiera la legislación, o cuando dichos terceros procesen la información por cuenta de Google. Google no asociará su dirección IP con ningún otro dato del que disponga Google. Usted puede rechazar el uso de cookies mediante la selección de la configuración apropiada de su navegador, sin embargo, tenga en cuenta que si lo hace puede ser que no pueda usar la plena funcionabilidad de este website. Al utilizar este website Usted consiente el tratamiento de información acerca de Usted por Google en la forma y para los fines arriba indicados.</target>
       </trans-unit>
+      <trans-unit id="36" resname="line-word">
+        <source>line-word</source>
+        <target state="new">palabra</target>
+      </trans-unit>
+      <trans-unit id="37" resname="line-words">
+        <source>line-words</source>
+        <target state="new">palabras</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

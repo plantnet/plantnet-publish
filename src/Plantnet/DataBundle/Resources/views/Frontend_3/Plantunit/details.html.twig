@@ -4,6 +4,9 @@
     {% set tmp_title = ' - ' ~ plantunit.title3 %}
 {% endif %}
 {% block title plantunit.title1 ~ ' - ' ~ plantunit.title2 ~ tmp_title %}
+{% block meta %}
+    <meta name="description" content="{{ plantunit.title1 }} - {{ plantunit.title2 }}{% if plantunit.title3 is defined and plantunit.title3 is not null %} - {{ plantunit.title3 }}{% endif %}{% if plantunit.taxon %}{% macro ct_taxon(taxon,project,collection,module) %}{% if taxon.parent %}{{ _self.ct_taxon(taxon.parent,project,collection,module) }}{% endif %}. {{ taxon.label }}: {{ taxon.name }}{% endmacro %}{% import _self as macros %}{{ macros.ct_taxon(plantunit.taxon,project,collection,module) }}{% endif %}"/>
+{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />

@@ -1,5 +1,8 @@
 {% extends "PlantnetDataBundle:Frontend_5:layout.html.twig" %}
 {% block title config.name ~ ' - ' ~ "line-glossary"|trans|capitalize ~ ' - Pl@ntnet' %}
+{% block meta %}
+    <meta name="description" content="{{ config.name }} - {{ "line-glossary"|trans|capitalize }} ({{ glossary.definitions|length }} {% if glossary.definitions|length > 1 %}{{ "line-words"|trans }}{% else %}{{ "line-word"|trans }}{% endif %})"/>
+{% endblock %}
 {% block stylesheets %}
 	{{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
