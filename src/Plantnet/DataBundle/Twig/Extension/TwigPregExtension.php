@@ -13,6 +13,7 @@ class TwigPregExtension extends \Twig_Extension
             'replace'=>new \Twig_Filter_Method($this,'replace'),
             'language'=>new \Twig_Filter_Method($this,'language'),
             'truncate'=>new \Twig_Filter_Method($this,'truncate'),
+            'fileexists'=>new \Twig_Filter_Method($this,'fileexists'),
         );
     }
 
@@ -53,6 +54,14 @@ class TwigPregExtension extends \Twig_Extension
             return substr($var,0,strrpos($var,' ')).'...';
         }
         return $var;
+    }
+
+    public function fileexists($var)
+    {
+        if(file_exists($var)){
+            return true;
+        }
+        return false;
     }
 
     public function getName()

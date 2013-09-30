@@ -3,7 +3,11 @@
 {% for child in module.children if (child.type == 'image' and child.deleting != true and imgs|length < nb_img) %}
     {% if child.nbrows > 0 and imgs|length < nb_img %}
         {% for image in child.images if imgs|length < nb_img %}
-            {% set imgs = imgs|merge([image]) %}
+            {% set imgspe = image.path|basename %}
+            {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+            {% if img|fileexists %}
+                {% set imgs = imgs|merge([image]) %}
+            {% endif %}
         {% endfor %}
     {% endif %}
 {% endfor %}
