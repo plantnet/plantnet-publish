@@ -5,7 +5,7 @@
 {% endif %}
 {% block title plantunit.title1 ~ ' - ' ~ plantunit.title2 ~ tmp_title %}
 {% block meta %}
-    <meta name="description" content="{{ plantunit.title1 }} - {{ plantunit.title2 }}{% if plantunit.title3 is defined and plantunit.title3 is not null %} - {{ plantunit.title3 }}{% endif %}{% if plantunit.taxon %}{% macro ct_taxon(taxon,project,collection,module) %}{% if taxon.parent %}{{ _self.ct_taxon(taxon.parent,project,collection,module) }}{% endif %}. {{ taxon.label }}: {{ taxon.name }}{% endmacro %}{% import _self as macros %}{{ macros.ct_taxon(plantunit.taxon,project,collection,module) }}{% endif %}"/>
+    <meta name="description" content="{{ plantunit.title1 }} - {{ plantunit.title2 }}{% if plantunit.title3 is defined and plantunit.title3 is not null %} - {{ plantunit.title3 }}{% endif %}{% if plantunit.taxonsrefs|length > 0 %}{% for taxon in plantunit.taxonsrefs %}. {{ taxon.label }}: {{ taxon.name }}{% endfor %}{% endif %}" />
 {% endblock %}
 {% block stylesheets %}
     {{ parent() }}
@@ -38,13 +38,10 @@
 {% endblock %}
 {% block main %}
     <section id="details">
-        {% if plantunit.taxon %}
+        {% if plantunit.taxonsrefs|length > 0 %}
             <div>
                 <h5>{{ "line-taxonomy"|trans|capitalize }}</h5>
-                {% macro pa_taxon(taxon,project,collection,module) %}
-                    {% if taxon.parent %}
-                        {{ _self.pa_taxon(taxon.parent,project,collection,module) }}
-                    {% endif %}
+                {% for taxon in plantunit.taxonsrefs %}
                     <div class="row">
                         <div class="span2">{{ taxon.label }}</div>
                         <div class="span7">
@@ -53,9 +50,7 @@
                             </a>
                         </div>
                     </div>
-                {% endmacro %}
-                {% import _self as macros %}
-                {{ macros.pa_taxon(plantunit.taxon,project,collection,module) }}
+                {% endfor %}
             </div>
         {% endif %}
         {% if tab_others_groups|length > 0 %}

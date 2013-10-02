@@ -88,10 +88,10 @@
                 <td>Species 2</td>
             </tr>
         </table>
-        {% if nb_taxons > 0 %}
-            <a href="{{ path('module_syn', { 'id': entity.id }) }}" class="btn">Add or update synonymy</a>
+        {% if nb_taxons > 0 and delete_syn_form == false %}
+            <a href="{{ path('module_syn', { 'id': entity.id }) }}" class="btn">Add synonymy</a>
         {% else %}
-            <a href="#" class="btn disabled">Add or update synonymy</a>
+            <a href="#" class="btn disabled">Add synonymy</a>
         {% endif %}
         {% if delete_syn_form != false %}
             <br />

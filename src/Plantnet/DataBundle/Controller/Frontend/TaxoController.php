@@ -457,7 +457,6 @@ class TaxoController extends Controller
             }
         }
         ksort($order);
-        // version 3
         $tab_ref=array(
             $taxon->getId()=>$taxon
         );
@@ -497,23 +496,6 @@ class TaxoController extends Controller
         else{
             $plantunits->field('taxonsrefs')->references($tab_ref[key($tab_ref)]);
         }
-        // // version 2
-        // $syns=$taxon->getSynonyms();
-        // $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit');
-        // $plantunits->field('module')->references($module);
-        // if(count($syns)){
-        //     $plantunits->addOr($plantunits->expr()->field('taxonsrefs')->references($taxon));
-        //     foreach($syns as $syn){
-        //         $plantunits->addOr($plantunits->expr()->field('taxonsrefs')->references($syn));
-        //     }
-        // }
-        // else{
-        //     $plantunits->field('taxonsrefs')->references($taxon);
-        // }
-        // // version 1
-        // $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-        //     ->field('module')->references($module)
-        //     ->field('taxonsrefs')->references($taxon);
         if($sortby!='null'&&$sortorder!='null'){
             if(in_array($sortby,$order)){
                 unset($order[array_search($sortby,$order)]);
@@ -629,7 +611,6 @@ class TaxoController extends Controller
                 $display[]=$row->getId();
             }
         }
-        // version 3
         $tab_ref=array(
             $taxon->getId()=>$taxon
         );
@@ -670,11 +651,6 @@ class TaxoController extends Controller
         }
         $images->sort('title1','asc');
         $images->sort('title2','asc');
-        // // version 1
-        // $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-        //     ->field('taxonsrefs')->references($taxon)
-        //     ->sort('title1','asc')
-        //     ->sort('title2','asc');
         $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($images));
         try{
             $paginator->setMaxPerPage(15);
@@ -757,7 +733,6 @@ class TaxoController extends Controller
                 $display[]=$row->getId();
             }
         }
-        // version 3
         $tab_ref=array(
             $taxon->getId()=>$taxon
         );
@@ -798,11 +773,6 @@ class TaxoController extends Controller
         }
         $locations=$locations->getQuery()
             ->execute();
-        // // version 1
-        // $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
-        //     ->field('taxonsrefs')->references($taxon)
-        //     ->getQuery()
-        //     ->execute();
         //count to display
         $nb_images=($taxon->getHasimages())?1:0;
         $nb_locations=1;

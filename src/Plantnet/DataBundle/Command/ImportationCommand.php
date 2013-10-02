@@ -123,6 +123,26 @@ class ImportationCommand extends ContainerAwareCommand
                             $dm->persist($parent);
                             $rowCount++;
                             //update Taxons
+                            $taxons=$parent->getTaxonsrefs();
+                            if(count($taxons)){
+                                foreach($taxons as $taxon){
+                                    $taxon->setHasimages(true);
+                                    $dm->persist($taxon);
+                                    $image->addTaxonsref($taxon);
+                                    if($taxon->getIssynonym()){
+                                        $taxon_valid=$taxon->getChosen();
+                                        $taxon_valid->setHasimages(true);
+                                        $dm->persist($taxon_valid);
+                                        $parent_taxon_valid=$taxon_valid->getParent();
+                                        while($parent_taxon_valid){
+                                            $parent_taxon_valid->setHasimages(true);
+                                            $dm->persist($parent_taxon_valid);
+                                            $parent_taxon_valid=$parent_taxon_valid->getParent();
+                                        }
+                                    }
+                                }
+                            }
+                            /*
                             $taxon=$parent->getTaxon();
                             if($taxon){
                                 $taxon->setHasimages(true);
@@ -149,6 +169,7 @@ class ImportationCommand extends ContainerAwareCommand
                                     }
                                 }
                             }
+                            */
                         }
                         else{
                             $orphans[$image->getIdparent()]=$image->getIdparent();
@@ -212,6 +233,26 @@ class ImportationCommand extends ContainerAwareCommand
                             $dm->persist($parent);
                             $rowCount++;
                             //update Taxons
+                            $taxons=$parent->getTaxonsrefs();
+                            if(count($taxons)){
+                                foreach($taxons as $taxon){
+                                    $taxon->setHaslocations(true);
+                                    $dm->persist($taxon);
+                                    $location->addTaxonsref($taxon);
+                                    if($taxon->getIssynonym()){
+                                        $taxon_valid=$taxon->getChosen();
+                                        $taxon_valid->setHaslocations(true);
+                                        $dm->persist($taxon_valid);
+                                        $parent_taxon_valid=$taxon_valid->getParent();
+                                        while($parent_taxon_valid){
+                                            $parent_taxon_valid->setHaslocations(true);
+                                            $dm->persist($parent_taxon_valid);
+                                            $parent_taxon_valid=$parent_taxon_valid->getParent();
+                                        }
+                                    }
+                                }
+                            }
+                            /*
                             $taxon=$parent->getTaxon();
                             if($taxon){
                                 $taxon->setHaslocations(true);
@@ -238,6 +279,7 @@ class ImportationCommand extends ContainerAwareCommand
                                     }
                                 }
                             }
+                            */
                         }
                         else{
                             $orphans[$location->getIdparent()]=$location->getIdparent();

@@ -83,8 +83,10 @@ class TaxonomizeCommand extends ContainerAwareCommand
         return $tab_tax;
     }
 
-    private function save($dm,$module,$taxo,$tab_taxons,$parent=null,$filter=array())
+    private function save($dbname,$dm,$module,$taxo,$tab_taxons,$parent=null,$filter=array())
     {
+        $connection=new \MongoClient();
+        $db=$connection->$dbname;
         foreach($tab_taxons as $tax_name=>$tax_data){
             $taxon=new Taxon();
             $taxon->setIdentifier($tax_data['identifier']);
@@ -95,43 +97,22 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $taxon->setNbpunits(0);
             $taxon->setIssynonym(false);
             // Punit number
-            $nb_punit=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->field('attributes.'.$taxo[$taxon->getLevel()][0])->equals($taxon->getName())
-                ->field('module')->references($module);
-            foreach($filter as $k=>$v){
-                $nb_punit->field('attributes.'.$k)->equals($v);
-            }
-            $nb_punit=$nb_punit->getQuery()
-                ->execute()
-                ->count();
+            $cur_filters=array(
+                'attributes.'.$taxo[$taxon->getLevel()][0]=>$taxon->getName(),
+                'module.$id'=>new \MongoId($module->getId()),
+            );
+            $cur_filters=array_merge($cur_filters,$filter);
+            $nb_punit=$db->Plantunit->find($cur_filters)->count();
             if($nb_punit>0){
                 $taxon->setNbpunits($nb_punit);
             }
             // Punit with img number
-            $nb_punit_img=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->field('attributes.'.$taxo[$taxon->getLevel()][0])->equals($taxon->getName())
-                ->field('module')->references($module)
-                ->field('hasimages')->equals(true);
-            foreach($filter as $k=>$v){
-                $nb_punit_img->field('attributes.'.$k)->equals($v);
-            }
-            $nb_punit_img=$nb_punit_img->getQuery()
-                ->execute()
-                ->count();
+            $nb_punit_img=$db->Plantunit->find(array_merge($cur_filters,array('hasimages'=>true)))->count();
             if($nb_punit_img>0){
                 $taxon->setHasimages(true);
             }
             // Punit with loc number
-            $nb_punit_loc=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->field('attributes.'.$taxo[$taxon->getLevel()][0])->equals($taxon->getName())
-                ->field('module')->references($module)
-                ->field('haslocations')->equals(true);
-            foreach($filter as $k=>$v){
-                $nb_punit_loc->field('attributes.'.$k)->equals($v);
-            }
-            $nb_punit_loc=$nb_punit_loc->getQuery()
-                ->execute()
-                ->count();
+            $nb_punit_loc=$db->Plantunit->find(array_merge($cur_filters,array('haslocations'=>true)))->count();
             if($nb_punit_loc>0){
                 $taxon->setHaslocations(true);
             }
@@ -142,14 +123,51 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 $taxon->setHaschildren(true);
                 $dm->persist($taxon);
                 $dm->flush();
-                $this->save($dm,$module,$taxo,$tax_data['child'],$taxon,array_merge($filter,array($taxo[$taxon->getLevel()][0],$taxon->getName())));
+                $this->save($dbname,$dm,$module,$taxo,$tax_data['child'],$taxon,array_merge($filter,array('attributes.'.$taxo[$taxon->getLevel()][0]=>$taxon->getName())));
             }
             else{
                 $dm->persist($taxon);
+                $dm->flush();
             }
-
+            // Set ref Punits // Taxon
+            $db->Plantunit->update($cur_filters,array(
+                '$addToSet'=>array(
+                    'taxonsrefs'=>array(
+                        '$ref'=>'Taxon',
+                        '$id'=>new \MongoId($taxon->getId()),
+                        '$db'=>$dbname
+                    )
+                )
+            ),array('multiple'=>true));
+            $punit_ids=$db->Plantunit->find($cur_filters,array('_id'=>1));
+            $punit_ids_array=array();
+            foreach($punit_ids as $id=>$data){
+                $punit_ids_array[]=$data['_id'];
+            }
+            unset($punit_ids);
+            if(count($punit_ids_array)){
+                // Set ref Images // Taxon
+                $db->Image->update(array('plantunit.$id'=>array('$in'=>$punit_ids_array)),array(
+                    '$addToSet'=>array(
+                        'taxonsrefs'=>array(
+                            '$ref'=>'Taxon',
+                            '$id'=>new \MongoId($taxon->getId()),
+                            '$db'=>$dbname
+                        )
+                    )
+                ),array('multiple'=>true));
+                // Set ref Locations // taxon
+                $db->Location->update(array('plantunit.$id'=>array('$in'=>$punit_ids_array)),array(
+                    '$addToSet'=>array(
+                        'taxonsrefs'=>array(
+                            '$ref'=>'Taxon',
+                            '$id'=>new \MongoId($taxon->getId()),
+                            '$db'=>$dbname
+                        )
+                    )
+                ),array('multiple'=>true));
+            }
         }
-        $dm->flush();
     }
 
     private function taxonomize($action,$dbname,$id_module,$usermail)
@@ -222,12 +240,11 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $last_level=key($taxo);
             reset($taxo);
             if($action=='taxo'){
-                /*
                 //populate
                 $s=microtime(true);
                 $tab_tax=$this->populate($dm,$module,$taxo,$first_level);
                 //save
-                $this->save($dm,$module,$taxo,$tab_tax);
+                $this->save($dbname,$dm,$module,$taxo,$tab_tax);
                 $dm->clear();
                 gc_collect_cycles();
                 $module=$dm->getRepository('PlantnetDataBundle:Module')
@@ -235,8 +252,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         'id'=>$id_module
                     ));
                 $e=microtime(true);
-                echo $e-$s;
-                */
+                // echo "\n".$e-$s.'s';
+                // echo "\n".'------- END -------'."\n";
+                /*
                 // load module's punit
                 $ids_punit=array();
                 $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
@@ -348,6 +366,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             ));
                     }
                 }
+                */
             }
             elseif($action=='syn'){
                 // synonymy management
@@ -544,6 +563,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     }
                 }
             }
+            /*
             $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
             $dm->getConfiguration()->setDefaultDB($dbname);
             $configuration=$dm->getConnection()->getConfiguration();
@@ -555,6 +575,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $module->setUpdating(false);
             $dm->persist($module);
             $dm->flush();
+            */
             $message=$error;
             if(empty($message)){
                 $message='Taxa were created successfully.';
@@ -572,6 +593,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $transport=$this->getContainer()->get('swiftmailer.transport.real');
             $spool->flushQueue($transport);
         }
+        /*
         $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($dbname);
         $configuration=$dm->getConnection()->getConfiguration();
@@ -583,6 +605,14 @@ class TaxonomizeCommand extends ContainerAwareCommand
         $module->setUpdating(false);
         $dm->persist($module);
         $dm->flush();
+        */
+        $connection=new \MongoClient();
+        $db=$connection->$dbname;
+        $db->Module->update(array('_id'=>new \MongoId($id_module)),array(
+            '$set'=>array(
+                'updating'=>false
+            )
+        ));
     }
 
     private function data_encode($data)

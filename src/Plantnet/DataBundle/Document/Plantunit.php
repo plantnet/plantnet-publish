@@ -82,7 +82,7 @@ class Plantunit
     private $taxon;
 
     /**
-     * @MongoDB\ReferenceMany(targetDocument="Taxon")
+     * @MongoDB\ReferenceMany(targetDocument="Taxon", sort={"level"="asc"})
      */
     private $taxonsrefs = array();
 

@@ -83,6 +83,13 @@ class DeleteCommand extends ContainerAwareCommand
             unlink($csvfile);
         }
         /*
+        * Remove csv syn file
+        */
+        $csvsynfile=__DIR__.'/../Resources/uploads/'.$collection->getAlias().'/'.$module->getAlias().'_syn.csv';
+        if(file_exists($csvsynfile)){
+            unlink($csvsynfile);
+        }
+        /*
         * Remove upload directory
         */
         $dir=$module->getUploaddir();
@@ -258,7 +265,6 @@ class DeleteCommand extends ContainerAwareCommand
                 ->hydrate(false)
                 ->select('_id')
                 ->field('module')->references($module_parent)
-                ->field('taxon')->notEqual(null)
                 ->getQuery()
                 ->execute();
             foreach($punits as $id){
@@ -272,6 +278,40 @@ class DeleteCommand extends ContainerAwareCommand
                     ));
                 $img_bool=$punit->getHasimages();
                 $loc_bool=$punit->getHaslocations();
+                $taxons=$punit->getTaxonsrefs();
+                if(count($taxons)&&($img_bool||$loc_bool)){
+                    foreach($taxons as $taxon){
+                        if($img_bool){
+                            $taxon->setHasimages(true);
+                        }
+                        if($loc_bool){
+                            $taxon->setHaslocations(true);
+                        }
+                        $dm->persist($taxon);
+                        if($taxon->getIssynonym()){
+                            $taxon_valid=$taxon->getChosen();
+                            if($img_bool){
+                                $taxon_valid->setHasimages(true);
+                            }
+                            if($loc_bool){
+                                $taxon_valid->setHaslocations(true);
+                            }
+                            $dm->persist($taxon_valid);
+                            $parent_taxon_valid=$taxon_valid->getParent();
+                            while($parent_taxon_valid){
+                                if($img_bool){
+                                    $parent_taxon_valid->setHasimages(true);
+                                }
+                                if($loc_bool){
+                                    $parent_taxon_valid->setHaslocations(true);
+                                }
+                                $dm->persist($parent_taxon_valid);
+                                $parent_taxon_valid=$parent_taxon_valid->getParent();
+                            }
+                        }
+                    }
+                }
+                /*
                 $taxon=$punit->getTaxon();
                 if($taxon&&($img_bool||$loc_bool)){
                     if($img_bool){
@@ -315,6 +355,7 @@ class DeleteCommand extends ContainerAwareCommand
                         }
                     }
                 }
+                */
                 $dm->flush();
             }
             $dm->clear();
