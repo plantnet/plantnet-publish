@@ -48,10 +48,8 @@ class TaxonomizeCommand extends ContainerAwareCommand
         
     }
 
-    private function populate($dbname,$dm,$module,$taxo,$level,$filter=array(),$identifier='')
+    private function populate($db,$dm,$module,$taxo,$level,$filter=array(),$identifier='')
     {
-        $connection=new \MongoClient();
-        $db=$connection->$dbname;
         // $values=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
         //     ->hydrate(false)
         //     ->distinct('attributes.'.$taxo[$level][0])
@@ -87,7 +85,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $tmp_identifier.=$val;
             $tab_tax[$val]['identifier']=$tmp_identifier;
             if(isset($taxo[$level+1])){
-                $tab_tax[$val]['child']=$this->populate($dbname,$dm,$module,$taxo,$level+1,array_merge($filter,array('attributes.'.$taxo[$level][0]=>$val)),$tmp_identifier);
+                $tab_tax[$val]['child']=$this->populate($db,$dm,$module,$taxo,$level+1,array_merge($filter,array('attributes.'.$taxo[$level][0]=>$val)),$tmp_identifier);
             }
         }
         return $tab_tax;
@@ -154,6 +152,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             foreach($punit_ids as $id=>$data){
                 $punit_ids_array[]=$data['_id'];
             }
+            $punit_ids=null;
             unset($punit_ids);
             if(count($punit_ids_array)){
                 // Set ref Images // Taxon
@@ -261,7 +260,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 echo 'action taxo'."\n";
                 //populate
                 $s=microtime(true);
-                $tab_tax=$this->populate($dbname,$dm,$module,$taxo,$first_level);
+                $connection=new \MongoClient();
+                $db=$connection->$dbname;
+                $tab_tax=$this->populate($db,$dm,$module,$taxo,$first_level);
                 echo 'populate ok'."\n";
                 $s2=microtime(true);
                 echo $s2-$s.'s'."\n";
