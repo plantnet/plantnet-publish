@@ -172,6 +172,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
 
     private function taxonomize($action,$dbname,$id_module,$usermail)
     {
+        echo 'start'."\n";
         $error='';
         $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($dbname);
@@ -184,13 +185,16 @@ class TaxonomizeCommand extends ContainerAwareCommand
         if(!$module){
             $error='Unable to find Module entity.';
         }
+        echo 'module ok'."\n";
         if($action=='taxo'){
+            echo 'action taxo'."\n";
             // remove old taxa
             $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
                 ->remove()
                 ->field('module')->references($module)
                 ->getQuery()
                 ->execute();
+            echo 'rm taxons ok'."\n";
             // remove old taxa' refs
             $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                 ->update()
@@ -200,6 +204,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 ->field('taxonsrefs')->unsetField()
                 ->getQuery()
                 ->execute();
+            echo 'rm refs punits ok'."\n";
             $sub_modules=$module->getChildren();
             foreach($sub_modules as $sub){
                 if($sub->getType()=='image'){
@@ -221,6 +226,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         ->execute();
                 }
             }
+            echo 'end rm ok'."\n";
         }
         // load taxonomy data
         $taxo=array();
