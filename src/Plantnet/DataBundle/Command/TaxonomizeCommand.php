@@ -239,18 +239,24 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 );
             }
         }
+        echo 'load taxo ok'."\n";
         if(count($taxo)){
+            echo 'count taxo ok'."\n";
             ksort($taxo);
             $first_level=key($taxo);
             end($taxo);
             $last_level=key($taxo);
             reset($taxo);
             if($action=='taxo'){
+                echo 'action taxo'."\n";
                 //populate
                 $s=microtime(true);
                 $tab_tax=$this->populate($dm,$module,$taxo,$first_level);
+                echo 'populate ok'."\n";
+                $s2=microtime(true);
+                echo $s2-$s.'s'."\n";
                 //save
-                $this->save($dbname,$dm,$module,$taxo,$tab_tax);
+                // $this->save($dbname,$dm,$module,$taxo,$tab_tax);
                 $dm->clear();
                 gc_collect_cycles();
                 $module=$dm->getRepository('PlantnetDataBundle:Module')
