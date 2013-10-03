@@ -50,16 +50,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
 
     private function populate($db,$dm,$module,$taxo,$level,$filter=array(),$identifier='')
     {
-        // $values=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-        //     ->hydrate(false)
-        //     ->distinct('attributes.'.$taxo[$level][0])
-        //     ->select('attributes.'.$taxo[$level][0])
-        //     ->field('module')->references($module);
-        // foreach($filter as $k=>$v){
-        //     $values->field('attributes.'.$k)->equals($v);
-        // }
-        // $values=$values->getQuery()
-        //     ->execute();
         $cur_filters=array_merge(array('module.$id'=>new \MongoId($module->getId())),$filter);
         $values=$db->command(
             array(
@@ -85,7 +75,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $tmp_identifier.=$val;
             $tab_tax[$val]['identifier']=$tmp_identifier;
             if(isset($taxo[$level+1])){
-                usleep(10000);
+                sleep(0.05);
                 $tab_tax[$val]['child']=$this->populate($db,$dm,$module,$taxo,$level+1,array_merge($filter,array('attributes.'.$taxo[$level][0]=>$val)),$tmp_identifier);
             }
         }
@@ -195,16 +185,14 @@ class TaxonomizeCommand extends ContainerAwareCommand
         if(!$module){
             $error='Unable to find Module entity.';
         }
-        echo 'module ok'."\n";
         if($action=='taxo'){
-            echo 'action taxo'."\n";
+            echo 'start rm'."\n";
             // remove old taxa
             $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
                 ->remove()
                 ->field('module')->references($module)
                 ->getQuery()
                 ->execute();
-            echo 'rm taxons ok'."\n";
             // remove old taxa' refs
             $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                 ->update()
@@ -214,7 +202,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 ->field('taxonsrefs')->unsetField()
                 ->getQuery()
                 ->execute();
-            echo 'rm refs punits ok'."\n";
             $sub_modules=$module->getChildren();
             foreach($sub_modules as $sub){
                 if($sub->getType()=='image'){
@@ -236,7 +223,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         ->execute();
                 }
             }
-            echo 'end rm ok'."\n";
+            echo 'end rm'."\n";
         }
         // load taxonomy data
         $taxo=array();
@@ -249,26 +236,26 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 );
             }
         }
-        echo 'load taxo ok'."\n";
         if(count($taxo)){
-            echo 'count taxo ok'."\n";
+            echo 'taxo ok'."\n";
             ksort($taxo);
             $first_level=key($taxo);
             end($taxo);
             $last_level=key($taxo);
             reset($taxo);
             if($action=='taxo'){
-                echo 'action taxo'."\n";
+                echo 'start populate'."\n";
                 //populate
                 $s=microtime(true);
                 $connection=new \MongoClient();
                 $db=$connection->$dbname;
                 $tab_tax=$this->populate($db,$dm,$module,$taxo,$first_level);
-                echo 'populate ok'."\n";
                 $s2=microtime(true);
-                echo $s2-$s.'s'."\n";
+                echo $s2-$s.' end populate'."\n";
                 //save
-                // $this->save($dbname,$dm,$module,$taxo,$tab_tax);
+                echo 'start save'."\n";
+                $this->save($dbname,$dm,$module,$taxo,$tab_tax);
+                echo 'end save'."\n";
                 $dm->clear();
                 gc_collect_cycles();
                 $module=$dm->getRepository('PlantnetDataBundle:Module')
@@ -276,8 +263,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         'id'=>$id_module
                     ));
                 $e=microtime(true);
-                // echo "\n".$e-$s.'s';
-                // echo "\n".'------- END -------'."\n";
+                echo $e-$s.' end save'."\n";
                 /*
                 // load module's punit
                 $ids_punit=array();
