@@ -60,23 +60,25 @@ class TaxonomizeCommand extends ContainerAwareCommand
         );
         $tab_tax=array();
         foreach($values['values'] as $val){
-            $tmp_identifier=$identifier;
-            $tab_tax[$val]=array(
-                'column'=>$taxo[$level][0],
-                'value'=>$val,
-                'label'=>$taxo[$level][1],
-                'level'=>$level,
-                'identifier'=>'',
-                'child'=>null
-            );
-            if($level!=1){
-                $tmp_identifier.=' - ';
-            }
-            $tmp_identifier.=$val;
-            $tab_tax[$val]['identifier']=$tmp_identifier;
-            if(isset($taxo[$level+1])){
-                usleep(75000);
-                $tab_tax[$val]['child']=$this->populate($db,$dm,$module,$taxo,$level+1,array_merge($filter,array('attributes.'.$taxo[$level][0]=>$val)),$tmp_identifier);
+            if($val!=''){
+                $tmp_identifier=$identifier;
+                $tab_tax[$val]=array(
+                    'column'=>$taxo[$level][0],
+                    'value'=>$val,
+                    'label'=>$taxo[$level][1],
+                    'level'=>$level,
+                    'identifier'=>'',
+                    'child'=>null
+                );
+                if($level!=1){
+                    $tmp_identifier.=' - ';
+                }
+                $tmp_identifier.=$val;
+                $tab_tax[$val]['identifier']=$tmp_identifier;
+                if(isset($taxo[$level+1])){
+                    usleep(75000);
+                    $tab_tax[$val]['child']=$this->populate($db,$dm,$module,$taxo,$level+1,array_merge($filter,array('attributes.'.$taxo[$level][0]=>$val)),$tmp_identifier);
+                }
             }
         }
         return $tab_tax;
@@ -172,7 +174,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
 
     private function taxonomize($action,$dbname,$id_module,$usermail)
     {
-        echo 'start'."\n";
         $error='';
         $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($dbname);
@@ -186,7 +187,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $error='Unable to find Module entity.';
         }
         if($action=='taxo'){
-            echo 'start rm'."\n";
             // remove old taxa
             $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
                 ->remove()
@@ -223,7 +223,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         ->execute();
                 }
             }
-            echo 'end rm'."\n";
         }
         // load taxonomy data
         $taxo=array();
@@ -237,33 +236,24 @@ class TaxonomizeCommand extends ContainerAwareCommand
             }
         }
         if(count($taxo)){
-            echo 'taxo ok'."\n";
             ksort($taxo);
             $first_level=key($taxo);
             end($taxo);
             $last_level=key($taxo);
             reset($taxo);
             if($action=='taxo'){
-                echo 'start populate'."\n";
                 //populate
-                $s=microtime(true);
                 $connection=new \MongoClient();
                 $db=$connection->$dbname;
                 $tab_tax=$this->populate($db,$dm,$module,$taxo,$first_level);
-                $s2=microtime(true);
-                echo $s2-$s.' end populate'."\n";
                 //save
-                echo 'start save'."\n";
                 $this->save($dbname,$dm,$module,$taxo,$tab_tax);
-                echo 'end save'."\n";
                 $dm->clear();
                 gc_collect_cycles();
                 $module=$dm->getRepository('PlantnetDataBundle:Module')
                     ->findOneBy(array(
                         'id'=>$id_module
                     ));
-                $e=microtime(true);
-                echo $e-$s.' end save'."\n";
                 /*
                 // load module's punit
                 $ids_punit=array();
