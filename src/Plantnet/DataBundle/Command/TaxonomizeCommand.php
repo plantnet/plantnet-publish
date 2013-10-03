@@ -75,7 +75,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $tmp_identifier.=$val;
             $tab_tax[$val]['identifier']=$tmp_identifier;
             if(isset($taxo[$level+1])){
-                sleep(0.1);
+                usleep(75000);
                 $tab_tax[$val]['child']=$this->populate($db,$dm,$module,$taxo,$level+1,array_merge($filter,array('attributes.'.$taxo[$level][0]=>$val)),$tmp_identifier);
             }
         }
