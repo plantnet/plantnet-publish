@@ -48,20 +48,30 @@ class TaxonomizeCommand extends ContainerAwareCommand
         
     }
 
-    private function populate($dm,$module,$taxo,$level,$filter=array(),$identifier='')
+    private function populate($dbname,$dm,$module,$taxo,$level,$filter=array(),$identifier='')
     {
-        $values=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-            ->hydrate(false)
-            ->distinct('attributes.'.$taxo[$level][0])
-            ->select('attributes.'.$taxo[$level][0])
-            ->field('module')->references($module);
-        foreach($filter as $k=>$v){
-            $values->field('attributes.'.$k)->equals($v);
-        }
-        $values=$values->getQuery()
-            ->execute();
+        $connection=new \MongoClient();
+        $db=$connection->$dbname;
+        // $values=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+        //     ->hydrate(false)
+        //     ->distinct('attributes.'.$taxo[$level][0])
+        //     ->select('attributes.'.$taxo[$level][0])
+        //     ->field('module')->references($module);
+        // foreach($filter as $k=>$v){
+        //     $values->field('attributes.'.$k)->equals($v);
+        // }
+        // $values=$values->getQuery()
+        //     ->execute();
+        $cur_filters=array_merge(array('module.$id'=>new \MongoId($module->getId())),$filter);
+        $values=$db->command(
+            array(
+                'distinct'=>'Plantunit',
+                'key'=>'attributes.'.$taxo[$level][0],
+                'query'=>$cur_filters
+            )
+        );
         $tab_tax=array();
-        foreach($values as $val){
+        foreach($values['values'] as $val){
             $tmp_identifier=$identifier;
             $tab_tax[$val]=array(
                 'column'=>$taxo[$level][0],
@@ -77,7 +87,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $tmp_identifier.=$val;
             $tab_tax[$val]['identifier']=$tmp_identifier;
             if(isset($taxo[$level+1])){
-                $tab_tax[$val]['child']=$this->populate($dm,$module,$taxo,$level+1,array_merge($filter,array($taxo[$level][0]=>$val)),$tmp_identifier);
+                $tab_tax[$val]['child']=$this->populate($dbname,$dm,$module,$taxo,$level+1,array_merge($filter,array('attributes.'.$taxo[$level][0]=>$val)),$tmp_identifier);
             }
         }
         return $tab_tax;
@@ -251,7 +261,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 echo 'action taxo'."\n";
                 //populate
                 $s=microtime(true);
-                $tab_tax=$this->populate($dm,$module,$taxo,$first_level);
+                $tab_tax=$this->populate($dbname,$dm,$module,$taxo,$first_level);
                 echo 'populate ok'."\n";
                 $s2=microtime(true);
                 echo $s2-$s.'s'."\n";
