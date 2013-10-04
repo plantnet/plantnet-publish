@@ -789,9 +789,6 @@ class TaxoController extends Controller
             $children=$children_new;
         }
         */
-
-
-
         $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit');
         $plantunits->field('module')->references($module);
         $plantunits->hydrate(false);

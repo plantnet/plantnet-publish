@@ -118,7 +118,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
         foreach($tab_taxons as $id_parent=>$taxons){
             if($id_parent==$parent_id){
                 foreach($taxons as $identifier=>$tax){
-                    echo $identifier."\n";
                     $cur_filters=array(
                         'attributes.'.$tax['column']=>$tax['name'],
                         'module.$id'=>new \MongoId($module->getId())
