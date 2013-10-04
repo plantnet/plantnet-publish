@@ -111,13 +111,14 @@ class TaxonomizeCommand extends ContainerAwareCommand
         return $tab_tax;
     }
 
-    private function save($dbname,$dm,$module,$taxo,$tab_taxons,$parent_id='|',$parent=null,$filters=array())
+    private function save($db,$dbname,$dm,$module,$taxo,$tab_taxons,$parent_id='|',$parent=null,$filters=array())
     {
-        $connection=new \MongoClient();
-        $db=$connection->$dbname;
+        // $connection=new \MongoClient();
+        // $db=$connection->$dbname;
         foreach($tab_taxons as $id_parent=>$taxons){
             if($id_parent==$parent_id){
                 foreach($taxons as $identifier=>$tax){
+                    echo $identifier."\n";
                     $cur_filters=array(
                         'attributes.'.$tax['column']=>$tax['name'],
                         'module.$id'=>new \MongoId($module->getId())
@@ -140,7 +141,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         $taxon->setHaschildren(true);
                         $dm->persist($taxon);
                         $dm->flush();
-                        $this->save($dbname,$dm,$module,$taxo,$tab_taxons,$identifier,$taxon,array_merge($filters,array('attributes.'.$tax['column']=>$tax['name'])));
+                        $this->save($db,$dbname,$dm,$module,$taxo,$tab_taxons,$identifier,$taxon,array_merge($filters,array('attributes.'.$tax['column']=>$tax['name'])));
                     }
                     else{
                         $dm->persist($taxon);
@@ -160,15 +161,18 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     ),array('multiple'=>true));
                     // Find all punit ids for this taxon
                     $punit_ids=$db->Plantunit->find($cur_filters,array('_id'=>1));
+                    $punit_ids=array_map(function($e){return $e['_id'];},iterator_to_array($punit_ids));
+                    /*
                     $punit_ids_array=array();
                     foreach($punit_ids as $id=>$data){
                         $punit_ids_array[]=$data['_id'];
                     }
                     $punit_ids=null;
                     unset($punit_ids);
-                    if(count($punit_ids_array)){
+                    */
+                    if(count($punit_ids)){
                         // Set ref Images // Taxon
-                        $db->Image->update(array('plantunit.$id'=>array('$in'=>$punit_ids_array)),array(
+                        $db->Image->update(array('plantunit.$id'=>array('$in'=>$punit_ids)),array(
                             '$addToSet'=>array(
                                 'taxonsrefs'=>array(
                                     '$ref'=>'Taxon',
@@ -178,7 +182,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             )
                         ),array('multiple'=>true));
                         // Set ref Locations // taxon
-                        $db->Location->update(array('plantunit.$id'=>array('$in'=>$punit_ids_array)),array(
+                        $db->Location->update(array('plantunit.$id'=>array('$in'=>$punit_ids)),array(
                             '$addToSet'=>array(
                                 'taxonsrefs'=>array(
                                     '$ref'=>'Taxon',
@@ -268,7 +272,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 //populate
                 $tab_tax=$this->populate($db,$module,$taxo);
                 //save
-                $this->save($dbname,$dm,$module,$taxo,$tab_tax);
+                $this->save($db,$dbname,$dm,$module,$taxo,$tab_tax);
                 $dm->clear();
                 gc_collect_cycles();
                 $module=$dm->getRepository('PlantnetDataBundle:Module')
