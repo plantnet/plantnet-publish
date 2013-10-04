@@ -146,6 +146,8 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         $dm->persist($taxon);
                         $dm->flush();
                     }
+                    // free memory
+                    $dm->detach($taxon);
                     // Set ref Punits // Taxon
                     $db->Plantunit->update($cur_filters,array(
                         '$addToSet'=>array(
