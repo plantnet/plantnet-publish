@@ -160,8 +160,8 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         )
                     ),array('multiple'=>true));
                     // Find all punit ids for this taxon
-                    $punit_ids=$db->Plantunit->find($cur_filters,array('_id'=>1));
-                    $punit_ids=array_map(function($e){return $e['_id'];},iterator_to_array($punit_ids));
+                    // $punit_ids=$db->Plantunit->find($cur_filters,array('_id'=>1));
+                    // $punit_ids=array_map(function($e){return $e['_id'];},iterator_to_array($punit_ids));
                     /*
                     $punit_ids_array=array();
                     foreach($punit_ids as $id=>$data){
@@ -170,6 +170,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     $punit_ids=null;
                     unset($punit_ids);
                     */
+                    /*
                     if(count($punit_ids)){
                         // Set ref Images // Taxon
                         $db->Image->update(array('plantunit.$id'=>array('$in'=>$punit_ids)),array(
@@ -192,6 +193,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             )
                         ),array('multiple'=>true));
                     }
+                    */
                 }
             }
         }

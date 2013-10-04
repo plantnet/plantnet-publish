@@ -466,6 +466,7 @@ class TaxoController extends Controller
                 $tab_ref[$syn->getId()]=$syn;
             }
         }
+        /*
         $children=$taxon->getChildren();
         while(count($children)){
             $children_new=array();
@@ -486,6 +487,7 @@ class TaxoController extends Controller
             }
             $children=$children_new;
         }
+        */
         $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit');
         $plantunits->field('module')->references($module);
         if(count($tab_ref)>1){
@@ -620,6 +622,7 @@ class TaxoController extends Controller
                 $tab_ref[$syn->getId()]=$syn;
             }
         }
+        /*
         $children=$taxon->getChildren();
         while(count($children)){
             $children_new=array();
@@ -640,6 +643,27 @@ class TaxoController extends Controller
             }
             $children=$children_new;
         }
+        */
+        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit');
+        $plantunits->field('module')->references($module);
+        $plantunits->hydrate(false);
+        $plantunits->select('_id');
+        if(count($tab_ref)>1){
+            foreach($tab_ref as $ref){
+                $plantunits->addOr($plantunits->expr()->field('taxonsrefs')->references($ref));
+            }
+        }
+        else{
+            $plantunits->field('taxonsrefs')->references($tab_ref[key($tab_ref)]);
+        }
+        $plantunits=$plantunits->getQuery()->execute();
+        $pu_ids=array();
+        foreach($plantunits as $id){
+            $pu_ids[]=$id['_id'];
+        }
+        $images=$dm->createQueryBuilder('PlantnetDataBundle:Image');
+        $images->field('plantunit.$id')->in($pu_ids);
+        /*
         $images=$dm->createQueryBuilder('PlantnetDataBundle:Image');
         if(count($tab_ref)>1){
             foreach($tab_ref as $ref){
@@ -649,6 +673,7 @@ class TaxoController extends Controller
         else{
             $images->field('taxonsrefs')->references($tab_ref[key($tab_ref)]);
         }
+        */
         $images->sort('title1','asc');
         $images->sort('title2','asc');
         $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($images));
@@ -742,6 +767,7 @@ class TaxoController extends Controller
                 $tab_ref[$syn->getId()]=$syn;
             }
         }
+        /*
         $children=$taxon->getChildren();
         while(count($children)){
             $children_new=array();
@@ -762,6 +788,30 @@ class TaxoController extends Controller
             }
             $children=$children_new;
         }
+        */
+
+
+
+        $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit');
+        $plantunits->field('module')->references($module);
+        $plantunits->hydrate(false);
+        $plantunits->select('_id');
+        if(count($tab_ref)>1){
+            foreach($tab_ref as $ref){
+                $plantunits->addOr($plantunits->expr()->field('taxonsrefs')->references($ref));
+            }
+        }
+        else{
+            $plantunits->field('taxonsrefs')->references($tab_ref[key($tab_ref)]);
+        }
+        $plantunits=$plantunits->getQuery()->execute();
+        $pu_ids=array();
+        foreach($plantunits as $id){
+            $pu_ids[]=$id['_id'];
+        }
+        $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location');
+        $locations->field('plantunit.$id')->in($pu_ids);
+        /*
         $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location');
         if(count($tab_ref)>1){
             foreach($tab_ref as $ref){
@@ -771,6 +821,7 @@ class TaxoController extends Controller
         else{
             $locations->field('taxonsrefs')->references($tab_ref[key($tab_ref)]);
         }
+        */
         $locations=$locations->getQuery()
             ->execute();
         //count to display

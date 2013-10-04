@@ -128,7 +128,7 @@ class ImportationCommand extends ContainerAwareCommand
                                 foreach($taxons as $taxon){
                                     $taxon->setHasimages(true);
                                     $dm->persist($taxon);
-                                    $image->addTaxonsref($taxon);
+                                    // $image->addTaxonsref($taxon);
                                     if($taxon->getIssynonym()){
                                         $taxon_valid=$taxon->getChosen();
                                         $taxon_valid->setHasimages(true);
@@ -238,7 +238,7 @@ class ImportationCommand extends ContainerAwareCommand
                                 foreach($taxons as $taxon){
                                     $taxon->setHaslocations(true);
                                     $dm->persist($taxon);
-                                    $location->addTaxonsref($taxon);
+                                    // $location->addTaxonsref($taxon);
                                     if($taxon->getIssynonym()){
                                         $taxon_valid=$taxon->getChosen();
                                         $taxon_valid->setHaslocations(true);
