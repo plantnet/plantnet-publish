@@ -299,8 +299,10 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 $skip=0;
                 $limit=100;
                 while(!$ending){
+                    $s=microtime(true);
                     echo 'Memory usage start: '.(memory_get_usage()/1024).' KB'."\n";
                     $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                        ->eagerCursor(true)
                         ->field('images')->prime(true)
                         ->field('locations')->prime(true)
                         ->field('module')->references($module)
@@ -313,7 +315,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     foreach($punits as $punit){
                         $tot++;
                         $nb++;
-                        echo $tot.' - '.$punit->getTitle1()."\n";
+                        // echo $tot.' - '.$punit->getTitle1()."\n";
                         $attributes=$punit->getAttributes();
                         $tab_taxo=array();
                         $identifier='';
@@ -375,6 +377,8 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     }
                     $skip+=$limit;
                     echo 'Memory usage end: '.(memory_get_usage()/1024).' KB'."\n";
+                    $e=microtime(true);
+                    echo $e-$s."s\n";
                 }
                 /*
                 $ids_punit=array();
