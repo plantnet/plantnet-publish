@@ -277,12 +277,102 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 $tab_tax=$this->populate($db,$module,$taxo);
                 //save
                 $this->save($db,$dbname,$dm,$module,$taxo,$tab_tax);
+                $tab_tax=null;
+                unset($tab_tax);
                 $dm->clear();
                 gc_collect_cycles();
                 $module=$dm->getRepository('PlantnetDataBundle:Module')
                     ->findOneBy(array(
                         'id'=>$id_module
                     ));
+                // load module's punit
+                $ids_punit=array();
+                $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                    ->hydrate(false)
+                    ->select('_id')
+                    ->field('module')->references($module)
+                    ->getQuery()
+                    ->execute();
+                foreach($punits as $id){
+                    $ids_punit[]=$id['_id']->{'$id'};
+                }
+                unset($punits);
+                $batch_size=100;
+                $size=0;
+                foreach($ids_punit as $id_punit){
+                    $size++;
+                    $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+                        ->findOneBy(array(
+                            'id'=>$id_punit
+                        ));
+                    if($punit){
+                        echo $punit->getTitle1()."\n";
+                        $attributes=$punit->getAttributes();
+                        $tab_taxo=array();
+                        $identifier='';
+                        foreach($taxo as $level=>$t){
+                            if(isset($attributes[$t[0]])){
+                                if(!empty($identifier)){
+                                    $identifier.=' - ';
+                                }
+                                $identifier.=$attributes[$t[0]];
+                                $tab_taxo[$level]=array(
+                                    $t[1],
+                                    $identifier,
+                                    $attributes[$t[0]]
+                                );
+                            }
+                        }
+                        foreach($tab_taxo as $level=>$data){
+                            if(!empty($data[2])){
+                                $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
+                                    ->findOneBy(array(
+                                        'module.id'=>$module->getId(),
+                                        'identifier'=>$data[1],
+                                        'level'=>$level
+                                    ));
+                                if($taxon){
+                                    $punit->addTaxonsref($taxon);
+                                    $dm->persist($punit);
+                                    $size++;
+                                    if($punit->getHasimages()===true){
+                                        $images=$punit->getImages();
+                                        foreach($images as $img){
+                                            $img->addTaxonsref($taxon);
+                                            $dm->persist($img);
+                                            $size++;
+                                        }
+                                    }
+                                    if($punit->getHaslocations()===true){
+                                        $locations=$punit->getLocations();
+                                        foreach($locations as $loc){
+                                            $loc->addTaxonsref($taxon);
+                                            $dm->persist($loc);
+                                            $size++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if(($size>=$batch_size)){
+                        $dm->flush();
+                        echo '----- FLUSH -------'."\n";
+                        echo '----- FLUSH -------'."\n";
+                        echo '----- FLUSH -------'."\n";
+                        echo '----- FLUSH -------'."\n";
+                        echo '----- FLUSH -------'."\n";
+                        echo '----- FLUSH -------'."\n";
+                        echo '----- FLUSH -------'."\n";
+                        $size=0;
+                        $dm->clear();
+                        gc_collect_cycles();
+                        $module=$dm->getRepository('PlantnetDataBundle:Module')
+                            ->findOneBy(array(
+                                'id'=>$id_module
+                            ));
+                    }
+                }
             }
             elseif($action=='syn'){
                 // synonymy management

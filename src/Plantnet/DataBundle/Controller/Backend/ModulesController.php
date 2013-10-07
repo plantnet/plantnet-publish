@@ -763,7 +763,6 @@ class ModulesController extends Controller
                 //command
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
-                echo $command;exit;
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
