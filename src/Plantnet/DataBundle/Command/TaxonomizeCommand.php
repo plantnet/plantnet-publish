@@ -108,6 +108,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 }
             }
         }
+        $fields=null;
+        $meta=null;
+        $data=null;
         return $tab_tax;
     }
 
@@ -143,11 +146,13 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         $dm->flush();
                         $this->save($db,$dbname,$dm,$module,$taxo,$tab_taxons,$identifier,$taxon,array_merge($filters,array('attributes.'.$tax['column']=>$tax['name'])));
                         $dm->detach($taxon);
+                        $taxon=null;
                     }
                     else{
                         $dm->persist($taxon);
                         $dm->flush();
                         $dm->detach($taxon);
+                        $taxon=null;
                     }
                     // free memory
                     // $dm->detach($taxon);
@@ -264,6 +269,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 );
             }
         }
+        $fields=null;
         if(count($taxo)){
             ksort($taxo);
             $first_level=key($taxo);
@@ -285,11 +291,15 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     ->findOneBy(array(
                         'id'=>$id_module
                     ));
+                $db=null;
+                $connection=null;
                 // load module's punit
+                $tot=0;
                 $ending=false;
                 $skip=0;
-                $limit=500;
+                $limit=100;
                 while(!$ending){
+                    echo 'Memory usage start: '.(memory_get_usage()/1024).' KB'."\n";
                     $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                         ->field('images')->prime(true)
                         ->field('locations')->prime(true)
@@ -301,8 +311,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         ->execute();
                     $nb=0;
                     foreach($punits as $punit){
+                        $tot++;
                         $nb++;
-                        echo $punit->getTitle1()."\n";
+                        echo $tot.' - '.$punit->getTitle1()."\n";
                         $attributes=$punit->getAttributes();
                         $tab_taxo=array();
                         $identifier='';
@@ -360,8 +371,10 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             ->findOneBy(array(
                                 'id'=>$id_module
                             ));
+
                     }
                     $skip+=$limit;
+                    echo 'Memory usage end: '.(memory_get_usage()/1024).' KB'."\n";
                 }
                 /*
                 $ids_punit=array();
