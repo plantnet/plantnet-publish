@@ -118,6 +118,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
         foreach($tab_taxons as $id_parent=>$taxons){
             if($id_parent==$parent_id){
                 foreach($taxons as $identifier=>$tax){
+                    echo $identifier."\n";
                     $cur_filters=array(
                         'attributes.'.$tax['column']=>$tax['name'],
                         'module.$id'=>new \MongoId($module->getId())
@@ -141,23 +142,25 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         $dm->persist($taxon);
                         $dm->flush();
                         $this->save($db,$dbname,$dm,$module,$taxo,$tab_taxons,$identifier,$taxon,array_merge($filters,array('attributes.'.$tax['column']=>$tax['name'])));
+                        $dm->detach($taxon);
                     }
                     else{
                         $dm->persist($taxon);
                         $dm->flush();
+                        $dm->detach($taxon);
                     }
                     // free memory
-                    $dm->detach($taxon);
+                    // $dm->detach($taxon);
                     // Set ref Punits // Taxon
-                    $db->Plantunit->update($cur_filters,array(
-                        '$addToSet'=>array(
-                            'taxonsrefs'=>array(
-                                '$ref'=>'Taxon',
-                                '$id'=>new \MongoId($taxon->getId()),
-                                '$db'=>$dbname
-                            )
-                        )
-                    ),array('multiple'=>true));
+                    // $db->Plantunit->update($cur_filters,array(
+                    //     '$addToSet'=>array(
+                    //         'taxonsrefs'=>array(
+                    //             '$ref'=>'Taxon',
+                    //             '$id'=>new \MongoId($taxon->getId()),
+                    //             '$db'=>$dbname
+                    //         )
+                    //     )
+                    // ),array('multiple'=>true));
                     // Find all punit ids for this taxon
                     // $punit_ids=$db->Plantunit->find($cur_filters,array('_id'=>1));
                     // $punit_ids=array_map(function($e){return $e['_id'];},iterator_to_array($punit_ids));
