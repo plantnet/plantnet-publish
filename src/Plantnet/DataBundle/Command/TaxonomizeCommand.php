@@ -71,40 +71,42 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $id_parent='';
             $identifier='';
             foreach($line['attributes'] as $column=>$value){
-                if(empty($id_parent)){
-                    $tmp_id_parent='|';
-                }
-                else{
-                    $tmp_id_parent=$id_parent;
-                }
-                if(!empty($identifier)){
-                    $identifier.=' - ';
-                }
-                $identifier.=$value;
-                if(!isset($tab_tax[$tmp_id_parent])){
-                    $tab_tax[$tmp_id_parent]=array();
-                }
-                if(!isset($tab_tax[$tmp_id_parent][$identifier])){
-                    $tab_tax[$tmp_id_parent][$identifier]=array(
-                        'column'=>$column,
-                        'name'=>$value,
-                        'level'=>$meta[$column]['level'],
-                        'label'=>$meta[$column]['label'],
-                        'hasimages'=>$img,
-                        'haslocations'=>$loc,
-                        'nb'=>1
-                    );
-                }
-                else{
-                    $tab_tax[$tmp_id_parent][$identifier]['hasimages']=$tab_tax[$tmp_id_parent][$identifier]['hasimages']||$img;
-                    $tab_tax[$tmp_id_parent][$identifier]['haslocations']=$tab_tax[$tmp_id_parent][$identifier]['haslocations']||$loc;
-                    $tab_tax[$tmp_id_parent][$identifier]['nb']=$tab_tax[$tmp_id_parent][$identifier]['nb']+1;
-                }
-                if($tmp_id_parent=='|'){
-                    $id_parent=$value;
-                }
-                else{
-                    $id_parent.=' - '.$value;
+                if(!empty($value)){
+                    if(empty($id_parent)){
+                        $tmp_id_parent='|';
+                    }
+                    else{
+                        $tmp_id_parent=$id_parent;
+                    }
+                    if(!empty($identifier)){
+                        $identifier.=' - ';
+                    }
+                    $identifier.=$value;
+                    if(!isset($tab_tax[$tmp_id_parent])){
+                        $tab_tax[$tmp_id_parent]=array();
+                    }
+                    if(!isset($tab_tax[$tmp_id_parent][$identifier])){
+                        $tab_tax[$tmp_id_parent][$identifier]=array(
+                            'column'=>$column,
+                            'name'=>$value,
+                            'level'=>$meta[$column]['level'],
+                            'label'=>$meta[$column]['label'],
+                            'hasimages'=>$img,
+                            'haslocations'=>$loc,
+                            'nb'=>1
+                        );
+                    }
+                    else{
+                        $tab_tax[$tmp_id_parent][$identifier]['hasimages']=$tab_tax[$tmp_id_parent][$identifier]['hasimages']||$img;
+                        $tab_tax[$tmp_id_parent][$identifier]['haslocations']=$tab_tax[$tmp_id_parent][$identifier]['haslocations']||$loc;
+                        $tab_tax[$tmp_id_parent][$identifier]['nb']=$tab_tax[$tmp_id_parent][$identifier]['nb']+1;
+                    }
+                    if($tmp_id_parent=='|'){
+                        $id_parent=$value;
+                    }
+                    else{
+                        $id_parent.=' - '.$value;
+                    }
                 }
             }
         }
