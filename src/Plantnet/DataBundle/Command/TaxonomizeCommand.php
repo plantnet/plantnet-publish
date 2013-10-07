@@ -286,6 +286,84 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         'id'=>$id_module
                     ));
                 // load module's punit
+                $ending=false;
+                $skip=0;
+                $limit=500;
+                while(!$ending){
+                    $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                        ->field('images')->prime(true)
+                        ->field('locations')->prime(true)
+                        ->field('module')->references($module)
+                        ->sort('_id','asc')
+                        ->limit($limit)
+                        ->skip($skip)
+                        ->getQuery()
+                        ->execute();
+                    $nb=0;
+                    foreach($punits as $punit){
+                        $nb++;
+                        echo $punit->getTitle1()."\n";
+                        $attributes=$punit->getAttributes();
+                        $tab_taxo=array();
+                        $identifier='';
+                        foreach($taxo as $level=>$t){
+                            if(isset($attributes[$t[0]])){
+                                if(!empty($identifier)){
+                                    $identifier.=' - ';
+                                }
+                                $identifier.=$attributes[$t[0]];
+                                $tab_taxo[$level]=array(
+                                    $t[1],
+                                    $identifier,
+                                    $attributes[$t[0]]
+                                );
+                            }
+                        }
+                        foreach($tab_taxo as $level=>$data){
+                            // if(!empty($data[2])){
+                                $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
+                                    ->findOneBy(array(
+                                        'module.id'=>$module->getId(),
+                                        'identifier'=>$data[1],
+                                        'level'=>$level
+                                    ));
+                                if($taxon){
+                                    $punit->addTaxonsref($taxon);
+                                    $dm->persist($punit);
+                                    if($punit->getHasimages()===true){
+                                        $images=$punit->getImages();
+                                        foreach($images as $img){
+                                            $img->addTaxonsref($taxon);
+                                            $dm->persist($img);
+                                        }
+                                    }
+                                    if($punit->getHaslocations()===true){
+                                        $locations=$punit->getLocations();
+                                        foreach($locations as $loc){
+                                            $loc->addTaxonsref($taxon);
+                                            $dm->persist($loc);
+                                        }
+                                    }
+                                }
+                            // }
+                        }
+                    }
+                    if(!$nb){
+                        $ending=true;
+                    }
+                    else{
+                        $dm->flush();
+                        echo '----- FLUSH -------'."\n";
+                        $dm->clear();
+                        gc_collect_cycles();
+                        $module=$dm->getRepository('PlantnetDataBundle:Module')
+                            ->findOneBy(array(
+                                'id'=>$id_module
+                            ));
+                    }
+                    $skip+=$limit;
+                }
+                /*
                 $ids_punit=array();
                 $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                     ->hydrate(false)
@@ -373,6 +451,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             ));
                     }
                 }
+                */
             }
             elseif($action=='syn'){
                 // synonymy management
