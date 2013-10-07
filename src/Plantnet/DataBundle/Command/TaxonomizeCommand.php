@@ -293,6 +293,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     ));
                 $db=null;
                 $connection=null;
+                sleep(30);
                 // load module's punit
                 $tot=0;
                 $ending=false;
@@ -373,7 +374,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             ->findOneBy(array(
                                 'id'=>$id_module
                             ));
-
                     }
                     $skip+=$limit;
                     echo 'Memory usage end: '.(memory_get_usage()/1024).' KB'."\n";
