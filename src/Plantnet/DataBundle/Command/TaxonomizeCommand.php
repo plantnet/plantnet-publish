@@ -145,27 +145,37 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         $dm->persist($taxon);
                         $dm->flush();
                         $this->save($db,$dbname,$dm,$module,$taxo,$tab_taxons,$identifier,$taxon,array_merge($filters,array('attributes.'.$tax['column']=>$tax['name'])));
-                        $dm->detach($taxon);
-                        $taxon=null;
+                        // $dm->detach($taxon);
+                        // $taxon=null;
                     }
                     else{
                         $dm->persist($taxon);
                         $dm->flush();
-                        $dm->detach($taxon);
-                        $taxon=null;
+                        // $dm->detach($taxon);
+                        // $taxon=null;
                     }
+                    // Set ref Punits // Taxon
+                    $db->Plantunit->update($cur_filters,array(
+                        '$addToSet'=>array(
+                            'taxonsrefs'=>array(
+                                '$ref'=>'Taxon',
+                                '$id'=>new \MongoId($taxon->getId()),
+                                '$db'=>$dbname
+                            )
+                        )
+                    ),array('multiple'=>true));
+                    // free memory
+                    $dm->detach($taxon);
+                    $taxon=null;
+
+
+
+
+
+
                     // free memory
                     // $dm->detach($taxon);
-                    // Set ref Punits // Taxon
-                    // $db->Plantunit->update($cur_filters,array(
-                    //     '$addToSet'=>array(
-                    //         'taxonsrefs'=>array(
-                    //             '$ref'=>'Taxon',
-                    //             '$id'=>new \MongoId($taxon->getId()),
-                    //             '$db'=>$dbname
-                    //         )
-                    //     )
-                    // ),array('multiple'=>true));
+                    
                     // Find all punit ids for this taxon
                     // $punit_ids=$db->Plantunit->find($cur_filters,array('_id'=>1));
                     // $punit_ids=array_map(function($e){return $e['_id'];},iterator_to_array($punit_ids));
@@ -293,6 +303,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     ));
                 $db=null;
                 $connection=null;
+                /*
                 sleep(30);
                 // load module's punit
                 $tot=0;
