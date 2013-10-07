@@ -150,7 +150,7 @@
 		        {% endfor %}
 	        {% endif %}
 			var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
-			marker_{{ location.id }}.bindPopup('<b>{{ title1|escape('js') }}</b><br /><b>{{ title2|escape('js') }}</b>{{ title3 }}'
+			marker_{{ location.id }}.bindPopup('<b>{{ title1|escape('js') }}</b><br /><b>{{ title2|escape('js') }}</b>{% autoescape false %}{{ title3 }}{% endautoescape %}'
 				+'<br />{{ loc_data|escape('js') }}'
 				{% if current_display is defined %}
 					+'<br /><br /><a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'id': location.plantunit.id }) }}" class="btn btn-small">{{ "line-details"|trans|capitalize }}</a>'
