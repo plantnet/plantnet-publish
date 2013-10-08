@@ -123,7 +123,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
         foreach($tab_taxons as $id_parent=>$taxons){
             if($id_parent==$parent_id){
                 foreach($taxons as $identifier=>$tax){
-                    echo $identifier."\n";
                     $cur_filters=array(
                         'attributes.'.$tax['column']=>$tax['name'],
                         'module.$id'=>new \MongoId($module->getId())
@@ -169,27 +168,15 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     // free memory
                     $dm->detach($taxon);
                     $taxon=null;
-
-
-
-
-
-
-                    // free memory
-                    // $dm->detach($taxon);
-                    
-                    // Find all punit ids for this taxon
-                    // $punit_ids=$db->Plantunit->find($cur_filters,array('_id'=>1));
-                    // $punit_ids=array_map(function($e){return $e['_id'];},iterator_to_array($punit_ids));
                     /*
+                    // Find all punit ids for this taxon
+                    $punit_ids=$db->Plantunit->find($cur_filters,array('_id'=>1));
                     $punit_ids_array=array();
                     foreach($punit_ids as $id=>$data){
                         $punit_ids_array[]=$data['_id'];
                     }
                     $punit_ids=null;
                     unset($punit_ids);
-                    */
-                    /*
                     if(count($punit_ids)){
                         // Set ref Images // Taxon
                         $db->Image->update(array('plantunit.$id'=>array('$in'=>$punit_ids)),array(
@@ -233,12 +220,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $error='Unable to find Module entity.';
         }
         if($action=='taxo'){
-            // remove old taxa
-            $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
-                ->remove()
-                ->field('module')->references($module)
-                ->getQuery()
-                ->execute();
             // remove old taxa' refs
             $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                 ->update()
@@ -269,6 +250,12 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         ->execute();
                 }
             }
+            // remove old taxa
+            $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                ->remove()
+                ->field('module')->references($module)
+                ->getQuery()
+                ->execute();
         }
         // load taxonomy data
         $taxo=array();
@@ -294,6 +281,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 //populate
                 $tab_tax=$this->populate($db,$module,$taxo);
                 //save
+                \MongoCursor::$timeout=-1;
                 $this->save($db,$dbname,$dm,$module,$taxo,$tab_tax);
                 $tab_tax=null;
                 unset($tab_tax);
@@ -306,15 +294,11 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 $db=null;
                 $connection=null;
                 /*
-                sleep(30);
                 // load module's punit
-                $tot=0;
                 $ending=false;
                 $skip=0;
                 $limit=100;
                 while(!$ending){
-                    $s=microtime(true);
-                    echo 'Memory usage start: '.(memory_get_usage()/1024).' KB'."\n";
                     $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                         ->eagerCursor(true)
                         ->field('images')->prime(true)
@@ -327,9 +311,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         ->execute();
                     $nb=0;
                     foreach($punits as $punit){
-                        $tot++;
                         $nb++;
-                        // echo $tot.' - '.$punit->getTitle1()."\n";
                         $attributes=$punit->getAttributes();
                         $tab_taxo=array();
                         $identifier='';
@@ -347,7 +329,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             }
                         }
                         foreach($tab_taxo as $level=>$data){
-                            // if(!empty($data[2])){
+                            if(!empty($data[2])){
                                 $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
                                     ->findOneBy(array(
                                         'module.id'=>$module->getId(),
@@ -372,7 +354,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                         }
                                     }
                                 }
-                            // }
+                            }
                         }
                     }
                     if(!$nb){
@@ -380,7 +362,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     }
                     else{
                         $dm->flush();
-                        echo '----- FLUSH -------'."\n";
                         $dm->clear();
                         gc_collect_cycles();
                         $module=$dm->getRepository('PlantnetDataBundle:Module')
@@ -389,10 +370,8 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             ));
                     }
                     $skip+=$limit;
-                    echo 'Memory usage end: '.(memory_get_usage()/1024).' KB'."\n";
-                    $e=microtime(true);
-                    echo $e-$s."s\n";
                 }
+                */
                 /*
                 $ids_punit=array();
                 $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
@@ -414,7 +393,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             'id'=>$id_punit
                         ));
                     if($punit){
-                        echo $punit->getTitle1()."\n";
                         $attributes=$punit->getAttributes();
                         $tab_taxo=array();
                         $identifier='';
@@ -465,13 +443,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     }
                     if(($size>=$batch_size)){
                         $dm->flush();
-                        echo '----- FLUSH -------'."\n";
-                        echo '----- FLUSH -------'."\n";
-                        echo '----- FLUSH -------'."\n";
-                        echo '----- FLUSH -------'."\n";
-                        echo '----- FLUSH -------'."\n";
-                        echo '----- FLUSH -------'."\n";
-                        echo '----- FLUSH -------'."\n";
                         $size=0;
                         $dm->clear();
                         gc_collect_cycles();
@@ -524,6 +495,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         }
                     }
                     if(!$csv_error){
+                        $connection=new \MongoClient();
+                        $db=$connection->$dbname;
+                        \MongoCursor::$timeout=-1;
                         while(($data=fgetcsv($handle,0,';'))!==false){
                             $non_valid_identifier='';
                             $valid_identifier='';
@@ -632,14 +606,12 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                     $last_valid->setHaschildren(true);
                                 }
                                 $last_valid->setHassynonyms(true);
-                                $dm->persist($last_non_valid);
-                                $dm->persist($last_valid);
                                 //
                                 $has_images=$last_non_valid->getHasimages();
                                 $has_locations=$last_non_valid->getHaslocations();
                                 $nb_to_switch=$last_non_valid->getNbpunits();
-                                //$last_non_valid->setNbpunits($last_non_valid->getNbpunits()-$nb_to_switch);
-                                $dm->persist($last_non_valid);
+                                // $last_non_valid->setNbpunits($last_non_valid->getNbpunits()-$nb_to_switch);
+                                // $dm->persist($last_non_valid);
                                 $parent_tmp=$last_non_valid->getParent();
                                 while($parent_tmp){
                                     $parent_tmp->setNbpunits($parent_tmp->getNbpunits()-$nb_to_switch);
@@ -666,7 +638,25 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                     $dm->persist($parent_tmp);
                                     $parent_tmp=$parent_tmp->getParent();
                                 }
+                                $dm->persist($last_non_valid);
+                                $dm->persist($last_valid);
                                 $dm->flush();
+                                $db->Plantunit->update(array(
+                                    'module.$id'=>new \MongoId($module->getId()),
+                                    'taxonsrefs'=>array(
+                                        '$elemMatch'=>array(
+                                            '$id'=>new \MongoId($last_non_valid->getId())
+                                        )
+                                    )
+                                ),array(
+                                    '$addToSet'=>array(
+                                        'taxonsrefs'=>array(
+                                            '$ref'=>'Taxon',
+                                            '$id'=>new \MongoId($last_valid->getId()),
+                                            '$db'=>$dbname
+                                        )
+                                    )
+                                ),array('multiple'=>true));
                             }
                             $dm->clear();
                             gc_collect_cycles();
