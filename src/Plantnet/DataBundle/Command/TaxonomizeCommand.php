@@ -499,7 +499,10 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         $connection=new \MongoClient();
                         $db=$connection->$dbname;
                         \MongoCursor::$timeout=-1;
+                        $tot=0;
                         while(($data=fgetcsv($handle,0,';'))!==false){
+                            $tot++;
+                            echo $tot."\n";
                             $non_valid_identifier='';
                             $valid_identifier='';
                             $non_valid=array();
@@ -507,6 +510,20 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             foreach($syns as $level=>$tab){
                                 $string_non_valid=isset($data[$tab['col_non_valid']])?trim($data[$tab['col_non_valid']]):'';
                                 $string_valid=isset($data[$tab['col_valid']])?trim($data[$tab['col_valid']]):'';
+                                $cur_encoding=mb_detect_encoding($string_non_valid);
+                                if($cur_encoding=="UTF-8" && mb_check_encoding($string_non_valid,"UTF-8")){
+                                    $string_non_valid=$string_non_valid;
+                                }
+                                else{
+                                    $string_non_valid=utf8_encode($string_non_valid);
+                                }
+                                $cur_encoding=mb_detect_encoding($string_valid);
+                                if($cur_encoding=="UTF-8" && mb_check_encoding($string_valid,"UTF-8")){
+                                    $string_valid=$string_valid;
+                                }
+                                else{
+                                    $string_valid=utf8_encode($string_valid);
+                                }
                                 if($non_valid_identifier&&!empty($string_non_valid)){
                                     $non_valid_identifier.=' - ';
                                 }
