@@ -220,6 +220,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $error='Unable to find Module entity.';
         }
         if($action=='taxo'){
+            \MongoCursor::$timeout=-1;
             // remove old taxa' refs
             $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
                 ->update()
