@@ -499,10 +499,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         $connection=new \MongoClient();
                         $db=$connection->$dbname;
                         \MongoCursor::$timeout=-1;
-                        $tot=0;
                         while(($data=fgetcsv($handle,0,';'))!==false){
-                            $tot++;
-                            echo $tot."\n";
                             $non_valid_identifier='';
                             $valid_identifier='';
                             $non_valid=array();
