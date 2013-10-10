@@ -1,3 +1,12 @@
-• Dark navbar
-• Horizontal submenu (display further columns)
-• Custom banner
+<td>
+	<span class="example" data-content="<img src='/bundles/plantnetdata/images/tpl_dark.png' alt='dark' />">
+		Dark
+	</span>
+</td>
+<td>
+	<span class="example" data-content="<img src='/bundles/plantnetdata/images/tpl_h.png' alt='horizontal' />">
+		Horizontal
+	</span> (display further columns)
+</td>
+<td>Custom</td>
+<td>Yes</td>

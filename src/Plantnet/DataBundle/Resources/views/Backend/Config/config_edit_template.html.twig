@@ -22,17 +22,39 @@
 		<br />
 		<button type="submit" class="btn">Update</button>
 	</form>
-	<div class="row">
+	<table class="table table-striped table-bordered">
+		<tr>
+			<th></th>
+			<th>
+				<span class="tab-tooltip" title="Navbar style">
+					Navbar
+				</span>
+			</th>
+			<th>
+				<span class="tab-tooltip" title="Submenu position">
+					Submenu
+				</span>
+			</th>
+			<th>
+				<span class="tab-tooltip" title="Display custom banner">
+					Banner
+				</span>
+			</th>
+			<th>
+				<span class="tab-tooltip" title="Collection level display on website">
+					Collection level
+				</span>
+			</th>
+		</tr>
 		{% for view in views %}
-			<div class="span3">
-				<h5>{{ view }}</h5>
-				{% set img = '/bundles/plantnetdata/images/' ~ view ~ '.png' %}
-				<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ view }}">
-					<img src="{{ asset(img) | imagine_filter('thumb_template') }}" alt="{{ view }}" data-title="<strong>Description</strong>" data-content="{{ descriptions[view]|nl2br }}" class="tpl-popover" />
-				</a>
-			</div>
+			<tr>
+				<td><strong>{{ view }}</strong></td>
+				{% autoescape false %}
+					{{ descriptions[view] }}
+				{% endautoescape %}
+			</tr>
 		{% endfor %}
-	</div>
+	</tavle>
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
@@ -50,6 +72,12 @@
 				'titlePosition':'inside'
 			});
 			$('.tpl-popover').popover({
+				html:true,
+				placement:'left',
+				trigger:'hover'
+			});
+			$('.tab-tooltip').tooltip();
+			$('.example').popover({
 				html:true,
 				placement:'left',
 				trigger:'hover'
