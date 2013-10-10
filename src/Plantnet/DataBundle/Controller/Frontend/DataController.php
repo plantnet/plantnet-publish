@@ -16,6 +16,7 @@ use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
 
 use Plantnet\DataBundle\Utils\StringHelp;
+use Plantnet\DataBundle\Utils\ControllerHelp;
 
 
 /**
@@ -134,25 +135,6 @@ class DataController extends Controller
         return $tab_links;
     }
 
-    private function glossarize($dm,$collection,$string,$nl2br=false)
-    {
-        if($collection&&$collection->getGlossary()){
-            $terms=array();
-            $tmp=$dm->createQueryBuilder('PlantnetDataBundle:Definition')
-                ->field('glossary')->references($collection->getGlossary())
-                ->select('name')
-                ->hydrate(false)
-                ->getQuery()
-                ->toArray();
-            foreach($tmp as $term){
-                $terms[]=$term['name'];
-            }
-            unset($tmp);
-            return StringHelp::glossary_highlight($collection->getUrl(),$terms,$string,$nl2br);
-        }
-        return $string;
-    }
-
     /**
      * @Route("/", name="front_index")
      * @Template()
@@ -199,14 +181,14 @@ class DataController extends Controller
         //
         $coll=null;
         foreach($collections as $collection){
-            $collection->setDescription($this->glossarize($dm,$collection,$collection->getDescription()));
+            $collection->setDescription(ControllerHelp::glossarize($dm,$collection,$collection->getDescription()));
             $coll=$collection;
             $modules=$collection->getModules();
             foreach($modules as $module){
-                $module->setDescription($this->glossarize($dm,$collection,$module->getDescription()));
+                $module->setDescription(ControllerHelp::glossarize($dm,$collection,$module->getDescription()));
             }
         }
-        $page->setContent($this->glossarize($dm,$coll,$page->getContent()));
+        $page->setContent(ControllerHelp::glossarize($dm,$coll,$page->getContent()));
         //
         $config=$this->get_config($project);
         $tpl=$config->getTemplate();
@@ -260,10 +242,10 @@ class DataController extends Controller
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         //
-        $collection->setDescription($this->glossarize($dm,$collection,$collection->getDescription()));
+        $collection->setDescription(ControllerHelp::glossarize($dm,$collection,$collection->getDescription()));
         $modules=$collection->getModules();
         foreach($modules as $module){
-            $module->setDescription($this->glossarize($dm,$collection,$module->getDescription()));
+            $module->setDescription(ControllerHelp::glossarize($dm,$collection,$module->getDescription()));
         }
         //
         $config=$this->get_config($project);
@@ -339,7 +321,7 @@ class DataController extends Controller
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         //
-        $module->setDescription($this->glossarize($dm,$collection,$module->getDescription()));
+        $module->setDescription(ControllerHelp::glossarize($dm,$collection,$module->getDescription()));
         //
         $display=array();
         $order=array();
@@ -727,7 +709,7 @@ class DataController extends Controller
         //
         $attributes=$plantunit->getAttributes();
         foreach($attributes as $key=>$attribute){
-            $attributes[$key]=$this->glossarize($dm,$collection,$attribute,true);
+            $attributes[$key]=ControllerHelp::glossarize($dm,$collection,$attribute,true);
         }
         $plantunit->setAttributes($attributes);
         //
