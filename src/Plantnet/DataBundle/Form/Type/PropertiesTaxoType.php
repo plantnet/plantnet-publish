@@ -12,7 +12,8 @@ class PropertiesTaxoType extends AbstractType
 	{
 		$builder
 			->add('taxolevel','integer',array(
-				'required'=>false
+				'required'=>false,
+				'attr'=>array('min'=>1)
 			))
 			->add('taxolabel','text',array(
 				'required'=>false

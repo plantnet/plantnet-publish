@@ -26,7 +26,8 @@ class PropertiesOtherType extends AbstractType
 				'required'=>false
 			))
 			->add('sortorder','integer',array(
-				'required'=>false
+				'required'=>false,
+				'attr'=>array('min'=>1)
 			))
 		;
 	}
