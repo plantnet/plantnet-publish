@@ -113,6 +113,13 @@
                 {% endfor %}
             </table>
         </div>
+        {% if plantunit.haslocations == true %}
+            <div>
+                <h5>{{ "line-map"|trans|capitalize }}</h5>
+                {# LEAFLET MAP #}
+                <div id="map"></div>
+            </div>
+        {% endif %}
         {% if plantunit.hasimages == true %}
             <div class="gallery">
                 <h5>{{ "line-gallery"|trans|capitalize }}</h5>
@@ -124,13 +131,6 @@
                         <a href="{{ path('front_details_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}/page0" id="end_of_gallery"></a>
                     </li>
                 </ul>
-            </div>
-        {% endif %}
-        {% if plantunit.haslocations == true %}
-            <div>
-                <h5>{{ "line-map"|trans|capitalize }}</h5>
-                {# LEAFLET MAP #}
-                <div id="map"></div>
             </div>
         {% endif %}
     </section>
