@@ -53,12 +53,12 @@
         </p>
         <form id="add_module" action="{{ path('module_create', { 'id': collection.id, 'type': type }) }}" method="post" {{ form_enctype(form) }}>
             {{ form_errors(form) }}
-            <div class="field-form">
+            <div class="field-form" id="txt-container">
                 {{ form_label(form.name) }}
                 {{ form_errors(form.name) }}
                 {{ form_widget(form.name) }}
             </div>
-            <div class="field-form">
+            <div class="field-form" id="url-container">
                 {{ form_label(form.url) }}
                 {{ form_errors(form.url) }}
                 {{ form_widget(form.url) }}
@@ -98,6 +98,21 @@
     <script type="text/javascript">
         $(document).ready(function(){
             {% include "PlantnetDataBundle:Backend\\WYSIWYG:cleditor.html.twig" %}
+            var isUpdated=false;
+            $('#url-container input[type=text]').keyup(function(){
+                isUpdated=true;
+            });
+            $('#txt-container input[type=text]').keyup(function(){
+                if(!isUpdated){
+                    var string=$(this).val();
+                    string=string.toLowerCase();
+                    string=string.replace(/[^a-z0-9]/gi,'-');
+                    string=string.replace(/--+/g,'-');
+                    string=string.indexOf('-')==0?string.substring(1):string;
+                    string=string.replace(/-$/,'');
+                    $('#url-container input[type=text]').val(string);
+                }
+            });
         });
     </script>
 {% endblock %}
