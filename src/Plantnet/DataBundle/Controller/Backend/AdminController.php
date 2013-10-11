@@ -673,4 +673,13 @@ class AdminController extends Controller
         $this->get('session')->getFlashBag()->add('msg_success','Switched to '.str_replace($this->get_prefix(),'',$database).' project');
         return $this->redirect($this->generateUrl('admin_index'));
     }
+
+    /**
+     * @Route("/help", name="help")
+     * @Template()
+     */
+    public function helpAction()
+    {
+        return $this->render('PlantnetDataBundle:Backend:help.html.twig');
+    }
 }

@@ -1,0 +1,739 @@
+{% extends "PlantnetDataBundle:Backend:layout.html.twig" %}
+{% block stylesheets %}
+	{{ parent() }}
+{% endblock %}
+{% block content %}
+	<h3>Publish v2</h3>
+	<p>
+		Publish v2 est une plate-forme de publication de données botaniques.
+	</p>
+	<p>
+		Elle se compose d'un espace public, destiné à la consultation des données par les internautes, et d'un espace privé, réservé aux administrateurs.
+	</p>
+	<blockquote>
+		<small>
+			Espace public : http://{url}/
+		</small>
+		<small>
+			Espace privé : http://{url}/admin/
+		</small>
+	</blockquote>
+	<p>
+		Publish v2 est uniquement destiné à la publication de données, on ne peut donc pas éditer et&nbsp;/&nbsp;ou exporter ces données.
+	</p>
+	<div>
+		<h3>Compte Administrateur</h3>
+		<p>
+			Le compte administrateur permet de se connecter à l'interface de saisie de données pour les publier sur le Web.
+		</p>
+		<h4>Créer un compte administrateur</h4>
+		<blockquote>
+			<small>
+				http://{url}/admin/ > Register
+			</small>
+		</blockquote>
+		<p>
+			Ces informations vous seront demandées pour créer un compte :
+		</p>
+		<dl>
+			<dt>Username</dt>
+			<dd>
+				Le nom d'utilisateur qui sera utilisé pour se connecter.
+			</dd>
+			<dt>Email</dt>
+			<dd>
+				L'e-mail permet de valider un compte, de récupérer son mot de passe, de recevoir des données relatives à l'utilisation de Publish v2, et d'être contacté par les responsables de la plate-forme.
+			</dd>
+			<dt>Password</dt>
+			<dd>
+				Le mot de passe qui sera utilisé pour se connecter.
+			</dd>
+			<dt>Looking for Super Admin account</dt>
+			<dd>
+				Permet la création d'un compte administrateur particulier, qui n'aura pas de base de données associée car il permet de gérer l'intégralité des bases de la plate-forme.
+				<br />
+				Ce type de compte permet également de valider les comptes administrateurs.
+				<br />
+				<span class="text-warning">
+					Pour une utilisation normale de la plate-forme, ne pas cocher cette case.
+				</span>
+			</dd>
+			<dt>Database name</dt>
+			<dd>
+				Le nom de la première base de données liée au compte.
+				<br />
+				<span class="text-warning">
+					Ce nom sera utilisé dans l'URL qui permet l'accès aux données.
+				</span>
+			</dd>
+			<dt>Default language</dt>
+			<dd>
+				La langue principale de cette base.
+			</dd>
+		</dl>
+		<p>
+			Une fois le compte créé, il faut le valider en cliquant sur le lien reçu par e-mail.
+			<br />
+			Après validation du compte par un responsable de la plate-forme, un e-mail est envoyé et on peut commencer à saisir des données.
+		</p>
+		<h4>Modifier un compte administrateur</h4>
+		<blockquote>
+			<small>
+				http://{url}/admin/ > {Username} > Settings
+			</small>
+		</blockquote>
+		<p>
+			Un administrateur peut modifier les données relatives à son compte :
+		</p>
+		<ul>
+			<li>Username</li>
+			<li>Email</li>
+			<li>Password</li>
+		</ul>
+	</div>
+	<div>
+		<h3>Tableau de bord</h3>
+		<p>
+			Le tableau de bord permet d'accéder à l'intégralité des paramètres relatifs à une base de données.
+		</p>
+		<blockquote>
+			<small>
+				Tableau de bord : http://{url}/admin/
+			</small>
+		</blockquote>
+		<p>
+			Si l'administrateur gère plusieurs bases, il peut sélectionner la base sur la quelle il souhaite travailler.
+		</p>
+		<h4>Home</h4>
+		<p>
+			Permet d'accéder à la page d'accueil du tableau de bord.
+		</p>
+		<h4>Edit pages</h4>
+		<p>
+			Par défaut, le site généré par Publish v2 intègre les pages suivantes :
+		</p>
+		<dl>
+			<dt>Home</dt>
+			<dd>
+				Pour la présentation du projet.
+				<br />
+				Ce texte est affiché en haut de la page d'accueil du site, avant les menus d'accès aux données.
+			</dd>
+			<dt>Mentions</dt>
+			<dd>
+				Pour les mentions légales.
+			</dd>
+			<dt>Credits</dt>
+			<dd>
+				Pour les crédits.
+			</dd>
+			<dt>Contacts</dt>
+			<dd>
+				Pour afficher un ou plusieurs contacts.
+			</dd>
+		</dl>
+		<p>
+			Ce menu permet d'éditer le titre et le contenu des ces différentes pages.
+		</p>
+		<h4>Settings > Template</h4>
+		<p>
+			Il est possible de sélectionner un template (modèle d'affichage) à appliquer au site.
+			<br />
+			Ce template doit être choisi en fonction des données qui seront diffusées.
+		</p>
+		<p>
+			Par exemple, si on souhaite afficher beaucoup de colonnes dans la vue "tableau", il faut privilégier un template qui utilise un sous-menu horizontal, de cette manière, il y aura plus d'espace dédié à l'affichage du tableau.
+		</p>
+		<p>
+			<span class="text-warning">
+				Dans le cas d'un site multilingue, le template sélectionné sera appliqué aux différentes langues.
+			</span>
+		</p>
+		<h4>Settings > Banner</h4>
+		<p>
+			Certains templates peuvent accueillir une bannière personnalisée en haut des pages du site.
+			<br />
+			Ce menu permet l'ajout et la suppression de la bannière.
+		</p>
+		<p>
+			<span class="text-warning">
+				Du texte peut être intégré à la bannière, pour cela, si le site est multilingue, il faudra ajouter la bannière pour chacune des langues.
+			</span>
+		</p>
+		<h4>Settings > Languages</h4>
+		<p>
+			En plus de la langue par défaut, il est possible de diffuser des données dans d'autres langues.
+		</p>
+		<p>
+			Pour ce faire, il faut sélectionner les langues désirées sur cette interface.
+			<br />
+			On peut ensuite passer d'une langue à l'autre grâce à un menu de sélection dans le barre de navigation.
+		</p>
+		<p>
+			<span class="text-warning">
+				Il faut noter que chaque version traduite du site est indépendante.
+				<br />
+				Il sera donc nécessaire de reseigner les données (contenu des pages "Home", "Contacts", ...) ainsi que les données botaniques pour chaque langue.
+				<br />
+				Pour chaque <i>Collection</i>, <i>Module</i>, <i>Sous-module</i>, il est important de garder la même valeur du champ "URL" afin que la correspondance se fasse entre les pages pour que l'internaute puisse passer d'une langue à l'autre.
+			</span>
+		</p>
+		<p>
+			Dans le cas où on choisit de désélectionner une langue, celle-ci n'est pas supprimée, elle est simplement indisponible en consultation.
+			On peut donc la réactiver par la suite.
+		</p>
+		<p>
+			Les éléments de navigation de l'interface réservée aux internautes sont automatiquement traduits en anglais, français et espagnol.
+			<br />
+			Pour tout autres langues, ces éléments seront affichés en anglais.
+		</p>
+	</div>
+	<div>
+		<h3>Organisation des données</h3>
+		<p>
+			Les données publiées par Publish v2 sont organisées suivant ce modèle :
+		</p>
+		<ul>
+			<li>
+				Projet
+				<ul>
+					<li>
+						Collection 
+						<ul>
+							<li>
+								Module
+								<ul>
+									<li>
+										Sous-module
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+		<h4>Projet</h4>
+		<p>
+			Le projet correspond à une base de données indépendante qui donne lieu à la création d'un site pour la consultation des données.
+			<br />
+			Le premier projet est créé automatiquement lors de la création du compte administrateur.
+		</p>
+		<p>
+			Un administrateur peut créer plusieurs projets (Bouton "Create new project").
+			<br />
+			Il peut passer d'un projet à l'autre grâce à un menu dans la barre de navigation sur le tableau de bord.
+		</p>
+		<p>
+			Un projet est constitué d'une ou plusieurs collections.
+		</p>
+		<h4>Collection</h4>
+		<p>
+			La collection est le point d'entrée vers les données publiées. Elle va regrouper plusieurs module et permet donc de les décrire succinctement.
+		</p>
+		<p>
+			Lors de la création d'une collection, ces informations vous seront demandées :
+		</p>
+		<dl>
+			<dt>Name</dt>
+			<dd>
+				C'est le nom de la collection qui sera affiché sur les pages du site.
+			</dd>
+			<dt>Url</dt>
+			<dd>
+				Cette valeur sera utilisée dans l'URL qui permet l'accès à la collection.
+				<br />
+				<span class="text-warning">
+					Il est fortement recommandé de ne pas modifier cette valeur par la suite. Les liens vers le site (marques-pages, e-mails, ...) ne seraient plus fonctionnels et le référencement du site par les moteurs de recherche serait affecté.
+				</span>
+			</dd>
+			<dt>Description</dt>
+			<dd>
+				Description de la collection, des modules qu'elle va contenir.
+			</dd>
+		</dl>
+		<p>
+			<span class="text-warning">
+				Ce niveau n'est pas toujours utile, notamment si il n'y a qu'un seul module à publier.
+				<br />
+				Il est possible de sélectionner un template qui ne prend pas en compte ce niveau pour faciliter la navigation des internautes sur le site.
+			</span>
+		</p>
+		<h4>Module</h4>
+		<p>
+			Le module correspond à un jeu de données principal qui pourra être complété par la suite avec des sous-modules.
+			<br />
+			Par exemple, la description d'espèces ...
+		</p>
+		<p>
+			Lors de la création d'un module, ces informations vous seront demandées :
+		</p>
+		<dl>
+			<dt>Name</dt>
+			<dd>
+				Le nom du module qui sera affiché sur les pages du site.
+			</dd>
+			<dt>Url</dt>
+			<dd>
+				Cette valeur sera utilisée dans l'URL qui permet l'accès au module.
+				<br />
+				<span class="text-warning">
+					Il est fortement recommandé de ne pas modifier cette valeur par la suite. Les liens vers le site (marques-pages, e-mails, ...) ne seraient plus fonctionnels et le référencement du site par les moteurs de recherche serait affecté.
+				</span>
+			</dd>
+			<dt>Enable taxonomic browser</dt>
+			<dd>
+				Permet l'ajout automatique d'un lien sur le site pour que les internautes aient accès à des données taxonomiques.
+			</dd>
+			<dt>Description</dt>
+			<dd>
+				Description du module.
+			</dd>
+			<dt>CSV data</dt>
+			<dd>
+				Fichier au format csv qui contient l'intégralité des données à publier.
+				<br />
+				Le fichier doit contenir une ligne d'en-tête avec le nom de chaque colonne.
+				<br />
+				Chaque ligne de données doit contenir un identifiant unique.
+				<table class="table table-bordered table-condensed">
+					<tr>
+						<th>ID</th>
+						<th>Famille</th>
+						<th>Genre</th>
+						<th>Espèce</th>
+						<th>...</th>
+					</tr>
+					<tr>
+						<td>e1</td>
+						<td>Apocynaceae</td>
+						<td>Adenium</td>
+						<td>Adenium obesum</td>
+						<td>...</td>
+					</tr>
+					<tr>
+						<td>e2</td>
+						<td>Solanaceae</td>
+						<td>Capsicum</td>
+						<td>Capsicum annuum</td>
+						<td>...</td>
+					</tr>
+				</table>
+			</dd>
+		</dl>
+		<p>
+			L'étape suivante permet de configurer l'affichage des données.
+		</p>
+		<dl>
+			<dt>Field</dt>
+			<dd>
+				Correspond au libellé de la colonne.
+			</dd>
+			<dt>Type</dt>
+			<dd>
+				<ul>
+					<li>Id : Colonne qui contient les identifiants</li>
+					<li>Title 1 : Première partie du libellé qui sera afficher pour désigner la ligne</li>
+					<li>Title 2 : Seconde partie du libellé qui sera afficher pour désigner la ligne</li>
+					<li>Title 3 [optionnel] : Troisième partie du libellé qui sera afficher pour désigner la ligne</li>
+				</ul>
+			</dd>
+			<dt>Display - Main</dt>
+			<dd>
+				Sélection des colonnes à afficher dans la vue "tableau".
+			</dd>
+			<dt>Display - Details</dt>
+			<dd>
+				Sélection des colonnes à afficher sur la fiche détaillée.
+			</dd>
+			<dt>Display - Details</dt>
+			<dd>
+				Sélection des colonnes à utiliser sur le formulaire de recherche proposé aux internautes.
+			</dd>
+			<dt>Sort order</dt>
+			<dd>
+				Tri qui sera appliqué par défaut sur la vue "tableau".
+				<br />
+				<span class="text-warning">
+					Cela ne correspond pas à l'ordre d'affichage des colonnes. Elles sont affichées dans le même ordre que dans le fichier.
+				</span>
+				<br />
+				Pour trier par Famille, puis par Genre, puis par Espèce :
+				<br />
+				Famille -> Sort order : 1<br />
+				Genre -> Sort order : 2<br />
+				Espèce -> Sort order : 3<br />
+			</dd>
+		</dl>
+		<p>
+			En cliquant sur le nom d'un module, on peut accéder à une option "Export".
+			Cette option permet d'exporter toutes les données relatives au module et à ses sous-modules sous forme de fichiers HTML.
+			<br />
+			<span class="text-warning">
+				Si le volume de données est important, cette procédure peut prendre beaucoup de temps et elle ne peut pas être interrompue.
+			</span>
+		</p>
+		<h4>Sous-module</h4>
+		<p>
+			Le sous-module correspond à un jeu de données secondaire, qui permet de compléter les données d'un module.
+			<br />
+			Il y a trois types de sous-module :
+		</p>
+		<ul>
+			<li>Image</li>
+			<li>Locality</li>
+			<li>Other</li>
+		</ul>
+		<p>
+			 Lors de la création d'un sous-module, ces informations vous seront demandées : 
+		</p>
+		<dl>
+			<dt>Name</dt>
+			<dd>
+				Le nom du sous-module qui sera affiché sur les pages du site.
+			</dd>
+			<dt>Url</dt>
+			<dd>
+				Cette valeur sera utilisée dans l'URL qui permet l'accès au sous-module.
+				<br />
+				<span class="text-warning">
+					Il est fortement recommandé de ne pas modifier cette valeur par la suite. Les liens vers le site (marques-pages, e-mails, ...) ne seraient plus fonctionnels et le référencement du site par les moteurs de recherche serait affecté.
+				</span>
+			</dd>
+			<dt>Type</dt>
+			<dd>
+				Le type du sous-module : Image, Locality, Other.
+			</dd>
+			<dt>CSV data</dt>
+			<dd>
+				Fichier au format csv qui contient les données à publier.
+				<br />
+				Le fichier doit contenir une ligne d'en-tête avec le nom de chaque colonne.
+				<br />
+				Chaque ligne de données doit contenir un identifiant qui correspond à un identifiant du fichier principal.
+				<br />
+				<span class="text-warning">
+					Si le fichier principal contient également les données du sous-module, il doit être réimporté.
+				</span>
+				<br />
+				Image :
+				<table class="table table-bordered table-condensed">
+					<tr>
+						<th>ID</th>
+						<th>Date</th>
+						<th>Copyright</th>
+						<th>Fichier</th>
+						<th>...</th>
+					</tr>
+					<tr>
+						<td>e1</td>
+						<td>05.11.2012</td>
+						<td>Juda Bricot</td>
+						<td>image1.jpg</td>
+						<td>...</td>
+					</tr>
+					<tr>
+						<td>e1</td>
+						<td>09.05.2012</td>
+						<td>Alain Proviste</td>
+						<td>image3.jpg</td>
+						<td>...</td>
+					</tr>
+				</table>
+				Locality :
+				<table class="table table-bordered table-condensed">
+					<tr>
+						<th>ID</th>
+						<th>Latitude</th>
+						<th>Longitude</th>
+						<th>...</th>
+					</tr>
+					<tr>
+						<td>e1</td>
+						<td>-12,9619805556</td>
+						<td>45,1272361111</td>
+						<td>...</td>
+					</tr>
+					<tr>
+						<td>e1</td>
+						<td>0,5624333333</td>
+						<td>12,8574888889</td>
+						<td>...</td>
+					</tr>
+				</table>
+				Other :
+				<table class="table table-bordered table-condensed">
+					<tr>
+						<th>ID</th>
+						<th>Nom commun</th>
+						<th>...</th>
+					</tr>
+					<tr>
+						<td>e1</td>
+						<td>Rose du désert</td>
+						<td>...</td>
+					</tr>
+					<tr>
+						<td>e2</td>
+						<td>Piment de Cayenne</td>
+						<td>...</td>
+					</tr>
+				</table>
+			</dd>
+			<dt>Parent</dt>
+			<dd>
+				Le module auquel le sous-module doit être rattaché.
+			</dd>
+		</dl>
+		<p>
+			L'étape suivante permet de configurer l'affichage des données.
+		</p>
+		<dl>
+			<dt>Field</dt>
+			<dd>
+				Correspond au libellé de la colonne.
+			</dd>
+			<dt>Type</dt>
+			<dd>
+				<ul>
+					<li>Parent : Colonne qui contient les identifiants</li>
+					<li>File : Colonne qui contient les noms de fichier</li>
+					<li>Copyright : colonne qui contient les copyrights</li>
+					<li>Latitude : colonne qui contient les latitudes</li>
+					<li>Longitude : colonne qui contient les longitudes</li>
+				</ul>
+			</dd>
+			<dt>Display</dt>
+			<dd>
+				Sélection des colonnes à afficher.
+			</dd>
+		</dl>
+		<h4>Sous-module de type Image</h4>
+		<p>
+			Après l'import de données relatives à des images, il faut envoyer les fichiers images sur le serveur.
+			Pour cela, il faut cliquer sur le nom du sous-module correspondant et sélectionner "Images upload".
+		</p>
+		<p>
+			Les images doivent être placées dans un répertoire qui devra être compressé au format zip.
+			La taille du fichier zip étant limité lors de l'envoi sur le serveur, il est possible de déposer plusieurs fichiers zip à la suite.
+			<br />
+			<span class="text-warning">
+				Si le sous-module de type Image est supprimé, les images seront également supprimées du serveur.
+				<br />
+				Si le site est multilingue, il n'est pas utile de déposer les images pour chaque langue, elles seront placées dans un répertoire partagé.
+				<br />
+				En revanche, si certaines images contiennent du texte et doivent donc être ajoutées, elles seront ajoutée au répertoire existant.
+			</span>
+		</p>
+		<h4>Sous-module de type Locality</h4>
+		<p>
+			...
+		</p>
+		<h4>Sous-module de type Other</h4>
+		<p>
+			Ce type de sous-module permet de sélectionner des colonnes à ajouter au formulaire de recherche et de définir un ordre de tri à appliquer lors de l'affichage.
+		</p>
+	</div>
+	<div>
+		<h3>Glossaire</h3>
+		<p>
+			Il est possible de mettre en place un glossaire au niveau d'une collection.
+			Une page contenant tous les termes, définitions, images du glossaire sera alors ajoutée au site.
+			<br />
+			En plus de cela, tous les termes du glossaires seront mis en évidence dans le contenu des pages pour que l'internaute puisse visualiser ces informations facilement.
+		</p>
+		<p>
+			Pour ajouter un glossaire, cliquer sur le lien "Add Glossary".
+			<br />
+			Il vous sera demander de déposer un fichier CSV.
+			<br />
+			Le fichier doit contenir une ligne d'en-tête avec le nom de chaque colonne. 
+		</p>
+		<table class="table table-bordered table-condensed">
+			<tr>
+				<th>keyword</th>
+				<th>definition</th>
+				<th>file</th>
+				<th>...</th>
+			</tr>
+			<tr>
+				<td>mot 1</td>
+				<td>définition ...</td>
+				<td>image1.jpg</td>
+				<td>...</td>
+			</tr>
+			<tr>
+				<td>mot 2</td>
+				<td>définition ...</td>
+				<td>image2.jpg</td>
+				<td>...</td>
+			</tr>
+		</table>
+		<p>
+			L'étape suivante permet de configurer l'affichage des données.
+		</p>
+		<dl>
+			<dt>Type</dt>
+			<dd>
+				<ul>
+					<li>Keyword : Colonne qui contient les mots</li>
+					<li>Definition : Colonne qui contient les noms de définition</li>
+					<li>File : colonne qui contient les noms de fichier</li>
+				</ul>
+			</dd>
+		</dl>
+		<p>
+			Après l'import de données relatives au glossaire, il faut envoyer les fichiers images sur le serveur.
+			Pour cela, il faut cliquer sur le nom de la collection qui contient le glossaire puis sur "Glossary".
+		</p>
+		<p>
+			Les images doivent être placées dans un répertoire qui devra être compressé au format zip.
+			La taille du fichier zip étant limité lors de l'envoi sur le serveur, il est possible de déposer plusieurs fichiers zip à la suite.
+			<br />
+			<span class="text-warning">
+				Si le glossaire est supprimé, les images seront également supprimées du serveur.
+				<br />
+				Si le site est multilingue, il n'est pas utile de déposer les images pour chaque langue, elles seront placées dans un répertoire partagé.
+				<br />
+				En revanche, si certaines images contiennent du texte et doivent donc être ajoutées, elles seront ajoutée au répertoire existant.
+			</span>
+		</p>
+	</div>
+	<div>
+		<h3>Taxonomie</h3>
+		<p>
+			Les modules pour les quels la case "Enable taxonomic browser" est cochée propose une option permettant de configurer les éléments relatifs à la taxonomie.
+			<br />
+			Cliquer sur le nom du module puis sur "Taxonomy".
+		</p>
+		<p>
+			Un formulaire permet alors de saisir les informations nécessaire à la création des données taxonomiques.
+		</p>
+		<dl>
+			<dt>Taxon level</dt>
+			<dd>
+				Permet de définir le niveau du taxon.
+				<br />
+				Dans un cas où on souhaite avoir 3 niveaux : Famille, Genre, Espèce, il faut préciser le niveau "1" pour Famille, "2" pour Genre ...
+			</dd>
+			<dt>Taxon label</dt>
+			<dd>
+				Permet de définir le libellé du niveau.
+				<br />
+				Cela peut être utile si la colonne a un nom ambigu (ex : taxon retenu).
+			</dd>
+		</dl>
+		<p>
+			Les éléments du module seront alors liés aux taxons correspondants.
+		</p>
+		<table class="table table-bordered table-condensed">
+			<tr>
+				<th>ID</th>
+				<th>Genre</th>
+				<th>Espèce</th>
+				<th>...</th>
+			</tr>
+			<tr>
+				<td>e1</td>
+				<td>Adenium</td>
+				<td>Adenium obesum</td>
+				<td>...</td>
+			</tr>
+			<tr>
+				<td>e2</td>
+				<td>Adenium</td>
+				<td></td>
+				<td>...</td>
+			</tr>
+		</table>
+		<p>
+			Dans cet exemple, deux taxons seront créés : "Adenium" et "Adenium obesum".
+			<br />
+			De plus, "Adenium obesum" sera classé sous "Adenium".
+			<br />
+			"e1" sera lié au genre "Adenium" et à l'espèce "Adenium obesum" et "e2" ne sera lié qu'au genre "Adenium".
+			<br />
+			Lors d'une recherche sur le genre "Adenium", on retrouvera donc "e1" + "e2".
+			<br />
+			Lors d'une recherche sur l'espèce "Adenium obesum", on retrouvera uniquement "e1".
+		</p>
+	</div>
+	<div>
+		<h3>Synonymie</h3>
+		<p>
+			Il est possible de gérer des cas de synonymie.
+			Pour cela il faut ajouter un fichier CSV contenant les données à intégrer à la taxonomie.
+		</p>
+		<p>
+			Le fichier doit contenir une ligne d'en-tête avec le nom de chaque colonne.
+			<br />
+			Les noms doivent correspondre aux libellé sélectionnés lors de la saisie des informations relatives à la taxonomie.
+			<br />
+			Si on a définit deux niveaux : Genre et Espèce
+			<br />
+			le fichier doit se présenter avec cette forme :
+		</p>
+		<table class="table table-bordered table-condensed">
+			<tr>
+				<th>Genre</th>
+				<th>Espèce</th>
+				<th>Genre_valid</th>
+				<th>Espèce_valid</th>
+			</tr>
+			<tr>
+				<td>g1</td>
+				<td></td>
+				<td>g1_v</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>g2</td>
+				<td>e1</td>
+				<td>g2</td>
+				<td>e1_v</td>
+			</tr>
+		</table>
+		<p>
+			Si un taxon (valide ou non) n'existe pas il est créé et placé dans la hiérarchie définie dans ce fichier.
+			<br />
+			Dans cet exemple, on précise que le genre "g1" est synonyme du genre "g1_v".
+			<br />
+			Donc tous les données attachées à g1 seront aussi attachée à "g1_v".
+			<br />
+			La seconde ligne indique que le taxon "e1" du genre "g2" est synonyme du taxon "e1_v" du genre "g2".
+			<br />
+			Il est impératif de répéter intégralement la "chaîne taxonomique" des taxons à mettre en synonymie. On peut ainsi mettre en synonymie des taxons de rangs différents. Par exemple :
+		</p>
+		<table class="table table-bordered table-condensed">
+			<tr>
+				<th>Genre</th>
+				<th>Espèce</th>
+				<th>Sous-expèce</th>
+				<th>Genre_valid</th>
+				<th>Espèce_valid</th>
+				<th>Sous-expèce_valid</th>
+			</tr>
+			<tr>
+				<td>g1</td>
+				<td>e1</td>
+				<td>se1</td>
+				<td>g2</td>
+				<td>e2</td>
+				<td></td>
+			</tr>
+		</table>
+		<p>
+			On indique ici que la sous-espèce "se1" de l'espèce "e1" et du genre "g1" est synonyme de l'espèce "e2" du genre "g2".
+			<br />
+			<strong>Attention :</strong> cela ne signifie pas que "g1" est synonyme de "g2". Seuls les deux derniers éléments des "chaînes" valide et non-valide sont mis en synonymie.
+		</p>
+		<p>
+			Ainsi, lors d'une recherche sur "e2", on retrouvera tous les éléments qui étaient déjà associés à "e2" ainsi que les éléments associés à "se1".
+			<br />
+			En revanche, lors d'une recherche sur "se1", on ne trouvera que les données associées à "se1".
+		</p>
+	</div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+{% endblock %}

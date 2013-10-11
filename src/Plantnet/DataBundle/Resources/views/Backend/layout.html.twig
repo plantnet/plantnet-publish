@@ -123,10 +123,10 @@
 											</a>
 											<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 												<li>
-													<a class="edit ajax" href="{{ path('config_edit') }}">
-														<i class="icon-globe"></i>
-											            Languages
-											        </a>
+													<a class="edit ajax" href="{{ path('config_edit_template') }}">
+														<i class="icon-eye-open"></i>
+														Template
+													</a>
 												</li>
 												<li>
 													<a class="edit ajax" href="{{ path('config_edit_banner') }}">
@@ -135,10 +135,10 @@
 													</a>
 												</li>
 												<li>
-													<a class="edit ajax" href="{{ path('config_edit_template') }}">
-														<i class="icon-eye-open"></i>
-														Template
-													</a>
+													<a class="edit ajax" href="{{ path('config_edit') }}">
+														<i class="icon-globe"></i>
+											            Languages
+											        </a>
 												</li>
 											</ul>
 										</li>
@@ -255,6 +255,7 @@
 									<i class="icon-briefcase"></i>
 									Create new project
 								</a>
+								<br />
 								<div class="modal hide fade" id="new_db">
 									<div class="modal-header">
 										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -275,6 +276,7 @@
 								</div>
 							{% endif %}
 						{% endif %}
+						<a href="{{ path('help') }}" class="btn btn-block">Help</a>
 					</div>
 					<div class="span8">
 						<div id="content" class="well wellcontent">
