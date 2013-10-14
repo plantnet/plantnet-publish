@@ -1,5 +1,13 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_5:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_5:datatypes.html.twig" %}
-{% block title config.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
+{% set tmp_title = '' %}
+{% if current_display == 'grid' %}
+    {% set tmp_title = ' - ' ~ "line-grid"|trans|capitalize %}
+{% elseif current_display == 'images' %}
+    {% set tmp_title = ' - ' ~ "line-images"|trans|capitalize %}
+{% elseif current_display == 'locations' %}
+    {% set tmp_title = ' - ' ~ "line-locations"|trans|capitalize %}
+{% endif %}
+{% block title taxon.name ~ ' [' ~ taxon.label ~ ']' ~ tmp_title %}
 {% block stylesheets %}
     {{ parent() }}
     {% if current_display == 'locations' %}
