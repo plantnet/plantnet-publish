@@ -1,5 +1,5 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_2:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_2:datatypes.html.twig" %}
-{% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - Pl@ntnet' %}
+{% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name %}
 {% block meta %}
     <meta name="description" content="{{ module.description|striptags|truncate(200)|cleandesc }}"/>
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_4:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_4:datatypes.html.twig" %}
-{% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - Pl@ntnet' %}
+{% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module_parent.name ~ ' - ' ~ module.name %}
 {% block stylesheets %}
 	{{ parent() }}
 	{% include 'PlantnetDataBundle:Frontend_4:leaflet.css.html.twig' %}
