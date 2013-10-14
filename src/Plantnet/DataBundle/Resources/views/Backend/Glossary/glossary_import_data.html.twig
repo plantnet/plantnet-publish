@@ -48,7 +48,7 @@
 					data: DATA,
 					cache: false,
 					success: function(data){
-						$('#data').html(data);
+						$('#data').html(data+' <a href="{{ path('glossary_edit', { 'id': glossary.id }) }}" class="btn btn-small">OK</a>');
 						$(".loading").hide();
 					}
 				});
