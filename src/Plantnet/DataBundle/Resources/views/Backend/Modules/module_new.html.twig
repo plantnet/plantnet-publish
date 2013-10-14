@@ -108,11 +108,24 @@
             $('#txt-container input[type=text]').keyup(function(){
                 if(!isUpdated){
                     var string=$(this).val();
+                    //
+                    string=string.replace(new RegExp("[àáâãäå]",'gi'),"a");
+                    string=string.replace(new RegExp("æ",'gi'),"ae");
+                    string=string.replace(new RegExp("ç",'gi'),"c");
+                    string=string.replace(new RegExp("[èéêë]",'gi'),"e");
+                    string=string.replace(new RegExp("[ìíîï]",'gi'),"i");
+                    string=string.replace(new RegExp("ñ",'gi'),"n");                            
+                    string=string.replace(new RegExp("[òóôõö]",'gi'),"o");
+                    string=string.replace(new RegExp("œ",'gi'),"oe");
+                    string=string.replace(new RegExp("[ùúûü]",'gi'),"u");
+                    string=string.replace(new RegExp("[ýÿ]",'gi'),"y");
+                    //
                     string=string.toLowerCase();
                     string=string.replace(/[^a-z0-9]/gi,'-');
                     string=string.replace(/--+/g,'-');
                     string=string.indexOf('-')==0?string.substring(1):string;
                     string=string.replace(/-$/,'');
+                    //
                     $('#url-container input[type=text]').val(string);
                 }
             });
