@@ -14,6 +14,7 @@ class TwigPregExtension extends \Twig_Extension
             'language'=>new \Twig_Filter_Method($this,'language'),
             'truncate'=>new \Twig_Filter_Method($this,'truncate'),
             'fileexists'=>new \Twig_Filter_Method($this,'fileexists'),
+            'cleandesc'=>new \Twig_Filter_Method($this,'cleandesc'),
         );
     }
 
@@ -62,6 +63,11 @@ class TwigPregExtension extends \Twig_Extension
             return true;
         }
         return false;
+    }
+
+    public function cleandesc($var)
+    {
+        return str_replace('"','&bdquo;',$var);
     }
 
     public function getName()

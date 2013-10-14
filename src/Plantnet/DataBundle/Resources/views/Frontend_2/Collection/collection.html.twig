@@ -1,7 +1,7 @@
 {% extends "PlantnetDataBundle:Frontend_2:layout.html.twig" %}
 {% block title config.name ~ ' - ' ~ collection.name ~ ' - Pl@ntnet' %}
 {% block meta %}
-    <meta name="description" content="{{ collection.name }} - {{ collection.description|striptags|truncate(175) }}"/>
+    <meta name="description" content="{{ collection.description|striptags|truncate(200)|cleandesc }}"/>
 {% endblock %}
 {% block stylesheets %}
 	{{ parent() }}

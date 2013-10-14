@@ -1,7 +1,7 @@
 {% extends "PlantnetDataBundle:Frontend:layout.html.twig" %}
 {% block title config.name ~ ' - Pl@ntnet' %}
 {% block meta %}
-	<meta name="description" content="{{ config.name }} - {{ page.content|striptags|truncate(175) }}"/>
+	<meta name="description" content="{{ page.content|striptags|truncate(200)|cleandesc }}"/>
 {% endblock %}
 {% block header %}<h1>{{ config.name }}</h1>{% endblock %}
 {% block row %}
