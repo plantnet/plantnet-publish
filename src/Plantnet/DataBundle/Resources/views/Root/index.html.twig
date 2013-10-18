@@ -1,11 +1,8 @@
 {% extends "PlantnetDataBundle:Root:layout.html.twig" %}
 {% block title "Pl@ntnet - Publish" %}
-{% block header %}<h1>{{ "line-projects"|trans|capitalize }}</h1>{% endblock %}
+{% block header %}<h3>{{ "line-projects-list"|trans }}</h3>{% endblock %}
 {% block row %}
 	<div id="root">
-		<h5>
-			{{ "line-projects-list"|trans }}
-		</h5>
 		{% for project in projects %}
 			<div class="website">
 				<h4>

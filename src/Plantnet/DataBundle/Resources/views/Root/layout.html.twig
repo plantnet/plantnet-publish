@@ -37,19 +37,19 @@
 </head>
 <body>
 	{% block topbar %}
-		<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container">
-					<a class="brand" href="{{ path('front_index') }}"></a>
+					<a class="brand" href="{{ path('front_index') }}">
+						<img src="{{ asset('bundles/plantnetdata/images/plantnet.png') }}" alt="Pl@ntNet - Publish" />
+					</a>
 				</div>
 			</div>
 		</div>
 	{% endblock %}
 	<div class="container">
 		<div class="content">
-			<div class="page-header">
-				{% block header %}{% endblock %}
-			</div>
+			{% block header %}{% endblock %}
 			<div class="row">
 				<div class="span12">
 					{% block breadcrumb %}{% endblock %}

@@ -5,8 +5,6 @@
 
 // Values
 // --------------------------------------------------
-@top_bar_height:	40px;
-@content_padding:	20px;
 
 
 // Styles
@@ -17,11 +15,8 @@ a,a:hover,a:active,a:focus{
 html{
 	overflow-y:scroll;
 }
-html,body{
-	background-color:#EEE;
-}
 body{
-	padding-top:@top_bar_height; // @top_bar_height to make the container go all the way to the bottom of the topbar
+	padding-top: 40px;
 }
 div.clear{
 	clear:both;
@@ -29,58 +24,8 @@ div.clear{
 span.nowrap{
 	white-space:nowrap;
 }
-.navbar-inverse .navbar-inner, .navbar-inverse .nav .active > a, .navbar-inverse .nav .active > a:hover, .navbar-inverse .nav .active > a:focus, .navbar-inverse .nav li.dropdown.open > .dropdown-toggle, .navbar-inverse .nav li.dropdown.active > .dropdown-toggle, .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle{
-	background-image:url(../../images/overlay.png);
-}
-.brand{
-	height:16px;
-	width:169px;
-	padding-left:20px;
-	padding-right:20px;
-	background:url(../../images/plantnet.png) no-repeat;
-}
-.container > .content{
-	background-color:#FFF;
-	padding:@content_padding;
-	margin-top:0;
-	margin-left:-@content_padding; // negative indent the amount of the padding to maintain the grid system
-	margin-right:-@content_padding; // negative indent the amount of the padding to maintain the grid system
-	margin-bottom:@top_bar_height;
-	-webkit-border-radius:0 0 12px 12px;
-	   -moz-border-radius:0 0 12px 12px;
-	        border-radius:0 0 12px 12px;
-	-webkit-box-shadow:0 2px 4px rgba(0,0,0,.15);
-	   -moz-box-shadow:0 2px 4px rgba(0,0,0,.15);
-	        box-shadow:0 2px 4px rgba(0,0,0,.15);
-}
-.page-header{
-	background-color:#F5F5F5;
-	margin:-@content_padding -@content_padding @content_padding -@content_padding;
-	padding-top:4px;
-	padding-left:20px;
-	padding-right:20px;
-	padding-bottom:4px;
-}
-.page-header h1{
-	font-size:27px;
-	line-height:30px;
-}
-#root h4{
-	margin-left:15px;
-	margin-bottom:5px;
-}
-#root .website{
-	margin-top:25px;
-}
-#root div.languages{
-	margin-right:0px;
-}
-
-
-// Bootstrap : Custom
-// --------------------------------------------------
-div.navbar-fixed-top{
-	margin-bottom:0px;
+.navbar .brand{
+	padding:0px;
 }
 
 
@@ -96,5 +41,5 @@ div.navbar-fixed-top{
 }
 #footer li{
 	display:inline;
-	margin-right:@content_padding;
+	margin-right:20px;
 }

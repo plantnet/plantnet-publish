@@ -142,10 +142,11 @@ class DataController extends Controller
     public function indexAction()
     {
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $projects=$dm->getRepository('PlantnetDataBundle:Database')
-            ->findBy(array(
-                'parent'=>null
-            ));
+        $projects=$dm->createQueryBuilder('PlantnetDataBundle:Database')
+            ->field('parent')->equals(null)
+            ->sort('name','asc')
+            ->getQuery()
+            ->execute();
         return $this->render('PlantnetDataBundle:Root:index.html.twig',array(
             'projects'=>$projects,
             'current'=>'index'
