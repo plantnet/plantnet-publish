@@ -714,13 +714,29 @@ class DataController extends Controller
         }
         $plantunit->setAttributes($attributes);
         //
+        $vernaculars=array();
         $others=$plantunit->getOthers();
         $tab_others_groups=array();
         if(count($others)){
             foreach($others as $other){
+                $verac_columns=array();
+                $field=$other->getModule()->getProperties();
+                foreach($field as $row){
+                    if($row->getVernacular()==true){
+                        $verac_columns[]=$row->getId();
+                    }
+                }
+                if(count($verac_columns)){
+                    $prop=$other->getProperty();
+                    foreach($prop as $key=>$val){
+                        if(in_array($key,$verac_columns)&&!in_array($val,$vernaculars)){
+                            $vernaculars[]=$val;
+                        }
+                    }
+                }
                 if(!in_array($other->getModule()->getId(),array_keys($tab_others_groups))){
                     $order=array();
-                    $field=$other->getModule()->getProperties();
+                    // $field=$other->getModule()->getProperties();
                     foreach($field as $row){
                         if($row->getSortorder()){
                             $order[$row->getSortorder()]=$row->getId();
@@ -756,6 +772,7 @@ class DataController extends Controller
             'display'=>$display,
             'layers'=>$layers,
             'tab_others_groups'=>$tab_others_groups,
+            'vernaculars'=>$vernaculars,
             'translations'=>$translations,
             'current'=>'collection'
         ));

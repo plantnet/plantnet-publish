@@ -4,6 +4,18 @@
     {% set tmp_title = taxon.name ~ ' [' ~ taxon.label ~ '] - ' ~ "line-taxonomy"|trans|capitalize %}
 {% endif %}
 {% block title tmp_title %}
+{% block meta %}
+    {% if taxon != 'null' %}
+        {% set keywords = ["line-taxonomy"|trans|capitalize] %}
+        {% set keywords = keywords|merge([taxon.label ~ ' ' ~ taxon.name]) %}
+        {% if taxon.synonyms|length > 0 %}
+            {% for syn in taxon.synonyms %}
+                {% set keywords = keywords|merge([syn.label ~ ' ' ~ syn.name]) %}
+            {% endfor %}
+        {% endif %}
+        <meta name="keywords" content="{{ keywords|join(', ') }}" />
+    {% endif %}
+{% endblock %}
 {% block stylesheets %}
 	{{ parent() }}
 {% endblock %}

@@ -39,6 +39,11 @@ class Property
     private $search;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $vernacular;
+
+    /**
      * @MongoDB\Int
      */
     private $sortorder;
@@ -151,6 +156,26 @@ class Property
     public function getSearch()
     {
         return $this->search;
+    }
+
+    /**
+     * Set vernacular
+     *
+     * @param boolean $vernacular
+     */
+    public function setVernacular($vernacular)
+    {
+        $this->vernacular = $vernacular;
+    }
+
+    /**
+     * Get vernacular
+     *
+     * @return boolean $vernacular
+     */
+    public function getVernacular()
+    {
+        return $this->vernacular;
     }
 
     /**

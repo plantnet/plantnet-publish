@@ -161,6 +161,14 @@
         <source>line-words</source>
         <target state="new">mots</target>
       </trans-unit>
+      <trans-unit id="38" resname="line-vernacular">
+        <source>line-vernacular</source>
+        <target state="new">nom vernaculaire</target>
+      </trans-unit>
+      <trans-unit id="39" resname="line-vernaculars">
+        <source>line-vernaculars</source>
+        <target state="new">noms vernaculaires</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

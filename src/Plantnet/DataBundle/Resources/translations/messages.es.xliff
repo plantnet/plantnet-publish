@@ -161,6 +161,14 @@
         <source>line-words</source>
         <target state="new">palabras</target>
       </trans-unit>
+      <trans-unit id="38" resname="line-vernacular">
+        <source>line-vernacular</source>
+        <target state="new">lengua vernácula</target>
+      </trans-unit>
+      <trans-unit id="39" resname="line-vernaculars">
+        <source>line-vernaculars</source>
+        <target state="new">lenguas vernáculas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

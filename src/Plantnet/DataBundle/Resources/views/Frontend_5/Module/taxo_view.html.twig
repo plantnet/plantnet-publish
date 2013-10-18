@@ -8,6 +8,23 @@
     {% set tmp_title = ' - ' ~ "line-locations"|trans|capitalize %}
 {% endif %}
 {% block title taxon.name ~ ' [' ~ taxon.label ~ ']' ~ tmp_title %}
+{% block meta %}
+    {% set keywords = [] %}
+    {% if current_display == 'grid' %}
+        {% set keywords = ["line-grid"|trans|capitalize] %}
+    {% elseif current_display == 'images' %}
+        {% set keywords = ["line-images"|trans|capitalize] %}
+    {% elseif current_display == 'locations' %}
+        {% set keywords = ["line-locations"|trans|capitalize] %}
+    {% endif %}
+    {% set keywords = keywords|merge([taxon.label ~ ' ' ~ taxon.name]) %}
+    {% if taxon.synonyms|length > 0 %}
+        {% for syn in taxon.synonyms %}
+            {% set keywords = keywords|merge([syn.label ~ ' ' ~ syn.name]) %}
+        {% endfor %}
+    {% endif %}
+    <meta name="keywords" content="{{ keywords|join(', ') }}" />
+{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     {% if current_display == 'locations' %}
