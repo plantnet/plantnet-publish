@@ -194,18 +194,20 @@ class DataController extends Controller
                         if(!$child->getDeleting()&&$child->getType()=='image'){
                             $limit=10;
                             $skip=rand(0,($child->getNbrows()-1-$limit));
-                            $tmp_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-                                ->field('module')->references($child)
-                                ->sort('_id','asc')
-                                ->limit($limit)
-                                ->skip($skip)
-                                ->getQuery()
-                                ->execute();
-                            foreach($tmp_images as $img){
-                                if(!isset($images[$module->getId()])){
-                                    $images[$module->getId()]=array();
+                            if($skip>0){
+                                $tmp_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+                                    ->field('module')->references($child)
+                                    ->sort('_id','asc')
+                                    ->limit($limit)
+                                    ->skip($skip)
+                                    ->getQuery()
+                                    ->execute();
+                                foreach($tmp_images as $img){
+                                    if(!isset($images[$module->getId()])){
+                                        $images[$module->getId()]=array();
+                                    }
+                                    $images[$module->getId()][]=$img;
                                 }
-                                $images[$module->getId()][]=$img;
                             }
                         }
                     }
@@ -278,18 +280,20 @@ class DataController extends Controller
                     if(!$child->getDeleting()&&$child->getType()=='image'){
                         $limit=10;
                         $skip=rand(0,($child->getNbrows()-1-$limit));
-                        $tmp_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-                            ->field('module')->references($child)
-                            ->sort('_id','asc')
-                            ->limit($limit)
-                            ->skip($skip)
-                            ->getQuery()
-                            ->execute();
-                        foreach($tmp_images as $img){
-                            if(!isset($images[$module->getId()])){
-                                $images[$module->getId()]=array();
+                        if($skip>0){
+                            $tmp_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+                                ->field('module')->references($child)
+                                ->sort('_id','asc')
+                                ->limit($limit)
+                                ->skip($skip)
+                                ->getQuery()
+                                ->execute();
+                            foreach($tmp_images as $img){
+                                if(!isset($images[$module->getId()])){
+                                    $images[$module->getId()]=array();
+                                }
+                                $images[$module->getId()][]=$img;
                             }
-                            $images[$module->getId()][]=$img;
                         }
                     }
                 }
