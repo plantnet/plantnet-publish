@@ -78,7 +78,7 @@
                             {{ form_widget(property.type) }}
                         </td>
                         {% if module.type == 'text' %}
-                            <td class="middle">
+                            <td class="middle main-cell">
                                 {{ form_errors(property.main) }}
                                 {{ form_widget(property.main) }}
                             </td>
@@ -126,4 +126,17 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            var one_checked=false;
+            $('td.main-cell').children('input[type=checkbox]').each(function(){
+                if($(this).is(':checked')){
+                    one_checked=true;
+                }
+            });
+            if(!one_checked){
+                $('td.main-cell').first().children('input[type=checkbox]').first().prop('checked',true);
+            }
+        });
+    </script>
 {% endblock %}
