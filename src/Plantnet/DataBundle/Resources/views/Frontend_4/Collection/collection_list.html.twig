@@ -4,11 +4,6 @@
 		<li class="divider"></li>
 	{% endif %}
 	{% set first = false %}
-	<li class="disabled">
-		<a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">
-			{{ collection.name }}
-		</a>
-	</li>
 	{% for module in collection.modules if module.deleting != true %}
 		<li class="dropdown-submenu">
 			<a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">

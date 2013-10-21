@@ -1,20 +1,16 @@
 {% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_4:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_4:datatypes.html.twig" %}
-{% block title config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-result"|trans|capitalize %}
+{% block title config.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-result"|trans|capitalize %}
 {% block stylesheets %}
     {{ parent() }}
     {% if current_display == 'locations' %}
         {% include 'PlantnetDataBundle:Frontend_4:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
-{% block header %}<h1>{{ module.name }} - {{ "tab-result"|trans|capitalize }}</h1>{% endblock %}
+{% block header %}<h1>{{ config.name }} - {{ module.name }} - {{ "tab-result"|trans|capitalize }}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
             <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
-            <span class="divider">/</span>
-        </li>
-        <li>
-            <a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">{{ collection.name }}</a>
             <span class="divider">/</span>
         </li>
         <li>

@@ -1,5 +1,5 @@
 {% extends "PlantnetDataBundle:Frontend_4:layout.html.twig" %}
-{% set tmp_title = config.name ~ ' - ' ~ collection.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
+{% set tmp_title = config.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
 {% if taxon != 'null' %}
     {% set tmp_title = taxon.name ~ ' [' ~ taxon.label ~ '] - ' ~ "line-taxonomy"|trans|capitalize %}
 {% endif %}
@@ -19,15 +19,11 @@
 {% block stylesheets %}
 	{{ parent() }}
 {% endblock %}
-{% block header %}<h1>{{ module.name }} - {{ "line-taxonomy"|trans|capitalize }}{% if taxon != 'null' %} - {{ taxon.name }}{% endif %}</h1>{% endblock %}
+{% block header %}<h1>{{ config.name }} - {{ module.name }} - {{ "line-taxonomy"|trans|capitalize }}{% if taxon != 'null' %} - {{ taxon.name }}{% endif %}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
             <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
-            <span class="divider">/</span>
-        </li>
-        <li>
-            <a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">{{ collection.name }}</a>
             <span class="divider">/</span>
         </li>
         <li>

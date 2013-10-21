@@ -23,15 +23,11 @@
         {% include 'PlantnetDataBundle:Frontend_4:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
-{% block header %}<h1>{{ plantunit.title1 }} - {{ plantunit.title2 }}{% if plantunit.title3 is defined and plantunit.title3 is not null %} - {{ plantunit.title3 }}{% endif %}</h1>{% endblock %}
+{% block header %}<h1>{{ config.name }} - {{ plantunit.title1 }} - {{ plantunit.title2 }}{% if plantunit.title3 is defined and plantunit.title3 is not null %} - {{ plantunit.title3 }}{% endif %}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
             <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
-            <span class="divider">/</span>
-        </li>
-        <li>
-            <a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">{{ collection.name }}</a>
             <span class="divider">/</span>
         </li>
         <li>

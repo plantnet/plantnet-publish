@@ -1,12 +1,7 @@
 <td>
-	<span class="example" data-content="<img src='/bundles/plantnetdata/images/tpl_white.png' alt='white' />">
-		White
+	<span class="example" data-content="<img src='/bundles/plantnetdata/images/tpl_v.png' alt='vertical' />">
+		Horizontal
 	</span>
 </td>
-<td>
-	<span class="example" data-content="<img src='/bundles/plantnetdata/images/tpl_h.png' alt='horizontal' />">
-		Horizontal
-	</span> (display further columns)
-</td>
 <td>Custom</td>
-<td>Yes</td>
+<td>No</td>

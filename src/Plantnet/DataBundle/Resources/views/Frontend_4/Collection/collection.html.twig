@@ -6,7 +6,7 @@
 {% block stylesheets %}
 	{{ parent() }}
 {% endblock %}
-{% block header %}<h1>{{ collection.name }}</h1>{% endblock %}
+{% block header %}<h1>{{ config.name }} - {{ collection.name }}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
@@ -24,10 +24,18 @@
             {{ collection.description }}
         {% endautoescape %}
     </div>
-    <div id="presentation_module">
-        {% for module in collection.modules if module.deleting != true %}
-            {% include "PlantnetDataBundle:Frontend_4\\Module:module_presentation.html.twig" %}
-        {% endfor %}
+    <div>
+        <div class="row">
+            {% set item_size = '12' %}
+            {% if collection.modules|length > 1 %}
+                {% set item_size = item_size/2 %}
+            {% endif %}
+            {% for module in collection.modules if module.deleting != true %}
+                <div class="span{{ item_size }}">
+                     {% include "PlantnetDataBundle:Frontend_4\\Module:module_presentation.html.twig" %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
 {% block javascripts %}

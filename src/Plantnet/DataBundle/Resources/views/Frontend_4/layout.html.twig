@@ -43,57 +43,54 @@
 	{% include "PlantnetDataBundle:Analytics:analyticstracking.html.twig" %}
 </head>
 <body>
-	<div class="container">
-		{% block topbar %}
-			<div class="masthead">
-				<header>
-					<a class="brand" href="{{ path('front_project', {'project': project}) }}"></a>
-					<h3 class="muted">{{ config.name }}</h3>
-				</header>
-				<div class="navbar">
-					<div class="navbar-inner">
-						<div class="container">
-							<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-								<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
-							</button>
-							<div class="nav-collapse collapse">
-								<ul class="nav">
-									{% if current is not defined %}
-										{% set current = '#' %}
-									{% endif %}
-									<li{% if current == 'project' %} class="active" {% endif %}>
-										<a href="{{ path('front_project', {'project': project}) }}">
-											{{ "tab-home"|trans|capitalize }}
-										</a>
-									</li>
-									<li class="dropdown{% if current == 'collection' %} active {% endif %}">
-										<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans|capitalize }} <span class="caret"></span></a>
-										<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-											{% render controller("PlantnetDataBundle:Frontend\\Data:collection_list", {'project': project}) %}
-										</ul>
-									</li>
-								</ul>
-							</div>
-							{% if translations is defined and translations|length > 0 %}
-								<div class="pull-right">
-									<ul class="nav">
-										<li class="dropdown">
-											<a class="dropdown-toggle" data-toggle="dropdown" href="#">
-												{% for translation in translations if translation.active == 1 %}
-													{{ translation.language|capitalize }}
-												{% endfor %}
-												<span class="caret"></span>
-											</a>
-											<ul id="i18n_links" class="dropdown-menu" role="menu" aria-labelledby="dLabel"></ul>
-										</li>
-									</ul>
-								</div>
+	{% block topbar %}
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+					</button>
+					<a class="brand" href="{{ path('front_project', {'project': project}) }}">
+						<img src="{{ asset('bundles/plantnetdata/images/plantnet.png') }}" alt="Pl@ntNet - Publish" />
+					</a>
+					<div class="nav-collapse collapse">
+						<ul class="nav">
+							{% if current is not defined %}
+								{% set current = '#' %}
 							{% endif %}
-						</div>
+							<li{% if current == 'project' %} class="active" {% endif %}>
+								<a href="{{ path('front_project', {'project': project}) }}">
+									{{ "tab-home"|trans|capitalize }}
+								</a>
+							</li>
+							<li class="dropdown{% if current == 'collection' %} active {% endif %}">
+								<a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ "tab-coll"|trans|capitalize }} <span class="caret"></span></a>
+								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+									{% render controller("PlantnetDataBundle:Frontend\\Data:collection_list", {'project': project}) %}
+								</ul>
+							</li>
+						</ul>
 					</div>
+					{% if translations is defined and translations|length > 0 %}
+						<div class="pull-right">
+							<ul class="nav">
+								<li class="dropdown">
+									<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+										{% for translation in translations if translation.active == 1 %}
+											{{ translation.language|capitalize }}
+										{% endfor %}
+										<span class="caret"></span>
+									</a>
+									<ul id="i18n_links" class="dropdown-menu" role="menu" aria-labelledby="dLabel"></ul>
+								</li>
+							</ul>
+						</div>
+					{% endif %}
 				</div>
 			</div>
-		{% endblock %}
+		</div>
+	{% endblock %}
+	<div class="container">
 		<div class="content">
 			{% if config.filepath %}
 				<div id="banner"{% if current != 'project' %} class="mini"{% endif %}>
@@ -106,6 +103,7 @@
 			{% endif %}
 			<div class="row">
 				<div class="span12">
+					{% block breadcrumb %}{% endblock %}
 					{% block row %}
 						<div>
 							{% block side %}{% endblock %}

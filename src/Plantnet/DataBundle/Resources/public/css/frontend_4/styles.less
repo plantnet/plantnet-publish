@@ -20,30 +20,18 @@ html{
 html,body{
 	background-color:#EEE;
 }
+body{
+	padding-top:@top_bar_height; // @top_bar_height to make the container go all the way to the bottom of the topbar
+}
 div.clear{
 	clear:both;
 }
 span.nowrap{
 	white-space:nowrap;
 }
-.navbar-inverse .navbar-inner, .navbar-inverse .nav .active > a, .navbar-inverse .nav .active > a:hover, .navbar-inverse .nav .active > a:focus, .navbar-inverse .nav li.dropdown.open > .dropdown-toggle, .navbar-inverse .nav li.dropdown.active > .dropdown-toggle, .navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle{
-	background-image:url(../../images/overlay.png);
-}
-.masthead .navbar{
-	margin-bottom:10px;
-	margin-left:-@content_padding; // negative indent the amount of the padding to maintain the grid system
-	margin-right:-@content_padding; // negative indent the amount of the padding to maintain the grid system
-}
-header .brand{
-	background:url("../../images/plantnet.png") no-repeat scroll 0 0 transparent;
-	display:inline-block;
-	height:38px;
-    width:200px;
-    margin:10px 0;
-}
-header h3{
-    display:inline;
-    float:right;
+.navbar .brand{
+	padding:0px;
+	margin-right:10px;
 }
 .container > .content{
 	background-color:#FFF;
@@ -52,9 +40,9 @@ header h3{
 	margin-left:-@content_padding; // negative indent the amount of the padding to maintain the grid system
 	margin-right:-@content_padding; // negative indent the amount of the padding to maintain the grid system
 	margin-bottom:@top_bar_height;
-	-webkit-border-radius:4px 4px 12px 12px;
-	   -moz-border-radius:4px 4px 12px 12px;
-	        border-radius:4px 4px 12px 12px;
+	-webkit-border-radius:0 0 12px 12px;
+	   -moz-border-radius:0 0 12px 12px;
+	        border-radius:0 0 12px 12px;
 	-webkit-box-shadow:0 2px 4px rgba(0,0,0,.15);
 	   -moz-box-shadow:0 2px 4px rgba(0,0,0,.15);
 	        box-shadow:0 2px 4px rgba(0,0,0,.15);
@@ -80,12 +68,9 @@ header h3{
 	padding-right:20px;
 	padding-top:4px;
 	padding-bottom:4px;
-	-webkit-border-radius:4px 4px 0 0;
-	   -moz-border-radius:4px 4px 0 0;
-	        border-radius:4px 4px 0 0;
 }
 #banner.mini{
-	height:120px;
+	height:100px;
 }
 #banner .page-header{
 	margin:0;
@@ -101,6 +86,10 @@ header h3{
 }
 #banner .page-header h1{
 	display:inline-block;
+}
+#banner.mini .page-header h1{
+	font-size:20px;
+	line-height:23px;
 }
 #page-loading{
 	float:left;
@@ -246,37 +235,21 @@ div.tooltip-inner{
 	width:70%;
 	text-align:justify;
 }
-.navbar button.btn-navbar{
-	float:left;
-}
 
 
 // Collection : Presentation
 // --------------------------------------------------
-#presentation div.carousel{
-	margin:0px;
-}
-#presentation div.txt{
-	min-width:200px;
+table.no-border td{
+	border:none;
 }
 
 
 // Module : Presentation
 // --------------------------------------------------
-#presentation_module .pull-right{
-	max-width:450px;
+#presentation div.carousel{
+	margin:0px;
 }
-#presentation_module .img_module{
-	display:inline-block;
-	width:130px;
-	height:75px;
-	margin-right:7px;
-	margin-bottom:7px;
-}
-#presentation_module h5{
-	display:inline;
-}
-#presentation_module div.txt{
+#presentation div.txt{
 	min-width:200px;
 }
 
@@ -307,7 +280,7 @@ div.break{
 .gallery a.thumbn > img.blind{
 	opacity:0;
 }
-ul.thumbnails.per3 > li:nth-child(3n+1){
+ul.thumbnails.per4 > li:nth-child(4n+1){
 	clear:left;
 }
 div.thumbnail{
