@@ -201,14 +201,21 @@
 					});
 				{% endfor %}
 				if(links.length>0){
+					var max=links.length;
 					$('#i18n_links').prepend('<li class="i18n_load"><span></span></li>');
 					for(var i=0;i<links.length;i++){
 						var item=links[i];
-						$.get(item.link).done(function(){
-							$('#i18n_links').append('<li><a href="'+item.link+'" class="i18n_link">'+item.label+'</a></li>');
-						});
+						test_i18n(item,i,max);
 					}
-					$('.i18n_load').remove();
+				}
+				function test_i18n(item,current,max)
+				{
+					$.get(item.link).done(function(){
+						$('#i18n_links').append('<li><a href="'+item.link+'" class="i18n_link">'+item.label+'</a></li>');
+					});
+					if(current==max-1){
+						$('.i18n_load').remove();
+					}
 				}
 				if($('span.glossary_term').length>0){
 					$('span.glossary_term').mouseenter(function(){
