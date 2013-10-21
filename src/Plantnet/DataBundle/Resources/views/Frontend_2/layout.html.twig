@@ -84,15 +84,7 @@
 												{% endfor %}
 												<span class="caret"></span>
 											</a>
-											<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-												{% for translation in translations if translation.active == 0 %}
-													<li class="i18n_line">
-														<a href="{{ translation.link }}" class="i18n_link">
-															{{ translation.language|capitalize }}
-														</a>
-													</li>
-												{% endfor %}
-											</ul>
+											<ul id="i18n_links" class="dropdown-menu" role="menu" aria-labelledby="dLabel"></ul>
 										</li>
 									</ul>
 								</div>
@@ -204,14 +196,21 @@
 				var spinner=new Spinner(opts).spin(target);
 			}
 			$(document).ready(function(){
-				if($('a.i18n_link').length>0){
-					$('a.i18n_link').first().parent('li').parent('ul').prepend('<li class="i18n_load"><span></span></li>');
-					$('a.i18n_link').each(function(index){
-						var i18n_node=$(this);
-						$.get($(this).attr('href')).done(function(){
-							i18n_node.parent('li').removeClass('i18n_line');
-						});
+				var links=[];
+				{% for translation in translations if translation.active == 0 %}
+					links.push({
+						link:'{{ translation.link }}',
+						label:'{{ translation.language|capitalize }}'
 					});
+				{% endfor %}
+				if(links.length>0){
+					$('#i18n_links').prepend('<li class="i18n_load"><span></span></li>');
+					for(var i=0;i<links.length;i++){
+						var item=links[i];
+						$.get(item.link).done(function(){
+							$('#i18n_links').append('<li><a href="'+item.link+'" class="i18n_link">'+item.label+'</a></li>');
+						});
+					}
 					$('.i18n_load').remove();
 				}
 				if($('span.glossary_term').length>0){
