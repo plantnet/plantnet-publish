@@ -180,6 +180,7 @@ class DataController extends Controller
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
         //
+        $images=array();
         $coll=null;
         foreach($collections as $collection){
             $collection->setDescription(ControllerHelp::glossarize($dm,$collection,$collection->getDescription()));
@@ -187,6 +188,28 @@ class DataController extends Controller
             $modules=$collection->getModules();
             foreach($modules as $module){
                 $module->setDescription(ControllerHelp::glossarize($dm,$collection,$module->getDescription()));
+                if(!$module->getDeleting()){
+                    $children=$module->getChildren();
+                    foreach($children as $child){
+                        if(!$child->getDeleting()&&$child->getType()=='image'){
+                            $limit=10;
+                            $skip=rand(0,($child->getNbrows()-1-$limit));
+                            $tmp_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+                                ->field('module')->references($child)
+                                ->sort('_id','asc')
+                                ->limit($limit)
+                                ->skip($skip)
+                                ->getQuery()
+                                ->execute();
+                            foreach($tmp_images as $img){
+                                if(!isset($images[$module->getId()])){
+                                    $images[$module->getId()]=array();
+                                }
+                                $images[$module->getId()][]=$img;
+                            }
+                        }
+                    }
+                }
             }
         }
         $page->setContent(ControllerHelp::glossarize($dm,$coll,$page->getContent()));
@@ -198,6 +221,7 @@ class DataController extends Controller
             'project'=>$project,
             'page'=>$page,
             'collections'=>$collections,
+            'images'=>$images,
             'translations'=>$translations,
             'current'=>'project'
         ));
@@ -243,10 +267,33 @@ class DataController extends Controller
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         //
+        $images=array();
         $collection->setDescription(ControllerHelp::glossarize($dm,$collection,$collection->getDescription()));
         $modules=$collection->getModules();
         foreach($modules as $module){
             $module->setDescription(ControllerHelp::glossarize($dm,$collection,$module->getDescription()));
+            if(!$module->getDeleting()){
+                $children=$module->getChildren();
+                foreach($children as $child){
+                    if(!$child->getDeleting()&&$child->getType()=='image'){
+                        $limit=10;
+                        $skip=rand(0,($child->getNbrows()-1-$limit));
+                        $tmp_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+                            ->field('module')->references($child)
+                            ->sort('_id','asc')
+                            ->limit($limit)
+                            ->skip($skip)
+                            ->getQuery()
+                            ->execute();
+                        foreach($tmp_images as $img){
+                            if(!isset($images[$module->getId()])){
+                                $images[$module->getId()]=array();
+                            }
+                            $images[$module->getId()][]=$img;
+                        }
+                    }
+                }
+            }
         }
         //
         $config=$this->get_config($project);
@@ -255,6 +302,7 @@ class DataController extends Controller
             'config'=>$config,
             'project'=>$project,
             'collection'=>$collection,
+            'images'=>$images,
             'translations'=>$translations,
             'current'=>'collection'
         ));

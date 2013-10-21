@@ -1,8 +1,8 @@
 {% set imgs = [] %}
 {% set nb_img = 9 %}
-{% for child in module.children if (child.type == 'image' and child.deleting != true and imgs|length < nb_img) %}
-    {% if child.nbrows > 0 and imgs|length < nb_img %}
-        {% for image in child.images if imgs|length < nb_img %}
+{% for tmp_mod_key, tmp_mod in images if imgs|length < nb_img %}
+    {% if tmp_mod_key == module.id %}
+        {% for image in tmp_mod if imgs|length < nb_img %}
             {% set imgspe = image.path|basename %}
             {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
             {% if img|fileexists %}
