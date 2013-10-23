@@ -810,6 +810,7 @@ class DataController extends Controller
                     );
                 }
             }
+            natcasesort($vernaculars);
         }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
