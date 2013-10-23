@@ -1117,20 +1117,145 @@ class DataController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collections=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
-        $page=$dm->getRepository('PlantnetDataBundle:Page')
-            ->findOneBy(array(
-                'alias'=>'home'
-            ));
-        if(!$page){
-            throw $this->createNotFoundException('Unable to find Page entity.');
-        }
         $config=$this->get_config($project);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Pages:sitemap.html.twig',array(
             'config'=>$config,
             'project'=>$project,
-            'page'=>$page,
             'collections'=>$collections,
+            'translations'=>$translations,
+            'current'=>'sitemap'
+        ));
+    }
+
+    /**
+     * @Route("/project/{project}/search", name="front_search")
+     * @Method("get")
+     * @Template()
+     */
+    public function searchAction($project,Request $request)
+    {
+        $this->check_enable_project($project);
+        $translations=$this->make_translations(
+            $project,
+            $this->container->get('request')->get('_route'),
+            array(
+                'project'=>$project
+            )
+        );
+        //
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $punits=array();
+        $query='';
+        if($request->isMethod('GET')&&$request->query->get('q')){
+            $query=$request->query->get('q');
+            $string=new \MongoRegex('/.*'.StringHelp::accentToRegex($query).'.*/i');
+            $collections=$dm->getRepository('PlantnetDataBundle:Collection')
+                ->findAll();
+            //
+            $punit_filters=array(
+                'identifier'=>1,
+                'title1'=>1,
+                'title2'=>1,
+                'title3'=>1
+            );
+            $img_filters=array();
+            $loc_filters=array();
+            $other_filters=array();
+            //
+            foreach($collections as $collection){
+                $modules=$collection->getModules();
+                foreach($modules as $module){
+                    $fields=$module->getProperties();
+                    foreach($fields as $field){
+                        if($field->getSearch()==true){
+                            $punit_filters['attributes.'.$field->getId()]=1;
+                        }
+                    }
+                    $submodules=$module->getChildren();
+                    foreach($submodules as $submodule){
+                        switch($submodule->getType()){
+                            case 'image':
+                                break;
+                            case 'locality':
+                                break;
+                            case 'other':
+                                $subfields=$submodule->getProperties();
+                                foreach($subfields as $subfield){
+                                    if($subfield->getSearch()==true){
+                                        $other_filters['property.'.$subfield->getId()]=1;
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+            //
+            $tmp_ids=array();
+            if(count($img_filters)){
+                $ids=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+                    ->hydrate(false)
+                    ->select('plantunit');
+                foreach($img_filters as $filter=>$active){
+                    $ids->addOr($ids->expr()->field($filter)->in(array($string)));
+                }
+                $ids=$ids->getQuery()
+                    ->execute();
+                foreach($ids as $id){
+                    $tmp_ids[]=$id['plantunit']['$id'].'';
+                }
+            }
+            if(count($loc_filters)){
+                $ids=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+                    ->hydrate(false)
+                    ->select('plantunit');
+                foreach($loc_filters as $filter=>$active){
+                    $ids->addOr($ids->expr()->field($filter)->in(array($string)));
+                }
+                $ids=$ids->getQuery()
+                    ->execute();
+                foreach($ids as $id){
+                    $tmp_ids[]=$id['plantunit']['$id'].'';
+                }
+            }
+            if(count($other_filters)){
+                $ids=$dm->createQueryBuilder('PlantnetDataBundle:Other')
+                    ->hydrate(false)
+                    ->select('plantunit');
+                foreach($other_filters as $filter=>$active){
+                    $ids->addOr($ids->expr()->field($filter)->in(array($string)));
+                }
+                $ids=$ids->getQuery()
+                    ->execute();
+                foreach($ids as $id){
+                    $tmp_ids[]=$id['plantunit']['$id'].'';
+                }
+            }
+            $tmp_ids=array_unique($tmp_ids);
+            //
+            $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit');
+            foreach($punit_filters as $filter=>$active){
+                $punits->addOr($punits->expr()->field($filter)->in(array($string)));
+            }
+            if(count($tmp_ids)){
+                $punits->addOr($punits->expr()->field('_id')->in($tmp_ids));
+            }
+            $punits=$punits
+                ->sort('title1','asc')
+                ->sort('title2','asc')
+                ->sort('title3','asc')
+                ->getQuery()
+                ->execute();
+        }
+        $config=$this->get_config($project);
+        $tpl=$config->getTemplate();
+        return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').':search.html.twig',array(
+            'config'=>$config,
+            'project'=>$project,
+            'query'=>$query,
+            'punits'=>$punits,
             'translations'=>$translations,
             'current'=>'contacts'
         ));

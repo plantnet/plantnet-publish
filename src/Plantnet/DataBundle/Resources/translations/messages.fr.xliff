@@ -169,6 +169,14 @@
         <source>line-vernaculars</source>
         <target state="new">noms vernaculaires</target>
       </trans-unit>
+      <trans-unit id="40" resname="line-result">
+        <source>line-result</source>
+        <target state="new">résultat</target>
+      </trans-unit>
+      <trans-unit id="41" resname="line-results">
+        <source>line-results</source>
+        <target state="new">résultats</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

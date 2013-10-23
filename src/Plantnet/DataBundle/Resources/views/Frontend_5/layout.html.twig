@@ -86,6 +86,12 @@
 							</ul>
 						</div>
 					{% endif %}
+					<form class="navbar-form form-search pull-right" method="get" action="{{ path('front_search', {'project': project}) }}">
+						<div class="input-append">
+							<input type="text" name="q" class="input-medium search-query" placeholder="{{ "search-field"|trans|capitalize }}" />
+							<button type="submit" class="btn"><i class="icon-search"></i></button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>

@@ -1,0 +1,53 @@
+{% extends "PlantnetDataBundle:Frontend_5:layout.html.twig" %}
+{% block title config.name ~ ' - ' ~ "tab-search"|trans|capitalize ~ ' - Pl@ntnet' %}
+{% block stylesheets %}
+	{{ parent() }}
+{% endblock %}
+{% block header %}<h1>{{ config.name }} - {{ "tab-search"|trans|capitalize }}</h1>{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ "tab-search"|trans|capitalize }}
+        </li>
+    </ul>
+{% endblock %}
+{% block row %}
+    <blockquote class="pull-right">
+        <p>: {{ query }}</p>
+        <small>
+            {{ punits|length }}
+            {% if punits|length > 1 %}
+                {{ "line-results"|trans }}
+            {% else %}
+                {{ "line-result"|trans }}
+            {% endif %}
+        </small>
+    </blockquote>
+    {% for punit in punits %}
+        <p>
+            <small class="muted">{{ loop.index }}.</small>
+            <a href="{{ path('front_details', { 'project': project, 'collection': punit.module.collection.url, 'module': punit.module.url, 'id': punit.identifier }) }}">
+                {{ punit.title1 }} - {{ punit.title2 }}
+                {% if punit.title3 is defined and punit.title3 is not null %}
+                    - {{ punit.title3 }}
+                {% endif %}
+            </a>
+            {% if punit.hasimages == true %}
+                <i class="icon-camera"></i>
+            {% endif %}
+            {% if punit.haslocations == true %}
+                <i class="icon-map-marker"></i>
+            {% endif %}
+            <span class="muted">
+                [ {{ punit.module.collection.name }} / {{ punit.module.name }} ]
+            </span>
+        </p>
+    {% endfor %}
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+{% endblock %}
