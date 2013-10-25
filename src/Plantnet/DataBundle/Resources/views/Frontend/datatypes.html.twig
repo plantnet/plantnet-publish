@@ -39,12 +39,20 @@
 	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.min.js') }}"></script>
 	<script type="text/javascript">
 		$('.pagerfanta').first().on('click','a', function(event){
+			console.log('click');
 			event.preventDefault();
+			console.log('prevent');
 			if($(this).attr('href').length&&$(this).attr('href')!='#'&&!$(this).parent('li').first().hasClass('active')){
+				console.log('validated link');
 				var url=$(this).attr('href');
+				console.log('url:');
+				console.log(url);
 				$('.pagerfanta ul').first().append('<li class="disabled"><a href="#">&nbsp;<div id="page-loading"></div>&nbsp;</a></li>');
+				console.log('append');
 				ajaxLoader();
+				console.log('loader');
 				$('#data-load').load(url,function(){
+					console.log('start loading');
 					$('#page-loading').empty();
 				});
 			}
