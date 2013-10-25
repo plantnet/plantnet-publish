@@ -1249,6 +1249,17 @@ class DataController extends Controller
                 ->sort('title3','asc')
                 ->getQuery()
                 ->execute();
+            if(count($punits)==1){
+                foreach($punits as $punit){
+                    return $this->redirect($this->generateUrl('front_details',array(
+                        'project'=>$project,
+                        'collection'=>$punit->getModule()->getCollection()->getUrl(),
+                        'module'=>$punit->getModule()->getUrl(),
+                        'id'=>$punit->getIdentifier()
+                        )
+                    ));
+                }
+            }
         }
         $config=$this->get_config($project);
         $tpl=$config->getTemplate();
