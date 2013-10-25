@@ -13,3 +13,6 @@ build/
 vendor
 bin
 composer.phar
+app/config/deploy/*
+app/config/deploy-prod/*
+app/config/deploy.rb
