@@ -1,7 +1,7 @@
 <td>
 	<span class="example" data-content="<img src='/bundles/plantnetdata/images/tpl_v.png' alt='vertical' />">
 		Horizontal
-	</span>
+	</span> (display further columns)
 </td>
 <td>Custom</td>
 <td>No</td>

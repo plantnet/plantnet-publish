@@ -30,15 +30,31 @@
     {% include "PlantnetDataBundle:Frontend_5:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
-    <div class="row">
-        <div class="span4">
-            {% if hasmap or nb_fields > 0 %}
-                <div>
-                	<form action="{{ path('front_module_result', {'project': project, 'collection': collection.url, 'module': module.url}) }}" method="get" {{ form_enctype(form) }} id="search_form">
-                        {{ form_widget(form.y_lat_1_bottom_left, {'id':'y_lat_1_bottom_left','attr':{'class':'coords'}}) }}
-                        {{ form_widget(form.x_lng_1_bottom_left, {'id':'x_lng_1_bottom_left','attr':{'class':'coords'}}) }}
-                        {{ form_widget(form.y_lat_2_top_right, {'id':'y_lat_2_top_right','attr':{'class':'coords'}}) }}
-                        {{ form_widget(form.x_lng_2_top_right, {'id':'x_lng_2_top_right','attr':{'class':'coords'}}) }}
+    {% if hasmap or nb_fields > 0 %}
+        <form action="{{ path('front_module_result', {'project': project, 'collection': collection.url, 'module': module.url}) }}" method="get" {{ form_enctype(form) }} id="search_form">
+            <div class="row">
+                {% if hasmap %}
+                    <div id="form_content" class="span4">
+                {% else %}
+                    <div id="form_content" class="span9">
+                {% endif %}
+                    {{ form_widget(form.y_lat_1_bottom_left, {'id':'y_lat_1_bottom_left','attr':{'class':'coords'}}) }}
+                    {{ form_widget(form.x_lng_1_bottom_left, {'id':'x_lng_1_bottom_left','attr':{'class':'coords'}}) }}
+                    {{ form_widget(form.y_lat_2_top_right, {'id':'y_lat_2_top_right','attr':{'class':'coords'}}) }}
+                    {{ form_widget(form.x_lng_2_top_right, {'id':'x_lng_2_top_right','attr':{'class':'coords'}}) }}
+                    {% if hasmap == false %}
+                        <div class="row">
+                            {{ form_widget(form) }}
+                            <div class="span4">
+                                {% if nb_fields == 0 %}
+                                <p class="text-warning">
+                                    {{ "line-only-map-search"|trans|capitalize }}
+                                </p>
+                            {% endif %}
+                            <input type="submit" value="{{ "tab-search"|trans|capitalize }}" class="btn" />
+                            </div>
+                        </div>
+                    {% else %}
                         {{ form_widget(form) }}
                         {% if nb_fields == 0 %}
                             <p class="text-warning">
@@ -46,23 +62,23 @@
                             </p>
                         {% endif %}
                         <input type="submit" value="{{ "tab-search"|trans|capitalize }}" class="btn" />
-                    </form>
+                    {% endif %}
                 </div>
-            {% else %}
-                <p class="text-warning">
-                    {{ "line-no-search"|trans|capitalize }}
-                </p>
-            {% endif %}
-        </div>
-        {% if hasmap %}
-            <div class="span5">
-                <div>
-                    {# LEAFLET MAP #}
-                    <div id="map"></div>
-                </div>
+                {% if hasmap %}
+                    <div class="span5">
+                        <div>
+                            {# LEAFLET MAP #}
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
-    </div>
+        </form>
+    {% else %}
+        <p class="text-warning">
+            {{ "line-no-search"|trans|capitalize }}
+        </p>
+    {% endif %}
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
@@ -71,6 +87,20 @@
     {% endif %}
     <script type="text/javascript">
         $(document).ready(function(){
+            if($('#form_content').hasClass('span9')){
+                var i=0;
+                var last_div=null;
+                $('#form > div').each(function(){
+                    i++;
+                    $(this).addClass('span4');
+                    if(i&1==1){
+                        $(this).next().next().after('<div class="span1"></div>');
+                    }
+                    else{
+                        $(this).next().next().after('<div class="clear"></div>');
+                    }
+                });
+            }
             $('input[type=text]').attr('autocomplete','off');
             $('#form .str').each(function(){
                 var item_class=$(this).attr('class').replace('str ','');
