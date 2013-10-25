@@ -37,10 +37,9 @@
 			event.preventDefault();
 			if($(this).attr('href').length&&$(this).attr('href')!='#'&&!$(this).parent('li').first().hasClass('active')){
 				var url=$(this).attr('href');
-				$('.pagerfanta ul').first().append('<li class="disabled"><a href="#">&nbsp;<div id="page-loading"></div>&nbsp;</a></li>');
-				ajaxLoader();
+				$('.pagerfanta ul').first().append('<li class="disabled"><a href="#"><div id="page-loading"></div></a></li>');
 				$('#data-load').load(url,function(){
-					$('#page-loading').empty();
+					;
 				});
 			}
 		});
@@ -48,13 +47,12 @@
             event.preventDefault();
             if($(this).attr('href').length&&$(this).attr('href')!='#'&&!$(this).parent('li').first().hasClass('active')){
                 var url=$(this).attr('href');
-                $('.pagerfanta ul').first().append('<li class="disabled"><a href="#">&nbsp;<div id="page-loading"></div>&nbsp;</a></li>');
-                ajaxLoader();
+                $('.pagerfanta ul').first().append('<li class="disabled"><a href="#"><div id="page-loading"></div></a></li>');
                 $('html, body').animate({
 	                scrollTop:0
 	            },'slow').promise().done(function(){
 	            	$('#data-load').load(url,function(){
-	                    $('#page-loading').empty();
+	                    ;
 	                });
 	            });
             }
