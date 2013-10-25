@@ -379,8 +379,8 @@
 					},4000);
 				}
 				$('a.ajax').live('click',function(e){
-					var $url=$(this).attr('href');
-					if($url!='#'){
+					var url=$(this).attr('href');
+					if(url!='#'){
 						e.preventDefault();
 						if(!$(this).hasClass('sub')){
 							$('#menu > li,#left-menu > li').each(function(){
@@ -389,7 +389,7 @@
 							$(this).parents('li.dropdown').addClass('active');
 						}
 						$('#content').prepend('<div class="page-loading"></div>');
-						$.get($url,function(data) {
+						$.get(url,function(data) {
 							$('#content').html(data);
 							$(".page-loading").remove();
 						});

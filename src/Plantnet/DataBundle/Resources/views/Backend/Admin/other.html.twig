@@ -47,9 +47,9 @@
 		$(document).ready(function() {
             $('.pagerfanta a').click(function(e) {
                 e.preventDefault();
-                var $url=$(this).attr('href');
+                var url=$(this).attr('href');
                 $('#content').prepend('<div class="page-loading"></div>');
-                $.get($url, function(data) {
+                $.get(url, function(data) {
                     $('#content').html(data);
                 });
             });
