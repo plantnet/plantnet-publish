@@ -16,6 +16,7 @@ use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
 
 use Plantnet\DataBundle\Utils\StringHelp;
+use Plantnet\DataBundle\Utils\ControllerHelp;
 
 
 /**
@@ -25,113 +26,9 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class TaxoController extends Controller
 {
-    private function check_enable_project($project)
-    {
-        $prefix=substr($this->get_prefix(),0,-1);
-        $connection=new \MongoClient();
-        $db=$connection->$prefix->Database->findOne(array(
-            'link'=>$project
-        ),array(
-            'enable'=>1
-        ));
-        if($db){
-            if(isset($db['enable'])&&$db['enable']===false){
-                throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-            }
-        }
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
-    }
-
-    private function database_list()
-    {
-        //display databases without prefix
-        $prefix=$this->get_prefix();
-        $dbs_array=array();
-        $connection=new \MongoClient();
-        $dbs=$connection->admin->command(array(
-            'listDatabases'=>1
-        ));
-        foreach($dbs['databases'] as $db){
-            $db_name=$db['name'];
-            if(substr_count($db_name,$prefix)){
-                $dbs_array[]=str_replace($prefix,'',$db_name);
-            }
-        }
-        return $dbs_array;
-    }
-
     private function get_prefix()
     {
         return $this->container->getParameter('mdb_base').'_';
-    }
-
-    private function get_config($project)
-    {
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
-            ->getQuery()
-            ->getSingleResult();
-        if(!$config){
-            throw $this->createNotFoundException('Unable to find Config entity.');
-        }
-        $default=$config->getDefaultlanguage();
-        if(!empty($default)){
-            $this->getRequest()->setLocale($default);
-        }
-        return $config;
-    }
-
-    private function make_translations($project,$route,$params)
-    {
-        $tab_links=array();
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->container->getParameter('mdb_base'));
-        $database=$dm->createQueryBuilder('PlantnetDataBundle:Database')
-            ->field('link')->equals($project)
-            ->getQuery()
-            ->getSingleResult();
-        if(!$database){
-            throw $this->createNotFoundException('Unable to find Database entity.');
-        }
-        $current=$database->getlanguage();
-        $parent=$database->getParent();
-        if($parent){
-            $database=$parent;
-        }
-        $children=$database->getChildren();
-        if(count($children)){
-            $params['project']=$database->getLink();
-            $tab_links[$database->getLanguage()]=array(
-                'lang'=>$database->getLanguage(),
-                'language'=>\Locale::getDisplayName($database->getLanguage(),$database->getLanguage()),
-                'link'=>$this->get('router')->generate($route,$params,true),
-                'active'=>($database->getLanguage()==$current)?1:0
-            );
-            $tab_sub_links=array();
-            foreach($children as $child){
-                if($child->getEnable()==true){
-                    $params['project']=$child->getLink();
-                    $tab_sub_links[$child->getLanguage()]=array(
-                        'lang'=>$child->getLanguage(),
-                        'language'=>\Locale::getDisplayName($child->getLanguage(),$child->getLanguage()),
-                        'link'=>$this->get('router')->generate($route,$params,true),
-                        'active'=>($child->getLanguage()==$current)?1:0
-                    );
-                }
-            }
-            if(count($tab_sub_links)){
-                ksort($tab_sub_links);
-                $tab_links=array_merge($tab_links,$tab_sub_links);
-            }
-            else{
-                $tab_links=array();
-            }
-        }
-        return $tab_links;
     }
 
     /**
@@ -149,7 +46,7 @@ class TaxoController extends Controller
      */
     public function module_taxoAction($project,$collection,$module,$taxon,Request $request)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         $form_identifier=$request->query->get('form_identifier');
         if($this->container->get('request')->get('_route')=='front_module_taxo'&&!empty($form_identifier)){
             return $this->redirect($this->generateUrl('front_module_taxo_details',array(
@@ -160,14 +57,16 @@ class TaxoController extends Controller
             )),301);
         }
         //
-        $translations=$this->make_translations(
+        $translations=ControllerHelp::make_translations(
             $project,
             'front_module_taxo',
             array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -234,7 +133,7 @@ class TaxoController extends Controller
             */
             $taxons=array($taxon);
         }
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:taxo.html.twig',array(
             'config'=>$config,
@@ -263,7 +162,7 @@ class TaxoController extends Controller
      */
     public function module_taxo_childrenAction($project,$collection,$module,$parent)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -301,7 +200,7 @@ class TaxoController extends Controller
             ->sort('name','asc')
             ->getQuery()
             ->execute();
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:taxo_children.html.twig',array(
             'config'=>$config,
@@ -327,7 +226,7 @@ class TaxoController extends Controller
      */
     public function module_taxo_queryAction($project,$collection,$module,$query)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         if($query=='null'){
             $response=new Response(json_encode(array()));
             $response->headers->set('Content-Type','application/json');
@@ -397,7 +296,7 @@ class TaxoController extends Controller
      */
     public function module_taxo_viewAction($project,$collection,$module,$taxon,$page,$sortby,$sortorder,Request $request)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;
@@ -412,14 +311,16 @@ class TaxoController extends Controller
             ),301);
         }
         //
-        $translations=$this->make_translations(
+        $translations=ControllerHelp::make_translations(
             $project,
             'front_module_taxo',
             array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -520,7 +421,7 @@ class TaxoController extends Controller
         //count to display
         $nb_images=($taxon->getHasimages())?1:0;
         $nb_locations=($taxon->getHaslocations())?1:0;
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:taxo_view.html.twig',array(
             'config'=>$config,
@@ -558,7 +459,7 @@ class TaxoController extends Controller
      */
     public function module_taxo_view_galleryAction($project,$collection,$module,$taxon,$page,Request $request)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;
@@ -573,14 +474,16 @@ class TaxoController extends Controller
             ),301);
         }
         //
-        $translations=$this->make_translations(
+        $translations=ControllerHelp::make_translations(
             $project,
             'front_module_taxo',
             array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -687,7 +590,7 @@ class TaxoController extends Controller
         //count to display
         $nb_images=1;
         $nb_locations=($taxon->getHaslocations())?1:0;
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:taxo_view.html.twig',array(
             'config'=>$config,
@@ -717,15 +620,17 @@ class TaxoController extends Controller
      */
     public function module_taxo_view_mapAction($project,$collection,$module,$taxon)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             'front_module_taxo',
             array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -826,7 +731,7 @@ class TaxoController extends Controller
         $nb_locations=1;
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:taxo_view.html.twig',array(
             'config'=>$config,

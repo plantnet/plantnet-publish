@@ -26,113 +26,9 @@ use Plantnet\DataBundle\Utils\ControllerHelp;
  */
 class DataController extends Controller
 {
-    private function check_enable_project($project)
-    {
-        $prefix=substr($this->get_prefix(),0,-1);
-        $connection=new \MongoClient();
-        $db=$connection->$prefix->Database->findOne(array(
-            'link'=>$project
-        ),array(
-            'enable'=>1
-        ));
-        if($db){
-            if(isset($db['enable'])&&$db['enable']===false){
-                throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-            }
-        }
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
-    }
-    
-    private function database_list()
-    {
-        //display databases without prefix
-        $prefix=$this->get_prefix();
-        $dbs_array=array();
-        $connection=new \MongoClient();
-        $dbs=$connection->admin->command(array(
-            'listDatabases'=>1
-        ));
-        foreach($dbs['databases'] as $db){
-            $db_name=$db['name'];
-            if(substr_count($db_name,$prefix)){
-                $dbs_array[]=str_replace($prefix,'',$db_name);
-            }
-        }
-        return $dbs_array;
-    }
-
     private function get_prefix()
     {
         return $this->container->getParameter('mdb_base').'_';
-    }
-
-    private function get_config($project)
-    {
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
-            ->getQuery()
-            ->getSingleResult();
-        if(!$config){
-            throw $this->createNotFoundException('Unable to find Config entity.');
-        }
-        $default=$config->getDefaultlanguage();
-        if(!empty($default)){
-            $this->getRequest()->setLocale($default);
-        }
-        return $config;
-    }
-
-    private function make_translations($project,$route,$params)
-    {
-        $tab_links=array();
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->container->getParameter('mdb_base'));
-        $database=$dm->createQueryBuilder('PlantnetDataBundle:Database')
-            ->field('link')->equals($project)
-            ->getQuery()
-            ->getSingleResult();
-        if(!$database){
-            throw $this->createNotFoundException('Unable to find Database entity.');
-        }
-        $current=$database->getlanguage();
-        $parent=$database->getParent();
-        if($parent){
-            $database=$parent;
-        }
-        $children=$database->getChildren();
-        if(count($children)){
-            $params['project']=$database->getLink();
-            $tab_links[$database->getLanguage()]=array(
-                'lang'=>$database->getLanguage(),
-                'language'=>\Locale::getDisplayName($database->getLanguage(),$database->getLanguage()),
-                'link'=>$this->get('router')->generate($route,$params,true),
-                'active'=>($database->getLanguage()==$current)?1:0
-            );
-            $tab_sub_links=array();
-            foreach($children as $child){
-                if($child->getEnable()==true){
-                    $params['project']=$child->getLink();
-                    $tab_sub_links[$child->getLanguage()]=array(
-                        'lang'=>$child->getLanguage(),
-                        'language'=>\Locale::getDisplayName($child->getLanguage(),$child->getLanguage()),
-                        'link'=>$this->get('router')->generate($route,$params,true),
-                        'active'=>($child->getLanguage()==$current)?1:0
-                    );
-                }
-            }
-            if(count($tab_sub_links)){
-                ksort($tab_sub_links);
-                $tab_links=array_merge($tab_links,$tab_sub_links);
-            }
-            else{
-                $tab_links=array();
-            }
-        }
-        return $tab_links;
     }
 
     /**
@@ -159,13 +55,15 @@ class DataController extends Controller
      */
     public function projectAction($project)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
             array(
                 'project'=>$project
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -216,7 +114,7 @@ class DataController extends Controller
         }
         $page->setContent(ControllerHelp::glossarize($dm,$coll,$page->getContent()));
         //
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').':project.html.twig',array(
             'config'=>$config,
@@ -231,12 +129,12 @@ class DataController extends Controller
 
     public function collection_listAction($project)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collections=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Collection:collection_list.html.twig',array(
             'config'=>$config,
@@ -251,14 +149,16 @@ class DataController extends Controller
      */
     public function collectionAction($project,$collection)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
             array(
                 'project'=>$project,
                 'collection'=>$collection
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -300,7 +200,7 @@ class DataController extends Controller
             }
         }
         //
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Collection:collection.html.twig',array(
             'config'=>$config,
@@ -334,7 +234,7 @@ class DataController extends Controller
      */
     public function moduleAction($project,$collection,$module,$page,$sortby,$sortorder,Request $request)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;
@@ -348,14 +248,16 @@ class DataController extends Controller
             ),301);
         }
         //
-        $translations=$this->make_translations(
+        $translations=ControllerHelp::make_translations(
             $project,
             'front_module',
             array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -409,7 +311,7 @@ class DataController extends Controller
         catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
             throw $this->createNotFoundException('Page not found.');
         }
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:datagrid.html.twig',array(
             'config'=>$config,
@@ -442,7 +344,7 @@ class DataController extends Controller
      */
     public function submoduleAction($project,$collection,$module,$submodule,$page,Request $request)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;
@@ -457,7 +359,7 @@ class DataController extends Controller
             ),301);
         }
         //
-        $translations=$this->make_translations(
+        $translations=ControllerHelp::make_translations(
             $project,
             'front_submodule',
             array(
@@ -465,7 +367,9 @@ class DataController extends Controller
                 'collection'=>$collection,
                 'module'=>$module,
                 'submodule'=>$submodule
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -532,7 +436,7 @@ class DataController extends Controller
                 catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
                     throw $this->createNotFoundException('Page not found.');
                 }
-                $config=$this->get_config($project);
+                $config=ControllerHelp::get_config($project,$dm,$this);
                 $tpl=$config->getTemplate();
                 return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:gallery.html.twig',array(
                     'config'=>$config,
@@ -550,7 +454,7 @@ class DataController extends Controller
                 $locations=array();
                 $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                 $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
-                $config=$this->get_config($project);
+                $config=ControllerHelp::get_config($project,$dm,$this);
                 $tpl=$config->getTemplate();
                 return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:map.html.twig',array(
                     'config'=>$config,
@@ -582,7 +486,7 @@ class DataController extends Controller
      */
     public function datamapAction($project,$collection,$module,$submodule,$page)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         $max_per_page=5000;
         $start=$page*$max_per_page;
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -702,8 +606,8 @@ class DataController extends Controller
      */
     public function detailsAction($project,$collection,$module,$id)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
             array(
@@ -711,7 +615,9 @@ class DataController extends Controller
                 'collection'=>$collection,
                 'module'=>$module,
                 'id'=>$id
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -832,7 +738,7 @@ class DataController extends Controller
         }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Plantunit:details.html.twig',array(
             'config'=>$config,
@@ -864,7 +770,7 @@ class DataController extends Controller
      */
     public function details_galleryAction($project,$collection,$module,$id,$page)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         $max_per_page=9;
         $start=$page*$max_per_page;
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -905,7 +811,7 @@ class DataController extends Controller
         if($start+$max_per_page>=count($images)){
             $next=-1;
         }
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Plantunit:details_gallery.html.twig',array(
             'config'=>$config,
@@ -924,14 +830,16 @@ class DataController extends Controller
      */
     public function glossaryAction($project,$collection)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
             array(
                 'project'=>$project,
                 'collection'=>$collection
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -945,7 +853,7 @@ class DataController extends Controller
         if(!$glossary){
             throw $this->createNotFoundException('Unable to find Glossary entity.');
         }
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').':glossary.html.twig',array(
             'config'=>$config,
@@ -963,13 +871,15 @@ class DataController extends Controller
      */
     public function creditsAction($project)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
             array(
                 'project'=>$project
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -981,7 +891,7 @@ class DataController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Pages:credits.html.twig',array(
             'config'=>$config,
@@ -998,13 +908,15 @@ class DataController extends Controller
      */
     public function mentionsAction($project)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
             array(
                 'project'=>$project
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -1016,7 +928,7 @@ class DataController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Pages:mentions.html.twig',array(
             'config'=>$config,
@@ -1033,13 +945,15 @@ class DataController extends Controller
      */
     public function contactsAction($project)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
             array(
                 'project'=>$project
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -1051,7 +965,7 @@ class DataController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Pages:contacts.html.twig',array(
             'config'=>$config,
@@ -1076,7 +990,7 @@ class DataController extends Controller
      */
     public function glossary_queryAction($project,$collection,$term)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         if($term=='null'){
             $response=new Response(json_encode(array()));
             $response->headers->set('Content-Type','application/json');
@@ -1123,20 +1037,22 @@ class DataController extends Controller
      */
     public function sitemapAction($project)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
             array(
                 'project'=>$project
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collections=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Pages:sitemap.html.twig',array(
             'config'=>$config,
@@ -1154,13 +1070,15 @@ class DataController extends Controller
      */
     public function searchAction($project,Request $request)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
             array(
                 'project'=>$project
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -1279,7 +1197,7 @@ class DataController extends Controller
                 }
             }
         }
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').':search.html.twig',array(
             'config'=>$config,

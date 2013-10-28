@@ -16,6 +16,7 @@ use Pagerfanta\Pagerfanta;
 use Pagerfanta\Adapter\DoctrineODMMongoDBAdapter;
 
 use Plantnet\DataBundle\Utils\StringHelp;
+use Plantnet\DataBundle\Utils\ControllerHelp;
 
 
 /**
@@ -25,113 +26,9 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class SearchController extends Controller
 {
-    private function check_enable_project($project)
-    {
-        $prefix=substr($this->get_prefix(),0,-1);
-        $connection=new \MongoClient();
-        $db=$connection->$prefix->Database->findOne(array(
-            'link'=>$project
-        ),array(
-            'enable'=>1
-        ));
-        if($db){
-            if(isset($db['enable'])&&$db['enable']===false){
-                throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-            }
-        }
-        $projects=$this->database_list();
-        if(!in_array($project,$projects)){
-            throw $this->createNotFoundException('Unable to find Project "'.$project.'".');
-        }
-    }
-
-    private function database_list()
-    {
-        //display databases without prefix
-        $prefix=$this->get_prefix();
-        $dbs_array=array();
-        $connection=new \MongoClient();
-        $dbs=$connection->admin->command(array(
-            'listDatabases'=>1
-        ));
-        foreach($dbs['databases'] as $db){
-            $db_name=$db['name'];
-            if(substr_count($db_name,$prefix)){
-                $dbs_array[]=str_replace($prefix,'',$db_name);
-            }
-        }
-        return $dbs_array;
-    }
-
     private function get_prefix()
     {
         return $this->container->getParameter('mdb_base').'_';
-    }
-
-    private function get_config($project)
-    {
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
-            ->getQuery()
-            ->getSingleResult();
-        if(!$config){
-            throw $this->createNotFoundException('Unable to find Config entity.');
-        }
-        $default=$config->getDefaultlanguage();
-        if(!empty($default)){
-            $this->getRequest()->setLocale($default);
-        }
-        return $config;
-    }
-
-    private function make_translations($project,$route,$params)
-    {
-        $tab_links=array();
-        $dm=$this->get('doctrine.odm.mongodb.document_manager');
-        $dm->getConfiguration()->setDefaultDB($this->container->getParameter('mdb_base'));
-        $database=$dm->createQueryBuilder('PlantnetDataBundle:Database')
-            ->field('link')->equals($project)
-            ->getQuery()
-            ->getSingleResult();
-        if(!$database){
-            throw $this->createNotFoundException('Unable to find Database entity.');
-        }
-        $current=$database->getlanguage();
-        $parent=$database->getParent();
-        if($parent){
-            $database=$parent;
-        }
-        $children=$database->getChildren();
-        if(count($children)){
-            $params['project']=$database->getLink();
-            $tab_links[$database->getLanguage()]=array(
-                'lang'=>$database->getLanguage(),
-                'language'=>\Locale::getDisplayName($database->getLanguage(),$database->getLanguage()),
-                'link'=>$this->get('router')->generate($route,$params,true),
-                'active'=>($database->getLanguage()==$current)?1:0
-            );
-            $tab_sub_links=array();
-            foreach($children as $child){
-                if($child->getEnable()==true){
-                    $params['project']=$child->getLink();
-                    $tab_sub_links[$child->getLanguage()]=array(
-                        'lang'=>$child->getLanguage(),
-                        'language'=>\Locale::getDisplayName($child->getLanguage(),$child->getLanguage()),
-                        'link'=>$this->get('router')->generate($route,$params,true),
-                        'active'=>($child->getLanguage()==$current)?1:0
-                    );
-                }
-            }
-            if(count($tab_sub_links)){
-                ksort($tab_sub_links);
-                $tab_links=array_merge($tab_links,$tab_sub_links);
-            }
-            else{
-                $tab_links=array();
-            }
-        }
-        return $tab_links;
     }
 
     private function createModuleSearchForm($fields,$module,$sub_fields)
@@ -222,15 +119,17 @@ class SearchController extends Controller
      */
     public function module_searchAction($project,$collection,$module)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
             array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -279,7 +178,7 @@ class SearchController extends Controller
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers_search.xml',0,true);
         $form=$this->createModuleSearchForm($fields,$module,$sub_fields);
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:module_search.html.twig',array(
             'config'=>$config,
@@ -310,20 +209,23 @@ class SearchController extends Controller
      */
     public function module_resultAction($project,$collection,$module,$mode,Request $request)
     {
-        $this->check_enable_project($project);
-        $translations=$this->make_translations(
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        $translations=ControllerHelp::make_translations(
             $project,
             'front_module_search',
             array(
                 'project'=>$project,
                 'collection'=>$collection,
                 'module'=>$module
-            )
+            ),
+            $this,
+            $this->container->getParameter('mdb_base')
         );
         //
-        $this->get_config($project);
+        // $this->get_config($project);
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        ControllerHelp::get_config($project,$dm,$this);
         $configuration=$dm->getConnection()->getConfiguration();
         $configuration->setLoggerCallable(null);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -573,7 +475,7 @@ class SearchController extends Controller
                             ->execute()
                             ->count();
                     }
-                    $config=$this->get_config($project);
+                    $config=ControllerHelp::get_config($project,$dm,$this);
                     $tpl=$config->getTemplate();
                     return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:module_result.html.twig',array(
                         'config'=>$config,
@@ -656,7 +558,7 @@ class SearchController extends Controller
                             ->execute()
                             ->count();
                     }
-                    $config=$this->get_config($project);
+                    $config=ControllerHelp::get_config($project,$dm,$this);
                     $tpl=$config->getTemplate();
                     return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:module_result.html.twig',array(
                         'config'=>$config,
@@ -730,7 +632,7 @@ class SearchController extends Controller
                     }
                     $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                     $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
-                    $config=$this->get_config($project);
+                    $config=ControllerHelp::get_config($project,$dm,$this);
                     $tpl=$config->getTemplate();
                     return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:module_result.html.twig',array(
                         'config'=>$config,
@@ -759,7 +661,7 @@ class SearchController extends Controller
                 'module'=>$module,
             )));
         }
-        $config=$this->get_config($project);
+        $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:module_result.html.twig',array(
             'config'=>$config,
@@ -786,7 +688,7 @@ class SearchController extends Controller
      */
     public function module_search_queryAction($project,$collection,$module,$attribute,$query)
     {
-        $this->check_enable_project($project);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
