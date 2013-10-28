@@ -1194,10 +1194,8 @@ class DataController extends Controller
             catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
                 throw $this->createNotFoundException('Page not found.');
             }
-            $nbResults=$paginator->getNbResults();
-            /*
-            if(count($punits)==1){
-                foreach($punits as $punit){
+            if($paginator->getNbResults()==1){
+                foreach($paginator as $punit){
                     return $this->redirect($this->generateUrl('front_details',array(
                         'project'=>$project,
                         'collection'=>$punit->getModule()->getCollection()->getUrl(),
@@ -1207,7 +1205,6 @@ class DataController extends Controller
                     ));
                 }
             }
-            */
         }
         $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
