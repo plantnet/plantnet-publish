@@ -1085,6 +1085,7 @@ class DataController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $punits=array();
         $query='';
+        $paginator=null;
         if($request->isMethod('GET')&&$request->query->get('q')){
             $query=$request->query->get('q');
             $string=new \MongoRegex('/.*'.StringHelp::accentToRegex($query).'.*/i');
@@ -1101,6 +1102,7 @@ class DataController extends Controller
             $loc_filters=array();
             $other_filters=array();
             //
+            /*
             foreach($collections as $collection){
                 $modules=$collection->getModules();
                 foreach($modules as $module){
@@ -1129,6 +1131,7 @@ class DataController extends Controller
                     }
                 }
             }
+            */
             //
             $tmp_ids=array();
             if(count($img_filters)){
@@ -1182,9 +1185,17 @@ class DataController extends Controller
             $punits=$punits
                 ->sort('title1','asc')
                 ->sort('title2','asc')
-                ->sort('title3','asc')
-                ->getQuery()
-                ->execute();
+                ->sort('title3','asc');
+            $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($punits));
+            try{
+                $paginator->setMaxPerPage(50);
+                $paginator->setCurrentPage($this->get('request')->query->get('page', 1));
+            }
+            catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
+                throw $this->createNotFoundException('Page not found.');
+            }
+            $nbResults=$paginator->getNbResults();
+            /*
             if(count($punits)==1){
                 foreach($punits as $punit){
                     return $this->redirect($this->generateUrl('front_details',array(
@@ -1196,6 +1207,7 @@ class DataController extends Controller
                     ));
                 }
             }
+            */
         }
         $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
@@ -1203,7 +1215,7 @@ class DataController extends Controller
             'config'=>$config,
             'project'=>$project,
             'query'=>$query,
-            'punits'=>$punits,
+            'paginator'=>$paginator,
             'translations'=>$translations,
             'current'=>'contacts'
         ));

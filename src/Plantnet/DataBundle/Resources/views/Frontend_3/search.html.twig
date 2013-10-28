@@ -19,34 +19,45 @@
     <blockquote class="pull-right">
         <p>: {{ query }}</p>
         <small>
-            {{ punits|length }}
-            {% if punits|length > 1 %}
+            {{ paginator|length }}
+            {% if paginator|length > 1 %}
                 {{ "line-results"|trans }}
             {% else %}
                 {{ "line-result"|trans }}
             {% endif %}
         </small>
     </blockquote>
-    {% for punit in punits %}
-        <p>
-            <small class="muted">{{ loop.index }}.</small>
-            <a href="{{ path('front_details', { 'project': project, 'collection': punit.module.collection.url, 'module': punit.module.url, 'id': punit.identifier }) }}">
-                {{ punit.title1 }} - {{ punit.title2 }}
-                {% if punit.title3 is defined and punit.title3 is not null %}
-                    - {{ punit.title3 }}
+    {% if paginator|length > 0 %}
+        {% if paginator.haveToPaginate() %}
+            <div class="pagerfanta">
+                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2, 'prev_message': '←', 'next_message': '→',}) }}
+            </div>
+        {% endif %}
+        {% for punit in paginator %}
+            <p>
+                <a href="{{ path('front_details', { 'project': project, 'collection': punit.module.collection.url, 'module': punit.module.url, 'id': punit.identifier }) }}">
+                    {{ punit.title1 }} - {{ punit.title2 }}
+                    {% if punit.title3 is defined and punit.title3 is not null %}
+                        - {{ punit.title3 }}
+                    {% endif %}
+                </a>
+                {% if punit.hasimages == true %}
+                    <i class="icon-camera"></i>
                 {% endif %}
-            </a>
-            {% if punit.hasimages == true %}
-                <i class="icon-camera"></i>
-            {% endif %}
-            {% if punit.haslocations == true %}
-                <i class="icon-map-marker"></i>
-            {% endif %}
-            <span class="muted">
-                [ {{ punit.module.collection.name }} / {{ punit.module.name }} ]
-            </span>
-        </p>
-    {% endfor %}
+                {% if punit.haslocations == true %}
+                    <i class="icon-map-marker"></i>
+                {% endif %}
+                <span class="muted">
+                    [ {{ punit.module.collection.name }} / {{ punit.module.name }} ]
+                </span>
+            </p>
+        {% endfor %}
+        {% if paginator.haveToPaginate() %}
+            <div class="pagerfanta">
+                {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2, 'prev_message': '←', 'next_message': '→',}) }}
+            </div>
+        {% endif %}
+    {% endif %}
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
