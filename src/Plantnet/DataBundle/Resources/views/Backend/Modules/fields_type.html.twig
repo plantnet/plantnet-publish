@@ -17,6 +17,11 @@
         <br />
         "Sort order" allows to set the sort order that will be applied for data display. To sort first on the colum "X" and secondly on the colum "Y", you must specify "X" : 1 and "Y" : 2.
     </p>
+    {% if module.type == 'other' %}
+        <p>
+            "Highlight" field allows to put some data in the top of the details page.
+        </p>
+    {% endif %}
     <form action="{{ path('save_fields', { 'id': collection.id, 'idmodule': module.id }) }}" method="post" {{ form_enctype(form) }}>
         {{ form_errors(form) }}
         <div class="field-form">
@@ -57,7 +62,7 @@
                     {% elseif module.type != 'locality' and module.type != 'image' %}
                         <th class="middle">Details</th>
                         <th class="middle">Search</th>
-                        <th class="middle">Common name</th>
+                        <th class="middle">Highlight</th>
                     {% else %}
                         <th class="middle">-</th>
                     {% endif %}

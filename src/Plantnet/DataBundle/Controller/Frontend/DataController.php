@@ -766,29 +766,41 @@ class DataController extends Controller
         }
         $plantunit->setAttributes($attributes);
         //
-        $vernaculars=array();
+        $highlights=array();
         $others=$plantunit->getOthers();
         $tab_others_groups=array();
         if(count($others)){
             foreach($others as $other){
-                $verac_columns=array();
+                $hl_colums=array();
                 $field=$other->getModule()->getProperties();
                 foreach($field as $row){
                     if($row->getVernacular()==true){
-                        $verac_columns[]=$row->getId();
+                        $hl_colums[$row->getId()]=$row->getName();
                     }
                 }
-                if(count($verac_columns)){
+                if(count($hl_colums)){
                     $prop=$other->getProperty();
                     foreach($prop as $key=>$val){
-                        if(in_array($key,$verac_columns)&&!in_array($val,$vernaculars)){
-                            $vernaculars[]=$val;
+                        if(array_key_exists($key,$hl_colums)){
+                            if(!isset($highlights[$other->getModule()->getId()])){
+                                $highlights[$other->getModule()->getId()]=array();
+                            }
+                            if(!isset($highlights[$other->getModule()->getId()][$key])){
+                                $highlights[$other->getModule()->getId()][$key]=array(
+                                    'name'=>$hl_colums[$key],
+                                    'horizontal'=>true,
+                                    'values'=>array()
+                                );
+                            }
+                            if(strlen($val)>25){
+                                $highlights[$other->getModule()->getId()][$key]['horizontal']=false;
+                            }
+                            $highlights[$other->getModule()->getId()][$key]['values'][]=$val;
                         }
                     }
                 }
                 if(!in_array($other->getModule()->getId(),array_keys($tab_others_groups))){
                     $order=array();
-                    // $field=$other->getModule()->getProperties();
                     foreach($field as $row){
                         if($row->getSortorder()){
                             $order[$row->getSortorder()]=$row->getId();
@@ -810,7 +822,13 @@ class DataController extends Controller
                     );
                 }
             }
-            natcasesort($vernaculars);
+            foreach($highlights as $id_mod=>$tab_mod){
+                foreach($tab_mod as $id_col=>$tab_col){
+                    $tmp_tab=$highlights[$id_mod][$id_col]['values'];
+                    natcasesort($tmp_tab);
+                    $highlights[$id_mod][$id_col]['values']=$tmp_tab;
+                }
+            }
         }
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
@@ -825,7 +843,7 @@ class DataController extends Controller
             'display'=>$display,
             'layers'=>$layers,
             'tab_others_groups'=>$tab_others_groups,
-            'vernaculars'=>$vernaculars,
+            'highlights'=>$highlights,
             'translations'=>$translations,
             'current'=>'collection'
         ));

@@ -24,6 +24,11 @@
         <br />
         It is recomended to not update this value: it could broken some external links to the resource.
     </p>
+    {% if entity.type == 'other' %}
+        <p>
+            "Highlight" field allows to put some data in the top of the details page.
+        </p>
+    {% endif %}
     <form action="{{ path('module_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
         {{ form_errors(edit_form) }}
         <div class="field-form">
@@ -75,7 +80,7 @@
                     {% elseif entity.type != 'locality' and entity.type != 'image' %}
                         <th class="middle">Details</th>
                         <th class="middle">Search</th>
-                        <th class="middle">Common name</th>
+                        <th class="middle">Highlight</th>
                     {% else %}
                         <th class="middle">-</th>
                     {% endif %}

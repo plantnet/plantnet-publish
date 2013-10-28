@@ -10,9 +10,6 @@
     {% if plantunit.title3 is defined and plantunit.title3 is not null %}
         {% set keywords = keywords|merge([plantunit.title3]) %}
     {% endif %}
-    {% if vernaculars|length > 0 %}
-        {% set keywords = keywords|merge(vernaculars) %}
-    {% endif %}
     <meta name="keywords" content="{{ keywords|join(', ') }}" />
 {% endblock %}
 {% block stylesheets %}
@@ -61,15 +58,31 @@
                 {% endfor %}
             </div>
         {% endif %}
-        {% if vernaculars|length > 0 %}
-            <div>
-                {% if vernaculars|length > 1 %}
-                    <h5>{{ "line-vernaculars"|trans|capitalize }}</h5>
-                {% else %}
-                    <h5>{{ "line-vernacular"|trans|capitalize }}</h5>
-                {% endif %}
-                <ul class="inline"><li>{% autoescape false %}{{ vernaculars|join(',</li><li>') }}{% endautoescape %}</li></ul>
-            </div>
+        {% if highlights|length > 0 %}
+            {% for mod in highlights %}
+                {% for col in mod %}
+                    <div>
+                        <h5>{{ col.name }}</h5>
+                        {% if col.horizontal == true %}
+                            <ul class="inline">
+                                <li>
+                                    {% autoescape false %}
+                                        {{ col.values|join(',</li><li>') }}
+                                    {% endautoescape %}
+                                </li>
+                            </ul>
+                        {% else %}
+                            <ul>
+                                <li>
+                                    {% autoescape false %}
+                                        {{ col.values|join('</li><li>') }}
+                                    {% endautoescape %}
+                                </li>
+                            </ul>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endfor %}
         {% endif %}
         <div>
             <h5>{{ "line-details"|trans|capitalize }}</h5>
