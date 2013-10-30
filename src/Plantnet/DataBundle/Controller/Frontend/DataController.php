@@ -736,6 +736,9 @@ class DataController extends Controller
                 }
             }
         }
+        usort($tab_others_groups,function($a,$b){
+            return ($a[0]->getName()<$b[0]->getName())?-1:1;
+        });
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
         $config=ControllerHelp::get_config($project,$dm,$this);

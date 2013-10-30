@@ -10,6 +10,15 @@
     {% if plantunit.title3 is defined and plantunit.title3 is not null %}
         {% set keywords = keywords|merge([plantunit.title3]) %}
     {% endif %}
+    {% if highlights|length > 0 %}
+        {% for mod in highlights %}
+            {% for col in mod if col.horizontal == true %}
+                {% for value in col.values if value not in keywords %}
+                    {% set keywords = keywords|merge([value]) %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
     <meta name="keywords" content="{{ keywords|join(', ') }}" />
 {% endblock %}
 {% block stylesheets %}
