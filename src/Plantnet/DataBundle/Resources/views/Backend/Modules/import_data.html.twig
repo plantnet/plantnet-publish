@@ -35,6 +35,15 @@
 	{{ parent() }}
 	<script type="text/javascript">
 		$(document).ready(function() {
+			$('a.ajax').die('click');
+			window.onbeforeunload=function(e){
+				var e=e||window.event;
+				var msg='Some data are not saved. Leave this page without saving ?';
+				if(e){
+					e.returnValue=msg;
+				}
+				return msg;
+			};
 			$(".loading").hide();
 			$("#import_data").submit(function(){
 				$(".loading").show();
@@ -50,6 +59,7 @@
 					success: function(data){
 						$('#data').html(data+' <a href="{{ path('admin_index') }}" class="btn btn-small">OK</a>');
 						$(".loading").hide();
+						window.onbeforeunload=null;
 					}
 				});
 				return false;
