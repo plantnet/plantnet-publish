@@ -36,11 +36,17 @@ class TaxonomizeCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input,OutputInterface $output)
     {
+        $actions=array(
+            'taxo',
+            'syn',
+            'desc',
+            'undesc'
+        );
         $action=$input->getArgument('action');
         $id=$input->getArgument('id');
         $dbname=$input->getArgument('dbname');
         $usermail=$input->getArgument('usermail');
-        if($action&&($action=='taxo'||$action=='syn')){
+        if($action&&in_array($action,$actions)){
             if($id&&$dbname&&$usermail){
                 $this->taxonomize($action,$dbname,$id,$usermail);
             }
@@ -508,14 +514,14 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 $string_non_valid=isset($data[$tab['col_non_valid']])?trim($data[$tab['col_non_valid']]):'';
                                 $string_valid=isset($data[$tab['col_valid']])?trim($data[$tab['col_valid']]):'';
                                 $cur_encoding=mb_detect_encoding($string_non_valid);
-                                if($cur_encoding=="UTF-8" && mb_check_encoding($string_non_valid,"UTF-8")){
+                                if($cur_encoding=="UTF-8"&&mb_check_encoding($string_non_valid,"UTF-8")){
                                     $string_non_valid=$string_non_valid;
                                 }
                                 else{
                                     $string_non_valid=utf8_encode($string_non_valid);
                                 }
                                 $cur_encoding=mb_detect_encoding($string_valid);
-                                if($cur_encoding=="UTF-8" && mb_check_encoding($string_valid,"UTF-8")){
+                                if($cur_encoding=="UTF-8"&&mb_check_encoding($string_valid,"UTF-8")){
                                     $string_valid=$string_valid;
                                 }
                                 else{
@@ -682,6 +688,139 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         }
                     }
                 }
+            }
+            elseif($action=='desc'){
+                // description management
+                $csv=__DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_desc.csv';
+                if(file_exists($csv)){
+                    $cols=array();
+                    $taxa=array();
+                    $desc=array();
+                    $handle=fopen($csv,"r");
+                    $field=fgetcsv($handle,0,";");
+                    foreach($field as $col){
+                        $col_name='';
+                        $cur_encoding=mb_detect_encoding($col);
+                        if($cur_encoding=="UTF-8"&&mb_check_encoding($col,"UTF-8")){
+                            $col_name=$col;
+                        }
+                        else{
+                            $col_name=utf8_encode($col);
+                        }
+                        $cols[]=$col_name;
+                    }
+                    $csv_error=false;
+                    $used_key=array();
+                    foreach($taxo as $level=>$data){
+                        $taxa[$level]=array(
+                            'col'=>''
+                        );
+                        foreach($cols as $key=>$col){
+                            if($col==$data[1]){
+                                $taxa[$level]['col']=$key;
+                                $used_key[]=$key;
+                            }
+                        }
+                        if(empty($taxa[$level]['col'])&&$taxa[$level]['col']!=0){
+                            $csv_error=true;
+                        }
+                    }
+                    foreach($cols as $key=>$col){
+                        if(!in_array($key,$used_key)){
+                            $desc[$key]=$col;
+                        }
+                    }
+                    $used_key=null;
+                    if(!count($desc)){
+                        $csv_error=true;
+                    }
+                    if(!$csv_error){
+                        $i=0;
+                        $batch_size=100;
+                        \MongoCursor::$timeout=-1;
+                        while(($data=fgetcsv($handle,0,';'))!==false){
+                            $identifier='';
+                            $tax=null;
+                            foreach($taxa as $level=>$tab){
+                                $string=isset($data[$tab['col']])?trim($data[$tab['col']]):'';
+                                $cur_encoding=mb_detect_encoding($string);
+                                if($cur_encoding=="UTF-8"&&mb_check_encoding($string,"UTF-8")){
+                                    $string=$string;
+                                }
+                                else{
+                                    $string=utf8_encode($string);
+                                }
+                                if($identifier&&!empty($string)){
+                                    $identifier.=' - ';
+                                }
+                                $identifier.=$string;
+                                if(!empty($string)){
+                                    $tax=array(
+                                        'name'=>$string,
+                                        'identifier'=>$identifier,
+                                        'level'=>$level,
+                                        'label'=>$cols[$tab['col']]
+                                    );
+                                }
+                            }
+                            if($tax){
+                                $description=array();
+                                foreach($desc as $key=>$val){
+                                    $string=isset($data[$key])?trim($data[$key]):'';
+                                    $cur_encoding=mb_detect_encoding($string);
+                                    if($cur_encoding=="UTF-8"&&mb_check_encoding($string,"UTF-8")){
+                                        $string=$string;
+                                    }
+                                    else{
+                                        $string=utf8_encode($string);
+                                    }
+                                    if(!empty($string)){
+                                        $description[$val]=$string;
+                                    }
+                                }
+                                $tax['description']=$description;
+                                $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
+                                    ->findOneBy(array(
+                                        'module.id'=>$module->getId(),
+                                        'identifier'=>$tax['identifier']
+                                    ));
+                                if($taxon){
+                                    $i++;
+                                    $taxon->setAttributes($tax['description']);
+                                    $dm->persist($taxon);
+                                    if($i>=$batch_size){
+                                        $dm->flush();
+                                        $i=0;
+                                        $dm->clear();
+                                        gc_collect_cycles();
+                                        $module=$dm->getRepository('PlantnetDataBundle:Module')
+                                            ->findOneBy(array(
+                                                'id'=>$id_module
+                                            ));
+                                    }
+                                }
+                            }
+                        }
+                        $dm->flush();
+                        $dm->clear();
+                        gc_collect_cycles();
+                        $module=$dm->getRepository('PlantnetDataBundle:Module')
+                            ->findOneBy(array(
+                                'id'=>$id_module
+                            ));
+                    }
+                }
+            }
+            elseif($action=='undesc'){
+                \MongoCursor::$timeout=-1;
+                // remove taxa' descriptions
+                $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                    ->update()
+                    ->multiple(true)
+                    ->field('module')->references($module)
+                    ->field('attributes')->unsetField()
+                    ->getQuery()
+                    ->execute();
             }
             $message=$error;
             if(empty($message)){

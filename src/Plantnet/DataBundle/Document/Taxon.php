@@ -34,6 +34,11 @@ class Taxon
     private $level;
 
     /**
+     * @MongoDB\Hash
+     */
+    protected $attributes;
+
+    /**
      * @MongoDB\Boolean
      */
     private $issynonym;
@@ -224,6 +229,26 @@ class Taxon
     public function getLevel()
     {
         return $this->level;
+    }
+
+    /**
+     * Set attributes
+     *
+     * @param hash $attributes
+     */
+    public function setAttributes($attributes)
+    {
+        $this->attributes = $attributes;
+    }
+
+    /**
+     * Get attributes
+     *
+     * @return hash $attributes
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
     }
 
     /**

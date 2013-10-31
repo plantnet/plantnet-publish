@@ -24,7 +24,8 @@ use Plantnet\DataBundle\Form\ImportFormType,
     Plantnet\DataBundle\Form\Type\ModulesType,
     Plantnet\DataBundle\Form\Type\ModulesTaxoType,
     Plantnet\DataBundle\Form\ModuleFormType,
-    Plantnet\DataBundle\Form\ModuleSynFormType;
+    Plantnet\DataBundle\Form\ModuleSynFormType,
+    Plantnet\DataBundle\Form\ModuleDescFormType;
 
 use Symfony\Component\Form\FormError;
 
@@ -714,9 +715,14 @@ class ModulesController extends Controller
         }
         $editForm=$this->get('form.factory')->create(new ModulesTaxoType(),$module);
         $deleteSynForm=false;
+        $deleteDescForm=false;
         $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
         if(file_exists($csv)){
             $deleteSynForm=$this->createDeleteSynForm($id);
+        }
+        $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_desc.csv';
+        if(file_exists($csv)){
+            $deleteDescForm=$this->createDeleteDescForm($id);
         }
         $nb_taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
             ->field('module')->references($module)
@@ -728,7 +734,8 @@ class ModulesController extends Controller
             'entity'=>$module,
             'nb_taxons'=>$nb_taxons,
             'edit_form'=>$editForm->createView(),
-            'delete_syn_form'=>($deleteSynForm!=false)?$deleteSynForm->createView():false
+            'delete_syn_form'=>($deleteSynForm!=false)?$deleteSynForm->createView():false,
+            'delete_desc_form'=>($deleteDescForm!=false)?$deleteDescForm->createView():false
         ));
     }
 
@@ -760,6 +767,14 @@ class ModulesController extends Controller
                 $module->setUpdating(true);
                 $dm->persist($module);
                 $dm->flush();
+                $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
+                if(file_exists($csv)){
+                    unlink($csv);
+                }
+                $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_desc.csv';
+                if(file_exists($csv)){
+                    unlink($csv);
+                }
                 //command
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
@@ -776,6 +791,13 @@ class ModulesController extends Controller
     }
 
     private function createDeleteSynForm($id)
+    {
+        return $this->createFormBuilder(array('id'=>$id))
+            ->add('id','hidden')
+            ->getForm();
+    }
+
+    private function createDeleteDescForm($id)
     {
         return $this->createFormBuilder(array('id'=>$id))
             ->add('id','hidden')
@@ -802,6 +824,31 @@ class ModulesController extends Controller
         }
         $form=$this->createForm(new ModuleSynFormType(),$module);
         return $this->render('PlantnetDataBundle:Backend\Modules:module_syn.html.twig',array(
+            'module'=>$module,
+            'form'=>$form->createView()
+        ));
+    }
+
+    /**
+     * Displays a form to add taxa desc to Module entity.
+     *
+     * @Route("/{id}/desc", name="module_desc")
+     * @Template()
+     */
+    public function module_descAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'id'=>$id
+            ));
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $form=$this->createForm(new ModuleDescFormType(),$module);
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_desc.html.twig',array(
             'module'=>$module,
             'form'=>$form->createView()
         ));
@@ -864,6 +911,62 @@ class ModulesController extends Controller
     }
 
     /**
+     * Add taxa desc to Module entity.
+     *
+     * @Route("/{id}/desc_update", name="module_desc_update")
+     * @Method("post")
+     * @Template()
+     */
+    public function module_desc_updateAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'id'=>$id
+            ));
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $request=$this->getRequest();
+        $form=$this->createForm(new ModuleDescFormType(),$module);
+        if('POST'===$request->getMethod()){
+            $form->bind($request);
+            if($form->isValid()){
+                $uploadedDescFile=$module->getDescfile();
+                try{
+                    $uploadedDescFile->move(
+                        __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/',
+                        $module->getAlias().'_desc.csv'
+                    );
+                }
+                catch(FilePermissionException $e)
+                {
+                    return false;
+                }
+                catch(\Exception $e)
+                {
+                    throw new \Exception($e->getMessage());
+                }
+                $module->setUpdating(true);
+                $dm->persist($module);
+                $dm->flush();
+                $kernel=$this->get('kernel');
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon desc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                $process=new \Symfony\Component\Process\Process($command);
+                $process->start();
+                $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
+                return $this->redirect($this->generateUrl('module_desc',array('id'=>$module->getId())));
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_desc.html.twig',array(
+            'module'=>$module,
+            'form'=>$form->createView()
+        ));
+    }
+
+    /**
      * Deletes syn from Module entity.
      *
      * @Route("/{id}/syn_delete", name="module_syn_delete")
@@ -897,6 +1000,49 @@ class ModulesController extends Controller
                     //command
                     $kernel=$this->get('kernel');
                     $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                    $process=new \Symfony\Component\Process\Process($command);
+                    $process->start();
+                    $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
+                }
+            }
+        }
+        return $this->redirect($this->generateUrl('module_edit_taxo',array('id'=>$id)));
+    }
+
+    /**
+     * Deletes taxa desc from Module entity.
+     *
+     * @Route("/{id}/desc_delete", name="module_desc_delete")
+     * @Method("post")
+     */
+    public function module_desc_deleteAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_desc.csv';
+        if(!file_exists($csv)){
+            throw $this->createNotFoundException('Unable to find Desc entity.');
+        }
+        $form=$this->createDeleteDescForm($id);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $form->bind($request);
+            if($form->isValid()){
+                if(unlink($csv)){
+                    $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                    $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                    $module->setUpdating(true);
+                    $dm->persist($module);
+                    $dm->flush();
+                    //command
+                    $kernel=$this->get('kernel');
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon undesc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
                     $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');

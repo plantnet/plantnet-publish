@@ -118,6 +118,64 @@
                 </div>
             </div>
         {% endif %}
+        <p>
+            Description file must contain one column by taxonomic level.
+            <br />
+            Descriptions will be set for valid and non-valid taxa.
+            <br />
+            <br />
+            Example:
+        </p>
+        <table class="table table-bordered table-condensed">
+            <tr>
+                <th>Family</th>
+                <th>Species</th>
+                <th>Description</th>
+                <th>Protection</th>
+            </tr>
+            <tr>
+                <td>Family 1</td>
+                <td></td>
+                <td>...</td>
+                <td>...</td>
+            </tr>
+            <tr>
+                <td>Family 3</td>
+                <td>Species 1</td>
+                <td>...</td>
+                <td>...</td>
+            </tr>
+        </table>
+        {% if nb_taxons > 0 and delete_desc_form == false %}
+            <a href="{{ path('module_desc', { 'id': entity.id }) }}" class="btn">Add descriptions</a>
+        {% else %}
+            <a href="#" class="btn disabled">Add descriptions</a>
+        {% endif %}
+        {% if delete_desc_form != false %}
+            <br />
+            <br />
+            <form id="form-delete-desc" action="{{ path('module_desc_delete', { 'id': entity.id }) }}" method="post">
+                {{ form_widget(delete_desc_form) }}
+                <button id="btn-delete-desc-1" type="submit" class="btn"><i class="icon-trash"></i> Delete descriptions</button>
+            </form>
+            <div id="modal-delete-desc" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        <i class="icon-remove-sign"></i>
+                    </button>
+                    <h3 id="myModalLabel">Delete ?</h3>
+                </div>
+                <div class="modal-body">
+                    <p class="text-error">
+                        <i class="icon-warning-sign"></i> Delete descriptions ?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">No</button>
+                    <button class="btn" id="btn-delete-desc-2"><i class="icon-trash"></i> Yes</button>
+                </div>
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}
 {% block javascripts %}
@@ -131,6 +189,14 @@
             });
             $('#btn-delete-2').click(function(){
                 $('#form-delete').submit();
+            });
+            $('#btn-delete-desc-1').click(function(event){
+                event.preventDefault();
+                $('#modal-delete-desc').modal();
+                return false;
+            });
+            $('#btn-delete-desc-2').click(function(){
+                $('#form-delete-desc').submit();
             });
             if($('a.btn.disabled').length>0){
                 $('a.btn.disabled').click(function(e){

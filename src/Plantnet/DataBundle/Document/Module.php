@@ -70,6 +70,12 @@ class Module
     protected $synfile;
 
     /**
+     * 
+     * @Assert\File(maxSize = "75M")
+     */
+    protected $descfile;
+
+    /**
      * @MongoDB\ReferenceOne(
      *      targetDocument="Collection",
      *      inversedBy="modules"
@@ -416,6 +422,26 @@ class Module
     public function getSynfile()
     {
         return $this->synfile;
+    }
+
+    /**
+     * Set descfile
+     *
+     * @param text $descfile
+     */
+    public function setDescfile($descfile)
+    {
+        $this->descfile = $descfile;
+    }
+
+    /**
+     * Get descfile
+     *
+     * @return text $descfile
+     */
+    public function getDescfile()
+    {
+        return $this->descfile;
     }
 
     /**

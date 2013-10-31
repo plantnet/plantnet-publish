@@ -1,0 +1,40 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block form %}
+    <div id="title-form">
+        <h4 class="text-info">
+            <em>Module: {{ module.name }}</em> > Taxonomy - description
+        </h4>
+    </div>
+    {% set updating = false %}
+    {% if module.updating == true %}
+        {% set updating = true %}
+    {% endif %}
+    {% for child in module.children %}
+        {% if child.updating == true %}
+            {% set updating = true %}
+        {% endif %}
+    {% endfor %}
+    {% if updating == true %}
+        <p class="text-warning">
+            There is a work in progress, taxonomy configuration is disabled few minutes.
+        </p>
+    {% else %}
+        <form action="{{ path('module_desc_update', { 'id': module.id }) }}" method="post" {{ form_enctype(form) }}>
+            {{ form_errors(form) }}
+            <div class="field-form">
+                {{ form_label(form.descfile, 'CSV description') }}
+                {{ form_errors(form.descfile) }}
+                {{ form_widget(form.descfile) }}
+            </div>
+            {{ form_rest(form) }}
+            <br />
+            <button type="submit" class="btn">Import structure</button>
+        </form>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

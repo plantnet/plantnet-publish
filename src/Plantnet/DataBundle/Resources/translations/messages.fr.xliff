@@ -107,7 +107,7 @@
       </trans-unit>
       <trans-unit id="24" resname="line-gallery">
         <source>line-gallery</source>
-        <target state="new">gallerie</target>
+        <target state="new">galerie</target>
       </trans-unit>
       <trans-unit id="25" resname="line-taxon">
         <source>line-taxon</source>
