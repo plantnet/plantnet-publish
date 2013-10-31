@@ -12,12 +12,14 @@
                         <i class="icon-minus"></i>
                         {{ taxon.name }}
                     {% endif %}
-                    {% if taxon.synonyms|length > 0 %}
-                        {% set syns = [] %}
-                        {% for syn in taxon.synonyms %}
-                            {% set syns = syns|merge([syn.identifier]) %}
-                        {% endfor %}
-                        <span class="icon-random syn-pop" data-original-title="{{ taxon.name }}" data-content="<p>{% if taxon.synonyms|length >= 2 %}{{ "line-synonyms"|trans|capitalize }}{% else %}{{ "line-synonym"|trans|capitalize }}{% endif %}</p><ul><li>{{ syns|join('</li><li>') }}</li></ul>"></span>
+                    {% if taxon.hassynonyms == true or taxon.attributes|length > 0 %}
+                        {% if taxon.hassynonyms == true %}
+                            {% set syns = [] %}
+                            {% for syn in taxon.synonyms %}
+                                {% set syns = syns|merge([syn.identifier]) %}
+                            {% endfor %}
+                        {% endif %}
+                        <span class="icon-info-sign syn-pop" data-original-title="{{ taxon.name }} [{{ taxon.label }}]" data-content="{% if taxon.attributes|length > 0 %}<dl>{% for key,value in taxon.attributes %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endfor %}</dl>{% endif %}{% if taxon.hassynonyms == true %}<p><strong>{% if taxon.synonyms|length >= 2 %}{{ "line-synonyms"|trans|capitalize }}{% else %}{{ "line-synonym"|trans|capitalize }}{% endif %}</strong></p><ul><li>{{ syns|join('</li><li>') }}</li></ul>{% endif %}"></span>
                     {% endif %}
                 </span>
             </td>
