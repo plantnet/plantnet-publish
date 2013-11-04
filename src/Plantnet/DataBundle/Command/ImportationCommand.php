@@ -69,17 +69,14 @@ class ImportationCommand extends ContainerAwareCommand
                 foreach($attributes as $field){
                     $fields[]=$field;
                 }
-                /*
-                 * Initialise the metrics
-                 */
-                //echo "Memory usage before: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
                 $s=microtime(true);
-                $batchSize=200;
+                $batchSize=100;
+                $size=0;
                 $rowCount=0;
                 $errorCount=0;
-                while(($data=fgetcsv($handle,0,';'))!==FALSE){
-                    $num=count($data);
-                    if($module->getType()=='image'){
+                if($module->getType()=='image'){
+                    while(($data=fgetcsv($handle,0,';'))!==false){
+                        $num=count($data);
                         $image=new Image();
                         $attributes=array();
                         for($c=0;$c<$num;$c++){
@@ -119,73 +116,63 @@ class ImportationCommand extends ContainerAwareCommand
                             $image->setTitle2($parent->getTitle2());
                             $image->setTitle3($parent->getTitle3());
                             $dm->persist($image);
-                            $parent->setHasimages(true);
-                            $dm->persist($parent);
                             $rowCount++;
+                            $size++;
+                            if(!$parent->getHasimages()){
+                                $parent->setHasimages(true);
+                                $dm->persist($parent);
+                                $size++;
+                            }
                             //update Taxons
                             $taxons=$parent->getTaxonsrefs();
                             if(count($taxons)){
                                 foreach($taxons as $taxon){
-                                    $taxon->setHasimages(true);
-                                    $dm->persist($taxon);
-                                    // $image->addTaxonsref($taxon);
+                                    if(!$taxon->getHasimages()){
+                                        $taxon->setHasimages(true);
+                                        $dm->persist($taxon);
+                                        $size++;
+                                    }
                                     if($taxon->getIssynonym()){
                                         $taxon_valid=$taxon->getChosen();
-                                        $taxon_valid->setHasimages(true);
-                                        $dm->persist($taxon_valid);
+                                        if(!$taxon_valid->getHasimages()){
+                                            $taxon_valid->setHasimages(true);
+                                            $dm->persist($taxon_valid);
+                                            $size++;
+                                        }
                                         $parent_taxon_valid=$taxon_valid->getParent();
                                         while($parent_taxon_valid){
-                                            $parent_taxon_valid->setHasimages(true);
-                                            $dm->persist($parent_taxon_valid);
+                                            if(!$parent_taxon_valid->getHasimages()){
+                                                $parent_taxon_valid->setHasimages(true);
+                                                $dm->persist($parent_taxon_valid);
+                                                $size++;
+                                            }
                                             $parent_taxon_valid=$parent_taxon_valid->getParent();
                                         }
                                     }
                                 }
                             }
-                            /*
-                            $taxon=$parent->getTaxon();
-                            if($taxon){
-                                $taxon->setHasimages(true);
-                                $dm->persist($taxon);
-                                $image->addTaxonsref($taxon);
-                                $parent_taxon=$taxon->getParent();
-                                while($parent_taxon){
-                                    $parent_taxon->setHasimages(true);
-                                    $dm->persist($parent_taxon);
-                                    $image->addTaxonsref($parent_taxon);
-                                    $parent_taxon=$parent_taxon->getParent();
-                                }
-                                $dm->persist($image);
-                                //update valid taxonomy
-                                if($taxon->getIssynonym()){
-                                    $taxon_valid=$taxon->getChosen();
-                                    $taxon_valid->setHasimages(true);
-                                    $dm->persist($taxon_valid);
-                                    $parent_taxon_valid=$taxon_valid->getParent();
-                                    while($parent_taxon_valid){
-                                        $parent_taxon_valid->setHasimages(true);
-                                        $dm->persist($parent_taxon_valid);
-                                        $parent_taxon_valid=$parent_taxon_valid->getParent();
-                                    }
-                                }
+                            if($size>=$batchSize){
+                                $dm->flush();
+                                $dm->clear();
+                                gc_collect_cycles();
+                                $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                                $size=0;
                             }
-                            */
                         }
                         else{
                             $orphans[$image->getIdparent()]=$image->getIdparent();
                             $errorCount++;
-                            /*
-                            $plantunit=new Plantunit();
-                            $plantunit->setModule($module);
-                            $plantunit->setAttributes($attributes);
-                            $plantunit->setIdentifier($image->getIdentifier());
-                            $dm->persist($plantunit);
-                            $image->setPlantunit($plantunit);
-                            $dm->persist($image);
-                            */
+                            $dm->detach($image);
                         }
                     }
-                    elseif($module->getType()=='locality'){
+                    $dm->flush();
+                    $dm->clear();
+                    gc_collect_cycles();
+                    $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                }
+                elseif($module->getType()=='locality'){
+                    while(($data=fgetcsv($handle,0,';'))!==false){
+                        $num=count($data);
                         $location=new Location();
                         $coordinates=new Coordinates();
                         $attributes=array();
@@ -229,76 +216,62 @@ class ImportationCommand extends ContainerAwareCommand
                             $location->setTitle2($parent->getTitle2());
                             $location->setTitle3($parent->getTitle3());
                             $dm->persist($location);
-                            $parent->setHaslocations(true);
-                            $dm->persist($parent);
                             $rowCount++;
+                            $size++;
+                            if(!$parent->getHaslocations()){
+                                $parent->setHaslocations(true);
+                                $dm->persist($parent);
+                                $size++;
+                            }
                             //update Taxons
                             $taxons=$parent->getTaxonsrefs();
                             if(count($taxons)){
                                 foreach($taxons as $taxon){
-                                    $taxon->setHaslocations(true);
-                                    $dm->persist($taxon);
-                                    // $location->addTaxonsref($taxon);
+                                    if(!$taxon->getHaslocations()){
+                                        $taxon->setHaslocations(true);
+                                        $dm->persist($taxon);
+                                        $size++;
+                                    }
                                     if($taxon->getIssynonym()){
                                         $taxon_valid=$taxon->getChosen();
-                                        $taxon_valid->setHaslocations(true);
-                                        $dm->persist($taxon_valid);
+                                        if(!$taxon_valid->getHaslocations()){
+                                            $taxon_valid->setHaslocations(true);
+                                            $dm->persist($taxon_valid);
+                                            $size++;
+                                        }
                                         $parent_taxon_valid=$taxon_valid->getParent();
                                         while($parent_taxon_valid){
-                                            $parent_taxon_valid->setHaslocations(true);
-                                            $dm->persist($parent_taxon_valid);
+                                            if(!$parent_taxon_valid->getHaslocations()){
+                                                $parent_taxon_valid->setHaslocations(true);
+                                                $dm->persist($parent_taxon_valid);
+                                            }
                                             $parent_taxon_valid=$parent_taxon_valid->getParent();
                                         }
                                     }
                                 }
                             }
-                            /*
-                            $taxon=$parent->getTaxon();
-                            if($taxon){
-                                $taxon->setHaslocations(true);
-                                $dm->persist($taxon);
-                                $location->addTaxonsref($taxon);
-                                $parent_taxon=$taxon->getParent();
-                                while($parent_taxon){
-                                    $parent_taxon->setHaslocations(true);
-                                    $dm->persist($parent_taxon);
-                                    $location->addTaxonsref($parent_taxon);
-                                    $parent_taxon=$parent_taxon->getParent();
-                                }
-                                $dm->persist($location);
-                                //update valid taxonomy
-                                if($taxon->getIssynonym()){
-                                    $taxon_valid=$taxon->getChosen();
-                                    $taxon_valid->setHaslocations(true);
-                                    $dm->persist($taxon_valid);
-                                    $parent_taxon_valid=$taxon_valid->getParent();
-                                    while($parent_taxon_valid){
-                                        $parent_taxon_valid->setHaslocations(true);
-                                        $dm->persist($parent_taxon_valid);
-                                        $parent_taxon_valid=$parent_taxon_valid->getParent();
-                                    }
-                                }
+                            if($size>=$batchSize){
+                                $dm->flush();
+                                $dm->clear();
+                                gc_collect_cycles();
+                                $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                                $size=0;
                             }
-                            */
                         }
                         else{
                             $orphans[$location->getIdparent()]=$location->getIdparent();
                             $errorCount++;
-                            /*
-                            $plantunit=new Plantunit();
-                            $plantunit->setModule($module);
-                            $plantunit->setAttributes($attributes);
-                            $plantunit->setIdentifier($location->getIdentifier());
-                            $plantunit->setTitle1($location->getTitle1());
-                            $plantunit->setTitle2($location->getTitle2());
-                            $plantunit->setTitle3($location->getTitle3());
-                            $dm->persist($plantunit);
-                            $location->setPlantunit($plantunit);
-                            $dm->persist($location);
-                            */
+                            $dm->detach($location);
                         }
                     }
-                    elseif($module->getType()=='other'){
+                    $dm->flush();
+                    $dm->clear();
+                    gc_collect_cycles();
+                    $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                }
+                elseif($module->getType()=='other'){
+                    while(($data=fgetcsv($handle,0,';'))!==false){
+                        $num=count($data);
                         $other=new Other();
                         $attributes=array();
                         for($c=0;$c<$num;$c++){
@@ -330,36 +303,34 @@ class ImportationCommand extends ContainerAwareCommand
                             $other->setPlantunit($parent);
                             $dm->persist($other);
                             $rowCount++;
+                            $size++;
+                            if($size>=$batchSize){
+                                $dm->flush();
+                                $dm->clear();
+                                gc_collect_cycles();
+                                $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                                $size=0;
+                            }
                         }
                         else{
                             $orphans[$other->getIdparent()]=$other->getIdparent();
                             $errorCount++;
-                            /*
-                            $plantunit=new Plantunit();
-                            $plantunit->setModule($module);
-                            $plantunit->setAttributes($attributes);
-                            $plantunit->setIdentifier($other->getIdentifier());
-                            $dm->persist($plantunit);
-                            $other->setPlantunit($plantunit);
-                            $dm->persist($other);
-                            */
+                            $dm->detach($other);
                         }
                     }
-                    if(($rowCount % $batchSize)==0){
-                        $dm->flush();
-                        $dm->clear();
-                        $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-                    }
+                    $dm->flush();
+                    $dm->clear();
+                    gc_collect_cycles();
+                    $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
                 }
+                fclose($handle);
                 $module->setNbrows($rowCount);
                 $module->setUpdating(false);
                 $dm->persist($module);
                 $dm->flush();
                 $dm->clear();
-                //echo "Memory usage after: " . (memory_get_usage() / 1024) . " KB" . PHP_EOL;
                 $e=microtime(true);
                 echo ' Inserted '.$rowCount.' objects in '.($e-$s).' seconds'.PHP_EOL;
-                fclose($handle);
                 if(file_exists($csvfile)){
                     unlink($csvfile);
                 }
@@ -380,12 +351,19 @@ class ImportationCommand extends ContainerAwareCommand
                 ->setTo($usermail)
                 ->setBody($message.$this->getContainer()->get('templating')->render(
                     'PlantnetDataBundle:Backend\Mail:task.txt.twig'
-                ))
-            ;
+                ));
             $this->getContainer()->get('mailer')->send($message_mail);
             $spool=$this->getContainer()->get('mailer')->getTransport()->getSpool();
             $transport=$this->getContainer()->get('swiftmailer.transport.real');
             $spool->flushQueue($transport);
+            //
+            $connection=new \MongoClient();
+            $db=$connection->$dbname;
+            $db->Module->update(array('_id'=>new \MongoId($id_module)),array(
+                '$set'=>array(
+                    'updating'=>false
+                )
+            ));
         }
     }
 

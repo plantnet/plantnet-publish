@@ -124,8 +124,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
 
     private function save($db,$dbname,$dm,$module,$taxo,$tab_taxons,$parent_id='|',$parent=null,$filters=array())
     {
-        // $connection=new \MongoClient();
-        // $db=$connection->$dbname;
         foreach($tab_taxons as $id_parent=>$taxons){
             if($id_parent==$parent_id){
                 foreach($taxons as $identifier=>$tax){
@@ -152,14 +150,10 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         $dm->persist($taxon);
                         $dm->flush();
                         $this->save($db,$dbname,$dm,$module,$taxo,$tab_taxons,$identifier,$taxon,array_merge($filters,array('attributes.'.$tax['column']=>$tax['name'])));
-                        // $dm->detach($taxon);
-                        // $taxon=null;
                     }
                     else{
                         $dm->persist($taxon);
                         $dm->flush();
-                        // $dm->detach($taxon);
-                        // $taxon=null;
                     }
                     // Set ref Punits // Taxon
                     $db->Plantunit->update($cur_filters,array(
@@ -174,38 +168,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     // free memory
                     $dm->detach($taxon);
                     $taxon=null;
-                    /*
-                    // Find all punit ids for this taxon
-                    $punit_ids=$db->Plantunit->find($cur_filters,array('_id'=>1));
-                    $punit_ids_array=array();
-                    foreach($punit_ids as $id=>$data){
-                        $punit_ids_array[]=$data['_id'];
-                    }
-                    $punit_ids=null;
-                    unset($punit_ids);
-                    if(count($punit_ids)){
-                        // Set ref Images // Taxon
-                        $db->Image->update(array('plantunit.$id'=>array('$in'=>$punit_ids)),array(
-                            '$addToSet'=>array(
-                                'taxonsrefs'=>array(
-                                    '$ref'=>'Taxon',
-                                    '$id'=>new \MongoId($taxon->getId()),
-                                    '$db'=>$dbname
-                                )
-                            )
-                        ),array('multiple'=>true));
-                        // Set ref Locations // taxon
-                        $db->Location->update(array('plantunit.$id'=>array('$in'=>$punit_ids)),array(
-                            '$addToSet'=>array(
-                                'taxonsrefs'=>array(
-                                    '$ref'=>'Taxon',
-                                    '$id'=>new \MongoId($taxon->getId()),
-                                    '$db'=>$dbname
-                                )
-                            )
-                        ),array('multiple'=>true));
-                    }
-                    */
                 }
             }
         }
@@ -300,166 +262,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     ));
                 $db=null;
                 $connection=null;
-                /*
-                // load module's punit
-                $ending=false;
-                $skip=0;
-                $limit=100;
-                while(!$ending){
-                    $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                        ->eagerCursor(true)
-                        ->field('images')->prime(true)
-                        ->field('locations')->prime(true)
-                        ->field('module')->references($module)
-                        ->sort('_id','asc')
-                        ->limit($limit)
-                        ->skip($skip)
-                        ->getQuery()
-                        ->execute();
-                    $nb=0;
-                    foreach($punits as $punit){
-                        $nb++;
-                        $attributes=$punit->getAttributes();
-                        $tab_taxo=array();
-                        $identifier='';
-                        foreach($taxo as $level=>$t){
-                            if(isset($attributes[$t[0]])){
-                                if(!empty($identifier)){
-                                    $identifier.=' - ';
-                                }
-                                $identifier.=$attributes[$t[0]];
-                                $tab_taxo[$level]=array(
-                                    $t[1],
-                                    $identifier,
-                                    $attributes[$t[0]]
-                                );
-                            }
-                        }
-                        foreach($tab_taxo as $level=>$data){
-                            if(!empty($data[2])){
-                                $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
-                                    ->findOneBy(array(
-                                        'module.id'=>$module->getId(),
-                                        'identifier'=>$data[1],
-                                        'level'=>$level
-                                    ));
-                                if($taxon){
-                                    $punit->addTaxonsref($taxon);
-                                    $dm->persist($punit);
-                                    if($punit->getHasimages()===true){
-                                        $images=$punit->getImages();
-                                        foreach($images as $img){
-                                            $img->addTaxonsref($taxon);
-                                            $dm->persist($img);
-                                        }
-                                    }
-                                    if($punit->getHaslocations()===true){
-                                        $locations=$punit->getLocations();
-                                        foreach($locations as $loc){
-                                            $loc->addTaxonsref($taxon);
-                                            $dm->persist($loc);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if(!$nb){
-                        $ending=true;
-                    }
-                    else{
-                        $dm->flush();
-                        $dm->clear();
-                        gc_collect_cycles();
-                        $module=$dm->getRepository('PlantnetDataBundle:Module')
-                            ->findOneBy(array(
-                                'id'=>$id_module
-                            ));
-                    }
-                    $skip+=$limit;
-                }
-                */
-                /*
-                $ids_punit=array();
-                $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                    ->hydrate(false)
-                    ->select('_id')
-                    ->field('module')->references($module)
-                    ->getQuery()
-                    ->execute();
-                foreach($punits as $id){
-                    $ids_punit[]=$id['_id']->{'$id'};
-                }
-                unset($punits);
-                $batch_size=100;
-                $size=0;
-                foreach($ids_punit as $id_punit){
-                    $size++;
-                    $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
-                        ->findOneBy(array(
-                            'id'=>$id_punit
-                        ));
-                    if($punit){
-                        $attributes=$punit->getAttributes();
-                        $tab_taxo=array();
-                        $identifier='';
-                        foreach($taxo as $level=>$t){
-                            if(isset($attributes[$t[0]])){
-                                if(!empty($identifier)){
-                                    $identifier.=' - ';
-                                }
-                                $identifier.=$attributes[$t[0]];
-                                $tab_taxo[$level]=array(
-                                    $t[1],
-                                    $identifier,
-                                    $attributes[$t[0]]
-                                );
-                            }
-                        }
-                        foreach($tab_taxo as $level=>$data){
-                            if(!empty($data[2])){
-                                $taxon=$dm->getRepository('PlantnetDataBundle:Taxon')
-                                    ->findOneBy(array(
-                                        'module.id'=>$module->getId(),
-                                        'identifier'=>$data[1],
-                                        'level'=>$level
-                                    ));
-                                if($taxon){
-                                    $punit->addTaxonsref($taxon);
-                                    $dm->persist($punit);
-                                    $size++;
-                                    if($punit->getHasimages()===true){
-                                        $images=$punit->getImages();
-                                        foreach($images as $img){
-                                            $img->addTaxonsref($taxon);
-                                            $dm->persist($img);
-                                            $size++;
-                                        }
-                                    }
-                                    if($punit->getHaslocations()===true){
-                                        $locations=$punit->getLocations();
-                                        foreach($locations as $loc){
-                                            $loc->addTaxonsref($taxon);
-                                            $dm->persist($loc);
-                                            $size++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if(($size>=$batch_size)){
-                        $dm->flush();
-                        $size=0;
-                        $dm->clear();
-                        gc_collect_cycles();
-                        $module=$dm->getRepository('PlantnetDataBundle:Module')
-                            ->findOneBy(array(
-                                'id'=>$id_module
-                            ));
-                    }
-                }
-                */
             }
             elseif($action=='syn'){
                 // synonymy management
@@ -631,8 +433,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 $has_images=$last_non_valid->getHasimages();
                                 $has_locations=$last_non_valid->getHaslocations();
                                 $nb_to_switch=$last_non_valid->getNbpunits();
-                                // $last_non_valid->setNbpunits($last_non_valid->getNbpunits()-$nb_to_switch);
-                                // $dm->persist($last_non_valid);
                                 $parent_tmp=$last_non_valid->getParent();
                                 while($parent_tmp){
                                     $parent_tmp->setNbpunits($parent_tmp->getNbpunits()-$nb_to_switch);
@@ -765,6 +565,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             }
                             if($tax){
                                 $description=array();
+                                $nb=0;
                                 foreach($desc as $key=>$val){
                                     $string=isset($data[$key])?trim($data[$key]):'';
                                     $cur_encoding=mb_detect_encoding($string);
@@ -775,6 +576,10 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                         $string=utf8_encode($string);
                                     }
                                     if(!empty($string)){
+                                        if(empty($val)){
+                                            $val=$nb+'';
+                                            $nb++;
+                                        }
                                         $description[$val]=$string;
                                     }
                                 }
