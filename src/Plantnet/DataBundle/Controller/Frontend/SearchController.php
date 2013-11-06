@@ -227,7 +227,7 @@ class SearchController extends Controller
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         ControllerHelp::get_config($project,$dm,$this);
         $configuration=$dm->getConnection()->getConfiguration();
-        $configuration->setLoggerCallable(null);
+        // $configuration->setLoggerCallable(null);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findOneBy(array('url'=>$collection));
         if(!$collection){
@@ -294,6 +294,7 @@ class SearchController extends Controller
                 foreach($locations as $location){
                     $ids_punit[]=$location['plantunit']['$id']->{'$id'};
                 }
+                $locations=null;
                 unset($locations);
             }
             $ids_punit=array_unique($ids_punit);
@@ -301,7 +302,7 @@ class SearchController extends Controller
             $fields=array();
             $sub_fields=array();
             foreach($data as $key=>$val){
-                if(substr_count($key,'name_field_')){
+                if(substr_count($key,'name_field_')&&$val){
                     if(isset($data[str_replace('name_','',$key).'_string'])&&!empty($data[str_replace('name_','',$key).'_string'])){
                         if(substr_count($val,'#')===0){
                             $fields[$val]=explode('~|~',$data[str_replace('name_','',$key).'_string']);
@@ -358,8 +359,11 @@ class SearchController extends Controller
                     foreach($others as $other){
                         $tmp_ids_other[]=$other['plantunit']['$id']->{'$id'};
                     }
+                    $others=null;
                     unset($others);
                     $ids_other=array_merge($ids_other,$tmp_ids_other);
+                    $tmp_ids_other=null;
+                    unset($tmp_ids_other);
                 }
             }
             $ids_other=array_unique($ids_other);
@@ -457,23 +461,36 @@ class SearchController extends Controller
                             ->execute();
                         $ids_tab=array();
                         foreach($ids_c as $id){
-                            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+                            // $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+                            $ids_tab[$id['_id']->{'$id'}]=$id['_id'];
                         }
+                        $clone_plantunits=null;
+                        unset($clone_plantunits);
+                        $ids_c=null;
                         unset($ids_c);
+                        /*
                         $nb_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
                             ->hydrate(false)
                             ->select('_id')
-                            ->field('plantunit.id')->in($ids_tab)
+                            ->field('plantunit.id')->in(array_values($ids_tab))
                             ->getQuery()
                             ->execute()
                             ->count();
                         $nb_locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
                             ->hydrate(false)
                             ->select('_id')
-                            ->field('plantunit.id')->in($ids_tab)
+                            ->field('plantunit.id')->in(array_values($ids_tab))
                             ->getQuery()
                             ->execute()
                             ->count();
+                        */
+                        $connection=new \MongoClient();
+                        $db=$this->get_prefix().$project;
+                        $db=$connection->$db;
+                        $nb_images=$db->Image->find(array('plantunit.$id'=>array('$in'=>array_values($ids_tab))))->count();
+                        $nb_locations=$db->Location->find(array('plantunit.$id'=>array('$in'=>array_values($ids_tab))))->count();
+                        $ids_tab=null;
+                        unset($ids_tab);
                     }
                     $config=ControllerHelp::get_config($project,$dm,$this);
                     $tpl=$config->getTemplate();
@@ -506,7 +523,7 @@ class SearchController extends Controller
                             ->select('_id')
                             ->field('module.id')->equals($module->getId());
                         if(count($ids_punit)){
-                            $plantunits->field('_id')->in($ids_punit);
+                            $plantunits->field('_id')->in(array_values($ids_punit));
                         }
                         if(count($fields)){
                             foreach($fields as $key=>$value){
@@ -532,11 +549,13 @@ class SearchController extends Controller
                             ->execute();
                         $ids_tab=array();
                         foreach($ids_c as $id){
-                            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+                            // $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+                            $ids_tab[$id['_id']->{'$id'}]=$id['_id'];
                         }
+                        $ids_c=null;
                         unset($ids_c);
                         $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-                            ->field('plantunit.id')->in($ids_tab)
+                            ->field('plantunit.id')->in(array_values($ids_tab))
                             ->sort('title1','asc')
                             ->sort('title2','asc');
                         $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($images));
@@ -550,13 +569,21 @@ class SearchController extends Controller
                         $nbResults=$paginator->getNbResults();
                         //count to display
                         $nb_images=$nbResults;
+                        /*
                         $nb_locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
                             ->hydrate(false)
                             ->select('_id')
-                            ->field('plantunit.id')->in($ids_tab)
+                            ->field('plantunit.id')->in(array_values($ids_tab))
                             ->getQuery()
                             ->execute()
                             ->count();
+                        */
+                        $connection=new \MongoClient();
+                        $db=$this->get_prefix().$project;
+                        $db=$connection->$db;
+                        $nb_locations=$db->Location->find(array('plantunit.$id'=>array('$in'=>array_values($ids_tab))))->count();
+                        $ids_tab=null;
+                        unset($ids_tab);
                     }
                     $config=ControllerHelp::get_config($project,$dm,$this);
                     $tpl=$config->getTemplate();
@@ -586,7 +613,7 @@ class SearchController extends Controller
                             ->select('_id')
                             ->field('module.id')->equals($module->getId());
                         if(count($ids_punit)){
-                            $plantunits->field('_id')->in($ids_punit);
+                            $plantunits->field('_id')->in(array_values($ids_punit));
                         }
                         if(count($fields)){
                             foreach($fields as $key=>$value){
@@ -612,23 +639,33 @@ class SearchController extends Controller
                             ->execute();
                         $ids_tab=array();
                         foreach($ids_c as $id){
-                            $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+                            // $ids_tab[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+                            $ids_tab[$id['_id']->{'$id'}]=$id['_id'];
                         }
+                        $ids_c=null;
                         unset($ids_c);
                         $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
-                            ->field('plantunit.id')->in($ids_tab)
+                            ->field('plantunit.id')->in(array_values($ids_tab))
                             ->getQuery()
                             ->execute();
                         $nbResults=count($locations);
                         //count to display
                         $nb_locations=$nbResults;
+                        /*
                         $nb_images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
                             ->hydrate(false)
                             ->select('_id')
-                            ->field('plantunit.id')->in($ids_tab)
+                            ->field('plantunit.id')->in(array_values($ids_tab))
                             ->getQuery()
                             ->execute()
                             ->count();
+                        */
+                        $connection=new \MongoClient();
+                        $db=$this->get_prefix().$project;
+                        $db=$connection->$db;
+                        $nb_images=$db->Image->find(array('plantunit.$id'=>array('$in'=>array_values($ids_tab))))->count();
+                        $ids_tab=null;
+                        unset($ids_tab);
                     }
                     $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
                     $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
