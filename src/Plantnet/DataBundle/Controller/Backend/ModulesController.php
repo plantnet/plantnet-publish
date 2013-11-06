@@ -1097,11 +1097,13 @@ class ModulesController extends Controller
     private function update_indexes($module)
     {
         if($module){
+            ini_set('memory_limit','-1');
             $user=$this->container->get('security.context')->getToken()->getUser();
             $dm=$this->get('doctrine.odm.mongodb.document_manager');
             $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
             $db=$this->getDataBase($user);
             $m=new \MongoClient();
+            \MongoCursor::$timeout=-1;
             //old indexes
             $old_indexes=$module->getIndexes();
             if(count($old_indexes)){
@@ -1111,11 +1113,17 @@ class ModulesController extends Controller
                 }
             }
             //get sort order
+            $fake_order=100;
             $order=array();
             $field=$module->getProperties();
             foreach($field as $row){
-                if($row->getSortorder()){
-                    $order[$row->getSortorder()]=$row->getId();
+                if($row->getMain()==true){
+                    if(!$row->getSortorder()){
+                        $order[$fake_order++]=$row->getId();
+                    }
+                    else{
+                        $order[$row->getSortorder()]=$row->getId();
+                    }
                 }
             }
             ksort($order);
