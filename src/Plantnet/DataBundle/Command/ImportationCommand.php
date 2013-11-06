@@ -173,6 +173,7 @@ class ImportationCommand extends ContainerAwareCommand
                 }
                 elseif($module->getType()=='locality'){
                     while(($data=fgetcsv($handle,0,';'))!==false){
+                        $geo_error=false;
                         $num=count($data);
                         $location=new Location();
                         $coordinates=new Coordinates();
@@ -182,12 +183,22 @@ class ImportationCommand extends ContainerAwareCommand
                             $attributes[$fields[$c]->getId()]=$value;
                             switch($fields[$c]->getType()){
                                 case 'lon':
-                                    $location->setLongitude(str_replace(',','.',$value));
-                                    $coordinates->setX(str_replace(',','.',$value));
+                                    if(strlen($value)==0){
+                                        $geo_error=true;
+                                    }
+                                    $value=str_replace(',','.',$value);
+                                    $value=floatval($value);
+                                    $location->setLongitude($value);
+                                    $coordinates->setX($value);
                                     break;
                                 case 'lat':
-                                    $location->setLatitude(str_replace(',','.',$value));
-                                    $coordinates->setY(str_replace(',','.',$value));
+                                    if(strlen($value)==0){
+                                        $geo_error=true;
+                                    }
+                                    $value=str_replace(',','.',$value);
+                                    $value=floatval($value);
+                                    $location->setLatitude($value);
+                                    $coordinates->setY($value);
                                     break;
                                 case 'idparent':
                                     $location->setIdparent($value);
@@ -197,66 +208,73 @@ class ImportationCommand extends ContainerAwareCommand
                                     break;
                             }
                         }
-                        $location->setCoordinates($coordinates);
-                        $location->setProperty($attributes);
-                        $location->setModule($module);
-                        $parent=null;
-                        if($module->getParent()){
-                            $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                                ->field('module.id')->equals($module->getParent()->getId())
-                                ->field('identifier')->equals($location->getIdparent())
-                                ->getQuery()
-                                ->execute();
-                            foreach($parent_q as $p){
-                                $parent=$p;
+                        if(!$geo_error){
+                            $location->setCoordinates($coordinates);
+                            $location->setProperty($attributes);
+                            $location->setModule($module);
+                            $parent=null;
+                            if($module->getParent()){
+                                $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                                    ->field('module.id')->equals($module->getParent()->getId())
+                                    ->field('identifier')->equals($location->getIdparent())
+                                    ->getQuery()
+                                    ->execute();
+                                foreach($parent_q as $p){
+                                    $parent=$p;
+                                }
                             }
-                        }
-                        if($parent){
-                            $location->setPlantunit($parent);
-                            $location->setTitle1($parent->getTitle1());
-                            $location->setTitle2($parent->getTitle2());
-                            $location->setTitle3($parent->getTitle3());
-                            $dm->persist($location);
-                            $rowCount++;
-                            $size++;
-                            if(!$parent->getHaslocations()){
-                                $parent->setHaslocations(true);
-                                $dm->persist($parent);
+                            if($parent){
+                                $location->setPlantunit($parent);
+                                $location->setTitle1($parent->getTitle1());
+                                $location->setTitle2($parent->getTitle2());
+                                $location->setTitle3($parent->getTitle3());
+                                $dm->persist($location);
+                                $rowCount++;
                                 $size++;
-                            }
-                            //update Taxons
-                            $taxons=$parent->getTaxonsrefs();
-                            if(count($taxons)){
-                                foreach($taxons as $taxon){
-                                    if(!$taxon->getHaslocations()){
-                                        $taxon->setHaslocations(true);
-                                        $dm->persist($taxon);
-                                        $size++;
-                                    }
-                                    if($taxon->getIssynonym()){
-                                        $taxon_valid=$taxon->getChosen();
-                                        if(!$taxon_valid->getHaslocations()){
-                                            $taxon_valid->setHaslocations(true);
-                                            $dm->persist($taxon_valid);
+                                if(!$parent->getHaslocations()){
+                                    $parent->setHaslocations(true);
+                                    $dm->persist($parent);
+                                    $size++;
+                                }
+                                //update Taxons
+                                $taxons=$parent->getTaxonsrefs();
+                                if(count($taxons)){
+                                    foreach($taxons as $taxon){
+                                        if(!$taxon->getHaslocations()){
+                                            $taxon->setHaslocations(true);
+                                            $dm->persist($taxon);
                                             $size++;
                                         }
-                                        $parent_taxon_valid=$taxon_valid->getParent();
-                                        while($parent_taxon_valid){
-                                            if(!$parent_taxon_valid->getHaslocations()){
-                                                $parent_taxon_valid->setHaslocations(true);
-                                                $dm->persist($parent_taxon_valid);
+                                        if($taxon->getIssynonym()){
+                                            $taxon_valid=$taxon->getChosen();
+                                            if(!$taxon_valid->getHaslocations()){
+                                                $taxon_valid->setHaslocations(true);
+                                                $dm->persist($taxon_valid);
+                                                $size++;
                                             }
-                                            $parent_taxon_valid=$parent_taxon_valid->getParent();
+                                            $parent_taxon_valid=$taxon_valid->getParent();
+                                            while($parent_taxon_valid){
+                                                if(!$parent_taxon_valid->getHaslocations()){
+                                                    $parent_taxon_valid->setHaslocations(true);
+                                                    $dm->persist($parent_taxon_valid);
+                                                }
+                                                $parent_taxon_valid=$parent_taxon_valid->getParent();
+                                            }
                                         }
                                     }
                                 }
+                                if($size>=$batchSize){
+                                    $dm->flush();
+                                    $dm->clear();
+                                    gc_collect_cycles();
+                                    $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                                    $size=0;
+                                }
                             }
-                            if($size>=$batchSize){
-                                $dm->flush();
-                                $dm->clear();
-                                gc_collect_cycles();
-                                $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
-                                $size=0;
+                            else{
+                                $orphans[$location->getIdparent()]=$location->getIdparent();
+                                $errorCount++;
+                                $dm->detach($location);
                             }
                         }
                         else{
