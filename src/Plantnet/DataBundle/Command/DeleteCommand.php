@@ -102,6 +102,7 @@ class DeleteCommand extends ContainerAwareCommand
             $original_db=$config->getOriginaldb();
             if($original_db){
                 $connection=new \MongoClient();
+                \MongoCursor::$timeout=-1;
                 $dbs_array=array();
                 $dbs=$connection->admin->command(array(
                     'listDatabases'=>1
@@ -181,6 +182,7 @@ class DeleteCommand extends ContainerAwareCommand
         }
         //indexes
         $m=new \MongoClient();
+        \MongoCursor::$timeout=-1;
         $old_indexes=$module->getIndexes();
         if(count($old_indexes)){
             foreach($old_indexes as $old){
@@ -188,178 +190,240 @@ class DeleteCommand extends ContainerAwareCommand
                 $m->$dbname->command(array('deleteIndexes'=>'Plantunit','index'=>$old));
             }
         }
+        $m=null;
         unset($m);
+        $old_indexes=null;
         unset($old_indexes);
         $dm->remove($module);
         $dm->flush();
+        $dm->detach($module);
         /*
         * Check for punits update
         */
         if($parent_to_update){
             $module_parent=$dm->getRepository('PlantnetDataBundle:Module')->find($parent_to_update);
-            //images
-            $ids_img=array();
-            $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->hydrate(false)
-                ->select('_id')
-                ->field('module')->references($module_parent)
-                ->field('hasimages')->equals(true)
-                ->getQuery()
-                ->execute();
-            foreach($punits as $id){
-                $ids_img[]=$id['_id']->{'$id'};
-            }
-            unset($punits);
-            foreach($ids_img as $id){
-                $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
-                    ->findOneBy(array(
-                        'id'=>$id
-                    ));
-                $images=$punit->getImages();
-                if(!count($images)){
-                    $punit->setHasimages(false);
-                    $dm->persist($punit);
-                    $dm->flush();
-                }
-            }
-            $dm->clear();
-            $module_parent=$dm->getRepository('PlantnetDataBundle:Module')->find($parent_to_update);
-            //locations
-            $ids_loc=array();
-            $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->hydrate(false)
-                ->select('_id')
-                ->field('module')->references($module_parent)
-                ->field('haslocations')->equals(true)
-                ->getQuery()
-                ->execute();
-            foreach($punits as $id){
-                $ids_loc[]=$id['_id']->{'$id'};
-            }
-            unset($punits);
-            foreach($ids_loc as $id){
-                $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
-                    ->findOneBy(array(
-                        'id'=>$id
-                    ));
-                $locations=$punit->getLocations();
-                if(!count($locations)){
-                    $punit->setHaslocations(false);
-                    $dm->persist($punit);
-                    $dm->flush();
-                }
-            }
-            $dm->clear();
-            $module_parent=$dm->getRepository('PlantnetDataBundle:Module')->find($parent_to_update);
-            //taxons
-            $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
-                ->update()
-                ->multiple(true)
-                ->field('module')->references($module_parent)
-                ->field('hasimages')->set(false)
-                ->field('haslocations')->set(false)
-                ->getQuery()
-                ->execute();
-            $ids_tax=array();
-            $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
-                ->hydrate(false)
-                ->select('_id')
-                ->field('module')->references($module_parent)
-                ->getQuery()
-                ->execute();
-            foreach($punits as $id){
-                $ids_tax[]=$id['_id']->{'$id'};
-            }
-            unset($punits);
-            foreach($ids_tax as $id){
-                $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
-                    ->findOneBy(array(
-                        'id'=>$id
-                    ));
-                $img_bool=$punit->getHasimages();
-                $loc_bool=$punit->getHaslocations();
-                $taxons=$punit->getTaxonsrefs();
-                if(count($taxons)&&($img_bool||$loc_bool)){
-                    foreach($taxons as $taxon){
-                        if($img_bool){
-                            $taxon->setHasimages(true);
-                        }
-                        if($loc_bool){
-                            $taxon->setHaslocations(true);
-                        }
-                        $dm->persist($taxon);
-                        if($taxon->getIssynonym()){
-                            $taxon_valid=$taxon->getChosen();
-                            if($img_bool){
-                                $taxon_valid->setHasimages(true);
+            if($module_parent){
+                $has_img_child=false;
+                $has_loc_child=false;
+                $tmp_children=$module_parent->getChildren();
+                if(count($tmp_children)){
+                    foreach($tmp_children as $tmp_child){
+                        if($tmp_child->getDeleting()===false){
+                            if($tmp_child->getType()=='image'){
+                                $has_img_child=true;
                             }
-                            if($loc_bool){
-                                $taxon_valid->setHaslocations(true);
+                            elseif($tmp_child->getType()=='locality'){
+                                $has_loc_child=true;
                             }
-                            $dm->persist($taxon_valid);
-                            $parent_taxon_valid=$taxon_valid->getParent();
-                            while($parent_taxon_valid){
-                                if($img_bool){
-                                    $parent_taxon_valid->setHasimages(true);
+                        }
+                    }
+                }
+                //images
+                \MongoCursor::$timeout=-1;
+                if($has_img_child){
+                    $ids_img=array();
+                    $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                        ->hydrate(false)
+                        ->select('_id')
+                        ->field('module')->references($module_parent)
+                        ->field('hasimages')->equals(true)
+                        ->getQuery()
+                        ->execute();
+                    foreach($punits as $id){
+                        $ids_img[]=$id['_id']->{'$id'};
+                    }
+                    $punits=null;
+                    unset($punits);
+                    foreach($ids_img as $id){
+                        $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+                            ->findOneBy(array(
+                                'id'=>$id
+                            ));
+                        if($punit){
+                            $images=$punit->getImages();
+                            if(!count($images)){
+                                $punit->setHasimages(false);
+                                $dm->persist($punit);
+                                $dm->flush();
+                            }
+                            $images=null;
+                            $dm->detach($punit);
+                        }
+                        $punit=null;
+                    }
+                    $dm->clear();
+                    $module_parent=$dm->getRepository('PlantnetDataBundle:Module')->find($parent_to_update);
+                }
+                else{
+                    $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                        ->update()
+                        ->multiple(true)
+                        ->field('module')->references($module_parent)
+                        ->field('hasimages')->equals(true)
+                        ->field('hasimages')->set(false)
+                        ->getQuery()
+                        ->execute();
+                }
+                //locations
+                \MongoCursor::$timeout=-1;
+                if($has_loc_child){
+                    $ids_loc=array();
+                    $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                        ->hydrate(false)
+                        ->select('_id')
+                        ->field('module')->references($module_parent)
+                        ->field('haslocations')->equals(true)
+                        ->getQuery()
+                        ->execute();
+                    foreach($punits as $id){
+                        $ids_loc[]=$id['_id']->{'$id'};
+                    }
+                    $punits=null;
+                    unset($punits);
+                    foreach($ids_loc as $id){
+                        $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+                            ->findOneBy(array(
+                                'id'=>$id
+                            ));
+                        if($punit){
+                            $locations=$punit->getLocations();
+                            if(!count($locations)){
+                                $punit->setHaslocations(false);
+                                $dm->persist($punit);
+                                $dm->flush();
+                            }
+                            $locations=null;
+                            $dm->detach($punit);
+                        }
+                        $punit=null;
+                    }
+                    $dm->clear();
+                    $module_parent=$dm->getRepository('PlantnetDataBundle:Module')->find($parent_to_update);
+                }
+                else{
+                    $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                        ->update()
+                        ->multiple(true)
+                        ->field('module')->references($module_parent)
+                        ->field('haslocations')->equals(true)
+                        ->field('haslocations')->set(false)
+                        ->getQuery()
+                        ->execute();
+                }
+                //taxons
+                \MongoCursor::$timeout=-1;
+                if($has_img_child||$has_loc_child){
+                    $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                        ->update()
+                        ->multiple(true)
+                        ->field('module')->references($module_parent)
+                        ->field('hasimages')->set(false)
+                        ->field('haslocations')->set(false)
+                        ->getQuery()
+                        ->execute();
+                    $ids_tax=array();
+                    if($has_img_child){
+                        $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                            ->hydrate(false)
+                            ->select('_id')
+                            ->field('module')->references($module_parent)
+                            ->field('hasimages')->equals(true)
+                            ->getQuery()
+                            ->execute();
+                        foreach($punits as $id){
+                            $ids_tax[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+                        }
+                        $punits=null;
+                    }
+                    if($has_loc_child){
+                        $punits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                            ->hydrate(false)
+                            ->select('_id')
+                            ->field('module')->references($module_parent)
+                            ->field('haslocations')->equals(true)
+                            ->getQuery()
+                            ->execute();
+                        foreach($punits as $id){
+                            $ids_tax[$id['_id']->{'$id'}]=$id['_id']->{'$id'};
+                        }
+                        $punits=null;
+                    }
+                    unset($punits);
+                    foreach($ids_tax as $id){
+                        $punit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+                            ->findOneBy(array(
+                                'id'=>$id
+                            ));
+                        if($punit){
+                            $img_bool=$punit->getHasimages();
+                            $loc_bool=$punit->getHaslocations();
+                            $taxons=$punit->getTaxonsrefs();
+                            if(count($taxons)&&($img_bool||$loc_bool)){
+                                $need_flush=false;
+                                foreach($taxons as $taxon){
+                                    if($img_bool&&!$taxon->getHasimages()){
+                                        $taxon->setHasimages(true);
+                                        $need_flush=true;
+                                    }
+                                    if($loc_bool&&!$taxon->getHaslocations()){
+                                        $taxon->setHaslocations(true);
+                                        $need_flush=true;
+                                    }
+                                    if($need_flush){
+                                        $dm->persist($taxon);
+                                    }
+                                    if($taxon->getIssynonym()){
+                                        $taxon_valid=$taxon->getChosen();
+                                        if($img_bool&&!$taxon_valid->getHasimages()){
+                                            $taxon_valid->setHasimages(true);
+                                            $need_flush=true;
+                                        }
+                                        if($loc_bool&&!$taxon_valid->getHaslocations()){
+                                            $taxon_valid->setHaslocations(true);
+                                            $need_flush=true;
+                                        }
+                                        if($need_flush){
+                                            $dm->persist($taxon_valid);
+                                        }
+                                        $parent_taxon_valid=$taxon_valid->getParent();
+                                        while($parent_taxon_valid){
+                                            if($img_bool&&!$parent_taxon_valid->getHasimages()){
+                                                $parent_taxon_valid->setHasimages(true);
+                                                $need_flush=true;
+                                            }
+                                            if($loc_bool&&!$parent_taxon_valid->getHaslocations()){
+                                                $parent_taxon_valid->setHaslocations(true);
+                                                $need_flush=true;
+                                            }
+                                            if($need_flush){
+                                                $dm->persist($parent_taxon_valid);
+                                            }
+                                            $parent_taxon_valid=$parent_taxon_valid->getParent();
+                                        }
+                                    }
                                 }
-                                if($loc_bool){
-                                    $parent_taxon_valid->setHaslocations(true);
+                                if($need_flush){
+                                    $dm->flush();
                                 }
-                                $dm->persist($parent_taxon_valid);
-                                $parent_taxon_valid=$parent_taxon_valid->getParent();
+                                $dm->detach($punit);
+                                $dm->clear();
+                                $module_parent=$dm->getRepository('PlantnetDataBundle:Module')->find($parent_to_update);
                             }
+                            $punit=null;
                         }
                     }
                 }
-                /*
-                $taxon=$punit->getTaxon();
-                if($taxon&&($img_bool||$loc_bool)){
-                    if($img_bool){
-                        $taxon->setHasimages(true);
-                    }
-                    if($loc_bool){
-                        $taxon->setHaslocations(true);
-                    }
-                    $dm->persist($taxon);
-                    $parent_taxon=$taxon->getParent();
-                    while($parent_taxon){
-                        if($img_bool){
-                            $parent_taxon->setHasimages(true);
-                        }
-                        if($loc_bool){
-                            $parent_taxon->setHaslocations(true);
-                        }
-                        $dm->persist($parent_taxon);
-                        $parent_taxon=$parent_taxon->getParent();
-                    }
-                    //update valid taxonomy
-                    if($taxon->getIssynonym()){
-                        $taxon_valid=$taxon->getChosen();
-                        if($img_bool){
-                            $taxon_valid->setHasimages(true);
-                        }
-                        if($loc_bool){
-                            $taxon_valid->setHaslocations(true);
-                        }
-                        $dm->persist($taxon_valid);
-                        $parent_taxon_valid=$taxon_valid->getParent();
-                        while($parent_taxon_valid){
-                            if($img_bool){
-                                $parent_taxon_valid->setHasimages(true);
-                            }
-                            if($loc_bool){
-                                $parent_taxon_valid->setHaslocations(true);
-                            }
-                            $dm->persist($parent_taxon_valid);
-                            $parent_taxon_valid=$parent_taxon_valid->getParent();
-                        }
-                    }
+                else{
+                    $dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                        ->update()
+                        ->multiple(true)
+                        ->field('module')->references($module_parent)
+                        ->field('hasimages')->set(false)
+                        ->field('haslocations')->set(false)
+                        ->getQuery()
+                        ->execute();
                 }
-                */
-                $dm->flush();
             }
-            $dm->clear();
-            $module_parent=$dm->getRepository('PlantnetDataBundle:Module')->find($parent_to_update);
         }
     }
 
@@ -415,6 +479,7 @@ class DeleteCommand extends ContainerAwareCommand
         */
         $dm->remove($collection);
         $dm->flush();
+        $dm->detach($collection);
     }
 
     private function delete_glossary($dbname,$id)
@@ -489,5 +554,6 @@ class DeleteCommand extends ContainerAwareCommand
         */
         $dm->remove($glossary);
         $dm->flush();
+        $dm->detach($glossary);
     }
 }

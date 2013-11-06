@@ -46,6 +46,7 @@ class ImportationCommand extends ContainerAwareCommand
             $dm->getConfiguration()->setDefaultDB($dbname);
             $configuration=$dm->getConnection()->getConfiguration();
             $configuration->setLoggerCallable(null);
+            \MongoCursor::$timeout=-1;
             $module=$dm->getRepository('PlantnetDataBundle:Module')
                 ->find($idmodule);
             if(!$module){
