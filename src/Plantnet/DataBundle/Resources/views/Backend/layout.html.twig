@@ -350,6 +350,26 @@
 				</div>
 			</div>
 		{% endfor %}
+		<div class="modal hide fade" id="modal-export">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>Export ?</h3>
+			</div>
+			<div class="modal-body">
+				<p>
+					<span class="text-warning">
+						<i class="icon-warning-sign"></i>
+						Warning !
+					</span>
+					<br />
+					The export function can take a long time and can not be canceled.
+				</p>
+			</div>
+			<div class="modal-footer">
+				<a href="#" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Cancel</a>
+                <a href="#" class="btn" id="btn-confirm-export"><i class="icon-download"></i><div class="loading"></div> Export</a>
+			</div>
+		</div>
 	{% endblock %}
 	{% block javascripts %}
 		<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-1.7.min.js') }}"></script>
@@ -395,6 +415,20 @@
 						});
 					}
 				});
+				if($('a.btn-confirm').length>0){
+					$('a.btn-confirm').click(function(e){
+						e.preventDefault();
+						var href=$(this).attr('href');
+						$('#btn-confirm-export').attr('href',href);
+						$('.loading').hide();
+						$('#modal-export').modal();
+						$('#btn-confirm-export').click(function(){
+							$('.loading').show();
+							$('#modal-export a').attr("disabled",true);
+						});
+						return false;
+					});
+				}
 			});
 		</script>
 	{% endblock %}
