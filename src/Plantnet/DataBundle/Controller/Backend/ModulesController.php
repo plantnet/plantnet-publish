@@ -764,6 +764,12 @@ class ModulesController extends Controller
             if($editForm->isValid()){
                 $dm=$this->get('doctrine.odm.mongodb.document_manager');
                 $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                foreach($module->getProperties() as $prop){
+                    if($prop->getTaxolevel()&&!$prop->getTaxolabel()){
+                        $prop->setTaxolabel($prop->getName());
+                        $dm->persist($prop);
+                    }
+                }
                 $module->setUpdating(true);
                 $dm->persist($module);
                 $dm->flush();

@@ -289,11 +289,16 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             'col_valid'=>''
                         );
                         foreach($cols as $key=>$col){
-                            if($col==$data[1]){
-                                $syns[$level]['col_non_valid']=$key;
+                            if(empty($data[1])){
+                                $csv_error=true;
                             }
-                            if($col!=$data[1]&&strlen($col)>=strlen($data[1])&&substr_count($col,$data[1],0,strlen($data[1]))){
-                                $syns[$level]['col_valid']=$key;
+                            else{
+                                if($col==$data[1]){
+                                    $syns[$level]['col_non_valid']=$key;
+                                }
+                                if($col!=$data[1]&&strlen($col)>=strlen($data[1])&&substr_count($col,$data[1],0,strlen($data[1]))){
+                                    $syns[$level]['col_valid']=$key;
+                                }
                             }
                         }
                         if(empty($syns[$level]['col_non_valid'])&&$syns[$level]['col_non_valid']!=0){
@@ -487,6 +492,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 ));
                         }
                     }
+                    else{
+                        $error='CSV file contains some errors...';
+                    }
                 }
             }
             elseif($action=='desc'){
@@ -613,6 +621,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             ->findOneBy(array(
                                 'id'=>$id_module
                             ));
+                    }
+                    else{
+                        $error='CSV file contains some errors...';
                     }
                 }
             }
