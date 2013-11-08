@@ -33,7 +33,10 @@ class StringHelp
 		foreach($regex as $rg_key=>$rg){
 			$text=preg_replace("/_{$rg_key}_/","[$rg]",$text);
 		}
-		return utf8_encode($text);
+		$text=utf8_encode($text);
+		$text=str_replace('(','\(',$text);
+		$text=str_replace(')','\)',$text);
+		return $text;
 	}
 
 	static public function isGoodForUrl($text)
