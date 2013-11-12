@@ -17,6 +17,7 @@ use Plantnet\DataBundle\Document\Collection,
     Plantnet\DataBundle\Document\Definition;
 
 use Plantnet\DataBundle\Form\GlossaryFormType,
+    Plantnet\DataBundle\Form\GlossarySynFormType,
     Plantnet\DataBundle\Form\ImportGlossaryFormType;
 
 use Symfony\Component\Form\FormError;
@@ -324,11 +325,15 @@ class GlossaryController extends Controller
                 $definition=new Definition();
                 $definition->setGlossary($glossary);
                 $attributes=array();
+                $def_error=false;
                 for($c=0;$c<$num;$c++){
                     $value=trim($this->data_encode($data[$c]));
                     $attributes[$fields[$c]->getId()]=$value;
                     switch($fields[$c]->getType()){
                         case 'keyword':
+                            if(empty($value)){
+                                $def_error=true;
+                            }
                             $definition->setName($value);
                             $definition->setDisplayedname($value);
                             break;
@@ -340,7 +345,10 @@ class GlossaryController extends Controller
                             break;
                     }
                 }
-                $dm->persist($definition);
+                if(!$def_error){
+                    $definition->setHaschildren(false);
+                    $dm->persist($definition);
+                }
                 if(($rowCount % $batchSize)==0){
                     $dm->flush();
                     $dm->clear();
@@ -397,9 +405,18 @@ class GlossaryController extends Controller
         if(!$glossary){
             throw $this->createNotFoundException('Unable to find Glossary entity.');
         }
+        $collection=$glossary->getCollection();
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $csv=__DIR__.'/../../Resources/uploads/'.$collection->getAlias().'/glossary_syn.csv';
+        if(file_exists($csv)){
+            $deleteSynForm=$this->createDeleteSynForm($id);
+        }
         $deleteForm=$this->createDeleteForm($id);
         return $this->render('PlantnetDataBundle:Backend\Glossary:glossary_edit.html.twig',array(
             'entity'=>$glossary,
+            'delete_syn_form'=>($deleteSynForm!=false)?$deleteSynForm->createView():false,
             'delete_form'=>$deleteForm->createView()
         ));
     }
@@ -433,5 +450,133 @@ class GlossaryController extends Controller
         return $this->createFormBuilder(array('id'=>$id))
             ->add('id','hidden')
             ->getForm();
+    }
+
+    private function createDeleteSynForm($id)
+    {
+        return $this->createFormBuilder(array('id'=>$id))
+            ->add('id','hidden')
+            ->getForm();
+    }
+
+    /**
+     * Displays a form to add syn to Glossary entity.
+     *
+     * @Route("/{id}/syn", name="glossary_syn")
+     * @Template()
+     */
+    public function glossary_synAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $glossary=$dm->getRepository('PlantnetDataBundle:Glossary')
+            ->find($id);
+        if(!$glossary){
+            throw $this->createNotFoundException('Unable to find Glossary entity.');
+        }
+        $form=$this->createForm(new GlossarySynFormType(),$glossary);
+        return $this->render('PlantnetDataBundle:Backend\Glossary:glossary_syn.html.twig',array(
+            'glossary'=>$glossary,
+            'form'=>$form->createView()
+        ));
+    }
+
+    /**
+     * Add syn to Glossary entity.
+     *
+     * @Route("/{id}/syn_update", name="glossary_syn_update")
+     * @Method("post")
+     * @Template()
+     */
+    public function glossary_syn_updateAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $glossary=$dm->getRepository('PlantnetDataBundle:Glossary')
+            ->find($id);
+        if(!$glossary){
+            throw $this->createNotFoundException('Unable to find Glossary entity.');
+        }
+        $collection=$glossary->getCollection();
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $request=$this->getRequest();
+        $form=$this->createForm(new GlossarySynFormType(),$glossary);
+        if('POST'===$request->getMethod()){
+            $form->bind($request);
+            if($form->isValid()){
+                $uploadedSynFile=$glossary->getSynfile();
+                try{
+                    $uploadedSynFile->move(
+                        __DIR__.'/../../Resources/uploads/'.$collection->getAlias().'/',
+                        'glossary_syn.csv'
+                    );
+                }
+                catch(FilePermissionException $e)
+                {
+                    return false;
+                }
+                catch(\Exception $e)
+                {
+                    throw new \Exception($e->getMessage());
+                }
+                $kernel=$this->get('kernel');
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:glossary syn '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                $process=new \Symfony\Component\Process\Process($command);
+                $process->start();
+                $this->get('session')->getFlashBag()->add('msg_success','Glossary updated');
+                return $this->redirect($this->generateUrl('glossary_edit',array('id'=>$id)));
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Glossary:glossary_syn.html.twig',array(
+            'glossary'=>$glossary,
+            'form'=>$form->createView()
+        ));
+    }
+    
+    /**
+     * Deletes syn from Glossary entity.
+     *
+     * @Route("/{id}/syn_delete", name="glossary_syn_delete")
+     * @Method("post")
+     */
+    public function glossary_syn_deleteAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $glossary=$dm->getRepository('PlantnetDataBundle:Glossary')
+            ->find($id);
+        if(!$glossary){
+            throw $this->createNotFoundException('Unable to find Glossary entity.');
+        }
+        $collection=$glossary->getCollection();
+        if(!$collection){
+            throw $this->createNotFoundException('Unable to find Collection entity.');
+        }
+        $csv=__DIR__.'/../../Resources/uploads/'.$collection->getAlias().'/glossary_syn.csv';
+        if(!file_exists($csv)){
+            throw $this->createNotFoundException('Unable to find Syn entity.');
+        }
+        $form=$this->createDeleteSynForm($id);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $form->bind($request);
+            if($form->isValid()){
+                if(unlink($csv)){
+                    $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                    $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                    $kernel=$this->get('kernel');
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:glossary unsyn '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                    $process=new \Symfony\Component\Process\Process($command);
+                    $process->start();
+                    $this->get('session')->getFlashBag()->add('msg_success','Glossary updated');
+                }
+            }
+        }
+        return $this->redirect($this->generateUrl('glossary_edit',array('id'=>$id)));
     }
 }

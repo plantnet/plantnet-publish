@@ -504,6 +504,10 @@ class DeleteCommand extends ContainerAwareCommand
         if(file_exists($file)){
             unlink($file);
         }
+        $file=__DIR__.'/../Resources/uploads/'.$glossary->getCollection()->getAlias().'/glossary_syn.csv';
+        if(file_exists($file)){
+            unlink($file);
+        }
         /*
         * Remove upload directory
         */

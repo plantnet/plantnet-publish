@@ -23,14 +23,42 @@
         <i class="icon-upload"></i>
         Images upload
     </a>
-    <a href="#" class="btn ajax disabled">
-        Add synonymy
-    </a>
-    <br />
-    <br />
+    {% if delete_syn_form == false %}
+        <br />
+        <br />
+        <a href="{{ path('glossary_syn', { 'id': entity.id }) }}" class="btn">
+            Add synonymy
+        </a>
+        <br />
+        <br />
+    {% else %}
+        <br />
+        <br />
+        <form id="form-delete-syn" action="{{ path('glossary_syn_delete', { 'id': entity.id }) }}" method="post" class="form-inline">
+            {{ form_widget(delete_syn_form) }}
+            <button id="btn-delete-syn-1" type="submit" class="btn"><i class="icon-trash"></i> Delete synonyms</button>
+        </form>
+        <div id="modal-delete-syn" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    <i class="icon-remove-sign"></i>
+                </button>
+                <h3 id="myModalLabel">Delete ?</h3>
+            </div>
+            <div class="modal-body">
+                <p class="text-error">
+                    <i class="icon-warning-sign"></i> Delete synonyms ?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">No</button>
+                <button class="btn" id="btn-delete-syn-2"><i class="icon-trash"></i> Yes</button>
+            </div>
+        </div>
+    {% endif %}
     <form id="form-delete" action="{{ path('glossary_delete', { 'id': entity.id }) }}" method="post">
         {{ form_widget(delete_form) }}
-        <button id="btn-delete-1" type="submit" class="btn"><i class="icon-trash"></i> Delete</button>
+        <button id="btn-delete-1" type="submit" class="btn"><i class="icon-trash"></i> Delete glossary</button>
     </form>
     <div id="modal-delete" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
@@ -61,6 +89,14 @@
             });
             $('#btn-delete-2').click(function(){
                 $('#form-delete').submit();
+            });
+            $('#btn-delete-syn-1').click(function(event){
+                event.preventDefault();
+                $('#modal-delete-syn').modal();
+                return false;
+            });
+            $('#btn-delete-syn-2').click(function(){
+                $('#form-delete-syn').submit();
             });
         });
     </script>

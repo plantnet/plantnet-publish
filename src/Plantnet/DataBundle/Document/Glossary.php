@@ -26,6 +26,12 @@ class Glossary
     protected $file;
 
     /**
+     * 
+     * @Assert\File(maxSize = "75M")
+     */
+    protected $synfile;
+
+    /**
      * @MongoDB\EmbedMany(targetDocument="Property")
      */
     protected $properties;
@@ -102,6 +108,26 @@ class Glossary
     public function getFile()
     {
         return $this->file;
+    }
+
+    /**
+     * Set Synfile
+     *
+     * @param text $synfile
+     */
+    public function setSynfile($synfile)
+    {
+        $this->synfile = $synfile;
+    }
+
+    /**
+     * Get Synfile
+     *
+     * @return text $synfile
+     */
+    public function getSynfile()
+    {
+        return $this->synfile;
     }
 
     /**

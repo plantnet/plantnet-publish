@@ -24,23 +24,74 @@
     </ul>
 {% endblock %}
 {% block row %}
-    {% for def in glossary.definitions %}
-        <div class="media">
-            {% if def.path is not empty %}
-                {% set imgspe = def.path|basename %}
-                {% set img = ['uploads/'~glossary.uploaddir~'/', imgspe]|join('') %}
-                <a class="pull-left grouped_elements" href="{{ asset(img) }}" rel="group">
-                    <img class="media-object img-polaroid" src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ def.name }}" width="130" height="75">
-                </a>
-            {% else %}
-                <span class="pull-left empty-media img-polaroid"></span>
-            {% endif %}
-            <div class="media-body">
-                <h4 class="media-heading">{{ def.displayedname|capitalize }}</h4>
-                {{ def.definition }}
+    {% if paginator|length > 0 %}
+        {% if paginator.haveToPaginate() %}
+            <div class="pagerfanta">
+                {{ pagerfanta(
+                    paginator,
+                    'twitter_bootstrap_translated',
+                    {
+                        'proximity': 2,
+                        'prev_message': '←',
+                        'next_message': '→',
+                        'routeName': 'front_glossary_paginated',
+                        'routeParams': {
+                            'project': project,
+                            'collection': collection.url
+                        }
+                    }
+                ) }}
             </div>
-        </div>
-    {% endfor %}
+        {% endif %}
+        {% for def in paginator %}
+            <div class="media">
+                {% if def.path is not empty %}
+                    {% set imgspe = def.path|basename %}
+                    {% set img = ['uploads/'~glossary.uploaddir~'/', imgspe]|join('') %}
+                    <a class="pull-left grouped_elements" href="{{ asset(img) }}" rel="group">
+                        <img class="media-object img-polaroid" src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ def.name }}" width="130" height="75">
+                    </a>
+                {% else %}
+                    <span class="pull-left empty-media img-polaroid"></span>
+                {% endif %}
+                <div class="media-body">
+                    {% set syns = [] %}
+                    {% if def.haschildren == true %}
+                        {% for synonyms in def.children %}
+                            {% set syns = syns|merge([synonyms.displayedname|capitalize]) %}
+                        {% endfor %}
+                    {% endif %}
+                    <h4 class="media-heading">
+                        {{ def.displayedname|capitalize }}
+                        {% if syns|length > 0 %}
+                            <small class="muted">
+                                {{ syns|join(', ') }}
+                            </small>
+                        {% endif %}
+                    </h4>
+                    {{ def.definition }}
+                </div>
+            </div>
+        {% endfor %}
+        {% if paginator.haveToPaginate() %}
+            <div class="pagerfanta">
+                {{ pagerfanta(
+                    paginator,
+                    'twitter_bootstrap_translated',
+                    {
+                        'proximity': 2,
+                        'prev_message': '←',
+                        'next_message': '→',
+                        'routeName': 'front_glossary_paginated',
+                        'routeParams': {
+                            'project': project,
+                            'collection': collection.url
+                        }
+                    }
+                ) }}
+            </div>
+        {% endif %}
+    {% endif %}
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}

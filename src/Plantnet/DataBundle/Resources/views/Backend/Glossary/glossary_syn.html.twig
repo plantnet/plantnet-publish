@@ -1,0 +1,25 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block form %}
+    <div id="title-form">
+        <h4 class="text-info">
+            <em>Glossary</em> > Edit - synonymy
+        </h4>
+    </div>
+    <form action="{{ path('glossary_syn_update', { 'id': glossary.id }) }}" method="post" {{ form_enctype(form) }}>
+        {{ form_errors(form) }}
+        <div class="field-form">
+            {{ form_label(form.synfile, 'CSV synonymy') }}
+            {{ form_errors(form.synfile) }}
+            {{ form_widget(form.synfile) }}
+        </div>
+        {{ form_rest(form) }}
+        <br />
+        <button type="submit" class="btn">Import structure</button>
+    </form>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

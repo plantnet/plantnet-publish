@@ -828,15 +828,32 @@ class DataController extends Controller
     }
 
     /**
-     * @Route("/project/{project}/collection/{collection}/glossary/terms", name="front_glossary")
+     * @Route(
+     *      "/project/{project}/collection/{collection}/glossary/terms",
+     *      defaults={"page"=1},
+     *      name="front_glossary"
+     *  )
+     * @Route(
+     *      "/project/{project}/collection/{collection}/glossary/terms/page{page}",
+     *      requirements={"page"="\d+"},
+     *      name="front_glossary_paginated"
+     *  )
+     * @Method("get")
      * @Template()
      */
-    public function glossaryAction($project,$collection)
+    public function glossaryAction($project,$collection,$page)
     {
         ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        if($this->container->get('request')->get('_route')=='front_glossary_paginated'&&$page==1){
+            return $this->redirect($this->generateUrl('front_glossary',array(
+                'project'=>$project,
+                'collection'=>$collection
+                )
+            ),301);
+        }
         $translations=ControllerHelp::make_translations(
             $project,
-            $this->container->get('request')->get('_route'),
+            'front_glossary',
             array(
                 'project'=>$project,
                 'collection'=>$collection
@@ -856,6 +873,18 @@ class DataController extends Controller
         if(!$glossary){
             throw $this->createNotFoundException('Unable to find Glossary entity.');
         }
+        $definitions=$dm->createQueryBuilder('PlantnetDataBundle:Definition')
+            ->field('glossary')->references($glossary)
+            ->field('parent')->equals(null)
+            ->sort('displayedname','asc');
+        $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($definitions));
+        try{
+            $paginator->setMaxPerPage(50);
+            $paginator->setCurrentPage($page);
+        }
+        catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
+            throw $this->createNotFoundException('Page not found.');
+        }
         $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').':glossary.html.twig',array(
@@ -863,6 +892,7 @@ class DataController extends Controller
             'project'=>$project,
             'collection'=>$collection,
             'glossary'=>$glossary,
+            'paginator'=>$paginator,
             'translations'=>$translations,
             'current'=>'collection'
         ));
