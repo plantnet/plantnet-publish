@@ -61,12 +61,14 @@ class TaxonomizeCommand extends ContainerAwareCommand
             'haslocations'=>1
         );
         $meta=array();
+        $field_ordered=array();
         foreach($taxo as $level=>$data){
             $fields['attributes.'.$data[0]]=1;
             $meta[$data[0]]=array(
                 'level'=>$level,
                 'label'=>$data[1]
             );
+            $field_ordered[]=$data[0];
         }
         $data=$db->Plantunit->find(array(
             'module.$id'=>new \MongoId($module->getId())
@@ -76,7 +78,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $loc=(isset($line['haslocations'])&&$line['haslocations'])?true:false;
             $id_parent='';
             $identifier='';
-            foreach($line['attributes'] as $column=>$value){
+            foreach($field_ordered as $attr_value){
+                $column=$attr_value;
+                $value=$line['attributes'][$column];
                 if(!empty($value)){
                     if(empty($id_parent)){
                         $tmp_id_parent='|';
@@ -119,6 +123,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
         $fields=null;
         $meta=null;
         $data=null;
+        $field_ordered=null;
         return $tab_tax;
     }
 
