@@ -1,6 +1,10 @@
 {% set imgs = [] %}
 {% set nb_img = 3 %}
-{% for tmp_mod in images if imgs|length < nb_img %}
+{% set tmp_mod_ids = [] %}
+{% for module in collection.modules if module.deleting != true %}
+	{% set tmp_mod_ids = tmp_mod_ids|merge([module.id]) %}
+{% endfor %}
+{% for key,tmp_mod in images if (imgs|length < nb_img and key in tmp_mod_ids) %}
 	{% for image in tmp_mod if imgs|length < nb_img %}
 		{% set imgspe = image.path|basename %}
 		{% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
