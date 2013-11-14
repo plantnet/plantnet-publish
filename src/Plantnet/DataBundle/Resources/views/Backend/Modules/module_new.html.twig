@@ -54,6 +54,9 @@
             <br />
             It is recomended to not update this value: it could broken some external links to the resource.
         </p>
+        <p>
+            In decimal values, "." (dot) must be used instead of "," (comma).
+        </p>
         <form id="add_module" action="{{ path('module_create', { 'id': collection.id, 'type': type }) }}" method="post" {{ form_enctype(form) }}>
             {{ form_errors(form) }}
             <div class="field-form" id="txt-container">

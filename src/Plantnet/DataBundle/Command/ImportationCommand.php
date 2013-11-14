@@ -82,6 +82,20 @@ class ImportationCommand extends ContainerAwareCommand
                         $attributes=array();
                         for($c=0;$c<$num;$c++){
                             $value=trim($this->data_encode($data[$c]));
+                            //check for int or float value
+                            if(is_numeric($value)){
+                                $tmp_value=intval($value);
+                                if($value==$tmp_value){
+                                    $value=$tmp_value;
+                                }
+                                else{
+                                    $tmp_value=floatval($value);
+                                    if($value==$tmp_value){
+                                        $value=$tmp_value;
+                                    }
+                                }
+                            }
+                            //
                             $attributes[$fields[$c]->getId()]=$value;
                             switch($fields[$c]->getType()){
                                 case 'file':
@@ -180,6 +194,20 @@ class ImportationCommand extends ContainerAwareCommand
                         $attributes=array();
                         for($c=0;$c<$num;$c++){
                             $value=trim($this->data_encode($data[$c]));
+                            //check for int or float value
+                            if(is_numeric($value)){
+                                $tmp_value=intval($value);
+                                if($value==$tmp_value){
+                                    $value=$tmp_value;
+                                }
+                                else{
+                                    $tmp_value=floatval($value);
+                                    if($value==$tmp_value){
+                                        $value=$tmp_value;
+                                    }
+                                }
+                            }
+                            //
                             $attributes[$fields[$c]->getId()]=$value;
                             switch($fields[$c]->getType()){
                                 case 'lon':
@@ -295,6 +323,20 @@ class ImportationCommand extends ContainerAwareCommand
                         $attributes=array();
                         for($c=0;$c<$num;$c++){
                             $value=trim($this->data_encode($data[$c]));
+                            //check for int or float value
+                            if(is_numeric($value)){
+                                $tmp_value=intval($value);
+                                if($value==$tmp_value){
+                                    $value=$tmp_value;
+                                }
+                                else{
+                                    $tmp_value=floatval($value);
+                                    if($value==$tmp_value){
+                                        $value=$tmp_value;
+                                    }
+                                }
+                            }
+                            //
                             $attributes[$fields[$c]->getId()]=$value;
                             switch($fields[$c]->getType()){
                                 case 'idparent':
