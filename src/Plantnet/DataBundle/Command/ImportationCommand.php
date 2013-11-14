@@ -99,16 +99,16 @@ class ImportationCommand extends ContainerAwareCommand
                             $attributes[$fields[$c]->getId()]=$value;
                             switch($fields[$c]->getType()){
                                 case 'file':
-                                    $image->setPath($value);
+                                    $image->setPath($value.'');
                                     break;
                                 case 'copyright':
-                                    $image->setCopyright($value);
+                                    $image->setCopyright($value.'');
                                     break;
                                 case 'idparent':
-                                    $image->setIdparent($value);
+                                    $image->setIdparent($value.'');
                                     break;
                                 case 'idmodule':
-                                    $image->setIdentifier($value);
+                                    $image->setIdentifier($value.'');
                                     break;
                             }
                         }
@@ -229,10 +229,10 @@ class ImportationCommand extends ContainerAwareCommand
                                     $coordinates->setY($value);
                                     break;
                                 case 'idparent':
-                                    $location->setIdparent($value);
+                                    $location->setIdparent($value.'');
                                     break;
                                 case 'idmodule':
-                                    $location->setIdentifier($value);
+                                    $location->setIdentifier($value.'');
                                     break;
                             }
                         }
@@ -340,10 +340,10 @@ class ImportationCommand extends ContainerAwareCommand
                             $attributes[$fields[$c]->getId()]=$value;
                             switch($fields[$c]->getType()){
                                 case 'idparent':
-                                    $other->setIdparent($value);
+                                    $other->setIdparent($value.'');
                                     break;
                                 case 'idmodule':
-                                    $other->setIdentifier($value);
+                                    $other->setIdentifier($value.'');
                                     break;
                             }
                         }
@@ -420,7 +420,7 @@ class ImportationCommand extends ContainerAwareCommand
             //
             $connection=new \MongoClient();
             $db=$connection->$dbname;
-            $db->Module->update(array('_id'=>new \MongoId($id_module)),array(
+            $db->Module->update(array('_id'=>new \MongoId($idmodule)),array(
                 '$set'=>array(
                     'updating'=>false
                 )

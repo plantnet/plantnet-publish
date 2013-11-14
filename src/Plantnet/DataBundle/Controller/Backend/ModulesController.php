@@ -514,19 +514,19 @@ class ModulesController extends Controller
                             $attributes[$fields[$c]->getId()]=$value;
                             switch($fields[$c]->getType()){
                                 case 'idmodule':
-                                    $plantunit->setIdentifier($value);
+                                    $plantunit->setIdentifier($value.'');
                                     break;
                                 case 'idparent':
-                                    $plantunit->setIdparent($value);
+                                    $plantunit->setIdparent($value.'');
                                     break;
                                 case 'title1':
-                                    $plantunit->setTitle1($value);
+                                    $plantunit->setTitle1($value.'');
                                     break;
                                 case 'title2':
-                                    $plantunit->setTitle2($value);
+                                    $plantunit->setTitle2($value.'');
                                     break;
                                 case 'title3':
-                                    $plantunit->setTitle3($value);
+                                    $plantunit->setTitle3($value.'');
                                     break;
                             }
                         }
