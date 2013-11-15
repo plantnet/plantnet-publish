@@ -409,19 +409,47 @@ class SearchController extends Controller
                         if(count($fields)){
                             foreach($fields as $key=>$value){
                                 if(is_array($value)){
+                                    $value_query_tab=array();
                                     for($i=0;$i<count($value);$i++){
-                                        $value[$i]=new \MongoRegex('/.*'.StringHelp::accentToRegex($value[$i]).'.*/i');
+                                        //check for int or float value
+                                        if(is_numeric($value[$i])){
+                                            $tmp_value=intval($value[$i]);
+                                            if($value[$i]==$tmp_value){
+                                                $value_query_tab[]=$tmp_value;
+                                            }
+                                            else{
+                                                $tmp_value=floatval($value[$i]);
+                                                if($value[$i]==$tmp_value){
+                                                    $value_query_tab[]=$tmp_value;
+                                                }
+                                            }
+                                        }
+                                        //
+                                        $value_query_tab[]=new \MongoRegex('/.*'.StringHelp::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
-                                        $value
+                                        $value_query_tab
                                     );
                                 }
                                 else{
-                                    $plantunits->field('attributes.'.$key)->in(
-                                        array(
-                                            new \MongoRegex('/.*'.StringHelp::accentToRegex($value).'.*/i')
-                                        )
+                                    $value_query_tab=array(
+                                        new \MongoRegex('/.*'.StringHelp::accentToRegex($value).'.*/i')
                                     );
+                                    //check for int or float value
+                                    if(is_numeric($value)){
+                                        $tmp_value=intval($value);
+                                        if($value==$tmp_value){
+                                            $value_query_tab[]=$tmp_value;
+                                        }
+                                        else{
+                                            $tmp_value=floatval($value);
+                                            if($value==$tmp_value){
+                                                $value_query_tab[]=$tmp_value;
+                                            }
+                                        }
+                                    }
+                                    //
+                                    $plantunits->field('attributes.'.$key)->in($value_query_tab);
                                 }
                             }
                         }
@@ -528,19 +556,47 @@ class SearchController extends Controller
                         if(count($fields)){
                             foreach($fields as $key=>$value){
                                 if(is_array($value)){
+                                    $value_query_tab=array();
                                     for($i=0;$i<count($value);$i++){
-                                        $value[$i]=new \MongoRegex('/.*'.StringHelp::accentToRegex($value[$i]).'.*/i');
+                                        //check for int or float value
+                                        if(is_numeric($value[$i])){
+                                            $tmp_value=intval($value[$i]);
+                                            if($value[$i]==$tmp_value){
+                                                $value_query_tab[]=$tmp_value;
+                                            }
+                                            else{
+                                                $tmp_value=floatval($value[$i]);
+                                                if($value[$i]==$tmp_value){
+                                                    $value_query_tab[]=$tmp_value;
+                                                }
+                                            }
+                                        }
+                                        //
+                                        $value_query_tab[]=new \MongoRegex('/.*'.StringHelp::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
-                                        $value
+                                        $value_query_tab
                                     );
                                 }
                                 else{
-                                    $plantunits->field('attributes.'.$key)->in(
-                                        array(
-                                            new \MongoRegex('/.*'.StringHelp::accentToRegex($value).'.*/i')
-                                        )
+                                    $value_query_tab=array(
+                                        new \MongoRegex('/.*'.StringHelp::accentToRegex($value).'.*/i')
                                     );
+                                    //check for int or float value
+                                    if(is_numeric($value)){
+                                        $tmp_value=intval($value);
+                                        if($value==$tmp_value){
+                                            $value_query_tab[]=$tmp_value;
+                                        }
+                                        else{
+                                            $tmp_value=floatval($value);
+                                            if($value==$tmp_value){
+                                                $value_query_tab[]=$tmp_value;
+                                            }
+                                        }
+                                    }
+                                    //
+                                    $plantunits->field('attributes.'.$key)->in($value_query_tab);
                                 }
                             }
                         }
@@ -618,19 +674,47 @@ class SearchController extends Controller
                         if(count($fields)){
                             foreach($fields as $key=>$value){
                                 if(is_array($value)){
+                                    $value_query_tab=array();
                                     for($i=0;$i<count($value);$i++){
-                                        $value[$i]=new \MongoRegex('/.*'.StringHelp::accentToRegex($value[$i]).'.*/i');
+                                        //check for int or float value
+                                        if(is_numeric($value[$i])){
+                                            $tmp_value=intval($value[$i]);
+                                            if($value[$i]==$tmp_value){
+                                                $value_query_tab[]=$tmp_value;
+                                            }
+                                            else{
+                                                $tmp_value=floatval($value[$i]);
+                                                if($value[$i]==$tmp_value){
+                                                    $value_query_tab[]=$tmp_value;
+                                                }
+                                            }
+                                        }
+                                        //
+                                        $value_query_tab[]=new \MongoRegex('/.*'.StringHelp::accentToRegex($value[$i]).'.*/i');
                                     }
                                     $plantunits->field('attributes.'.$key)->in(
-                                        $value
+                                        $value_query_tab
                                     );
                                 }
                                 else{
-                                    $plantunits->field('attributes.'.$key)->in(
-                                        array(
-                                            new \MongoRegex('/.*'.StringHelp::accentToRegex($value).'.*/i')
-                                        )
+                                    $value_query_tab=array(
+                                        new \MongoRegex('/.*'.StringHelp::accentToRegex($value).'.*/i')
                                     );
+                                    //check for int or float value
+                                    if(is_numeric($value)){
+                                        $tmp_value=intval($value);
+                                        if($value==$tmp_value){
+                                            $value_query_tab[]=$tmp_value;
+                                        }
+                                        else{
+                                            $tmp_value=floatval($value);
+                                            if($value==$tmp_value){
+                                                $value_query_tab[]=$tmp_value;
+                                            }
+                                        }
+                                    }
+                                    //
+                                    $plantunits->field('attributes.'.$key)->in($value_query_tab);
                                 }
                             }
                         }
@@ -742,6 +826,23 @@ class SearchController extends Controller
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $results=array();
+        $query_tab=array(
+            new \MongoRegex('/.*'.StringHelp::accentToRegex($query).'.*/i')
+        );
+        //check for int or float value
+        if(is_numeric($query)){
+            $tmp_query=intval($query);
+            if($query==$tmp_query){
+                $query_tab[]=$tmp_query;
+            }
+            else{
+                $tmp_query=floatval($query);
+                if($query==$tmp_query){
+                    $query_tab[]=$tmp_query;
+                }
+            }
+        }
+        //
         if(substr_count($attribute,'#')==1){
             $sub_module_id=substr($attribute,0,strpos($attribute,'#'));
             $sub_attribute_id=substr($attribute,strpos($attribute,'#')+1);
@@ -758,9 +859,7 @@ class SearchController extends Controller
                 ->distinct('property.'.$sub_attribute_id)
                 ->select('property.'.$sub_attribute_id)
                 ->field('module')->references($sub_module)
-                ->field('property.'.$sub_attribute_id)->in(array(
-                    new \MongoRegex('/.*'.StringHelp::accentToRegex($query).'.*/i')
-                ))
+                ->field('property.'.$sub_attribute_id)->in($query_tab)
                 ->sort('property.'.$sub_attribute_id,'asc')
                 ->limit(10)
                 ->getQuery()
@@ -775,9 +874,7 @@ class SearchController extends Controller
                 ->distinct('attributes.'.$attribute)
                 ->select('attributes.'.$attribute)
                 ->field('module')->references($module)
-                ->field('attributes.'.$attribute)->in(array(
-                    new \MongoRegex('/.*'.StringHelp::accentToRegex($query).'.*/i')
-                ))
+                ->field('attributes.'.$attribute)->in($query_tab)
                 ->sort('attributes.'.$attribute,'asc')
                 ->limit(10)
                 ->getQuery()

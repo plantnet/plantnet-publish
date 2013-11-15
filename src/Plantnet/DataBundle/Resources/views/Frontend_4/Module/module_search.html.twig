@@ -117,6 +117,9 @@
                 $(this).parent('label').first().parent('div').first().children('div').last().children('div').last().children('input').first().typeahead({
                     source:function(query,process){
                         return $.get('{{ path('front_module_search_query_path', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/'+col_name+'/'+query,function(data){
+                            data=data.map(function(elem){
+                                return elem+'';
+                            });
                             return process(data);
                         });
                     },
@@ -146,6 +149,9 @@
                 $(this).typeahead({
                     source:function(query,process){
                         return $.get('{{ path('front_module_search_query_path', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/'+col_name+'/'+query,function(data){
+                            data=data.map(function(elem){
+                                return elem+'';
+                            });
                             return process(data);
                         });
                     },
