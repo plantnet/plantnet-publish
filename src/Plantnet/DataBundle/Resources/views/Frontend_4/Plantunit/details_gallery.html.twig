@@ -17,14 +17,14 @@
         {% endif %}
         <div class="thumbnail pop_{{ pos_class }}" data-content="{{ content }}">
             <a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
-                <img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid new" alt="<strong>{{ image.title1 }} - {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} - {{ image.title3 }}{% endif %}</strong><br />{{ image.copyright }}" />
+                <img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid new" alt="<strong>{{ image.title1 }} - {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} - {{ image.title3 }}{% endif %}</strong><br />© {{ image.copyright }}" />
             </a>
             <h5>
                 {{ image.title1 }} - {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} - {{ image.title3 }}{% endif %}
             </h5>
             {% if image.copyright is not empty %}
                 <p>
-                    {{ image.copyright }}
+                    © {{ image.copyright }}
                 </p>
             {% endif %}
             <div class="access">
