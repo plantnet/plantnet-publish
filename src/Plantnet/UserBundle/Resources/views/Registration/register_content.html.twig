@@ -1,27 +1,27 @@
 <form action="{{ path('fos_user_registration_register') }}" {{ form_enctype(form) }} method="POST" class="fos_user_registration_register">
 	<div>
         {{ form_label(form.username) }}
-        {{ form_errors(form.username) }}
+        <div class="text-error">{{ form_errors(form.username) }}</div>
         {{ form_widget(form.username) }}
     </div>
     <div>
         {{ form_label(form.email) }}
-        {{ form_errors(form.email) }}
+        <div class="text-error">{{ form_errors(form.email) }}</div>
         {{ form_widget(form.email) }}
     </div>
     <div>
         {{ form_label(form.plainPassword.first) }}
-        {{ form_errors(form.plainPassword.first) }}
+        <div class="text-error">{{ form_errors(form.plainPassword.first) }}</div>
         {{ form_widget(form.plainPassword.first) }}
     </div>
     <div>
         {{ form_label(form.plainPassword.second) }}
-        {{ form_errors(form.plainPassword.second) }}
+        <div class="text-error">{{ form_errors(form.plainPassword.second) }}</div>
         {{ form_widget(form.plainPassword.second) }}
     </div>
     <div class="rd_chk" id="chk_super">
         {{ form_label(form.super) }}
-        {{ form_errors(form.super) }}
+        <div class="text-error">{{ form_errors(form.super) }}</div>
         {{ form_widget(form.super) }}
     </div>
     <br />
@@ -31,7 +31,7 @@
     			Warning, the database name can not be changed later.
     		</p>
             {{ form_label(form.dbNameUq) }}
-            {{ form_errors(form.dbNameUq) }}
+            <div class="text-error">{{ form_errors(form.dbNameUq) }}</div>
             {{ form_widget(form.dbNameUq) }}
         </div>
         <div>
@@ -39,7 +39,7 @@
                 Warning, the default language can not be changed later.
             </p>
             {{ form_label(form.defaultlanguage) }}
-            {{ form_errors(form.defaultlanguage) }}
+            <div class="text-error">{{ form_errors(form.defaultlanguage) }}</div>
             {{ form_widget(form.defaultlanguage) }}
         </div>
     </div>
