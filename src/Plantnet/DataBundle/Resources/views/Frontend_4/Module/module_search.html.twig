@@ -73,6 +73,9 @@
                     </div>
                 {% endif %}
             </div>
+            <div class="form-scroll-btns">
+                <input type="submit" value="{{ "tab-search"|trans|capitalize }}" class="btn" />
+            </div>
         </form>
     {% else %}
         <p class="text-warning">
@@ -87,6 +90,23 @@
     {% endif %}
     <script type="text/javascript">
         $(document).ready(function(){
+            if($('input[type=submit]').length>0){
+                var elem=$('input[type=submit]').first();
+                var pos_top=elem.offset().top;
+                $(window).scroll(function(){
+                    var scroll_top=$(window).scrollTop();
+                    var screen_height=$(window).height();
+                    if(screen_height+scroll_top+40<pos_top){
+                        $('.form-scroll-btns').show();
+                    }
+                    else{
+                        $('.form-scroll-btns').hide();
+                    }
+                });
+                $(window).resize(function(){
+                    var pos_top=elem.offset().top;
+                });
+            }
             if($('#form_content').hasClass('span12')){
                 var i=0;
                 var last_div=null;
