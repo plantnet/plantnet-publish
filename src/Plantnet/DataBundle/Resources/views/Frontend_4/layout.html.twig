@@ -259,6 +259,14 @@
 						}
 					});
 				}
+				{% if config.hasimageprotection is defined and config.hasimageprotection == true %}
+					if($('img').length>0){
+						$('img').bind('contextmenu',function(e){
+							e.preventDefault();
+							return false;
+						});
+					}
+				{% endif %}
 			});
 		</script>
 	{% endblock %}

@@ -13,6 +13,12 @@
 	</p>
 	<form action="{{ path('config_update_template') }}" method="post" {{ form_enctype(edit_form) }}>
 		{{ form_errors(edit_form) }}
+		<div class="field-form rd_chk">
+			{{ form_label(edit_form.hasimageprotection) }}
+			{{ form_errors(edit_form.hasimageprotection) }}
+			{{ form_widget(edit_form.hasimageprotection) }}
+		</div>
+		<br />
 		<div class="field-form">
 			{{ form_label(edit_form.template) }}
 			{{ form_errors(edit_form.template) }}

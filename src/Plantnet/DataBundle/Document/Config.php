@@ -48,6 +48,11 @@ class Config
     /**
      * @MongoDB\Boolean
      */
+    private $hasimageprotection;
+
+    /**
+     * @MongoDB\Boolean
+     */
     private $islocked;
 
     /**
@@ -200,6 +205,26 @@ class Config
         return $this->template;
     }
 
+    /**
+     * Set hasimageprotection
+     *
+     * @param boolean $hasimageprotection
+     */
+    public function setHasimageprotection($hasimageprotection)
+    {
+        $this->hasimageprotection = $hasimageprotection;
+    }
+
+    /**
+     * Get hasimageprotection
+     *
+     * @return boolean $hasimageprotection
+     */
+    public function getHasimageprotection()
+    {
+        return $this->hasimageprotection;
+    }
+    
     /**
      * Set islocked
      *

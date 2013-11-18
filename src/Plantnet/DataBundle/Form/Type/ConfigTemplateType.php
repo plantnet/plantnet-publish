@@ -15,6 +15,10 @@ class ConfigTemplateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder,array $options)
     {
         $builder
+            ->add('hasimageprotection','checkbox',array(
+                'label'=>'Disable right click on images',
+                'required'=>false
+            ))
             ->add('template','choice',array(
                 'choices'=>$options['templates'],
                 'required'=>true

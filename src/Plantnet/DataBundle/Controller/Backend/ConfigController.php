@@ -252,6 +252,7 @@ class ConfigController extends Controller
             throw $this->createNotFoundException('Unable to find Config entity.');
         }
         $default_template=$config->getTemplate();
+        $imgprotect=$config->getHasimageprotection();
         $default_link=$database->getLink();
         $children=$database->getChildren();
         if(count($children)){
@@ -321,7 +322,8 @@ class ConfigController extends Controller
                         'originaldb'=>$default_db,
                         'defaultlanguage'=>$language,
                         'name'=>ucfirst($default_link).' '.$language,
-                        'template'=>$default_template
+                        'template'=>$default_template,
+                        'hasimageprotection'=>$imgprotect
                     ));
                 }
             }
@@ -493,7 +495,7 @@ class ConfigController extends Controller
             $editForm->bind($request);
             $dm->persist($config);
             $dm->flush();
-            $this->config_update_templates($config->getTemplate());
+            $this->config_update_templates($config->getTemplate(),$config->getHasimageprotection());
             $this->get('session')->getFlashBag()->add('msg_success','Template updated');
         }
         return $this->render('PlantnetDataBundle:Backend\Config:config_edit_template.html.twig',array(
@@ -505,7 +507,7 @@ class ConfigController extends Controller
         ));
     }
 
-    private function config_update_templates($tpl)
+    private function config_update_templates($tpl,$imgprotect)
     {
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -532,7 +534,12 @@ class ConfigController extends Controller
         foreach($dbs as $db){
             $connection=new \MongoClient();
             $db=$connection->$db;
-            $db->Config->update(array(),array('$set'=>array('template'=>$tpl)));
+            $db->Config->update(array(),array(
+                '$set'=>array(
+                    'template'=>$tpl,
+                    'hasimageprotection'=>$imgprotect
+                )
+            ));
         }
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
     }
