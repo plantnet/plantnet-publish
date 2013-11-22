@@ -789,14 +789,14 @@ class ModulesController extends Controller
                 $module->setUpdating(true);
                 $dm->persist($module);
                 $dm->flush();
-                $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
-                if(file_exists($csv)){
-                    unlink($csv);
-                }
-                $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_desc.csv';
-                if(file_exists($csv)){
-                    unlink($csv);
-                }
+                // $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
+                // if(file_exists($csv)){
+                //     unlink($csv);
+                // }
+                // $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_desc.csv';
+                // if(file_exists($csv)){
+                //     unlink($csv);
+                // }
                 //command
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';

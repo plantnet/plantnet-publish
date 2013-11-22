@@ -15,6 +15,17 @@
             </p>
         </div>
     {% endfor %}
+    {% if module.type == 'text' %}
+        <p>
+            After updating data from a top level module, taxonomy is not updated.
+            <br />
+            You must run manually these tasks (taxonomy, synonymy, taxa description).
+        </p>
+    {% elseif module.type == 'image' %}
+        <p>
+            After updating data from an image module, don't forget to upload new images.
+        </p>
+    {% endif %}
     {% set updating = false %}
     {% if module.updating == true %}
         {% set updating = true %}
@@ -69,9 +80,16 @@
                     <th>N°</th>
                     <th>Name</th>
                     <th>Type</th>
-                    <th>Main</th>
+                    {% if module.type == 'text' %}
+                        <th>Main</th>
+                    {% endif %}
                     <th>Details</th>
-                    <th>Search</th>
+                    {% if module.type == 'text' or module.type == 'other' %}
+                        <th>Search</th>
+                    {% endif %}
+                    {% if module.type == 'other' %}
+                        <td>Highlight</td>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -80,9 +98,16 @@
                         <td>{{ loop.index }}</td>
                         <td>{{ prop.name }}</td>
                         <td>{{ prop.type }}</td>
-                        <td>{% if prop.main == true %}<i class="icon-ok"></i>{% endif %}</td>
+                        {% if module.type == 'text' %}
+                            <td>{% if prop.main == true %}<i class="icon-ok"></i>{% endif %}</td>
+                        {% endif %}
                         <td>{% if prop.details == true %}<i class="icon-ok"></i>{% endif %}</td>
-                        <td>{% if prop.search == true %}<i class="icon-ok"></i>{% endif %}</td>
+                        {% if module.type == 'text' or module.type == 'other' %}
+                            <td>{% if prop.search == true %}<i class="icon-ok"></i>{% endif %}</td>
+                        {% endif %}
+                        {% if module.type == 'other' %}
+                            <td>{% if prop.vernacular == true %}<i class="icon-ok"></i>{% endif %}</td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

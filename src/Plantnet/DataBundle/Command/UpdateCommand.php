@@ -73,6 +73,7 @@ class UpdateCommand extends ContainerAwareCommand
                     $s=microtime(true);
                     switch($module->getType()){
                         case 'text':
+                            $module=$this->update_punit($dm,$module,$dbname,$usermail);
                             break;
                         case 'image':
                             $module=$this->update_image($dm,$module);
@@ -138,6 +139,7 @@ class UpdateCommand extends ContainerAwareCommand
 
     private function update_other($dm,$module)
     {
+        \MongoCursor::$timeout=-1;
         $idmodule=$module->getId();
         //remove old data
         $dm->createQueryBuilder('PlantnetDataBundle:Other')
@@ -229,6 +231,7 @@ class UpdateCommand extends ContainerAwareCommand
 
     private function update_image($dm,$module)
     {
+        \MongoCursor::$timeout=-1;
         $idmodule=$module->getId();
         $parent_to_update=null;
         if($module->getType()=='image'||$module->getType()=='locality'){
@@ -516,6 +519,7 @@ class UpdateCommand extends ContainerAwareCommand
 
     private function update_locality($dm,$module)
     {
+        \MongoCursor::$timeout=-1;
         $idmodule=$module->getId();
         $parent_to_update=null;
         if($module->getType()=='image'||$module->getType()=='locality'){
@@ -817,6 +821,108 @@ class UpdateCommand extends ContainerAwareCommand
         $dm->clear();
         gc_collect_cycles();
         $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+        return $module;
+    }
+
+    private function update_punit($dm,$module,$dbname,$usermail)
+    {
+        \MongoCursor::$timeout=-1;
+        $idmodule=$module->getId();
+        $csvfile=__DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'.csv';
+        $handle=fopen($csvfile,"r");
+        $columns=fgetcsv($handle,0,";");
+        $fields=array();
+        $attributes=$module->getProperties();
+        foreach($attributes as $field){
+            $fields[]=$field;
+        }
+        $csv_ids=array();
+        while(($data=fgetcsv($handle,0,';'))!==false){
+            $num=count($data);
+            for($c=0;$c<$num;$c++){
+                if($fields[$c]->getType()=='idmodule'){
+                    $value=trim($this->data_encode($data[$c]));
+                    $csv_ids[]=$value;
+                }
+            }
+        }
+        fclose($handle);
+        //delete
+        //deletes punits where id is not in csv_ids
+        $dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            ->remove()
+            ->field('identifier')->notIn($csv_ids)
+            ->getQuery()
+            ->execute();
+        //cascade doesnt work !?
+        
+        //update
+        //updates punits where id is in csv_ids
+
+        //create
+        //creates punits where csv_id is not in id
+
+        //nb rows module
+        $count=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+            ->field('module')->references($module)
+            ->getQuery()
+            ->execute()
+            ->count();
+        $module->setNbrows($count);
+        $dm->persist($module);
+        //nb rows children
+        $children=$module->getChildren();
+        if(count($children)){
+            foreach($children as $child){
+                if($child->getType()=='image'){
+                    $count=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+                        ->field('module')->references($child)
+                        ->getQuery()
+                        ->execute()
+                        ->count();
+                    $child->setNbrows($count);
+                    $dm->persist($child);
+                }
+                elseif($child->getType()=='locality'){
+                    $count=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+                        ->field('module')->references($child)
+                        ->getQuery()
+                        ->execute()
+                        ->count();
+                    $child->setNbrows($count);
+                    $dm->persist($child);
+                }
+                elseif($child->getType()=='other'){
+                    $count=$dm->createQueryBuilder('PlantnetDataBundle:Other')
+                        ->field('module')->references($child)
+                        ->getQuery()
+                        ->execute()
+                        ->count();
+                    $child->setNbrows($count);
+                    $dm->persist($child);
+                }
+            }
+        }
+        //flush it !
+        $dm->flush();
+        $dm->clear();
+        gc_collect_cycles();
+        $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+        //
+        $kernel=$this->getContainer()->get('kernel');
+        //
+        $command=$this->getContainer()->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$idmodule.' '.$dbname.' '.$usermail.'';
+        $process=new \Symfony\Component\Process\Process($command);
+        $process->run();
+        //
+        $command=$this->getContainer()->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon syn '.$idmodule.' '.$dbname.' '.$usermail.'';
+        $process=new \Symfony\Component\Process\Process($command);
+        $process->run();
+        //
+        $command=$this->getContainer()->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon desc '.$idmodule.' '.$dbname.' '.$usermail.'';
+        $process=new \Symfony\Component\Process\Process($command);
+        $process->run();
+        //
         return $module;
     }
 }

@@ -653,8 +653,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 ->setTo($usermail)
                 ->setBody($message.$this->getContainer()->get('templating')->render(
                     'PlantnetDataBundle:Backend\Mail:task.txt.twig'
-                ))
-            ;
+                ));
             $this->getContainer()->get('mailer')->send($message_mail);
             $spool=$this->getContainer()->get('mailer')->getTransport()->getSpool();
             $transport=$this->getContainer()->get('swiftmailer.transport.real');
