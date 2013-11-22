@@ -90,6 +90,13 @@ class DeleteCommand extends ContainerAwareCommand
             unlink($csvsynfile);
         }
         /*
+        * Remove csv desc file
+        */
+        $csvdescfile=__DIR__.'/../Resources/uploads/'.$collection->getAlias().'/'.$module->getAlias().'_desc.csv';
+        if(file_exists($csvdescfile)){
+            unlink($csvdescfile);
+        }
+        /*
         * Remove upload directory
         */
         $dir=$module->getUploaddir();

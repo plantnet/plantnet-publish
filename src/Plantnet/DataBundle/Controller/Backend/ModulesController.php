@@ -1263,8 +1263,16 @@ class ModulesController extends Controller
             }
             fclose($handle);
             if($nb_columns==$nb_properties){
+                $module->setUpdating(true);
                 $dm->persist($module);
                 $dm->flush();
+                $user=$this->container->get('security.context')->getToken()->getUser();
+                $kernel=$this->get('kernel');
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                echo $command;exit;
+                $process=new \Symfony\Component\Process\Process($command);
+                $process->start();
+                $this->get('session')->getFlashBag()->add('msg_success','Updating data.');
             }
             else{
                 if(file_exists($csv)){
