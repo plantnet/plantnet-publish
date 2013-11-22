@@ -47,6 +47,12 @@
                         Edit
                     </a>
                 </li>
+                <li>
+                    <a href="{{ path('module_edit_data', { 'id': module.id }) }}" class="ajax">
+                        <i class="icon-edit"></i>
+                        Update data
+                    </a>
+                </li>
                 {% if module.taxonomy == true %}
                     <li>
                         <a href="{{ path('module_edit_taxo', { 'id': module.id }) }}" class="ajax">
@@ -88,6 +94,12 @@
                             <a href="{{ path('module_edit', { 'id': child.id }) }}" class="ajax">
                                 <i class="icon-pencil"></i>
                                 Edit
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('module_edit_data', { 'id': child.id }) }}" class="ajax">
+                                <i class="icon-edit"></i>
+                                Update data
                             </a>
                         </li>
                         {% if child.type=='image' %}

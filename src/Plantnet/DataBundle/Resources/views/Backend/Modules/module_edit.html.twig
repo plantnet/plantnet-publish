@@ -150,6 +150,9 @@
     {% if entity.updating == true %}
         {% set updating = true %}
     {% endif %}
+    {% if module.parent is defined and module.parent is not null and module.parent.updating == true %}
+        {% set updating = true %}
+    {% endif %}
     {% for child in entity.children %}
         {% if child.updating == true %}
             {% set updating = true %}

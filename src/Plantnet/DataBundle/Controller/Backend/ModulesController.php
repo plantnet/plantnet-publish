@@ -24,6 +24,7 @@ use Plantnet\DataBundle\Form\ImportFormType,
     Plantnet\DataBundle\Form\Type\ModulesType,
     Plantnet\DataBundle\Form\Type\ModulesTaxoType,
     Plantnet\DataBundle\Form\ModuleFormType,
+    Plantnet\DataBundle\Form\ModuleUpdateFormType,
     Plantnet\DataBundle\Form\ModuleSynFormType,
     Plantnet\DataBundle\Form\ModuleDescFormType;
 
@@ -244,6 +245,7 @@ class ModulesController extends Controller
                                 $dm->persist($property);
                                 $module->addProperties($property);
                             }
+                            fclose($handle);
                             $module->setDeleting(false);
                             $dm->persist($module);
                             $dm->flush();
@@ -1184,5 +1186,97 @@ class ModulesController extends Controller
             $dm->persist($module);
             $dm->flush();
         }
+    }
+
+    /**
+     * Displays a form to edit data for existing Module entity.
+     *
+     * @Route("/{id}/edit_data", name="module_edit_data")
+     * @Template()
+     */
+    public function module_edit_dataAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $form=$this->createForm(new ModuleUpdateFormType(),$module);
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_data.html.twig',array(
+            'module'=>$module,
+            'form'=>$form->createView(),
+        ));
+    }
+
+    /**
+     * Edits data for existing Module entity.
+     *
+     * @Route("/{id}/update_data", name="module_update_data")
+     * @Method("post")
+     * @Template()
+     */
+    public function module_update_dataAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $properties=$module->getProperties();
+        $nb_properties=count($properties);
+        $request=$this->getRequest();
+        $form=$this->createForm(new ModuleUpdateFormType(),$module);
+        if('POST'===$request->getMethod()){
+            $form->bind($request);
+            $uploadedFile=$module->getFile();
+            $old_csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'.csv';
+            if(file_exists($old_csv)){
+                unlink($old_csv);
+            }
+            unset($old_csv);
+            try{
+                $uploadedFile->move(
+                    __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/',
+                    $module->getAlias().'.csv'
+                );
+            }
+            catch(FilePermissionException $e)
+            {
+                return false;
+            }
+            catch(\Exception $e)
+            {
+                throw new \Exception($e->getMessage());
+            }
+            $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'.csv';
+            $handle=fopen($csv, "r");
+            $field=fgetcsv($handle,0,";");
+            $nb_columns=0;
+            foreach($field as $col){
+                $nb_columns++;
+            }
+            fclose($handle);
+            if($nb_columns==$nb_properties){
+                $dm->persist($module);
+                $dm->flush();
+            }
+            else{
+                if(file_exists($csv)){
+                    unlink($csv);
+                }
+                $this->get('session')->getFlashBag()->add('error','The number of columns in the CSV file does not match the number of columns in this module.');
+                $form->get('file')->addError(new FormError('The number of columns in the CSV file does not match the number of columns in this module.'));
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_data.html.twig',array(
+            'module'=>$module,
+            'form'=>$form->createView()
+        ));
     }
 }
