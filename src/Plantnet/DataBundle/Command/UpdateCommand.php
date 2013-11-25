@@ -855,13 +855,102 @@ class UpdateCommand extends ContainerAwareCommand
             ->getQuery()
             ->execute();
         //cascade doesnt work !?
-        
-        //update
-        //updates punits where id is in csv_ids
+        $dm->createQueryBuilder('PlantnetDataBundle:Image')
+            ->remove()
+            ->field('plantunit.$id')->notIn($csv_ids)
+            ->getQuery()
+            ->execute();
+        $dm->createQueryBuilder('PlantnetDataBundle:Location')
+            ->remove()
+            ->field('plantunit.$id')->notIn($csv_ids)
+            ->getQuery()
+            ->execute();
+        $dm->createQueryBuilder('PlantnetDataBundle:Other')
+            ->remove()
+            ->field('plantunit.$id')->notIn($csv_ids)
+            ->getQuery()
+            ->execute();
+        //update / create
+        $handle=fopen($csvfile,"r");
+        $columns=fgetcsv($handle,0,";");
+        $batchSize=100;
+        $size=0;
+        while(($data=fgetcsv($handle,0,';'))!==false){
+            $csv_id=null;
+            $num=count($data);
+            for($c=0;$c<$num;$c++){
+                if($fields[$c]->getType()=='idmodule'){
+                    $value=trim($this->data_encode($data[$c]));
+                    $csv_id=$value;
+                }
+            }
+            if($scv_id){
+                //update
+                //updates punits where id is in csv_ids
+                $plantunit=$dm->getRepository('PlantnetDataBundle:Plantunit')
+                    ->findOneBy(array(
+                        'module.id'=>$module->getId(),
+                        'identifier'=>$scv_id
+                    ));
+                //create
+                //creates punits where csv_id is not in id
+                if(!$plantunit){
+                    $plantunit=new Plantunit();
+                    $plantunit->setModule($module);
+                }
+                $attributes=array();
+                for($c=0;$c<$num;$c++){
+                    $value=trim($this->data_encode($data[$c]));
+                    //check for int or float value
+                    if(is_numeric($value)){
+                        $tmp_value=intval($value);
+                        if($value==$tmp_value){
+                            $value=$tmp_value;
+                        }
+                        else{
+                            $tmp_value=floatval($value);
+                            if($value==$tmp_value){
+                                $value=$tmp_value;
+                            }
+                        }
+                    }
+                    //
+                    $attributes[$fields[$c]->getId()]=$value;
+                    switch($fields[$c]->getType()){
+                        case 'idmodule':
+                            $plantunit->setIdentifier($value.'');
+                            break;
+                        case 'idparent':
+                            $plantunit->setIdparent($value.'');
+                            break;
+                        case 'title1':
+                            $plantunit->setTitle1($value.'');
+                            break;
+                        case 'title2':
+                            $plantunit->setTitle2($value.'');
+                            break;
+                        case 'title3':
+                            $plantunit->setTitle3($value.'');
+                            break;
+                    }
+                }
+                $plantunit->setAttributes($attributes);
+                $dm->persist($plantunit);
+                if($size>=$batchSize){
+                    $dm->flush();
+                    $dm->clear();
+                    gc_collect_cycles();
+                    $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                    $size=0;
+                }
+                //
 
-        //create
-        //creates punits where csv_id is not in id
 
+
+
+            }
+        }
+        fclose($handle);
         //nb rows module
         $count=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
             ->field('module')->references($module)
