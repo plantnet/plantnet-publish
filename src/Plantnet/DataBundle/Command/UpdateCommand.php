@@ -857,17 +857,17 @@ class UpdateCommand extends ContainerAwareCommand
         //cascade doesnt work !?
         $dm->createQueryBuilder('PlantnetDataBundle:Image')
             ->remove()
-            ->field('plantunit.$id')->notIn($csv_ids)
+            ->field('idparent')->notIn($csv_ids)
             ->getQuery()
             ->execute();
         $dm->createQueryBuilder('PlantnetDataBundle:Location')
             ->remove()
-            ->field('plantunit.$id')->notIn($csv_ids)
+            ->field('idparent')->notIn($csv_ids)
             ->getQuery()
             ->execute();
         $dm->createQueryBuilder('PlantnetDataBundle:Other')
             ->remove()
-            ->field('plantunit.$id')->notIn($csv_ids)
+            ->field('idparent')->notIn($csv_ids)
             ->getQuery()
             ->execute();
         //update / create
@@ -884,17 +884,19 @@ class UpdateCommand extends ContainerAwareCommand
                     $csv_id=$value;
                 }
             }
-            if($scv_id){
+            if($csv_id){
+                $update=true;
                 //update
                 //updates punits where id is in csv_ids
                 $plantunit=$dm->getRepository('PlantnetDataBundle:Plantunit')
                     ->findOneBy(array(
                         'module.id'=>$module->getId(),
-                        'identifier'=>$scv_id
+                        'identifier'=>$csv_id
                     ));
                 //create
                 //creates punits where csv_id is not in id
                 if(!$plantunit){
+                    $update=false;
                     $plantunit=new Plantunit();
                     $plantunit->setModule($module);
                 }
@@ -936,6 +938,7 @@ class UpdateCommand extends ContainerAwareCommand
                 }
                 $plantunit->setAttributes($attributes);
                 $dm->persist($plantunit);
+                $size++;
                 if($size>=$batchSize){
                     $dm->flush();
                     $dm->clear();
@@ -944,13 +947,33 @@ class UpdateCommand extends ContainerAwareCommand
                     $size=0;
                 }
                 //
-
-
-
-
+                if($update){
+                    $dm->createQueryBuilder('PlantnetDataBundle:Image')
+                        ->update()
+                        ->multiple(true)
+                        ->field('plantunit')->references($plantunit)
+                        ->field('title1')->set($plantunit->getTitle1())
+                        ->field('title2')->set($plantunit->getTitle2())
+                        ->field('title3')->set($plantunit->getTitle3())
+                        ->getQuery()
+                        ->execute();
+                    $dm->createQueryBuilder('PlantnetDataBundle:Location')
+                        ->update()
+                        ->multiple(true)
+                        ->field('plantunit')->references($plantunit)
+                        ->field('title1')->set($plantunit->getTitle1())
+                        ->field('title2')->set($plantunit->getTitle2())
+                        ->field('title3')->set($plantunit->getTitle3())
+                        ->getQuery()
+                        ->execute();
+                }
             }
         }
         fclose($handle);
+        $dm->flush();
+        $dm->clear();
+        gc_collect_cycles();
+        $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
         //nb rows module
         $count=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
             ->field('module')->references($module)

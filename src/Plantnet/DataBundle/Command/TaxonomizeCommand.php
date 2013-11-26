@@ -31,6 +31,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             ->addArgument('id',InputArgument::REQUIRED,'Specify the ID of the module entity')
             ->addArgument('dbname',InputArgument::REQUIRED,'Specify a database name')
             ->addArgument('usermail',InputArgument::REQUIRED,'Specify a user e-mail')
+            ->addArgument('clean',InputArgument::OPTIONAL,'Clean Syn and Desc')
         ;
     }
 
@@ -46,9 +47,13 @@ class TaxonomizeCommand extends ContainerAwareCommand
         $id=$input->getArgument('id');
         $dbname=$input->getArgument('dbname');
         $usermail=$input->getArgument('usermail');
+        $clean=false;
         if($action&&in_array($action,$actions)){
+            if($action=='taxo'&&$clean=$input->getArgument('clean')){
+                $clean=true;
+            }
             if($id&&$dbname&&$usermail){
-                $this->taxonomize($action,$dbname,$id,$usermail);
+                $this->taxonomize($action,$dbname,$id,$usermail,$clean);
             }
         }
     }
@@ -178,7 +183,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
         }
     }
 
-    private function taxonomize($action,$dbname,$id_module,$usermail)
+    private function taxonomize($action,$dbname,$id_module,$usermail,$clean)
     {
         $error='';
         $dm=$this->getContainer()->get('doctrine.odm.mongodb.document_manager');
@@ -191,6 +196,16 @@ class TaxonomizeCommand extends ContainerAwareCommand
             ));
         if(!$module){
             $error='Unable to find Module entity.';
+        }
+        if($clean){
+            $csv=__DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
+            if(file_exists($csv)){
+                unlink($csv);
+            }
+            $csv=__DIR__.'/../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_desc.csv';
+            if(file_exists($csv)){
+                unlink($csv);
+            }
         }
         if($action=='taxo'){
             \MongoCursor::$timeout=-1;

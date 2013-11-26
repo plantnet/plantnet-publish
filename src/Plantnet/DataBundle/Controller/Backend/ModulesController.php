@@ -789,17 +789,9 @@ class ModulesController extends Controller
                 $module->setUpdating(true);
                 $dm->persist($module);
                 $dm->flush();
-                // $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
-                // if(file_exists($csv)){
-                //     unlink($csv);
-                // }
-                // $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_desc.csv';
-                // if(file_exists($csv)){
-                //     unlink($csv);
-                // }
                 //command
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' clean &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -1269,7 +1261,6 @@ class ModulesController extends Controller
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
-                echo $command;exit;
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Updating data.');
