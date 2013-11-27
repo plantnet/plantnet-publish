@@ -15,118 +15,120 @@
             </p>
         </div>
     {% endfor %}
-    {% if module.type == 'text' %}
-        <p>
-            After updating data from a top level module, taxonomy is not updated.
-            <br />
-            You must run manually these tasks (taxonomy, synonymy, taxa description).
-        </p>
-    {% elseif module.type == 'image' %}
-        <p>
-            After updating data from an image module, don't forget to upload new images.
-        </p>
-    {% endif %}
-    {% set updating = false %}
-    {% if module.updating == true %}
-        {% set updating = true %}
-    {% endif %}
-    {% if module.parent is defined and module.parent is not null and module.parent.updating == true %}
-        {% set updating = true %}
-    {% endif %}
-    {% for child in module.children %}
-        {% if child.updating == true %}
+    {% if is_over is defined and is_over == false %}
+        {% if module.type == 'text' %}
+            <p>
+                After updating data from a top level module, taxonomy is not updated.
+                <br />
+                You must run manually these tasks (taxonomy, synonymy, taxa description).
+            </p>
+        {% elseif module.type == 'image' %}
+            <p>
+                After updating data from an image module, don't forget to upload new images.
+            </p>
+        {% endif %}
+        {% set updating = false %}
+        {% if module.updating == true %}
             {% set updating = true %}
         {% endif %}
-    {% endfor %}
-    {% if updating == false %}
-        <p>
-            <strong>Module description:</strong>
-        </p>
-        <table class="table table-bordered table-hover table-condensed">
-            <tr>
-                <td>Module name</td>
-                <td>{{ module.name }}</td>
-            </tr>
-            <tr>
-                <td>Number of data</td>
-                <td>{{ module.nbrows }}</td>
-            </tr>
-            {% if module.type == 'text' %}
-                <tr>
-                    <td>Taxonomy</td>
-                    <td>{% if module.taxonomy == true %}Enabled{% else %}Disabled{% endif %}</td>
-                </tr>
-                <tr>
-                    <td>{% if module.children|length >= 2 %}Children{% else %}Child{% endif %}</td>
-                    <td>
-                        {% for child in module.children if child.deleting != true %}
-                            {{ child.name }}<br />
-                        {% endfor %}
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td>Parent</td>
-                    <td>{{ module.parent.name }}</td>
-                </tr>
+        {% if module.parent is defined and module.parent is not null and module.parent.updating == true %}
+            {% set updating = true %}
+        {% endif %}
+        {% for child in module.children %}
+            {% if child.updating == true %}
+                {% set updating = true %}
             {% endif %}
-        </table>
-        <p>
-            <strong>Current module configuration:</strong>
-        </p>
-        <table class="table table-bordered table-hover table-condensed">
-            <thead>
+        {% endfor %}
+        {% if updating == false %}
+            <p>
+                <strong>Module description:</strong>
+            </p>
+            <table class="table table-bordered table-hover table-condensed">
                 <tr>
-                    <th>N°</th>
-                    <th>Name</th>
-                    <th>Type</th>
-                    {% if module.type == 'text' %}
-                        <th>Main</th>
-                    {% endif %}
-                    <th>Details</th>
-                    {% if module.type == 'text' or module.type == 'other' %}
-                        <th>Search</th>
-                    {% endif %}
-                    {% if module.type == 'other' %}
-                        <td>Highlight</td>
-                    {% endif %}
+                    <td>Module name</td>
+                    <td>{{ module.name }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for prop in module.properties %}
+                <tr>
+                    <td>Number of data</td>
+                    <td>{{ module.nbrows }}</td>
+                </tr>
+                {% if module.type == 'text' %}
                     <tr>
-                        <td>{{ loop.index }}</td>
-                        <td>{{ prop.name }}</td>
-                        <td>{{ prop.type }}</td>
+                        <td>Taxonomy</td>
+                        <td>{% if module.taxonomy == true %}Enabled{% else %}Disabled{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td>{% if module.children|length >= 2 %}Children{% else %}Child{% endif %}</td>
+                        <td>
+                            {% for child in module.children if child.deleting != true %}
+                                {{ child.name }}<br />
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td>Parent</td>
+                        <td>{{ module.parent.name }}</td>
+                    </tr>
+                {% endif %}
+            </table>
+            <p>
+                <strong>Current module configuration:</strong>
+            </p>
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Name</th>
+                        <th>Type</th>
                         {% if module.type == 'text' %}
-                            <td>{% if prop.main == true %}<i class="icon-ok"></i>{% endif %}</td>
+                            <th>Main</th>
                         {% endif %}
-                        <td>{% if prop.details == true %}<i class="icon-ok"></i>{% endif %}</td>
+                        <th>Details</th>
                         {% if module.type == 'text' or module.type == 'other' %}
-                            <td>{% if prop.search == true %}<i class="icon-ok"></i>{% endif %}</td>
+                            <th>Search</th>
                         {% endif %}
                         {% if module.type == 'other' %}
-                            <td>{% if prop.vernacular == true %}<i class="icon-ok"></i>{% endif %}</td>
+                            <td>Highlight</td>
                         {% endif %}
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <form action="{{ path('module_update_data', { 'id': module.id }) }}" method="post" {{ form_enctype(form) }}>
-            {{ form_errors(form) }}
-            <div class="field-form">
-                {{ form_label(form.file, 'CSV data') }}
-                {{ form_errors(form.file) }}
-                {{ form_widget(form.file) }}
-            </div>
-            {{ form_rest(form) }}
-            <br />
-            <button type="submit" class="btn">Import data</button>
-        </form>
-    {% else %}
-        <p class="text-warning">
-            There is a work in progress, update action is disabled few minutes.
-        </p>
+                </thead>
+                <tbody>
+                    {% for prop in module.properties %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ prop.name }}</td>
+                            <td>{{ prop.type }}</td>
+                            {% if module.type == 'text' %}
+                                <td>{% if prop.main == true %}<i class="icon-ok"></i>{% endif %}</td>
+                            {% endif %}
+                            <td>{% if prop.details == true %}<i class="icon-ok"></i>{% endif %}</td>
+                            {% if module.type == 'text' or module.type == 'other' %}
+                                <td>{% if prop.search == true %}<i class="icon-ok"></i>{% endif %}</td>
+                            {% endif %}
+                            {% if module.type == 'other' %}
+                                <td>{% if prop.vernacular == true %}<i class="icon-ok"></i>{% endif %}</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <form action="{{ path('module_update_data', { 'id': module.id }) }}" method="post" {{ form_enctype(form) }}>
+                {{ form_errors(form) }}
+                <div class="field-form">
+                    {{ form_label(form.file, 'CSV data') }}
+                    {{ form_errors(form.file) }}
+                    {{ form_widget(form.file) }}
+                </div>
+                {{ form_rest(form) }}
+                <br />
+                <button type="submit" class="btn">Import data</button>
+            </form>
+        {% else %}
+            <p class="text-warning">
+                There is a work in progress, update action is disabled few minutes.
+            </p>
+        {% endif %}
     {% endif %}
 {% endblock %}
 {% block javascripts %}

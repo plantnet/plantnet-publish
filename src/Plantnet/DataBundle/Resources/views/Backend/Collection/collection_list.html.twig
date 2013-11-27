@@ -47,12 +47,14 @@
                         Edit
                     </a>
                 </li>
-                <li>
-                    <a href="{{ path('module_edit_data', { 'id': module.id }) }}" class="ajax">
-                        <i class="icon-edit"></i>
-                        Update data
-                    </a>
-                </li>
+                {% if module.nbrows <= 5000 %}
+                    <li>
+                        <a href="{{ path('module_edit_data', { 'id': module.id }) }}" class="ajax">
+                            <i class="icon-edit"></i>
+                            Update data
+                        </a>
+                    </li>
+                {% endif %}
                 {% if module.taxonomy == true %}
                     <li>
                         <a href="{{ path('module_edit_taxo', { 'id': module.id }) }}" class="ajax">
@@ -96,12 +98,14 @@
                                 Edit
                             </a>
                         </li>
-                        <li>
-                            <a href="{{ path('module_edit_data', { 'id': child.id }) }}" class="ajax">
-                                <i class="icon-edit"></i>
-                                Update data
-                            </a>
-                        </li>
+                        {% if child.nbrows <= 5000 %}
+                            <li>
+                                <a href="{{ path('module_edit_data', { 'id': child.id }) }}" class="ajax">
+                                    <i class="icon-edit"></i>
+                                    Update data
+                                </a>
+                            </li>
+                        {% endif %}
                         {% if child.type=='image' %}
                             <li>
                                 <a href="{{ path('plantnet_file_manager_homepage', {'name': child.uploaddir}) }}" class="ajax">

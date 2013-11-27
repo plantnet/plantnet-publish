@@ -1188,6 +1188,7 @@ class ModulesController extends Controller
      */
     public function module_edit_dataAction($id)
     {
+        $limit=5000;
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1196,9 +1197,15 @@ class ModulesController extends Controller
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
+        $is_over=false;
+        if($module->getNbrows()>$limit){
+            $is_over=true;
+            $this->get('session')->getFlashBag()->add('error','This action is disabled.');
+        }
         $form=$this->createForm(new ModuleUpdateFormType(),$module);
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_data.html.twig',array(
             'module'=>$module,
+            'is_over'=>$is_over,
             'form'=>$form->createView(),
         ));
     }
@@ -1212,6 +1219,7 @@ class ModulesController extends Controller
      */
     public function module_update_dataAction($id)
     {
+        $limit=5000;
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1220,61 +1228,69 @@ class ModulesController extends Controller
         if(!$module){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
-        $properties=$module->getProperties();
-        $nb_properties=count($properties);
-        $request=$this->getRequest();
-        $form=$this->createForm(new ModuleUpdateFormType(),$module);
-        if('POST'===$request->getMethod()){
-            $form->bind($request);
-            $uploadedFile=$module->getFile();
-            $old_csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'.csv';
-            if(file_exists($old_csv)){
-                unlink($old_csv);
-            }
-            unset($old_csv);
-            try{
-                $uploadedFile->move(
-                    __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/',
-                    $module->getAlias().'.csv'
-                );
-            }
-            catch(FilePermissionException $e)
-            {
-                return false;
-            }
-            catch(\Exception $e)
-            {
-                throw new \Exception($e->getMessage());
-            }
-            $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'.csv';
-            $handle=fopen($csv, "r");
-            $field=fgetcsv($handle,0,";");
-            $nb_columns=0;
-            foreach($field as $col){
-                $nb_columns++;
-            }
-            fclose($handle);
-            if($nb_columns==$nb_properties){
-                $module->setUpdating(true);
-                $dm->persist($module);
-                $dm->flush();
-                $user=$this->container->get('security.context')->getToken()->getUser();
-                $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
-                $process=new \Symfony\Component\Process\Process($command);
-                $process->start();
-                $this->get('session')->getFlashBag()->add('msg_success','Updating data.');
-            }
-            else{
-                if(file_exists($csv)){
-                    unlink($csv);
+        $is_over=true;
+        if($module->getNbrows()<=$limit){
+            $is_over=false;
+            $properties=$module->getProperties();
+            $nb_properties=count($properties);
+            $request=$this->getRequest();
+            $form=$this->createForm(new ModuleUpdateFormType(),$module);
+            if('POST'===$request->getMethod()){
+                $form->bind($request);
+                $uploadedFile=$module->getFile();
+                $old_csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'.csv';
+                if(file_exists($old_csv)){
+                    unlink($old_csv);
                 }
-                $this->get('session')->getFlashBag()->add('error','The number of columns in the CSV file does not match the number of columns in this module.');
-                $form->get('file')->addError(new FormError('The number of columns in the CSV file does not match the number of columns in this module.'));
+                unset($old_csv);
+                try{
+                    $uploadedFile->move(
+                        __DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/',
+                        $module->getAlias().'.csv'
+                    );
+                }
+                catch(FilePermissionException $e)
+                {
+                    return false;
+                }
+                catch(\Exception $e)
+                {
+                    throw new \Exception($e->getMessage());
+                }
+                $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'.csv';
+                $handle=fopen($csv, "r");
+                $field=fgetcsv($handle,0,";");
+                $nb_columns=0;
+                foreach($field as $col){
+                    $nb_columns++;
+                }
+                fclose($handle);
+                if($nb_columns==$nb_properties){
+                    $module->setUpdating(true);
+                    $dm->persist($module);
+                    $dm->flush();
+                    $user=$this->container->get('security.context')->getToken()->getUser();
+                    $kernel=$this->get('kernel');
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                    $process=new \Symfony\Component\Process\Process($command);
+                    $process->start();
+                    $this->get('session')->getFlashBag()->add('msg_success','Updating data.');
+                }
+                else{
+                    if(file_exists($csv)){
+                        unlink($csv);
+                    }
+                    $this->get('session')->getFlashBag()->add('error','The number of columns in the CSV file does not match the number of columns in this module.');
+                    $form->get('file')->addError(new FormError('The number of columns in the CSV file does not match the number of columns in this module.'));
+                }
             }
+        }
+        else{
+            $this->get('session')->getFlashBag()->add('error','This action is disabled.');
         }
         return $this->render('PlantnetDataBundle:Backend\Modules:module_edit_data.html.twig',array(
             'module'=>$module,
+            'is_over'=>$is_over,
             'form'=>$form->createView()
         ));
     }
