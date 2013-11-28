@@ -1,0 +1,111 @@
+{% extends "PlantnetDataBundle:Frontend_6:layout.html.twig" %}
+{% block title config.name ~ ' - ' ~ "line-glossary"|trans|capitalize ~ ' - Pl@ntnet' %}
+{% block meta %}
+    <meta name="description" content="{{ config.name }} - {{ "line-glossary"|trans|capitalize }} ({{ glossary.definitions|length }} {% if glossary.definitions|length > 1 %}{{ "line-words"|trans }}{% else %}{{ "line-word"|trans }}{% endif %})"/>
+{% endblock %}
+{% block stylesheets %}
+	{{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
+{% endblock %}
+{% block header %}<h1>{{ config.name }} - {{ "line-glossary"|trans|capitalize }}</h1>{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ "line-glossary"|trans|capitalize }}
+        </li>
+    </ul>
+{% endblock %}
+{% block row %}
+    {% if paginator|length > 0 %}
+        {% if paginator.haveToPaginate() %}
+            <div class="pagerfanta">
+                {{ pagerfanta(
+                    paginator,
+                    'twitter_bootstrap_translated',
+                    {
+                        'proximity': 2,
+                        'prev_message': '←',
+                        'next_message': '→',
+                        'routeName': 'front_glossary_paginated',
+                        'routeParams': {
+                            'project': project,
+                            'collection': collection.url
+                        }
+                    }
+                ) }}
+            </div>
+        {% endif %}
+        {% for def in paginator %}
+            <div class="media">
+                {% if def.path is not empty %}
+                    {% set imgspe = def.path|basename %}
+                    {% set img = ['uploads/'~glossary.uploaddir~'/', imgspe]|join('') %}
+                    <a class="pull-left grouped_elements" href="{{ asset(img) }}" rel="group">
+                        <img class="media-object img-polaroid" src="{{ asset(img) | imagine_filter('thumb_130_75') }}" alt="{{ def.name }}" width="130" height="75">
+                    </a>
+                {% else %}
+                    <span class="pull-left empty-media img-polaroid"></span>
+                {% endif %}
+                <div class="media-body">
+                    {% set syns = [] %}
+                    {% if def.haschildren == true %}
+                        {% for synonyms in def.children %}
+                            {% set syns = syns|merge([synonyms.displayedname|capitalize]) %}
+                        {% endfor %}
+                    {% endif %}
+                    <h4 class="media-heading">
+                        {{ def.displayedname|capitalize }}
+                        {% if syns|length > 0 %}
+                            <small class="muted">
+                                {{ syns|join(', ') }}
+                            </small>
+                        {% endif %}
+                    </h4>
+                    {{ def.definition }}
+                </div>
+            </div>
+        {% endfor %}
+        {% if paginator.haveToPaginate() %}
+            <div class="pagerfanta">
+                {{ pagerfanta(
+                    paginator,
+                    'twitter_bootstrap_translated',
+                    {
+                        'proximity': 2,
+                        'prev_message': '←',
+                        'next_message': '→',
+                        'routeName': 'front_glossary_paginated',
+                        'routeParams': {
+                            'project': project,
+                            'collection': collection.url
+                        }
+                    }
+                ) }}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.pack.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/fancybox/jquery.easing-1.3.pack.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('a.grouped_elements').fancybox({
+                'transitionIn':'elastic',
+                'transitionOut':'elastic',
+                'speedIn':200,
+                'speedOut':200,
+                'enableEscapeButton':true,
+                'hideOnContentClick':true,
+                'titlePosition':'inside',
+                'overlayShow':true,
+                'titleFromAlt':true
+            });
+        });
+    </script>
+{% endblock %}

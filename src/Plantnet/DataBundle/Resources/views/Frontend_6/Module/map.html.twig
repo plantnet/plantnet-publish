@@ -1,0 +1,23 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_6:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_6:datatypes.html.twig" %}
+{% block title config.name ~ ' - ' ~ module_parent.name ~ ' - ' ~ module.name %}
+{% block stylesheets %}
+	{{ parent() }}
+	{% include 'PlantnetDataBundle:Frontend_6:leaflet.css.html.twig' %}
+{% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend_6:side.html.twig" with { module: module_parent } %}
+{% endblock %}
+{% block main %}
+    <div>
+    	{# LEAFLET MAP #}
+    	<div id="map">
+    		<div id="map_bar" class="progress progress-striped active">
+	    		<div class="bar" style="width:0%;"></div>
+	    	</div>
+    	</div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	{% include 'PlantnetDataBundle:Frontend_6:leaflet.js.html.twig' %}
+{% endblock %}

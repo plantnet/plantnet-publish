@@ -127,7 +127,7 @@ class DataController extends Controller
         ));
     }
 
-    public function collection_listAction($project)
+    public function collection_listAction($project,$selected=null)
     {
         ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -139,7 +139,8 @@ class DataController extends Controller
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Collection:collection_list.html.twig',array(
             'config'=>$config,
             'project'=>$project,
-            'collections'=>$collections
+            'collections'=>$collections,
+            'selected'=>$selected
         ));
     }
 
@@ -324,7 +325,8 @@ class DataController extends Controller
             'sortby'=>$sortby,
             'sortorder'=>$sortorder,
             'translations'=>$translations,
-            'current'=>'collection'
+            'current'=>'collection',
+            'selected'=>'module'.$collection->getId().$module->getId()
         ));
     }
 
@@ -448,6 +450,7 @@ class DataController extends Controller
                     'display'=>$display,
                     'translations'=>$translations,
                     'current'=>'collection',
+                    'selected'=>'submodule'.$collection->getId().$module_parent->getId().$module->getid()
                 ));
                 break;
             case 'locality':
@@ -465,7 +468,8 @@ class DataController extends Controller
                     'layers'=>$layers,
                     'locations'=>$locations,
                     'translations'=>$translations,
-                    'current'=>'collection'
+                    'current'=>'collection',
+                    'selected'=>'submodule'.$collection->getId().$module_parent->getId().$module->getid()
                 ));
                 break;
         }
@@ -754,7 +758,8 @@ class DataController extends Controller
             'tab_others_groups'=>$tab_others_groups,
             'highlights'=>$highlights,
             'translations'=>$translations,
-            'current'=>'collection'
+            'current'=>'collection',
+            'selected'=>'module'.$collection->getId().$module->getId()
         ));
     }
 
@@ -894,7 +899,8 @@ class DataController extends Controller
             'glossary'=>$glossary,
             'paginator'=>$paginator,
             'translations'=>$translations,
-            'current'=>'collection'
+            'current'=>'collection',
+            'selected'=>'glossary'.$collection->getId()
         ));
     }
 

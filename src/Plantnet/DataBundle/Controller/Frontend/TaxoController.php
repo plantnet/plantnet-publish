@@ -143,7 +143,8 @@ class TaxoController extends Controller
             'taxon'=>$taxon,
             'taxons'=>$taxons,
             'translations'=>$translations,
-            'current'=>'collection'
+            'current'=>'collection',
+            'selected'=>'taxo'.$collection->getId().$module->getId()
         ));
     }
 
@@ -208,7 +209,8 @@ class TaxoController extends Controller
             'collection'=>$collection,
             'module'=>$module,
             'taxons'=>$taxons,
-            'current'=>'collection'
+            'current'=>'collection',
+            'selected'=>'taxo'.$collection->getId().$module->getId()
         ));
     }
 
@@ -439,7 +441,8 @@ class TaxoController extends Controller
             'sortorder'=>$sortorder,
             'translations'=>$translations,
             'current'=>'collection',
-            'current_display'=>'grid'
+            'current_display'=>'grid',
+            'selected'=>'taxo'.$collection->getId().$module->getId()
         ));
     }
 
@@ -607,7 +610,8 @@ class TaxoController extends Controller
             'page'=>$page,
             'translations'=>$translations,
             'current'=>'collection',
-            'current_display'=>'images'
+            'current_display'=>'images',
+            'selected'=>'taxo'.$collection->getId().$module->getId()
         ));
     }
 
@@ -748,7 +752,8 @@ class TaxoController extends Controller
             'display'=>$display,
             'translations'=>$translations,
             'current'=>'collection',
-            'current_display'=>'locations'
+            'current_display'=>'locations',
+            'selected'=>'taxo'.$collection->getId().$module->getId()
         ));
     }
 }

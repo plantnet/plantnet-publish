@@ -189,7 +189,8 @@ class SearchController extends Controller
             'form'=>$form->createView(),
             'nb_fields'=>count($fields)+count($sub_fields),
             'translations'=>$translations,
-            'current'=>'collection'
+            'current'=>'collection',
+            'selected'=>'searchform'.$collection->getId().$module->getId()
         ));
     }
 
@@ -537,7 +538,8 @@ class SearchController extends Controller
                         'url'=>$url,
                         'translations'=>$translations,
                         'current'=>'collection',
-                        'current_display'=>'grid'
+                        'current_display'=>'grid',
+                        'selected'=>'searchform'.$collection->getId().$module->getId()
                     ));
                     break;
                 case 'images':
@@ -657,7 +659,8 @@ class SearchController extends Controller
                         'url'=>$url,
                         'translations'=>$translations,
                         'current'=>'collection',
-                        'current_display'=>'images'
+                        'current_display'=>'images',
+                        'selected'=>'searchform'.$collection->getId().$module->getId()
                     ));
                     break;
                 case 'locations':
@@ -770,7 +773,8 @@ class SearchController extends Controller
                         'url'=>$url,
                         'translations'=>$translations,
                         'current'=>'collection',
-                        'current_display'=>'locations'
+                        'current_display'=>'locations',
+                        'selected'=>'searchform'.$collection->getId().$module->getId()
                     ));
                     break;
             }
@@ -791,7 +795,8 @@ class SearchController extends Controller
             'module'=>$module,
             'translations'=>$translations,
             'nbResults'=>0,
-            'current'=>'collection'
+            'current'=>'collection',
+            'selected'=>'searchform'.$collection->getId().$module->getId()
         ));
     }
 
