@@ -20,11 +20,25 @@ html{
 html,body{
 	background-color:#EEE;
 }
+body{
+	padding-top:@top_bar_height;
+}
 div.clear{
 	clear:both;
 }
 span.nowrap{
 	white-space:nowrap;
+}
+#super-head{
+	margin-bottom:0px;
+}
+#super-head img{
+	display:block;
+	height:@top_bar_height;
+}
+#super-head a.logo{
+	display:block;
+	margin-left:@content_padding;
 }
 .container > .content{
 	background-color:#FFF;

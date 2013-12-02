@@ -43,6 +43,19 @@
 	{% include "PlantnetDataBundle:Analytics:analyticstracking.html.twig" %}
 </head>
 <body>
+	<div id="super-head" class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="brand" href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
+				<a href="https://www.ird.fr" class="logo pull-right" target="_blank">
+					<img src="{{ asset('bundles/plantnetdata/images/logo-cyan-IRD_450.gif') }}" alt="IRD" />
+				</a>
+				<a href="http://amap.cirad.fr" class="logo pull-right" target="_blank">
+					<img src="{{ asset('bundles/plantnetdata/images/logoAMAP.gif') }}" alt="AMAP" />
+				</a>
+			</div>
+		</div>
+	</div>
 	<div class="container">
 		<div class="content">
 			{% if config.filepath %}
@@ -97,7 +110,7 @@
 					<div class="header pull-left">
 						{% block header %}{% endblock %}
 					</div>
-					<a href="http://www.plantnet-project.org/papyrus.php" target="_blank" id="pn_support" class="pull-right"><img src="{{ asset('bundles/plantnetdata/images/supported-by-plantnet.png') }}" alt="Pl@ntNet"></a>
+					<a href="http://www.plantnet-project.org" target="_blank" id="pn_support" class="pull-right"><img src="{{ asset('bundles/plantnetdata/images/supported-by-plantnet.png') }}" alt="Pl@ntNet"></a>
 					<form class="form-search pull-right" method="get" action="{{ path('front_search', {'project': project}) }}">
 						<div class="input-append">
 							<input type="text" name="q" class="input-medium search-query" placeholder="{{ "search-field"|trans|capitalize }}" />

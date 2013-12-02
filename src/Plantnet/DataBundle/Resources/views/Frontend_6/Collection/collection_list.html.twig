@@ -2,6 +2,7 @@
 	{% for module in collection.modules if module.deleting != true %}
 		<li{% if selected == 'module' ~ collection.id ~ module.id %} class="active" {% endif %}>
 			<a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
+				<i class="icon-th-list"></i>
 				{{ module.name }}
 			</a>
 		</li>
