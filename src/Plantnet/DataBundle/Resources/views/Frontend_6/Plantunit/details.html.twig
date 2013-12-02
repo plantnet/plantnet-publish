@@ -29,7 +29,7 @@
         {% include 'PlantnetDataBundle:Frontend_6:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
-{% block header %}<h1>{{ config.name }} - {{ plantunit.title1 }} - {{ plantunit.title2 }}{% if plantunit.title3 is defined and plantunit.title3 is not null %} - {{ plantunit.title3 }}{% endif %}</h1>{% endblock %}
+{% block header %}<h1>{{ plantunit.title1 }} - {{ plantunit.title2 }}{% if plantunit.title3 is defined and plantunit.title3 is not null %} - {{ plantunit.title3 }}{% endif %}</h1>{% endblock %}
 {% block breadcrumb %}
     <ul class="breadcrumb">
         <li>
