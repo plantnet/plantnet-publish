@@ -106,7 +106,7 @@
                             <span class="text-info">{{ property.name }}</span>
                         </td>
                         <td class="second">
-                            {% autoescape false %}{{ plantunit.attributes[property.id] }}{% endautoescape %}
+                            {% autoescape false %}{{ plantunit.attributes[property.id]|addLinks }}{% endautoescape %}
                         </td>
                     </tr>
                 {% endfor %}
