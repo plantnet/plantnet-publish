@@ -237,6 +237,7 @@
 				$('#map_bar').remove();
 			}
 			markers.addLayer(geoJsonLayer);
+			map.fitBounds(markers.getBounds());
 		});
 		map.addLayer(markers);
 	}
