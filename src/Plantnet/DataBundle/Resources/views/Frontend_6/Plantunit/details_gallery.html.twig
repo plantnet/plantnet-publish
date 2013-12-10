@@ -1,0 +1,74 @@
+{% set pos = 1 %}
+{% for image in images %}
+    {% if pos == 5 %}
+        {% set pos = 1 %}
+    {% endif %}
+    {% set imgspe = image.path|basename %}
+    {% set img = ['uploads/'~image.module.uploaddir~'/', imgspe]|join('') %}
+    <li class="span3">
+        {% set content = '' %}
+        {% for property in image.module.properties if property.details == true %}
+            {% set content = content ~ '<u>' ~ property.name ~ '</u>' %}
+            {% set content = content ~ ': ' ~ image.property[property.id]|replace(',',', ') ~ '<br />' %}
+        {% endfor %}
+        {% set pos_class = 'right' %}
+        {% if pos == 3 or pos == 4 %}
+            {% set pos_class = 'left' %}
+        {% endif %}
+        <div class="thumbnail pop_{{ pos_class }}" data-content="{{ content }}">
+            <a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
+                <img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid new" alt="<strong>{{ image.title1 }} - {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} - {{ image.title3 }}{% endif %}</strong><br />© {{ image.copyright }}" />
+            </a>
+            <h5>
+                {{ image.title1 }} - {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} - {{ image.title3 }}{% endif %}
+            </h5>
+            {% if image.copyright is not empty %}
+                <p>
+                    © {{ image.copyright }}
+                </p>
+            {% endif %}
+            <div class="access">
+                <a class="html-box btn btn-mini" href="#data_{{ image.id }}">
+                    <i class="icon-eye-open pop-tooltip" data-toggle="tooltip" title="Zoom"></i>
+                </a>
+                <div style="display:none">
+                    <div id="data_{{ image.id }}" data-src="{{ asset(img) }}">
+                        <div id="v_data_{{ image.id }}" class="viewer"></div>
+                        <div class="control-panel">
+                            <div class="btn-group">
+                                <a id="v_data_{{ image.id }}_in" href="#" class="btn">
+                                    <i class="icon-plus-sign"></i>
+                                </a>
+                                <a id="v_data_{{ image.id }}_out" href="#" class="btn">
+                                    <i class="icon-minus-sign"></i>
+                                </a>
+                                <a id="v_data_{{ image.id }}_orig" href="#" class="btn">
+                                    <i class="icon-fullscreen"></i>
+                                </a>
+                                <a id="v_data_{{ image.id }}_fit" href="#" class="btn">
+                                    <i class="icon-screenshot"></i>
+                                </a>
+                                <a id="v_data_{{ image.id }}_right" href="#" class="btn">
+                                    <i class="icon-retweet"></i>
+                                </a>
+                            </div>
+                            <div class="input-append">
+                                <input type="text" id="v_data_{{ image.id }}_percent" value="100" class="input-mini uneditable-input" readonly="readonly" />
+                                <span class="add-on"><strong>%</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+    {% set pos = pos + 1 %}
+{% endfor %}
+{% if next > 0 %}
+    <li>
+        <a href="#" class="end_of_gallery_load"></a>
+    </li>
+    <li>
+        <a href="{{ path('front_details_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}/page{{ next }}" id="end_of_gallery"></a>
+    </li>
+{% endif %}

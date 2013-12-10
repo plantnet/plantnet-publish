@@ -1,0 +1,246 @@
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/leaflet-src.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/marker_cluster/leaflet.markercluster.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/full_screen/Control.FullScreen.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/mini_map/Control.MiniMap.js') }}"></script>
+{# DRAW #}
+{% if layers.attributes().draw=='true' %}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/Leaflet.draw.js') }}"></script>
+	{##}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/edit/handler/Edit.Poly.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/edit/handler/Edit.SimpleShape.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/edit/handler/Edit.Circle.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/edit/handler/Edit.Rectangle.js') }}"></script>
+	{##}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/draw/handler/Draw.Feature.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/draw/handler/Draw.Polyline.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/draw/handler/Draw.Polygon.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/draw/handler/Draw.SimpleShape.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/draw/handler/Draw.Rectangle.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/draw/handler/Draw.Circle.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/draw/handler/Draw.Marker.js') }}"></script>
+	{##}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/ext/LatLngUtil.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/ext/LineUtil.Intersect.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/ext/Polygon.Intersect.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/ext/Polyline.Intersect.js') }}"></script>
+	{##}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/Control.Draw.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/Tooltip.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/Toolbar.js') }}"></script>
+	{##}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/draw/DrawToolbar.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/edit/EditToolbar.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/edit/handler/EditToolbar.Edit.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/edit/handler/EditToolbar.Delete.js') }}"></script>
+{% endif %}
+{# /DRAW #}
+<script src="http://openweathermap.org/js/leaflet-layer.js"></script>
+<script type="text/javascript">
+	{####### MAP #################################################}
+	var map=L.map('map',{
+		center:[{{ layers.attributes().centerlat }},{{ layers.attributes().centerlng }}],
+		zoom:{{ layers.attributes().defaultzoom }},
+		minZoom:{{ layers.attributes().minzoom }},
+		worldCopyJump:false
+	});
+	{####### FULL SCREEN #################################################}
+	{% if layers.attributes().fullscreen=='true' %}
+		var full_screen=new L.Control.FullScreen();
+		map.addControl(full_screen);
+	{% endif %}
+	{####### SCALE #################################################}
+	{% if layers.attributes().scale=='true' %}
+		L.control.scale({
+			imperial:false
+		}).addTo(map);
+	{% endif %}
+	{####### BASE MAPS #################################################}
+	var base_maps=new Array();
+	{####### OVERLAY MAPS #################################################}
+	var overlay_maps=new Array();
+	{####### LEGENDS #################################################}
+	var legends=new Array();
+	{####### LAYERS #################################################}
+	{% set default=0 %}
+	{% for layer in layers %}
+		{% set alias=layer.attributes().alias %}
+		{% autoescape false %}
+			var layer_url_{{ alias }}='{{ layer.url.__toString()|escape('js') }}';
+			var layer_attrib_{{ alias }}='{{ layer.attrib.__toString()|escape('js') }}';
+		{% endautoescape %}
+		{####### OVERLAY MAPS #################################################}
+		{% if layer.attributes().opacity is defined %}
+			{% if layer.legend is defined %}
+				{% autoescape false %}
+					var legend_url_{{ alias }}='{{ layer.legend.__toString()|escape('js') }}';
+				{% endautoescape %}
+				var Legend_{{ alias }}=L.Control.extend({
+					options:{
+						position:'bottomleft'
+					},
+					onAdd:function(map){
+						var container=L.DomUtil.create('div','legend legend_{{ alias }}');
+						return container;
+					}
+				});
+				map.addControl(new Legend_{{ alias }}());
+				$('.legend_{{ alias }}').html('<img src="'+legend_url_{{ alias }}+'" alt="legend" class="legend" id="legend_{{ alias }}" />');
+				$('.legend_{{ alias }}').hide();
+				legends[layer_url_{{ alias }}]='{{ alias }}';
+			{% endif %}
+			var layer_{{ alias }}=new L.TileLayer(layer_url_{{ alias }},{
+				attribution:layer_attrib_{{ alias }},
+				opacity:{{ layer.attributes().opacity }},
+				unloadInvisibleTiles:true
+			});
+			overlay_maps['{{ layer.attributes().name }}']=layer_{{ alias }};
+		{####### BASE MAPS #################################################}
+		{% else %}
+			var layer_{{ alias }}=new L.TileLayer(layer_url_{{ alias }},{
+				attribution:layer_attrib_{{ alias }},
+				unloadInvisibleTiles:true
+			});
+			{% if layer.attributes().minimap=='false' %}
+				base_maps['{{ layer.attributes().name }}']=layer_{{ alias }};
+				{% if default==0 %}
+					map.addLayer(layer_{{ alias }});
+				{% endif %}
+				{% set default=1 %}
+			{####### MINI MAP #################################################}
+			{% else %}
+				var mini_map=new L.Control.MiniMap(layer_{{ alias }},{
+					{% if layer.attributes().zoomoffset is defined %}
+						zoomLevelOffset:{{ layer.attributes().zoomoffset }},
+					{% endif %}
+					toggleDisplay:true
+				}).addTo(map);
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+	{####### WEATHER #################################################}
+	{% if layers.attributes().weather=='true' %}
+		var validatorsLayer=new OsmJs.Weather.LeafletLayer({lang:'en'});
+		overlay_maps['Météo']=validatorsLayer;
+	{% endif %}
+	{####### MAP #################################################}
+	L.control.layers(base_maps,overlay_maps).addTo(map);
+	{####### MARKERS #################################################}
+	var markers=new L.MarkerClusterGroup({
+		showCoverageOnHover:false
+	});
+	{% if locations is defined %}
+		{% for location in locations %}
+			{% set title1 = '' %}
+			{% if location.title1 is defined %}
+				{% set title1 = location.title1 %}
+			{% endif %}
+			{% set title2 = '' %}
+			{% if location.title2 is defined %}
+				{% set title2 = location.title2 %}
+			{% endif %}
+			{% set title3 = '' %}
+			{% if location.title3 is defined and location.title3 is not null %}
+				{% set title3 = '<br />' ~ location.title3 %}
+			{% endif %}
+			{% set loc_data = '' %}
+			{% if location.module.properties is defined %}
+				{% for property in location.module.properties if property.details == true %}
+		            {% set loc_data = loc_data ~ '<br />' ~ property.name %}
+		            {% set loc_data = loc_data ~ ': ' ~ location.property[property.id]|replace(',',', ') %}
+		        {% endfor %}
+	        {% endif %}
+			var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
+			marker_{{ location.id }}.bindPopup('<b>{{ title1|escape('js') }}</b><br /><b>{{ title2|escape('js') }}</b>{% autoescape false %}{{ title3 }}{% endautoescape %}'
+				+'<br />{{ loc_data|escape('js') }}'
+				{% if current_display is defined %}
+					+'<br /><br /><a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'id': location.plantunit.id }) }}" class="btn btn-small">{{ "line-details"|trans|capitalize }}</a>'
+				{% endif %}
+			);
+			markers.addLayer(marker_{{ location.id }});
+		{% endfor %}
+	{% endif %}
+	map.addLayer(markers);
+	{####### DRAW #################################################}
+	{% if layers.attributes().draw=='true' %}
+		var currentLayer=null;
+		var drawnItems=new L.FeatureGroup();
+		map.addLayer(drawnItems);
+		var drawControl=new L.Control.Draw({
+			draw:{
+				polyline:false,
+				polygon:false,
+				circle:false,
+				marker:false
+			},
+			edit:{
+				featureGroup:drawnItems,
+				edit:false
+			}
+		});
+		map.addControl(drawControl);
+		map.on('draw:created',function(e){
+			var type=e.layerType;
+			var layer=e.layer;
+			if(type==='rectangle'){
+				if(currentLayer!=null){
+					drawnItems.removeLayer(currentLayer);
+				}
+				currentLayer=layer;
+				var points=currentLayer.getLatLngs();
+				for(var i=0;i<points.length;i++){
+					if(i==0){
+						$('#y_lat_1_bottom_left').val(points[i].lat);
+						$('#x_lng_1_bottom_left').val(points[i].lng);
+					}
+					else if(i==2){
+						$('#y_lat_2_top_right').val(points[i].lat);
+						$('#x_lng_2_top_right').val(points[i].lng);
+					}
+				}
+				drawnItems.addLayer(currentLayer);
+			}
+		});
+		map.on('draw:deleted',function(e){
+			$('.coords').val('');
+		});
+	{% endif %}
+	{####### LEGENDS #################################################}
+	map.on('layeradd',function(e){
+		var layer=legends[e.layer._url];
+		$('.legend_'+layer).show();
+	});
+	map.on('layerremove',function(e){
+		var layer=legends[e.layer._url];
+		$('.legend_'+layer).hide();
+	});
+	{####### AJAX DATA LOAD #################################################}
+	{% if module_parent is defined and current_display is not defined %}
+	function load_markers(page)
+	{
+		map.removeLayer(markers);
+		$.getJSON('{{ path('front_datamap', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'submodule': module.url }) }}/page'+page+'',function(data){
+			var geoJsonLayer=L.geoJson(data,{
+				onEachFeature:function(feature,layer){
+					layer.bindPopup('<b>'+feature.properties.title1+'</b><br />'
+						+feature.properties.title2+'<br />'
+						+feature.properties.title3+'<br />'
+						+'<br />'
+						+feature.properties.loc_data.replace(new RegExp('\n','g'),'<br />')+'<br />'
+						+'<a href="'+feature.properties.punit+'" class="btn btn-small">{{ "line-details"|trans|capitalize }}</a>');
+				}
+			});
+			if(data.next!=-1){
+				$('#map_bar .bar').css('width',data.done+'%');
+				load_markers(data.next)
+			}
+			else{
+				$('#map_bar').remove();
+			}
+			markers.addLayer(geoJsonLayer);
+			map.fitBounds(markers.getBounds());
+		});
+		map.addLayer(markers);
+	}
+	load_markers(0);
+	{% endif %}
+</script>

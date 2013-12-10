@@ -1,0 +1,184 @@
+{% extends "PlantnetDataBundle:Frontend_6:layout.html.twig" %}
+{% block title config.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-search"|trans|capitalize %}
+{% set hasmap = false %}
+{% for child in module.children if (child.deleting != true and child.type == 'locality') %}
+    {% set hasmap = true %}
+{% endfor %}
+{% block stylesheets %}
+	{{ parent() }}
+    {% if hasmap %}
+        {% include 'PlantnetDataBundle:Frontend_6:leaflet.css.html.twig' %}
+    {% endif %}
+{% endblock %}
+{% block header %}<h1>{{ module.name }} - {{ "tab-search"|trans|capitalize }}</h1>{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{{ path('front_project', {'project': project}) }}">{{ config.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">{{ module.name }}</a>
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {{ "tab-search"|trans|capitalize }}
+        </li>
+    </ul>
+{% endblock %}
+{% block side %}
+    {% include "PlantnetDataBundle:Frontend_6:side.html.twig" with { module: module } %}
+{% endblock %}
+{% block main %}
+    {% if hasmap or nb_fields > 0 %}
+        <form action="{{ path('front_module_result', {'project': project, 'collection': collection.url, 'module': module.url}) }}" method="get" {{ form_enctype(form) }} id="search_form">
+            <div class="row">
+                {% if hasmap %}
+                    <div id="form_content" class="span4">
+                {% else %}
+                    <div id="form_content" class="span12">
+                {% endif %}
+                    {{ form_widget(form.y_lat_1_bottom_left, {'id':'y_lat_1_bottom_left','attr':{'class':'coords'}}) }}
+                    {{ form_widget(form.x_lng_1_bottom_left, {'id':'x_lng_1_bottom_left','attr':{'class':'coords'}}) }}
+                    {{ form_widget(form.y_lat_2_top_right, {'id':'y_lat_2_top_right','attr':{'class':'coords'}}) }}
+                    {{ form_widget(form.x_lng_2_top_right, {'id':'x_lng_2_top_right','attr':{'class':'coords'}}) }}
+                    {% if hasmap == false %}
+                        <div class="row">
+                            {{ form_widget(form) }}
+                            <div class="span4">
+                                {% if nb_fields == 0 %}
+                                <p class="text-warning">
+                                    {{ "line-only-map-search"|trans|capitalize }}
+                                </p>
+                            {% endif %}
+                            <input type="submit" value="{{ "tab-search"|trans|capitalize }}" class="btn" />
+                            </div>
+                        </div>
+                    {% else %}
+                        {{ form_widget(form) }}
+                        {% if nb_fields == 0 %}
+                            <p class="text-warning">
+                                {{ "line-only-map-search"|trans|capitalize }}
+                            </p>
+                        {% endif %}
+                        <input type="submit" value="{{ "tab-search"|trans|capitalize }}" class="btn" />
+                    {% endif %}
+                </div>
+                {% if hasmap %}
+                    <div class="span8">
+                        <div>
+                            {# LEAFLET MAP #}
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-scroll-btns">
+                <input type="submit" value="{{ "tab-search"|trans|capitalize }}" class="btn" />
+            </div>
+        </form>
+    {% else %}
+        <p class="text-warning">
+            {{ "line-no-search"|trans|capitalize }}
+        </p>
+    {% endif %}
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+    {% if hasmap %}
+        {% include 'PlantnetDataBundle:Frontend_6:leaflet.js.html.twig' %}
+    {% endif %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            if($('input[type=submit]').length>0){
+                var elem=$('input[type=submit]').first();
+                var pos_top=elem.offset().top;
+                $(window).scroll(function(){
+                    var scroll_top=$(window).scrollTop();
+                    var screen_height=$(window).height();
+                    if(screen_height+scroll_top+40<pos_top){
+                        $('.form-scroll-btns').show();
+                    }
+                    else{
+                        $('.form-scroll-btns').hide();
+                    }
+                });
+                $(window).resize(function(){
+                    var pos_top=elem.offset().top;
+                });
+            }
+            if($('#form_content').hasClass('span12')){
+                var i=0;
+                var last_div=null;
+                $('#form > div').each(function(){
+                    i++;
+                    $(this).addClass('span4');
+                    if(i%3==0){
+                        $(this).next().next().after('<div class="clear"></div>');
+                    }
+                });
+            }
+            $('input[type=text]').attr('autocomplete','off');
+            $('#form .str').each(function(){
+                var item_class=$(this).attr('class').replace('str ','');
+                $(this).parent('div').first().children('label').first().append('<a href="#'+item_class+'" class="btn btn-mini add-btn"><i class="icon-plus"></i></a>');
+            });
+            $('.add-btn').click(function(event){
+                event.preventDefault();
+                var item_class=$(this).attr('href').replace('#','');
+                $(this).parent('label').first().parent('div').first().append('<div>'
+                    +'<div class="input-prepend input-append">'
+                    +'<span class="add-on">{{ "line-or"|trans }}</span>'
+                    +'<input type="text" class="'+item_class+' span2" />'
+                    +'<button class="btn rm-btn" type="button"><i class="icon-minus"></i></button>'
+                    +'</div>'
+                    +'</div>');
+                var col_name=encodeURIComponent($(this).parent('label').first().parent('div').first().next('input').val());
+                $(this).parent('label').first().parent('div').first().children('div').last().children('div').last().children('input').first().typeahead({
+                    source:function(query,process){
+                        return $.get('{{ path('front_module_search_query_path', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/'+col_name+'/'+query,function(data){
+                            data=data.map(function(elem){
+                                return elem+'';
+                            });
+                            return process(data);
+                        });
+                    },
+                    items:10,
+                    minLength:2
+                });
+            });
+            $(document).on('click','.rm-btn',function(event){
+                event.preventDefault();
+                $(this).parent('div').first().remove();
+            });
+            $('#search_form').submit(function(event){
+                $('#form .str').each(function(){
+                    var item_class=$(this).attr('class').replace('str ','');
+                    var string='';
+                    $('.'+item_class).each(function(){
+                        if(string!=''&&$(this).val()!=''){
+                            string+='~|~';
+                        }
+                        string+=$(this).val();
+                    });
+                    $('.string_'+item_class).val(string);
+                });
+            });
+            $('input.str').each(function(){
+                var col_name=encodeURIComponent($(this).parent('div').next('input').val());
+                $(this).typeahead({
+                    source:function(query,process){
+                        return $.get('{{ path('front_module_search_query_path', { 'project': project, 'collection': collection.url, 'module': module.url }) }}/'+col_name+'/'+query,function(data){
+                            data=data.map(function(elem){
+                                return elem+'';
+                            });
+                            return process(data);
+                        });
+                    },
+                    items:10,
+                    minLength:2
+                });
+            });
+        });
+    </script>
+{% endblock %}

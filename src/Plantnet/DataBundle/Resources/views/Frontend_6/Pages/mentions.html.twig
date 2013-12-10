@@ -1,0 +1,14 @@
+{% extends "PlantnetDataBundle:Frontend_6:layout.html.twig" %}
+{% block title "Pl@ntnet - " ~ config.name ~ ' - ' ~ "footer-legal"|trans|capitalize %}
+{% block header %}<h1>{{ "footer-legal"|trans|capitalize }}</h1>{% endblock %}
+{% block row %}
+	<div>
+		{% autoescape false %}
+			{{ page.content }}
+		{% endautoescape %}
+	</div>
+	<div>
+		<h4>{{ "line-google-mentions"|trans }}</h4>
+		<p>{{ "text-google-mentions"|trans }}</p>
+	</div>
+{% endblock %}
