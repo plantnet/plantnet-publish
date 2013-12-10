@@ -1,4 +1,4 @@
-{% extends "PlantnetDataBundle:Frontend_6:layout.html.twig" %}
+{% extends "PlantnetDataBundle:Frontend_CAY_Herbarium:layout.html.twig" %}
 {% set tmp_title = '' %}
 {% if plantunit.title3 is defined and plantunit.title3 is not null %}
     {% set tmp_title = ' - ' ~ plantunit.title3 %}
@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/fancybox/jquery.fancybox-1.3.4.css') }}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.css') }}" type="text/css" />
     {% if plantunit.haslocations == true %}
-        {% include 'PlantnetDataBundle:Frontend_6:leaflet.css.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_CAY_Herbarium:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
 {% block header %}<h1>{{ plantunit.title1 }} - {{ plantunit.title2 }}{% if plantunit.title3 is defined and plantunit.title3 is not null %} - {{ plantunit.title3 }}{% endif %}</h1>{% endblock %}
@@ -48,7 +48,7 @@
     </ul>
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend_6:side.html.twig" with { module: module } %}
+    {% include "PlantnetDataBundle:Frontend_CAY_Herbarium:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     <section id="details">
@@ -292,6 +292,6 @@
     </script>
     {% if plantunit.haslocations == true %}
         {% set locations = plantunit.locations %}
-        {% include 'PlantnetDataBundle:Frontend_6:leaflet.js.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_CAY_Herbarium:leaflet.js.html.twig' %}
     {% endif %}
 {% endblock %}

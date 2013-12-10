@@ -1,4 +1,4 @@
-{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_6:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_6:datatypes.html.twig" %}
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_CAY_Herbarium:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_CAY_Herbarium:datatypes.html.twig" %}
 {% block title config.name ~ ' - ' ~ module.name %}
 {% block meta %}
     <meta name="description" content="{{ module.description|striptags|truncate(200)|cleandesc }}"/>
@@ -7,7 +7,7 @@
     {{ parent() }}
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend_6:side.html.twig" with { module: module } %}
+    {% include "PlantnetDataBundle:Frontend_CAY_Herbarium:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     {% if module.description %}

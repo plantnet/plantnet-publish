@@ -1,4 +1,4 @@
-{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_6:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_6:datatypes.html.twig" %}
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_CAY_Herbarium:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_CAY_Herbarium:datatypes.html.twig" %}
 {% set tmp_title = '' %}
 {% if current_display == 'grid' %}
     {% set tmp_title = ' - ' ~ "line-grid"|trans|capitalize %}
@@ -28,7 +28,7 @@
 {% block stylesheets %}
     {{ parent() }}
     {% if current_display == 'locations' %}
-        {% include 'PlantnetDataBundle:Frontend_6:leaflet.css.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_CAY_Herbarium:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
 {% block header %}<h1>{{ module.name }} - {{ "line-taxonomy"|trans|capitalize }} - {{ taxon.name }}</h1>{% endblock %}
@@ -73,7 +73,7 @@
     </ul>
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend_6:side.html.twig" with { module: module } %}
+    {% include "PlantnetDataBundle:Frontend_CAY_Herbarium:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     <div class="results">
@@ -330,7 +330,7 @@
                                     {% if pos == 5 %}
                                         {% set pos = 1 %}
                                     {% endif %}
-                                    {% include "PlantnetDataBundle:Frontend_6\\Image:item.html.twig" with { image: image } %}
+                                    {% include "PlantnetDataBundle:Frontend_CAY_Herbarium\\Image:item.html.twig" with { image: image } %}
                                     {% set pos = pos + 1 %}
                                 {% endfor %}
                             </ul>
@@ -372,7 +372,7 @@
 {% block javascripts %}
     {{ parent() }}
     {% if current_display == 'locations' %}
-        {% include 'PlantnetDataBundle:Frontend_6:leaflet.js.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_CAY_Herbarium:leaflet.js.html.twig' %}
     {% endif %}
     <script type="text/javascript">
         $(document).ready(function(){

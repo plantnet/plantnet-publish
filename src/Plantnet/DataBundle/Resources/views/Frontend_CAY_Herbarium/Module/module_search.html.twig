@@ -1,4 +1,4 @@
-{% extends "PlantnetDataBundle:Frontend_6:layout.html.twig" %}
+{% extends "PlantnetDataBundle:Frontend_CAY_Herbarium:layout.html.twig" %}
 {% block title config.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-search"|trans|capitalize %}
 {% set hasmap = false %}
 {% for child in module.children if (child.deleting != true and child.type == 'locality') %}
@@ -7,7 +7,7 @@
 {% block stylesheets %}
 	{{ parent() }}
     {% if hasmap %}
-        {% include 'PlantnetDataBundle:Frontend_6:leaflet.css.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_CAY_Herbarium:leaflet.css.html.twig' %}
     {% endif %}
 {% endblock %}
 {% block header %}<h1>{{ module.name }} - {{ "tab-search"|trans|capitalize }}</h1>{% endblock %}
@@ -27,7 +27,7 @@
     </ul>
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend_6:side.html.twig" with { module: module } %}
+    {% include "PlantnetDataBundle:Frontend_CAY_Herbarium:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     {% if hasmap or nb_fields > 0 %}
@@ -86,7 +86,7 @@
 {% block javascripts %}
 	{{ parent() }}
     {% if hasmap %}
-        {% include 'PlantnetDataBundle:Frontend_6:leaflet.js.html.twig' %}
+        {% include 'PlantnetDataBundle:Frontend_CAY_Herbarium:leaflet.js.html.twig' %}
     {% endif %}
     <script type="text/javascript">
         $(document).ready(function(){

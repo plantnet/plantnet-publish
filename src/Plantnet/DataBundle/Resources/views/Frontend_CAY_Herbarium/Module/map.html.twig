@@ -1,11 +1,11 @@
-{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_6:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_6:datatypes.html.twig" %}
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Frontend_CAY_Herbarium:ajax_datatypes.html.twig" : "PlantnetDataBundle:Frontend_CAY_Herbarium:datatypes.html.twig" %}
 {% block title config.name ~ ' - ' ~ module_parent.name ~ ' - ' ~ module.name %}
 {% block stylesheets %}
 	{{ parent() }}
-	{% include 'PlantnetDataBundle:Frontend_6:leaflet.css.html.twig' %}
+	{% include 'PlantnetDataBundle:Frontend_CAY_Herbarium:leaflet.css.html.twig' %}
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend_6:side.html.twig" with { module: module_parent } %}
+    {% include "PlantnetDataBundle:Frontend_CAY_Herbarium:side.html.twig" with { module: module_parent } %}
 {% endblock %}
 {% block main %}
     <div>
@@ -19,5 +19,5 @@
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
-	{% include 'PlantnetDataBundle:Frontend_6:leaflet.js.html.twig' %}
+	{% include 'PlantnetDataBundle:Frontend_CAY_Herbarium:leaflet.js.html.twig' %}
 {% endblock %}

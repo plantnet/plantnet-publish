@@ -1,4 +1,4 @@
-{% extends "PlantnetDataBundle:Frontend_6:layout.html.twig" %}
+{% extends "PlantnetDataBundle:Frontend_CAY_Herbarium:layout.html.twig" %}
 {% block title config.name ~ ' - Pl@ntnet' %}
 {% block meta %}
 	<meta name="description" content="{{ page.content|striptags|truncate(200)|cleandesc }}"/>
@@ -12,7 +12,7 @@
 	</div>
 	<div id="presentation">
 		{% for collection in collections if collection.deleting != true %}
-			{% include "PlantnetDataBundle:Frontend_6\\Collection:collection_presentation.html.twig" %}
+			{% include "PlantnetDataBundle:Frontend_CAY_Herbarium\\Collection:collection_presentation.html.twig" %}
 		{% endfor %}
 	</div>
 {% endblock %}

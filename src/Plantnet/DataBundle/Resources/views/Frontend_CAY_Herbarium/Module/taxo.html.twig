@@ -1,4 +1,4 @@
-{% extends "PlantnetDataBundle:Frontend_6:layout.html.twig" %}
+{% extends "PlantnetDataBundle:Frontend_CAY_Herbarium:layout.html.twig" %}
 {% set tmp_title = config.name ~ ' - ' ~ module.name ~ ' - ' ~ "line-taxonomy"|trans|capitalize %}
 {% if taxon != 'null' %}
     {% set tmp_title = taxon.name ~ ' [' ~ taxon.label ~ '] - ' ~ "line-taxonomy"|trans|capitalize %}
@@ -63,7 +63,7 @@
     </ul>
 {% endblock %}
 {% block side %}
-    {% include "PlantnetDataBundle:Frontend_6:side.html.twig" with { module: module } %}
+    {% include "PlantnetDataBundle:Frontend_CAY_Herbarium:side.html.twig" with { module: module } %}
 {% endblock %}
 {% block main %}
     <div id="taxo">
