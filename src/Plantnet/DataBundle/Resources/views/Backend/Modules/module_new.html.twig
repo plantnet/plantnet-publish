@@ -82,6 +82,11 @@
                 </div>
             {% endif %}
             <div class="field-form">
+                {{ form_label(form.wsonly, 'Web Service only', {'label_attr': {'class': 'inline'}}) }}
+                {{ form_errors(form.wsonly) }}
+                {{ form_widget(form.wsonly) }}
+            </div>
+            <div class="field-form">
                 {% if form.type.vars.value is defined and form.type.vars.value!='text' %}
                     {{ form_label(form.type) }}
                 {% endif %}

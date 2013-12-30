@@ -14,6 +14,9 @@ class ModulesType extends AbstractType
         $builder
             ->add('name')
             ->add('url')
+            ->add('wsonly','checkbox',array(
+                    'required'=>false
+                ))
         ;
         if($module->getType()=='text'){
             $builder

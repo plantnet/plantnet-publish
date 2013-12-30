@@ -53,6 +53,11 @@
                 {{ form_widget(edit_form.description, { 'attr': {'class': 'textarea'} }) }}
             </div>
         {% endif %}
+        <div class="field-form">
+            {{ form_label(edit_form.wsonly, 'Web Service only', {'label_attr': {'class': 'inline'}}) }}
+            {{ form_errors(edit_form.wsonly) }}
+            {{ form_widget(edit_form.wsonly) }}
+        </div>
         <br />
         <table id="table-form" class="table table-bordered table-condensed table-hover">
             <thead>

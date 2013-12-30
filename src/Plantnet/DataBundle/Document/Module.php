@@ -174,6 +174,11 @@ class Module
     protected $indexes;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $wsonly;
+
+    /**
      * To String
      *
      * @return string
@@ -812,5 +817,25 @@ class Module
     public function getIndexes()
     {
         return $this->indexes;
+    }
+
+    /**
+     * Set wsonly
+     *
+     * @param boolean $wsonly
+     */
+    public function setWsonly($wsonly)
+    {
+        $this->wsonly = $wsonly;
+    }
+
+    /**
+     * Get wsonly
+     *
+     * @return boolean $wsonly
+     */
+    public function getWsonly()
+    {
+        return $this->wsonly;
     }
 }

@@ -19,6 +19,9 @@ class ModuleFormType extends AbstractType
             $builder
                 ->add('name')
                 ->add('url')
+                ->add('wsonly','checkbox',array(
+                    'required'=>false
+                ))
                 ->add('type','choice',array(
                     'choices'=>array(
                         'image'=>'Image',
@@ -40,6 +43,9 @@ class ModuleFormType extends AbstractType
                 ->add('name')
                 ->add('url')
                 ->add('taxonomy','checkbox',array(
+                    'required'=>false
+                ))
+                ->add('wsonly','checkbox',array(
                     'required'=>false
                 ))
                 ->add('description','textarea',array(
