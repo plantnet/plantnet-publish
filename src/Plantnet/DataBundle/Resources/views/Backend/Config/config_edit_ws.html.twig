@@ -1,0 +1,30 @@
+{% extends app.request.isXmlHttpRequest ? "PlantnetDataBundle:Backend:ajax_form_layout.html.twig" : "PlantnetDataBundle:Backend:form_layout.html.twig" %}
+{% block stylesheets %}
+	{{ parent() }}
+{% endblock %}
+{% block form %}
+	<div id="title-form">
+		<h4 class="text-info">
+			<em>Config Web Service</em> > Edit
+		</h4>
+	</div>
+	<form action="{{ path('config_update_ws') }}" method="post" {{ form_enctype(edit_form) }}>
+		{{ form_errors(edit_form) }}
+		<div class="field-form">
+			{{ form_label(edit_form.ips_list, 'IPs list') }}
+			{{ form_errors(edit_form.ips_list) }}
+			{{ form_widget(edit_form.ips_list, { 'attr': {'rows': 10} }) }}
+		</div>
+		{{ form_rest(edit_form) }}
+		<br />
+		<button type="submit" class="btn">Update</button>
+	</form>
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript">
+		$(document).ready(function(){
+			;
+		});
+	</script>
+{% endblock %}

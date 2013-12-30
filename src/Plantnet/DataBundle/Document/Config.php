@@ -61,6 +61,11 @@ class Config
     protected $originaldb;
 
     /**
+     * @MongoDB\Hash
+     */
+    protected $ips;
+
+    /**
      * To String
      *
      * @return string
@@ -73,6 +78,7 @@ class Config
     public function __construct()
     {
         $this->availablelanguages = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->ips = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -263,5 +269,25 @@ class Config
     public function getOriginaldb()
     {
         return $this->originaldb;
+    }
+
+    /**
+     * Set ips
+     *
+     * @param hash $ips
+     */
+    public function setIps($ips)
+    {
+        $this->ips = $ips;
+    }
+
+    /**
+     * Get ips
+     *
+     * @return hash $ips
+     */
+    public function getIps()
+    {
+        return $this->ips;
     }
 }

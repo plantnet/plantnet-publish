@@ -543,4 +543,124 @@ class ConfigController extends Controller
         }
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
     }
+    
+    private function createWsForm($ips)
+    {
+        $form=$this->createFormBuilder(null,array(
+                'csrf_protection'=>false
+            ))
+            ->add('ips_list','textarea',array(
+                'required'=>false,
+                'data'=>implode("\n",$ips)
+            ));
+        $form=$form->getForm();
+        return $form;
+    }
+
+    /**
+     * Displays a form to edit Config entity.
+     *
+     * @Route("/edit_ws", name="config_edit_ws")
+     * @Template()
+     */
+    public function config_edit_wsAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        $ips=$config->getIps();
+        $editForm=$this->createWsForm($ips);
+        return $this->render('PlantnetDataBundle:Backend\Config:config_edit_ws.html.twig',array(
+            'entity'=>$config,
+            'ips'=>$ips,
+            'edit_form'=>$editForm->createView(),
+            'current'=>'config'
+        ));
+    }
+
+    /**
+     * Edits Config entity.
+     *
+     * @Route("/update_ws", name="config_update_ws")
+     * @Method("post")
+     * @Template()
+     */
+    public function config_update_wsAction()
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $config=$dm->createQueryBuilder('PlantnetDataBundle:Config')
+            ->getQuery()
+            ->getSingleResult();
+        if(!$config){
+            throw $this->createNotFoundException('Unable to find Config entity.');
+        }
+        $ips=$config->getIps();
+        $editForm=$this->createWsForm($ips);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $editForm->bind($request);
+            $data=$editForm->getData();
+            if(isset($data['ips_list'])){
+                $ips_tab=preg_split('/\r\n|[\r\n]/',$data['ips_list']);
+                $ips_tab=array_map(function($elem){
+                    return str_replace(' ','',trim($elem));
+                },$ips_tab);
+                $config->setIps($ips_tab);
+                $dm->persist($config);
+                $dm->flush();
+                $this->config_update_ws($config->getIps());
+                $this->get('session')->getFlashBag()->add('msg_success','Web Service updated');
+            }
+        }
+        return $this->render('PlantnetDataBundle:Backend\Config:config_edit_ws.html.twig',array(
+            'entity'=>$config,
+            'ips'=>$ips,
+            'edit_form'=>$editForm->createView(),
+            'current'=>'config'
+        ));
+    }
+
+    private function config_update_ws($ips)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase());
+        $database=$dm->getRepository('PlantnetDataBundle:Database')
+            ->findOneBy(array(
+                'name'=>$user->getDbName()
+            ));
+        if(!$database){
+            throw $this->createNotFoundException('Unable to find Database entity.');
+        }
+        $parent=$database->getParent();
+        if($parent){
+            $database=$parent;
+        }
+        $dbs=array();
+        $dbs[]=$database->getName();
+        $children=$database->getChildren();
+        if(count($children)){
+            foreach($children as $child){
+                $dbs[]=$child->getName();
+            }
+        }
+        foreach($dbs as $db){
+            $connection=new \MongoClient();
+            $db=$connection->$db;
+            $db->Config->update(array(),array(
+                '$set'=>array(
+                    'ips'=>$ips
+                )
+            ));
+        }
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+    }
 }

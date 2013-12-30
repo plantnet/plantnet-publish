@@ -55,12 +55,12 @@
 				{% endautoescape %}
 			</tr>
 		{% endfor %}
-	</tavle>
+	</table>
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
 	<script type="text/javascript">
-		$(document).ready(function() {
+		$(document).ready(function(){
 			$("a.grouped_elements").fancybox({
 				'scrolling':'yes',
 				'autoScale':false,
