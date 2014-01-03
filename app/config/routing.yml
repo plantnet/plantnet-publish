@@ -30,15 +30,19 @@ fos_user_resetting:
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
 
-plantnet_securityrest:
-    resource: Plantnet\UserBundle\Controller\WsseSecurityController
-    type: rest
+#plantnet_securityrest:
+#    resource: Plantnet\UserBundle\Controller\WsseSecurityController
+#    type: rest
 
-plantnet_userrest:
-    resource: "@PlantnetUserBundle/Resources/config/routing.yml"
-    type: rest
-    prefix: /api
+#plantnet_userrest:
+#    resource: "@PlantnetUserBundle/Resources/config/routing.yml"
+#    type: rest
+#    prefix: /api
 
 _imagine:
     resource: .
     type: imagine
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc

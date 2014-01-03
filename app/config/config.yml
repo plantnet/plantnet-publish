@@ -166,6 +166,8 @@ escape_wsse_authentication:
     authentication_provider_class: Escape\WSSEAuthenticationBundle\Security\Core\Authentication\Provider\Provider
     authentication_listener_class: Escape\WSSEAuthenticationBundle\Security\Http\Firewall\Listener
 
+nelmio_api_doc: ~
+
 raul_fraile_ladybug:  
     general:              
         expanded: true 
