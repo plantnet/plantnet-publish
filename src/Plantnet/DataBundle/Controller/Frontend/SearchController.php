@@ -144,7 +144,7 @@ class SearchController extends Controller
                 'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module){
+        if(!$module||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         if($module->getParent()){
@@ -239,7 +239,7 @@ class SearchController extends Controller
                 'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module){
+        if(!$module||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         if($module->getParent()){
@@ -827,7 +827,7 @@ class SearchController extends Controller
                 'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module){
+        if(!$module||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $results=array();

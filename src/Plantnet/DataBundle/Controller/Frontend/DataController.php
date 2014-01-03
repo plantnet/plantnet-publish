@@ -273,7 +273,7 @@ class DataController extends Controller
                 'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module||$module->getType()!='text'){
+        if(!$module||$module->getType()!='text'||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         //
@@ -395,7 +395,7 @@ class DataController extends Controller
                 'parent.id'=>$module_parent->getId(),
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module||$module->getType()=='text'){
+        if(!$module||$module->getType()=='text'||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $display=array();
@@ -514,7 +514,7 @@ class DataController extends Controller
                 'parent.id'=>$module_parent->getId(),
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module||$module->getType()!='locality'){
+        if(!$module||$module->getType()!='locality'||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $display=array();
@@ -636,7 +636,7 @@ class DataController extends Controller
                 'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module){
+        if(!$module||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         //check for old links
@@ -790,7 +790,7 @@ class DataController extends Controller
         }
         $module=$dm->getRepository('PlantnetDataBundle:Module')
             ->findOneBy(array('url'=>$module,'collection.id'=>$collection->getId()));
-        if(!$module){
+        if(!$module||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $display=array();

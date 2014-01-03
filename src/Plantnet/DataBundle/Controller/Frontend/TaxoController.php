@@ -81,7 +81,7 @@ class TaxoController extends Controller
                 'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module||$module->getType()!='text'){
+        if(!$module||$module->getType()!='text'||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         if($taxon=='null'){
@@ -176,7 +176,7 @@ class TaxoController extends Controller
                 'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module||$module->getType()!='text'){
+        if(!$module||$module->getType()!='text'||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $parent=$dm->getRepository('PlantnetDataBundle:Taxon')
@@ -247,7 +247,7 @@ class TaxoController extends Controller
                 'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module||$module->getType()!='text'){
+        if(!$module||$module->getType()!='text'||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
@@ -337,7 +337,7 @@ class TaxoController extends Controller
                 'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module||$module->getType()!='text'){
+        if(!$module||$module->getType()!='text'||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $taxon=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
@@ -501,7 +501,7 @@ class TaxoController extends Controller
                 'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module||$module->getType()!='text'){
+        if(!$module||$module->getType()!='text'||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $taxon=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
@@ -649,7 +649,7 @@ class TaxoController extends Controller
                 'url'=>$module,
                 'collection.id'=>$collection->getId()
             ));
-        if(!$module||$module->getType()!='text'){
+        if(!$module||$module->getType()!='text'||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $taxon=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
