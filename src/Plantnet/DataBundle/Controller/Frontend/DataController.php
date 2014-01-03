@@ -1235,13 +1235,16 @@ class DataController extends Controller
             }
             if($paginator->getNbResults()==1){
                 foreach($paginator as $punit){
-                    return $this->redirect($this->generateUrl('front_details',array(
-                        'project'=>$project,
-                        'collection'=>$punit->getModule()->getCollection()->getUrl(),
-                        'module'=>$punit->getModule()->getUrl(),
-                        'id'=>$punit->getIdentifier()
-                        )
-                    ));
+                    if($punit->getModule()->getWsonly()!=true){
+                        return $this->redirect($this->generateUrl('front_details',array(
+                            'project'=>$project,
+                            'collection'=>$punit->getModule()->getCollection()->getUrl(),
+                            'module'=>$punit->getModule()->getUrl(),
+                            'id'=>$punit->getIdentifier()
+                            )
+                        ));
+                    }
+                    
                 }
             }
         }

@@ -33,7 +33,7 @@
                 {{ pagerfanta(paginator, 'twitter_bootstrap_translated', {'proximity': 2, 'prev_message': '←', 'next_message': '→',}) }}
             </div>
         {% endif %}
-        {% for punit in paginator %}
+        {% for punit in paginator if (punit.module.deleting != true and punit.module.wsonly != true) %}
             <p>
                 <a href="{{ path('front_details', { 'project': project, 'collection': punit.module.collection.url, 'module': punit.module.url, 'id': punit.identifier }) }}">
                     {{ punit.title1 }} - {{ punit.title2 }}
