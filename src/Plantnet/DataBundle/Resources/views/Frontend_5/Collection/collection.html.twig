@@ -30,7 +30,7 @@
             {% if collection.modules|length > 1 %}
                 {% set item_size = item_size/2 %}
             {% endif %}
-            {% for module in collection.modules if module.deleting != true %}
+            {% for module in collection.modules if (module.deleting != true and module.wsonly != true) %}
                 <div class="span{{ item_size }}">
                      {% include "PlantnetDataBundle:Frontend_5\\Module:module_presentation.html.twig" %}
                 </div>

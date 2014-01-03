@@ -9,7 +9,7 @@
 		<ul>
 			{% for collection in collections if collection.deleting != true %}
 				{% if collection.modules|length > 0 %}
-					{% for module in collection.modules if module.deleting != true %}
+					{% for module in collection.modules if (module.deleting != true and module.wsonly != true) %}
 						<li>
 							<a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module': module.url }) }}">
 								<i class="icon-list"></i>
@@ -18,7 +18,7 @@
 							</a>
 							<ul>
 								{% if module.children|length > 0 %}
-									{% for child in module.children if (child.type == 'image' and child.deleting != true) %}
+									{% for child in module.children if (child.type == 'image' and child.deleting != true and child.wsonly != true) %}
 										<li>
 											<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
 												<i class="icon-camera"></i>
@@ -27,7 +27,7 @@
 											</a>
 										</li>
 									{% endfor %}
-									{% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
+									{% for child in module.children if (child.type == 'locality' and child.deleting != true and child.wsonly != true) %}
 										<li>
 											<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
 												<i class="icon-map-marker"></i>

@@ -46,7 +46,7 @@
             {% endif %}
             <div class="clear"></div>
             <div>
-                {% for child in module.children if (child.type == 'image' and child.deleting != true) %}
+                {% for child in module.children if (child.type == 'image' and child.deleting != true and child.wsonly != true) %}
                     <div>
                         <i class="icon-camera"></i>
                         <h5>
@@ -59,7 +59,7 @@
                         </span>
                     </div>
                 {% endfor %}
-                {% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
+                {% for child in module.children if (child.type == 'locality' and child.deleting != true and child.wsonly != true) %}
                     <div>
                         <i class="icon-map-marker"></i>
                         <h5>

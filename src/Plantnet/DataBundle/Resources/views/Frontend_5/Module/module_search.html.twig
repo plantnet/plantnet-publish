@@ -1,7 +1,7 @@
 {% extends "PlantnetDataBundle:Frontend_5:layout.html.twig" %}
 {% block title config.name ~ ' - ' ~ module.name ~ ' - ' ~ "tab-search"|trans|capitalize %}
 {% set hasmap = false %}
-{% for child in module.children if (child.deleting != true and child.type == 'locality') %}
+{% for child in module.children if (child.deleting != true and child.wsonly != true and child.type == 'locality') %}
     {% set hasmap = true %}
 {% endfor %}
 {% block stylesheets %}

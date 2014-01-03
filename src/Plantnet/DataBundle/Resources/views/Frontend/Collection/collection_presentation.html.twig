@@ -1,7 +1,7 @@
 {% set imgs = [] %}
 {% set nb_img = 3 %}
 {% set tmp_mod_ids = [] %}
-{% for module in collection.modules if module.deleting != true %}
+{% for module in collection.modules if (module.deleting != true and module.wsonly != true) %}
 	{% set tmp_mod_ids = tmp_mod_ids|merge([module.id]) %}
 {% endfor %}
 {% for key,tmp_mod in images if (imgs|length < nb_img and key in tmp_mod_ids) %}
@@ -62,10 +62,10 @@
 		</div>
 	</div>
 	<div class="span3">
-		{% for module in collection.modules if module.deleting != true %}
+		{% for module in collection.modules if (module.deleting != true and module.wsonly != true) %}
 			{% set nbimg = 0 %}
 			{% set nbloc = 0 %}
-			{% for child in module.children if child.deleting != true %}
+			{% for child in module.children if (child.deleting != true and child.wsonly != true) %}
 				{% if child.type == 'image' %}
 					{% set nbimg = nbimg+child.nbrows %}
 				{% elseif child.type == 'locality' %}

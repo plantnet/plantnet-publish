@@ -1,5 +1,5 @@
 {% set nb_img = 3 %}
-{% for module in collection.modules if module.deleting != true %}
+{% for module in collection.modules if (module.deleting != true and module.wsonly != true) %}
 	{% set imgs = [] %}
 	{% for tmp_mod_key, tmp_mod in images if imgs|length < nb_img %}
 		{% if tmp_mod_key == module.id %}
@@ -62,7 +62,7 @@
 			</div>
 		</div>
 		<div class="span3">
-			{% for child in module.children if (child.type == 'image' and child.deleting != true) %}
+			{% for child in module.children if (child.type == 'image' and child.deleting != true and child.wsonly != true) %}
 				<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}" class="btn btn-small btn-block">
 					{{ child.name }}
 					{% if child.nbrows > 0 %}
@@ -71,7 +71,7 @@
 					{% endif %}
 				</a>
 			{% endfor %}
-			{% for child in module.children if (child.type == 'locality' and child.deleting != true) %}
+			{% for child in module.children if (child.type == 'locality' and child.deleting != true and child.wsonly != true) %}
 				<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}" class="btn btn-small btn-block">
 					{{ child.name }}
 					{% if child.nbrows > 0 %}
