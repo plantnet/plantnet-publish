@@ -56,6 +56,180 @@ class ApiController extends Controller
         exit;
     }
 
+    private function format_project($name,$project)
+    {
+        return array(
+            'name'=>$name,
+            'url'=>$project,
+            'access_url'=>$this->get('router')->generate('front_project',array(
+                'project'=>$project
+            ),true),
+            'hierarchy'=>array(
+                'project'=>$project
+            )
+        );
+    }
+
+    private function format_collection($project,$collection)
+    {
+        return array(
+            'name'=>$collection->getName(),
+            'url'=>$collection->getUrl(),
+            'access_url'=>$this->get('router')->generate('front_collection',array(
+                'project'=>$project,
+                'collection'=>$collection->getUrl()
+            ),true),
+            'description'=>($collection->getDescription())?$collection->getDescription():'',
+            'hierarchy'=>array(
+                'project'=>$project,
+                'collection'=>$collection->getUrl()
+            )
+        );
+    }
+
+    private function format_module($project,$collection,$module)
+    {
+        return array(
+            'name'=>$module->getName(),
+            'url'=>$module->getUrl(),
+            'access_url'=>($module->getWsonly())?null:$this->get('router')->generate('front_module',array(
+                'project'=>$project,
+                'collection'=>$collection->getUrl(),
+                'module'=>$module->getUrl()
+            ),true),
+            'description'=>($module->getDescription())?$module->getDescription():'',
+            'row_count'=>$module->getNbrows(),
+            'has_taxonomy'=>($module->getTaxonomy())?true:false,
+            'public'=>($module->getWsonly())?false:true,
+            'hierarchy'=>array(
+                'project'=>$project,
+                'collection'=>$collection->getUrl(),
+                'module'=>$module->getUrl()
+            )
+        );
+    }
+
+    private function format_submodule($project,$collection,$module,$submodule)
+    {
+        return array(
+            'type'=>$submodule->getType(),
+            'name'=>$submodule->getName(),
+            'url'=>$submodule->getUrl(),
+            'access_url'=>($submodule->getWsonly()||$submodule->getType()=='other')?null:$this->get('router')->generate('front_submodule',array(
+                'project'=>$project,
+                'collection'=>$collection->getUrl(),
+                'module'=>$module->getUrl(),
+                'submodule'=>$submodule->getUrl()
+            ),true),
+            'row_count'=>$submodule->getNbrows(),
+            'public'=>($submodule->getWsonly())?false:true,
+            'hierarchy'=>array(
+                'project'=>$project,
+                'collection'=>$collection->getUrl(),
+                'module'=>$module->getUrl(),
+                'submodule'=>$submodule->getUrl()
+            )
+        );
+    }
+
+    private function format_punit($field,$display,$punit)
+    {
+        $p=array(
+            'identifier'=>$punit->getIdentifier(),
+            'title1'=>$punit->getTitle1(),
+            'title2'=>$punit->getTitle2(),
+            'title3'=>$punit->getTitle3(),
+        );
+        $attributes=$punit->getAttributes();
+        foreach($field as $f){
+            if(in_array($f->getId(),$display)){
+                $p[$f->getName()]=$attributes[$f->getId()];
+            }
+        }
+        return $p;
+    }
+
+    private function format_taxon($taxon)
+    {
+        return array(
+            'identifier'=>$taxon->getIdentifier(),
+            'level'=>$taxon->getLevel(),
+            'label'=>$taxon->getLabel(),
+            'name'=>$taxon->getName(),
+            'parent_identifier'=>($taxon->getParent())?$taxon->getParent()->getIdentifier():null,
+            'parent_name'=>($taxon->getParent())?$taxon->getParent()->getName():null,
+            'valid_identifier'=>($taxon->getIssynonym()&&$taxon->getChosen())?$taxon->getChosen()->getIdentifier():null,
+            'valid_name'=>($taxon->getIssynonym()&&$taxon->getChosen())?$taxon->getChosen()->getName():null,
+        );
+    }
+
+    private function format_image($field,$display,$field_sub,$img_dir,$image)
+    {
+        $i=array();
+        $i_attributes=$image->getProperty();
+        foreach($field_sub as $f){
+            if($f->getDetails()==true){
+                $i[$f->getName()]=$i_attributes[$f->getId()];
+            }
+        }
+        $i['title1']=$image->getTitle1();
+        $i['title2']=$image->getTitle2();
+        $i['title3']=$image->getTitle3();
+        $i['image_url']=$img_dir.$image->getPath();
+        $i['punit']=$this->format_punit($field,$display,$image->getPlantunit());
+        return $i;
+    }
+
+    private function format_location($field,$display,$field_sub,$location)
+    {
+        $l=array();
+        $l_attributes=$location->getProperty();
+        foreach($field_sub as $f){
+            if($f->getDetails()==true){
+                $l[$f->getName()]=$l_attributes[$f->getId()];
+            }
+        }
+        $l['title1']=$location->getTitle1();
+        $l['title2']=$location->getTitle2();
+        $l['title3']=$location->getTitle3();
+        $l['latitude']=$location->getLatitude();
+        $l['longitude']=$location->getLongitude();
+        $l['punit']=$this->format_punit($field,$display,$location->getPlantunit());
+        return $l;
+    }
+
+    private function format_location_for_taxon($field,$display,$location)
+    {
+        $l=array();
+        $l_attributes=$location->getProperty();
+        $field_sub=$location->getModule()->getProperties();
+        foreach($field_sub as $f){
+            if($f->getDetails()==true){
+                $l[$f->getName()]=$l_attributes[$f->getId()];
+            }
+        }
+        $l['title1']=$location->getTitle1();
+        $l['title2']=$location->getTitle2();
+        $l['title3']=$location->getTitle3();
+        $l['latitude']=$location->getLatitude();
+        $l['longitude']=$location->getLongitude();
+        $l['punit']=$this->format_punit($field,$display,$location->getPlantunit());
+        return $l;
+    }
+
+    private function format_pager($paginator)
+    {
+        return array(
+            'total_row_count'=>$paginator->getNbResults(),
+            'max_rows_per_page'=>$paginator->getMaxPerPage(),
+            'total_page_count'=>$paginator->getNbPages(),
+            'current_page'=>$paginator->getCurrentPage(),
+            'have_to_paginate'=>$paginator->haveToPaginate(),
+            'previous_page'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$paginator->getPreviousPage():null,
+            'next_page'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$paginator->getNextPage():null
+        );
+    }
+
     // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
     // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
     // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
@@ -99,31 +273,14 @@ class ApiController extends Controller
         $result['language']=$config->getDefaultlanguage();
         $result['original_project_url']=str_replace($this->get_prefix(),'',$config->getOriginaldb());
         //data1
-        $result['project']=array(
-        	'name'=>$config->getName(),
-        	'url'=>$project,
-        	'access_url'=>$this->get('router')->generate('front_project',array(
-                'project'=>$project
-            ),true),
-            'hierarchy'=>array(
-                'project'=>$project
-            )
-        );
+        $result['project']=$this->format_project($config->getName(),$project);
         //data2
         $collections=$dm->getRepository('PlantnetDataBundle:Collection')
             ->findAll();
         $result['collections']=array();
         foreach($collections as $collection){
         	if($collection->getDeleting()!=true){
-	        	$result['collections'][]=array(
-	        		'name'=>$collection->getName(),
-	        		'url'=>$collection->getUrl(),
-	        		'access_url'=>$this->get('router')->generate('front_collection',array(
-		                'project'=>$project,
-		                'collection'=>$collection->getUrl()
-		            ),true),
-	        		'description'=>($collection->getDescription())?$collection->getDescription():''
-	        	);
+	        	$result['collections'][]=$this->format_collection($project,$collection);
         	}
         }
         //response
@@ -178,37 +335,13 @@ class ApiController extends Controller
             $this->return_404_not_found('Unable to find Collection entity.');
             exit;
         }
-        $result['collection']=array(
-        	'name'=>$collection->getName(),
-	        'url'=>$collection->getUrl(),
-	        'access_url'=>$this->get('router')->generate('front_collection',array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl()
-            ),true),
-	        'description'=>($collection->getDescription())?$collection->getDescription():'',
-            'hierarchy'=>array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl()
-            )
-        );
+        $result['collection']=$this->format_collection($project,$collection);
         //data2
         $result['modules']=array();
         $modules=$collection->getModules();
         foreach($modules as $module){
         	if($module->getDeleting()!=true){
-	        	$result['modules'][]=array(
-	        		'name'=>$module->getName(),
-	        		'url'=>$module->getUrl(),
-	        		'access_url'=>($module->getWsonly())?null:$this->get('router')->generate('front_module',array(
-		                'project'=>$project,
-		                'collection'=>$collection->getUrl(),
-		                'module'=>$module->getUrl()
-		            ),true),
-	        		'description'=>($module->getDescription())?$module->getDescription():'',
-	        		'row_count'=>$module->getNbrows(),
-	        		'has_taxonomy'=>($module->getTaxonomy())?true:false,
-	        		'public'=>($module->getWsonly())?false:true
-	        	);
+	        	$result['modules'][]=$this->format_module($project,$collection,$module);
         	}
         }
         //response
@@ -273,24 +406,7 @@ class ApiController extends Controller
             $this->return_404_not_found('Unable to find Module entity.');
             exit;
         }
-        $result['module']=array(
-        	'name'=>$module->getName(),
-	        'url'=>$module->getUrl(),
-	        'access_url'=>($module->getWsonly())?null:$this->get('router')->generate('front_module',array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl(),
-                'module'=>$module->getUrl()
-            ),true),
-	        'description'=>($module->getDescription())?$module->getDescription():'',
-	        'row_count'=>$module->getNbrows(),
-    		'has_taxonomy'=>($module->getTaxonomy())?true:false,
-    		'public'=>($module->getWsonly())?false:true,
-            'hierarchy'=>array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl(),
-                'module'=>$module->getUrl()
-            )
-        );
+        $result['module']=$this->format_module($project,$collection,$module);
         //data2
         $result['sub_modules_image']=array();
         $result['sub_modules_locality']=array();
@@ -298,18 +414,7 @@ class ApiController extends Controller
         $children=$module->getChildren();
         foreach($children as $child){
         	if($child->getDeleting()!=true){
-        		$child_tab=array(
-        			'name'=>$child->getName(),
-	        		'url'=>$child->getUrl(),
-	        		'access_url'=>($child->getWsonly()||$child->getType()=='other')?null:$this->get('router')->generate('front_submodule',array(
-		                'project'=>$project,
-		                'collection'=>$collection->getUrl(),
-		                'module'=>$module->getUrl(),
-		                'submodule'=>$child->getUrl()
-		            ),true),
-	        		'row_count'=>$child->getNbrows(),
-	        		'public'=>($child->getWsonly())?false:true
-        		);
+        		$child_tab=$this->format_submodule($project,$collection,$module,$child);
         		switch($child->getType()){
         			case 'image':
         				$result['sub_modules_image'][]=$child_tab;
@@ -392,24 +497,7 @@ class ApiController extends Controller
             $this->return_404_not_found('Unable to find Module entity.');
             exit;
         }
-        $result['module']=array(
-            'name'=>$module->getName(),
-            'url'=>$module->getUrl(),
-            'access_url'=>($module->getWsonly())?null:$this->get('router')->generate('front_module',array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl(),
-                'module'=>$module->getUrl()
-            ),true),
-            'description'=>($module->getDescription())?$module->getDescription():'',
-            'row_count'=>$module->getNbrows(),
-            'has_taxonomy'=>($module->getTaxonomy())?true:false,
-            'public'=>($module->getWsonly())?false:true,
-            'hierarchy'=>array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl(),
-                'module'=>$module->getUrl()
-            )
-        );
+        $result['module']=$this->format_module($project,$collection,$module);
         //data2
         $display=array();
         $order=array();
@@ -439,38 +527,11 @@ class ApiController extends Controller
             $this->return_404_not_found('Page "'.$page.'" not found.');
             exit;
         }
-        $result['pager']=array(
-            'total_row_count'=>$paginator->getNbResults(),
-            'max_rows_per_page'=>$paginator->getMaxPerPage(),
-            'total_page_count'=>$paginator->getNbPages(),
-            'current_page'=>$paginator->getCurrentPage(),
-            'have_to_paginate'=>$paginator->haveToPaginate(),
-            'previous_page'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$paginator->getPreviousPage():null,
-            'previous_page_url'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$this->get('router')->generate('api_module_data_paginated',array(
-                        'project'=>$project,
-                        'collection'=>$collection->getUrl(),
-                        'module'=>$module->getUrl(),
-                        'page'=>$paginator->getPreviousPage()
-                    ),true):null,
-            'next_page'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$paginator->getNextPage():null,
-            'next_page_url'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$this->get('router')->generate('api_module_data_paginated',array(
-                        'project'=>$project,
-                        'collection'=>$collection->getUrl(),
-                        'module'=>$module->getUrl(),
-                        'page'=>$paginator->getNextPage()
-                    ),true):null,
-        );
+        $result['pager']=$this->format_pager($paginator);
         $result['data']=array();
         $punits=$paginator->getCurrentPageResults();
         foreach($punits as $punit){
-            $p=array();
-            $attributes=$punit->getAttributes();
-            foreach($field as $f){
-                if(in_array($f->getId(),$display)){
-                    $p[$f->getName()]=$attributes[$f->getId()];
-                }
-            }
-            $result['data'][]=$p;
+            $result['data'][]=$this->format_punit($field,$display,$punit);
         }
         //response
         $response=new Response(json_encode($result));
@@ -545,24 +606,7 @@ class ApiController extends Controller
             $this->return_404_not_found('Taxonomy is not enabled for this module.');
             exit;
         }
-        $result['module']=array(
-            'name'=>$module->getName(),
-            'url'=>$module->getUrl(),
-            'access_url'=>($module->getWsonly())?null:$this->get('router')->generate('front_module',array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl(),
-                'module'=>$module->getUrl()
-            ),true),
-            'description'=>($module->getDescription())?$module->getDescription():'',
-            'row_count'=>$module->getNbrows(),
-            'has_taxonomy'=>($module->getTaxonomy())?true:false,
-            'public'=>($module->getWsonly())?false:true,
-            'hierarchy'=>array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl(),
-                'module'=>$module->getUrl()
-            )
-        );
+        $result['module']=$this->format_module($project,$collection,$module);
         //data2
         $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
             ->field('module')->references($module)
@@ -577,40 +621,11 @@ class ApiController extends Controller
             $this->return_404_not_found('Page "'.$page.'" not found.');
             exit;
         }
-        $result['pager']=array(
-            'total_row_count'=>$paginator->getNbResults(),
-            'max_rows_per_page'=>$paginator->getMaxPerPage(),
-            'total_page_count'=>$paginator->getNbPages(),
-            'current_page'=>$paginator->getCurrentPage(),
-            'have_to_paginate'=>$paginator->haveToPaginate(),
-            'previous_page'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$paginator->getPreviousPage():null,
-            'previous_page_url'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$this->get('router')->generate('api_module_taxa_paginated',array(
-                    'project'=>$project,
-                    'collection'=>$collection->getUrl(),
-                    'module'=>$module->getUrl(),
-                    'page'=>$paginator->getPreviousPage()
-                ),true):null,
-            'next_page'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$paginator->getNextPage():null,
-            'next_page_url'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$this->get('router')->generate('api_module_taxa_paginated',array(
-                    'project'=>$project,
-                    'collection'=>$collection->getUrl(),
-                    'module'=>$module->getUrl(),
-                    'page'=>$paginator->getNextPage()
-                ),true):null,
-        );
+        $result['pager']=$this->format_pager($paginator);
         $result['data']=array();
         $taxa=$paginator->getCurrentPageResults();
         foreach($taxa as $taxon){
-            $result['data'][]=array(
-                'identifier'=>$taxon->getIdentifier(),
-                'level'=>$taxon->getLevel(),
-                'label'=>$taxon->getLabel(),
-                'name'=>$taxon->getName(),
-                'parent_identifier'=>($taxon->getParent())?$taxon->getParent()->getIdentifier():null,
-                'parent_name'=>($taxon->getParent())?$taxon->getParent()->getName():null,
-                'valid_identifier'=>($taxon->getIssynonym()&&$taxon->getChosen())?$taxon->getChosen()->getIdentifier():null,
-                'valid_name'=>($taxon->getIssynonym()&&$taxon->getChosen())?$taxon->getChosen()->getName():null,
-            );
+            $result['data'][]=$this->format_taxon($taxon);
         }
         //response
         $response=new Response(json_encode($result));
@@ -685,25 +700,7 @@ class ApiController extends Controller
             $this->return_404_not_found('Unable to find Sub-module entity.');
             exit;
         }
-        $result['submodule']=array(
-            'type'=>$submodule->getType(),
-            'name'=>$submodule->getName(),
-            'url'=>$submodule->getUrl(),
-            'access_url'=>($submodule->getWsonly()||$submodule->getType()=='other')?null:$this->get('router')->generate('front_submodule',array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl(),
-                'module'=>$module->getUrl(),
-                'submodule'=>$submodule->getUrl()
-            ),true),
-            'row_count'=>$submodule->getNbrows(),
-            'public'=>($module->getWsonly())?false:true,
-            'hierarchy'=>array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl(),
-                'module'=>$module->getUrl(),
-                'submodule'=>$submodule->getUrl()
-            )
-        );
+        $result['submodule']=$this->format_submodule($project,$collection,$module,$submodule);
         //data2
         //response
         $response=new Response(json_encode($result));
@@ -785,25 +782,7 @@ class ApiController extends Controller
             $this->return_404_not_found('Unable to find Sub-module entity.');
             exit;
         }
-        $result['submodule']=array(
-            'type'=>$submodule->getType(),
-            'name'=>$submodule->getName(),
-            'url'=>$submodule->getUrl(),
-            'access_url'=>($submodule->getWsonly()||$submodule->getType()=='other')?null:$this->get('router')->generate('front_submodule',array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl(),
-                'module'=>$module->getUrl(),
-                'submodule'=>$submodule->getUrl()
-            ),true),
-            'row_count'=>$submodule->getNbrows(),
-            'public'=>($module->getWsonly())?false:true,
-            'hierarchy'=>array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl(),
-                'module'=>$module->getUrl(),
-                'submodule'=>$submodule->getUrl()
-            )
-        );
+        $result['submodule']=$this->format_submodule($project,$collection,$module,$submodule);
         //data2
         $display=array();
         $field=$module->getProperties();
@@ -828,53 +807,12 @@ class ApiController extends Controller
                     $this->return_404_not_found('Page "'.$page.'" not found.');
                     exit;
                 }
-                $result['pager']=array(
-                    'total_row_count'=>$paginator->getNbResults(),
-                    'max_rows_per_page'=>$paginator->getMaxPerPage(),
-                    'total_page_count'=>$paginator->getNbPages(),
-                    'current_page'=>$paginator->getCurrentPage(),
-                    'have_to_paginate'=>$paginator->haveToPaginate(),
-                    'previous_page'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$paginator->getPreviousPage():null,
-                    'previous_page_url'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$this->get('router')->generate('api_submodule_data_paginated',array(
-                            'project'=>$project,
-                            'collection'=>$collection->getUrl(),
-                            'module'=>$module->getUrl(),
-                            'submodule'=>$submodule->getUrl(),
-                            'page'=>$paginator->getPreviousPage()
-                        ),true):null,
-                    'next_page'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$paginator->getNextPage():null,
-                    'next_page_url'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$this->get('router')->generate('api_submodule_data_paginated',array(
-                            'project'=>$project,
-                            'collection'=>$collection->getUrl(),
-                            'module'=>$module->getUrl(),
-                            'submodule'=>$submodule->getUrl(),
-                            'page'=>$paginator->getNextPage()
-                        ),true):null,
-                );
+                $result['pager']=$this->format_pager($paginator);
                 $img_dir=$this->get('router')->generate('front_index',array(),true).'uploads/'.$submodule->getUploaddir().'/';
                 $result['data']=array();
                 $images=$paginator->getCurrentPageResults();
                 foreach($images as $image){
-                    $i=array();
-                    $i_attributes=$image->getProperty();
-                    foreach($field_sub as $f){
-                        if($f->getDetails()==true){
-                            $i[$f->getName()]=$i_attributes[$f->getId()];
-                        }
-                    }
-                    $i['title1']=$image->getTitle1();
-                    $i['title2']=$image->getTitle2();
-                    $i['title3']=$image->getTitle3();
-                    $i['image_url']=$img_dir.$image->getPath();
-                    $p=array();
-                    $p_attributes=$image->getPlantunit()->getAttributes();
-                    foreach($field as $f){
-                        if(in_array($f->getId(),$display)){
-                            $p[$f->getName()]=$p_attributes[$f->getId()];
-                        }
-                    }
-                    $i['punit']=$p;
-                    $result['data'][]=$i;
+                    $result['data'][]=$this->format_image($field,$display,$field_sub,$img_dir,$image);
                 }
                 break;
             case 'locality':
@@ -891,53 +829,11 @@ class ApiController extends Controller
                     $this->return_404_not_found('Page "'.$page.'" not found.');
                     exit;
                 }
-                $result['pager']=array(
-                    'total_row_count'=>$paginator->getNbResults(),
-                    'max_rows_per_page'=>$paginator->getMaxPerPage(),
-                    'total_page_count'=>$paginator->getNbPages(),
-                    'current_page'=>$paginator->getCurrentPage(),
-                    'have_to_paginate'=>$paginator->haveToPaginate(),
-                    'previous_page'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$paginator->getPreviousPage():null,
-                    'previous_page_url'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$this->get('router')->generate('api_submodule_data_paginated',array(
-                            'project'=>$project,
-                            'collection'=>$collection->getUrl(),
-                            'module'=>$module->getUrl(),
-                            'submodule'=>$submodule->getUrl(),
-                            'page'=>$paginator->getPreviousPage()
-                        ),true):null,
-                    'next_page'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$paginator->getNextPage():null,
-                    'next_page_url'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$this->get('router')->generate('api_submodule_data_paginated',array(
-                            'project'=>$project,
-                            'collection'=>$collection->getUrl(),
-                            'module'=>$module->getUrl(),
-                            'submodule'=>$submodule->getUrl(),
-                            'page'=>$paginator->getNextPage()
-                        ),true):null,
-                );
+                $result['pager']=$this->format_pager($paginator);
                 $result['data']=array();
                 $locations=$paginator->getCurrentPageResults();
                 foreach($locations as $location){
-                    $l=array();
-                    $l_attributes=$location->getProperty();
-                    foreach($field_sub as $f){
-                        if($f->getDetails()==true){
-                            $l[$f->getName()]=$l_attributes[$f->getId()];
-                        }
-                    }
-                    $l['title1']=$location->getTitle1();
-                    $l['title2']=$location->getTitle2();
-                    $l['title3']=$location->getTitle3();
-                    $l['latitude']=$location->getLatitude();
-                    $l['longitude']=$location->getLongitude();
-                    $p=array();
-                    $p_attributes=$location->getPlantunit()->getAttributes();
-                    foreach($field as $f){
-                        if(in_array($f->getId(),$display)){
-                            $p[$f->getName()]=$p_attributes[$f->getId()];
-                        }
-                    }
-                    $l['punit']=$p;
-                    $result['data'][]=$l;
+                    $result['data'][]=$this->format_location($field,$display,$field_sub,$location);
                 }
                 break;
         }
@@ -946,7 +842,7 @@ class ApiController extends Controller
         $response->headers->set('Content-Type','application/json');
         return $response;
     }
-    
+
     /**
      * @ApiDoc(
      *  section="Publish v2 - 05. Taxon entity",
@@ -1036,16 +932,7 @@ class ApiController extends Controller
             $this->return_404_not_found('Unable to find Taxon entity.');
             exit;
         }
-        $result['taxon']=array(
-            'identifier'=>$taxon->getIdentifier(),
-            'level'=>$taxon->getLevel(),
-            'label'=>$taxon->getLabel(),
-            'name'=>$taxon->getName(),
-            'parent_identifier'=>($taxon->getParent())?$taxon->getParent()->getIdentifier():null,
-            'parent_name'=>($taxon->getParent())?$taxon->getParent()->getName():null,
-            'valid_identifier'=>($taxon->getIssynonym()&&$taxon->getChosen())?$taxon->getChosen()->getIdentifier():null,
-            'valid_name'=>($taxon->getIssynonym()&&$taxon->getChosen())?$taxon->getChosen()->getName():null,
-        );
+        $result['taxon']=$this->format_taxon($taxon);
         //data2
         $display=array();
         $field=$module->getProperties();
@@ -1093,54 +980,11 @@ class ApiController extends Controller
             $this->return_404_not_found('Page "'.$page.'" not found.');
             exit;
         }
-        $result['pager']=array(
-            'total_row_count'=>$paginator->getNbResults(),
-            'max_rows_per_page'=>$paginator->getMaxPerPage(),
-            'total_page_count'=>$paginator->getNbPages(),
-            'current_page'=>$paginator->getCurrentPage(),
-            'have_to_paginate'=>$paginator->haveToPaginate(),
-            'previous_page'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$paginator->getPreviousPage():null,
-            'previous_page_url'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$this->get('router')->generate('api_module_taxon_name_paginated',array(
-                    'project'=>$project,
-                    'collection'=>$collection->getUrl(),
-                    'module'=>$module->getUrl(),
-                    'taxon'=>$taxon->getName(),
-                    'page'=>$paginator->getPreviousPage()
-                ),true):null,
-            'next_page'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$paginator->getNextPage():null,
-            'next_page_url'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$this->get('router')->generate('api_module_taxon_name_paginated',array(
-                    'project'=>$project,
-                    'collection'=>$collection->getUrl(),
-                    'module'=>$module->getUrl(),
-                    'taxon'=>$taxon->getName(),
-                    'page'=>$paginator->getNextPage()
-                ),true):null,
-        );
+        $result['pager']=$this->format_pager($paginator);
         $result['data']=array();
         $locations=$paginator->getCurrentPageResults();
         foreach($locations as $location){
-            $l=array();
-            $l_attributes=$location->getProperty();
-            $field_sub=$location->getModule()->getProperties();
-            foreach($field_sub as $f){
-                if($f->getDetails()==true){
-                    $l[$f->getName()]=$l_attributes[$f->getId()];
-                }
-            }
-            $l['title1']=$location->getTitle1();
-            $l['title2']=$location->getTitle2();
-            $l['title3']=$location->getTitle3();
-            $l['latitude']=$location->getLatitude();
-            $l['longitude']=$location->getLongitude();
-            $p=array();
-            $p_attributes=$location->getPlantunit()->getAttributes();
-            foreach($field as $f){
-                if(in_array($f->getId(),$display)){
-                    $p[$f->getName()]=$p_attributes[$f->getId()];
-                }
-            }
-            $l['punit']=$p;
-            $result['data'][]=$l;
+            $result['data'][]=$this->format_location_for_taxon($field,$display,$location);
         }
         //response
         $response=new Response(json_encode($result));
