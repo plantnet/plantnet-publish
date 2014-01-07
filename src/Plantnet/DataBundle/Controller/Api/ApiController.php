@@ -52,7 +52,7 @@ class ApiController extends Controller
     {
         $result=array(
             'code'=>'401',
-            'message'=>'Unauthorized client'
+            'message'=>'Unauthorized client ('.((isset($_SERVER['REMOTE_ADDR']))?$_SERVER['REMOTE_ADDR']:'?').')'
         );
         $response=new Response(json_encode($result));
         $response->setStatusCode(401);
@@ -81,6 +81,7 @@ class ApiController extends Controller
     private function format_project($name,$project)
     {
         return array(
+            'test'=>$_SERVER['REMOTE_ADDR'],
             'name'=>$name,
             'url'=>$project,
             'access_url'=>$this->get('router')->generate('front_project',array(
