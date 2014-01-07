@@ -38,10 +38,22 @@ class ApiController extends Controller
     {
         $ips=$config->getIps();
         $ips[]='127.0.0.1';
-        if(!isset($_SERVER['REMOTE_ADDR'])||!in_array($_SERVER['REMOTE_ADDR'],$ips)){
+        echo $this->getRemoteIPAddress();exit;
+        if(!in_array($this->getRemoteIPAddress(),$ips)){
             $this->return_401_unauthorized();
             exit;
         }
+    }
+
+    private function getRemoteIPAddress()
+    {
+        if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+            return $_SERVER['HTTP_CLIENT_IP'];
+        }
+        elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){ 
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+        return $_SERVER['REMOTE_ADDR'];
     }
 
     // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
@@ -81,7 +93,7 @@ class ApiController extends Controller
     private function format_project($name,$project)
     {
         return array(
-            'test'=>$_SERVER['REMOTE_ADDR'],
+            'test'=>$this->getRemoteIPAddress(),
             'name'=>$name,
             'url'=>$project,
             'access_url'=>$this->get('router')->generate('front_project',array(
