@@ -38,7 +38,7 @@ class ApiController extends Controller
     {
         $ips=$config->getIps();
         $ips[]='127.0.0.1';
-        if(!in_array($_SERVER['REMOTE_ADDR'],$ips)){
+        if(!isset($_SERVER['REMOTE_ADDR'])||!in_array($_SERVER['REMOTE_ADDR'],$ips)){
             $this->return_401_unauthorized();
             exit;
         }
