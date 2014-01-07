@@ -39,8 +39,11 @@ class TwigPregExtension extends \Twig_Extension
         return round($var,2);
     }
 
-    public function replace($var,$search,$replace)
+    public function replace($var=null,$search=null,$replace=null)
     {
+        if($var==null||$search==null||$replace==null){
+            return $var;
+        }
         return str_replace($search,$replace,$var);
     }
 
