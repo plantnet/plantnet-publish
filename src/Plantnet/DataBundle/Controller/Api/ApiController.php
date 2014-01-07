@@ -62,7 +62,7 @@ class ApiController extends Controller
 
     /**
      * @ApiDoc(
-     *	section="Publish v2",
+     *	section="Publish v2 - 01. Project entity",
      *	description="Describes a project and lists its collections",
      *	statusCodes={
      *		200="Returned when: Successful",
@@ -126,6 +126,7 @@ class ApiController extends Controller
 	        	);
         	}
         }
+        //response
         $response=new Response(json_encode($result));
         $response->headers->set('Content-Type','application/json');
         return $response;
@@ -133,7 +134,7 @@ class ApiController extends Controller
 
     /**
      * @ApiDoc(
-     *	section="Publish v2",
+     *	section="Publish v2 - 02. Collection entity",
      *	description="Describes a collection and lists its modules",
      *	statusCodes={
      *		200="Returned when: Successful",
@@ -210,6 +211,7 @@ class ApiController extends Controller
 	        	);
         	}
         }
+        //response
         $response=new Response(json_encode($result));
         $response->headers->set('Content-Type','application/json');
         return $response;
@@ -217,7 +219,7 @@ class ApiController extends Controller
 
     /**
      * @ApiDoc(
-     *	section="Publish v2",
+     *	section="Publish v2 - 03. Module entity",
      *	description="Describes a module and lists its sub-modules",
      *	statusCodes={
      *		200="Returned when: Successful",
@@ -321,6 +323,7 @@ class ApiController extends Controller
         		}
         	}
         }
+        //response
         $response=new Response(json_encode($result));
         $response->headers->set('Content-Type','application/json');
         return $response;
@@ -328,7 +331,7 @@ class ApiController extends Controller
 
     /**
      * @ApiDoc(
-     *  section="Publish v2",
+     *  section="Publish v2 - 03. Module entity",
      *  description="Describes a module and lists its data",
      *  statusCodes={
      *      200="Returned when: Successful",
@@ -469,6 +472,7 @@ class ApiController extends Controller
             }
             $result['data'][]=$p;
         }
+        //response
         $response=new Response(json_encode($result));
         $response->headers->set('Content-Type','application/json');
         return $response;
@@ -476,7 +480,145 @@ class ApiController extends Controller
 
     /**
      * @ApiDoc(
-     *  section="Publish v2",
+     *  section="Publish v2 - 03. Module entity",
+     *  description="Describes a module and lists its taxa",
+     *  statusCodes={
+     *      200="Returned when: Successful",
+     *      401="Returned when: Unauthorized client",
+     *      404="Returned when: Resource not found"
+     *  },
+     *  filters={
+     *      {"name"="project", "dataType"="String", "required"=true, "description"="Project url"},
+     *      {"name"="collection", "dataType"="String", "required"=true, "description"="Collection url"},
+     *      {"name"="module", "dataType"="String", "required"=true, "description"="Module url"},
+     *      {"name"="page", "dataType"="int", "required"=false, "description"="Page number (default = 1)"}
+     *  }
+     * )
+     *
+     * @Route(
+     *      "/{project}/{collection}/{module}/taxa",
+     *      defaults={"page"=1},
+     *      name="api_module_taxa"
+     * )
+     * @Route(
+     *      "/{project}/{collection}/{module}/taxa/page{page}",
+     *      requirements={"page"="\d+"},
+     *      name="api_module_taxa_paginated"
+     * )
+     * @Method("get")
+     */
+    public function api_module_taxaAction($project,$collection,$module,$page)
+    {
+        //check project
+        try{
+            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        }
+        catch(\Exception $e){
+            $this->return_404_not_found($e->getMessage());
+            exit;
+        }
+        //init
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $result=array();
+        //get language config
+        $config=ControllerHelp::get_config($project,$dm,$this);
+        $result['language']=$config->getDefaultlanguage();
+        $result['original_project_url']=str_replace($this->get_prefix(),'',$config->getOriginaldb());
+        //data1
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneBy(array('url'=>$collection));
+        if(!$collection||$collection->getDeleting()==true){
+            $this->return_404_not_found('Unable to find Collection entity.');
+            exit;
+        }
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'url'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
+        if(!$module||$module->getType()!='text'||$module->getDeleting()==true){
+            $this->return_404_not_found('Unable to find Module entity.');
+            exit;
+        }
+        if(!$module->getTaxonomy()){
+            $this->return_404_not_found('Taxonomy is not enabled for this module.');
+            exit;
+        }
+        $result['module']=array(
+            'name'=>$module->getName(),
+            'url'=>$module->getUrl(),
+            'access_url'=>($module->getWsonly())?null:$this->get('router')->generate('front_module',array(
+                'project'=>$project,
+                'collection'=>$collection->getUrl(),
+                'module'=>$module->getUrl()
+            ),true),
+            'description'=>($module->getDescription())?$module->getDescription():'',
+            'row_count'=>$module->getNbrows(),
+            'has_taxonomy'=>($module->getTaxonomy())?true:false,
+            'public'=>($module->getWsonly())?false:true,
+            'hierarchy'=>array(
+                'project'=>$project,
+                'collection'=>$collection->getUrl(),
+                'module'=>$module->getUrl()
+            )
+        );
+        //data2
+        $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+            ->field('module')->references($module)
+            ->sort('level','asc')
+            ->sort('name','asc');
+        $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+        try{
+            $paginator->setMaxPerPage(50);
+            $paginator->setCurrentPage($page);
+        }
+        catch(\Exception $e){
+            $this->return_404_not_found('Page "'.$page.'" not found.');
+            exit;
+        }
+        $result['pager']=array(
+            'total_row_count'=>$paginator->getNbResults(),
+            'max_rows_per_page'=>$paginator->getMaxPerPage(),
+            'total_page_count'=>$paginator->getNbPages(),
+            'current_page'=>$paginator->getCurrentPage(),
+            'have_to_paginate'=>$paginator->haveToPaginate(),
+            'previous_page'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$paginator->getPreviousPage():null,
+            'previous_page_url'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$this->get('router')->generate('api_module_taxa_paginated',array(
+                    'project'=>$project,
+                    'collection'=>$collection->getUrl(),
+                    'module'=>$module->getUrl(),
+                    'page'=>$paginator->getPreviousPage()
+                ),true):null,
+            'next_page'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$paginator->getNextPage():null,
+            'next_page_url'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$this->get('router')->generate('api_module_taxa_paginated',array(
+                    'project'=>$project,
+                    'collection'=>$collection->getUrl(),
+                    'module'=>$module->getUrl(),
+                    'page'=>$paginator->getNextPage()
+                ),true):null,
+        );
+        $result['data']=array();
+        $taxa=$paginator->getCurrentPageResults();
+        foreach($taxa as $taxon){
+            $result['data'][]=array(
+                'identifier'=>$taxon->getIdentifier(),
+                'level'=>$taxon->getLevel(),
+                'label'=>$taxon->getLabel(),
+                'name'=>$taxon->getName(),
+                'parent_identifier'=>($taxon->getParent())?$taxon->getParent()->getIdentifier():null,
+                'valid_identifier'=>($taxon->getIssynonym()&&$taxon->getChosen())?$taxon->getChosen()->getIdentifier():null,
+            );
+        }
+        //response
+        $response=new Response(json_encode($result));
+        $response->headers->set('Content-Type','application/json');
+        return $response;
+    }
+    
+    /**
+     * @ApiDoc(
+     *  section="Publish v2 - 04. Sub-module entity",
      *  description="Describes a sub-module",
      *  statusCodes={
      *      200="Returned when: Successful",
@@ -561,6 +703,7 @@ class ApiController extends Controller
             )
         );
         //data2
+        //response
         $response=new Response(json_encode($result));
         $response->headers->set('Content-Type','application/json');
         return $response;
@@ -568,7 +711,7 @@ class ApiController extends Controller
 
     /**
      * @ApiDoc(
-     *  section="Publish v2",
+     *  section="Publish v2 - 04. Sub-module entity",
      *  description="Describes a sub-module and lists its data",
      *  statusCodes={
      *      200="Returned when: Successful",
@@ -796,6 +939,7 @@ class ApiController extends Controller
                 }
                 break;
         }
+        //response
         $response=new Response(json_encode($result));
         $response->headers->set('Content-Type','application/json');
         return $response;
