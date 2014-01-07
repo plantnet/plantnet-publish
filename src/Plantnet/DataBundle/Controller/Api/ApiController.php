@@ -38,7 +38,6 @@ class ApiController extends Controller
     {
         $ips=$config->getIps();
         $ips[]='127.0.0.1';
-        echo $this->getRemoteIPAddress();exit;
         if(!in_array($this->getRemoteIPAddress(),$ips)){
             $this->return_401_unauthorized();
             exit;
@@ -93,7 +92,6 @@ class ApiController extends Controller
     private function format_project($name,$project)
     {
         return array(
-            'test'=>$this->getRemoteIPAddress(),
             'name'=>$name,
             'url'=>$project,
             'access_url'=>$this->get('router')->generate('front_project',array(
