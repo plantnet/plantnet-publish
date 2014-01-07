@@ -691,20 +691,20 @@ class ApiController extends Controller
                     'have_to_paginate'=>$paginator->haveToPaginate(),
                     'previous_page'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$paginator->getPreviousPage():null,
                     'previous_page_url'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$this->get('router')->generate('api_submodule_data_paginated',array(
-                                'project'=>$project,
-                                'collection'=>$collection->getUrl(),
-                                'module'=>$module->getUrl(),
-                                'submodule'=>$submodule->getUrl(),
-                                'page'=>$paginator->getPreviousPage()
-                            ),true):null,
+                            'project'=>$project,
+                            'collection'=>$collection->getUrl(),
+                            'module'=>$module->getUrl(),
+                            'submodule'=>$submodule->getUrl(),
+                            'page'=>$paginator->getPreviousPage()
+                        ),true):null,
                     'next_page'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$paginator->getNextPage():null,
                     'next_page_url'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$this->get('router')->generate('api_submodule_data_paginated',array(
-                                'project'=>$project,
-                                'collection'=>$collection->getUrl(),
-                                'module'=>$module->getUrl(),
-                                'submodule'=>$submodule->getUrl(),
-                                'page'=>$paginator->getNextPage()
-                            ),true):null,
+                            'project'=>$project,
+                            'collection'=>$collection->getUrl(),
+                            'module'=>$module->getUrl(),
+                            'submodule'=>$submodule->getUrl(),
+                            'page'=>$paginator->getNextPage()
+                        ),true):null,
                 );
                 $img_dir=$this->get('router')->generate('front_index',array(),true).'uploads/'.$submodule->getUploaddir().'/';
                 $result['data']=array();
@@ -717,6 +717,9 @@ class ApiController extends Controller
                             $i[$f->getName()]=$i_attributes[$f->getId()];
                         }
                     }
+                    $i['title1']=$image->getTitle1();
+                    $i['title2']=$image->getTitle2();
+                    $i['title3']=$image->getTitle3();
                     $i['image_url']=$img_dir.$image->getPath();
                     $p=array();
                     $p_attributes=$image->getPlantunit()->getAttributes();
@@ -730,6 +733,67 @@ class ApiController extends Controller
                 }
                 break;
             case 'locality':
+                $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+                    ->field('module')->references($submodule)
+                    ->sort('title1','asc')
+                    ->sort('title2','asc');
+                $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+                try{
+                    $paginator->setMaxPerPage(50);
+                    $paginator->setCurrentPage($page);
+                }
+                catch(\Exception $e){
+                    $this->return_404_not_found('Page "'.$page.'" not found.');
+                    exit;
+                }
+                $result['pager']=array(
+                    'total_row_count'=>$paginator->getNbResults(),
+                    'max_rows_per_page'=>$paginator->getMaxPerPage(),
+                    'total_page_count'=>$paginator->getNbPages(),
+                    'current_page'=>$paginator->getCurrentPage(),
+                    'have_to_paginate'=>$paginator->haveToPaginate(),
+                    'previous_page'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$paginator->getPreviousPage():null,
+                    'previous_page_url'=>($paginator->haveToPaginate()&&$paginator->hasPreviousPage())?$this->get('router')->generate('api_submodule_data_paginated',array(
+                            'project'=>$project,
+                            'collection'=>$collection->getUrl(),
+                            'module'=>$module->getUrl(),
+                            'submodule'=>$submodule->getUrl(),
+                            'page'=>$paginator->getPreviousPage()
+                        ),true):null,
+                    'next_page'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$paginator->getNextPage():null,
+                    'next_page_url'=>($paginator->haveToPaginate()&&$paginator->hasNextPage())?$this->get('router')->generate('api_submodule_data_paginated',array(
+                            'project'=>$project,
+                            'collection'=>$collection->getUrl(),
+                            'module'=>$module->getUrl(),
+                            'submodule'=>$submodule->getUrl(),
+                            'page'=>$paginator->getNextPage()
+                        ),true):null,
+                );
+                $result['data']=array();
+                $locations=$paginator->getCurrentPageResults();
+                foreach($locations as $location){
+                    $l=array();
+                    $l_attributes=$location->getProperty();
+                    foreach($field_sub as $f){
+                        if($f->getDetails()==true){
+                            $l[$f->getName()]=$l_attributes[$f->getId()];
+                        }
+                    }
+                    $l['title1']=$location->getTitle1();
+                    $l['title2']=$location->getTitle2();
+                    $l['title3']=$location->getTitle3();
+                    $l['latitude']=$location->getLatitude();
+                    $l['longitude']=$location->getLongitude();
+                    $p=array();
+                    $p_attributes=$location->getPlantunit()->getAttributes();
+                    foreach($field as $f){
+                        if(in_array($f->getId(),$display)){
+                            $p[$f->getName()]=$p_attributes[$f->getId()];
+                        }
+                    }
+                    $l['punit']=$p;
+                    $result['data'][]=$l;
+                }
                 break;
         }
         $response=new Response(json_encode($result));
