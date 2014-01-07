@@ -63,7 +63,7 @@ class ApiController extends Controller
     {
         $result=array(
             'code'=>'401',
-            'message'=>'Unauthorized client ('.((isset($_SERVER['REMOTE_ADDR']))?$_SERVER['REMOTE_ADDR']:'?').')'
+            'message'=>'Unauthorized client ('.$this->getRemoteIPAddress().')'
         );
         $response=new Response(json_encode($result));
         $response->setStatusCode(401);
