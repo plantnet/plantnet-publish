@@ -30,6 +30,24 @@ class ApiController extends Controller
         return $this->container->getParameter('mdb_base').'_';
     }
 
+    // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
+    // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
+    // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
+
+    private function check_authorized_client($config)
+    {
+        $ips=$config->getIps();
+        $ips[]='127.0.0.1';
+        if(!in_array($_SERVER['REMOTE_ADDR'],$ips)){
+            $this->return_401_unauthorized();
+            exit;
+        }
+    }
+
+    // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
+    // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
+    // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
+
     private function return_401_unauthorized()
     {
         $result=array(
@@ -55,6 +73,10 @@ class ApiController extends Controller
         $response->send();
         exit;
     }
+
+    // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
+    // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
+    // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
 
     private function format_project($name,$project)
     {
@@ -270,6 +292,7 @@ class ApiController extends Controller
         $result=array();
         //get language config
         $config=ControllerHelp::get_config($project,$dm,$this);
+        $this->check_authorized_client($config);
         $result['language']=$config->getDefaultlanguage();
         $result['original_project_url']=str_replace($this->get_prefix(),'',$config->getOriginaldb());
         //data1
@@ -326,6 +349,7 @@ class ApiController extends Controller
         $result=array();
         //get language config
         $config=ControllerHelp::get_config($project,$dm,$this);
+        $this->check_authorized_client($config);
         $result['language']=$config->getDefaultlanguage();
         $result['original_project_url']=str_replace($this->get_prefix(),'',$config->getOriginaldb());
         //data1
@@ -388,6 +412,7 @@ class ApiController extends Controller
         $result=array();
         //get language config
         $config=ControllerHelp::get_config($project,$dm,$this);
+        $this->check_authorized_client($config);
         $result['language']=$config->getDefaultlanguage();
         $result['original_project_url']=str_replace($this->get_prefix(),'',$config->getOriginaldb());
         //data1
@@ -479,6 +504,7 @@ class ApiController extends Controller
         $result=array();
         //get language config
         $config=ControllerHelp::get_config($project,$dm,$this);
+        $this->check_authorized_client($config);
         $result['language']=$config->getDefaultlanguage();
         $result['original_project_url']=str_replace($this->get_prefix(),'',$config->getOriginaldb());
         //data1
@@ -584,6 +610,7 @@ class ApiController extends Controller
         $result=array();
         //get language config
         $config=ControllerHelp::get_config($project,$dm,$this);
+        $this->check_authorized_client($config);
         $result['language']=$config->getDefaultlanguage();
         $result['original_project_url']=str_replace($this->get_prefix(),'',$config->getOriginaldb());
         //data1
@@ -672,6 +699,7 @@ class ApiController extends Controller
         $result=array();
         //get language config
         $config=ControllerHelp::get_config($project,$dm,$this);
+        $this->check_authorized_client($config);
         $result['language']=$config->getDefaultlanguage();
         $result['original_project_url']=str_replace($this->get_prefix(),'',$config->getOriginaldb());
         //data1
@@ -754,6 +782,7 @@ class ApiController extends Controller
         $result=array();
         //get language config
         $config=ControllerHelp::get_config($project,$dm,$this);
+        $this->check_authorized_client($config);
         $result['language']=$config->getDefaultlanguage();
         $result['original_project_url']=str_replace($this->get_prefix(),'',$config->getOriginaldb());
         //data1
@@ -889,6 +918,7 @@ class ApiController extends Controller
         $result=array();
         //get language config
         $config=ControllerHelp::get_config($project,$dm,$this);
+        $this->check_authorized_client($config);
         $result['language']=$config->getDefaultlanguage();
         $result['original_project_url']=str_replace($this->get_prefix(),'',$config->getOriginaldb());
         //data1
