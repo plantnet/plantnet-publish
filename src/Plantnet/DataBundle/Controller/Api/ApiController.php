@@ -483,7 +483,7 @@ class ApiController extends Controller
      *      {"name"="project", "dataType"="String", "required"=true, "description"="Project url"},
      *      {"name"="collection", "dataType"="String", "required"=true, "description"="Collection url"},
      *      {"name"="module", "dataType"="String", "required"=true, "description"="Module url"},
-     *      {"name"="page", "dataType"="int", "required"=false, "description"="Page number (default = 1)"}
+     *      {"name"="page", "dataType"="int", "required"=false, "description"="Page number", "default"="1"}
      *  }
      * )
      *
@@ -589,7 +589,7 @@ class ApiController extends Controller
      *      {"name"="project", "dataType"="String", "required"=true, "description"="Project url"},
      *      {"name"="collection", "dataType"="String", "required"=true, "description"="Collection url"},
      *      {"name"="module", "dataType"="String", "required"=true, "description"="Module url"},
-     *      {"name"="page", "dataType"="int", "required"=false, "description"="Page number (default = 1)"}
+     *      {"name"="page", "dataType"="int", "required"=false, "description"="Page number", "default"="1"}
      *  }
      * )
      *
@@ -761,7 +761,7 @@ class ApiController extends Controller
      *      {"name"="collection", "dataType"="String", "required"=true, "description"="Collection url"},
      *      {"name"="module", "dataType"="String", "required"=true, "description"="Module url"},
      *      {"name"="submodule", "dataType"="String", "required"=true, "description"="Sub-Module url"},
-     *      {"name"="page", "dataType"="int", "required"=false, "description"="Page number (default = 1)"}
+     *      {"name"="page", "dataType"="int", "required"=false, "description"="Page number", "default"="1"}
      *  }
      * )
      *
@@ -897,7 +897,7 @@ class ApiController extends Controller
      *      {"name"="collection", "dataType"="String", "required"=true, "description"="Collection url"},
      *      {"name"="module", "dataType"="String", "required"=true, "description"="Module url"},
      *      {"name"="taxon", "dataType"="String", "required"=true, "description"="Taxon name"},
-     *      {"name"="page", "dataType"="int", "required"=false, "description"="Page number (default = 1)"}
+     *      {"name"="page", "dataType"="int", "required"=false, "description"="Page number", "default"="1"}
      *  }
      * )
      *
@@ -914,6 +914,54 @@ class ApiController extends Controller
      * @Method("get")
      */
     public function api_module_taxon_name_locationsAction($project,$collection,$module,$taxon,$page)
+    {
+        $result=$this->api_module_taxon_locations($project,$collection,$module,$taxon,$page,'name');
+        //response
+        $response=new Response(json_encode($result));
+        $response->headers->set('Content-Type','application/json');
+        return $response;
+    }
+
+    /**
+     * @ApiDoc(
+     *  section="Publish v2 - 05. Taxon entity",
+     *  description="Describes a taxon and lists its locations",
+     *  statusCodes={
+     *      200="Returned when: Successful",
+     *      401="Returned when: Unauthorized client",
+     *      404="Returned when: Resource not found"
+     *  },
+     *  filters={
+     *      {"name"="project", "dataType"="String", "required"=true, "description"="Project url"},
+     *      {"name"="collection", "dataType"="String", "required"=true, "description"="Collection url"},
+     *      {"name"="module", "dataType"="String", "required"=true, "description"="Module url"},
+     *      {"name"="taxon", "dataType"="String", "required"=true, "description"="Taxon identifier"},
+     *      {"name"="page", "dataType"="int", "required"=false, "description"="Page number", "default"="1"}
+     *  }
+     * )
+     *
+     * @Route(
+     *      "/{project}/{collection}/{module}/taxon_identifier/{taxon}/locations",
+     *      defaults={"page"=1},
+     *      name="api_module_taxon_identifier"
+     * )
+     * @Route(
+     *      "/{project}/{collection}/{module}/taxon_identifier/{taxon}/locations/page{page}",
+     *      requirements={"page"="\d+"},
+     *      name="api_module_taxon_identifier_paginated"
+     * )
+     * @Method("get")
+     */
+    public function api_module_taxon_identifier_locationsAction($project,$collection,$module,$taxon,$page)
+    {
+        $result=$this->api_module_taxon_locations($project,$collection,$module,$taxon,$page,'identifier');
+        //response
+        $response=new Response(json_encode($result));
+        $response->headers->set('Content-Type','application/json');
+        return $response;
+    }
+
+    private function api_module_taxon_locations($project,$collection,$module,$taxon,$page,$param)
     {
         //check project
         try{
@@ -954,7 +1002,7 @@ class ApiController extends Controller
         }
         $taxons=$dm->getRepository('PlantnetDataBundle:Taxon')
             ->findBy(array(
-                'name'=>$taxon,
+                $param=>$taxon,
                 'module.id'=>$module->getId()
             ));
         if(count($taxons)==0){
@@ -1027,9 +1075,7 @@ class ApiController extends Controller
         foreach($locations as $location){
             $result['data'][]=$this->format_location_for_taxon($field,$display,$location);
         }
-        //response
-        $response=new Response(json_encode($result));
-        $response->headers->set('Content-Type','application/json');
-        return $response;
+        //
+        return $result;
     }
 }
