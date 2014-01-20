@@ -160,6 +160,11 @@ class Module
     private $taxonomy;
 
     /**
+     * @MongoDB\Boolean
+     */
+    private $displaysyns;
+
+    /**
      * @MongoDB\ReferenceMany(
      *      targetDocument="Taxon",
      *      mappedBy="module",
@@ -757,6 +762,26 @@ class Module
     public function getTaxonomy()
     {
         return $this->taxonomy;
+    }
+    
+    /**
+     * Set displaysyns
+     *
+     * @param boolean $displaysyns
+     */
+    public function setDisplaysyns($displaysyns)
+    {
+        $this->displaysyns = $displaysyns;
+    }
+
+    /**
+     * Get displaysyns
+     *
+     * @return boolean $displaysyns
+     */
+    public function getDisplaysyns()
+    {
+        return $this->displaysyns;
     }
 
     /**

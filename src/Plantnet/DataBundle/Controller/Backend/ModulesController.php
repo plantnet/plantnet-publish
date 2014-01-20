@@ -25,6 +25,7 @@ use Plantnet\DataBundle\Form\ImportFormType,
     Plantnet\DataBundle\Form\Type\ModulesTaxoType,
     Plantnet\DataBundle\Form\ModuleFormType,
     Plantnet\DataBundle\Form\ModuleUpdateFormType,
+    Plantnet\DataBundle\Form\ModuleDisplaySynsFormType,
     Plantnet\DataBundle\Form\ModuleSynFormType,
     Plantnet\DataBundle\Form\ModuleDescFormType;
 
@@ -730,6 +731,7 @@ class ModulesController extends Controller
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
         $editForm=$this->get('form.factory')->create(new ModulesTaxoType(),$module);
+        $editDisplaySynsForm=$this->get('form.factory')->create(new ModuleDisplaySynsFormType(),$module);
         $deleteSynForm=false;
         $deleteDescForm=false;
         $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'_syn.csv';
@@ -750,6 +752,7 @@ class ModulesController extends Controller
             'entity'=>$module,
             'nb_taxons'=>$nb_taxons,
             'edit_form'=>$editForm->createView(),
+            'edit_display_syns_form'=>$editDisplaySynsForm->createView(),
             'delete_syn_form'=>($deleteSynForm!=false)?$deleteSynForm->createView():false,
             'delete_desc_form'=>($deleteDescForm!=false)?$deleteDescForm->createView():false
         ));
@@ -802,6 +805,40 @@ class ModulesController extends Controller
             'entity'=>$module,
             'edit_form'=>$editForm->createView(),
         ));
+    }
+
+    /**
+     * Edits an existing Module entity.
+     *
+     * @Route("/{id}/update_taxo_display_syns", name="module_update_taxo_display_syns")
+     * @Method("post")
+     * @Template()
+     */
+    public function module_update_taxo_display_synsAction($id)
+    {
+        $user=$this->container->get('security.context')->getToken()->getUser();
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->find($id);
+        if(!$module){
+            throw $this->createNotFoundException('Unable to find Module entity.');
+        }
+        $collection=$module->getCollection();
+        $editForm=$this->get('form.factory')->create(new ModuleDisplaySynsFormType(),$module);
+        $request=$this->getRequest();
+        if('POST'===$request->getMethod()){
+            $editForm->bind($request);
+            if($editForm->isValid()){
+                $dm=$this->get('doctrine.odm.mongodb.document_manager');
+                $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
+                $dm->persist($module);
+                $dm->flush();
+                $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
+                return $this->redirect($this->generateUrl('module_edit_taxo',array('id'=>$id)));
+            }
+        }
+        return $this->redirect($this->generateUrl('module_edit_taxo',array('id'=>$id)));
     }
 
     private function createDeleteSynForm($id)
