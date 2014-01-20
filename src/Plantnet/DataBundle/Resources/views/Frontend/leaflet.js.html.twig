@@ -158,6 +158,9 @@
 			);
 			markers.addLayer(marker_{{ location.id }});
 		{% endfor %}
+		{% if locations|length > 0 %}
+			map.fitBounds(markers.getBounds());
+		{% endif %}
 	{% endif %}
 	map.addLayer(markers);
 	{####### DRAW #################################################}
