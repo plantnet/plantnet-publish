@@ -97,13 +97,23 @@ class TaxoController extends Controller
                     ->execute();
             }
             else{
-                $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
-                    ->field('module')->references($module)
-                    ->field('parent')->equals(null)
-                    ->field('issynonym')->equals(false)
-                    ->sort('name','asc')
-                    ->getQuery()
-                    ->execute();
+                if($module->getDisplaysyns()==true){
+                    $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                        ->field('module')->references($module)
+                        ->field('parent')->equals(null)
+                        ->sort('name','asc')
+                        ->getQuery()
+                        ->execute();
+                }
+                else{
+                    $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                        ->field('module')->references($module)
+                        ->field('parent')->equals(null)
+                        ->field('issynonym')->equals(false)
+                        ->sort('name','asc')
+                        ->getQuery()
+                        ->execute();
+                }
             }
         }
         else{
@@ -194,13 +204,23 @@ class TaxoController extends Controller
                 $tab_id[]=$syn->getId();
             }
         }
-        $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
-            ->field('module')->references($module)
-            ->field('parent.id')->in($tab_id)
-            ->field('issynonym')->equals(false)
-            ->sort('name','asc')
-            ->getQuery()
-            ->execute();
+        if($module->getDisplaysyns()==true){
+            $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                ->field('module')->references($module)
+                ->field('parent.id')->in($tab_id)
+                ->sort('name','asc')
+                ->getQuery()
+                ->execute();
+        }
+        else{
+            $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
+                ->field('module')->references($module)
+                ->field('parent.id')->in($tab_id)
+                ->field('issynonym')->equals(false)
+                ->sort('name','asc')
+                ->getQuery()
+                ->execute();
+        }
         $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Module:taxo_children.html.twig',array(
