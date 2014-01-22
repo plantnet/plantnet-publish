@@ -79,6 +79,15 @@ class TaxonomizeCommand extends ContainerAwareCommand
             'module.$id'=>new \MongoId($module->getId())
         ),$fields);
         foreach($data as $line){
+            //find last non null value => last non null rank
+            $last_non_null_rank=0;
+            foreach($field_ordered as $attr_value_tmp){
+                $checked_value=$line['attributes'][$attr_value_tmp];
+                if(!empty($checked_value)){
+                    $last_non_null_rank=$meta[$attr_value_tmp]['level'];
+                }
+            }
+            //check data
             $img=(isset($line['hasimages'])&&$line['hasimages'])?true:false;
             $loc=(isset($line['haslocations'])&&$line['haslocations'])?true:false;
             $id_parent='';
@@ -86,6 +95,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
             foreach($field_ordered as $attr_value){
                 $column=$attr_value;
                 $value=$line['attributes'][$column];
+                if(empty($value)&&$meta[$column]['level']<$last_non_null_rank){
+                    $value='-';
+                }
                 if(!empty($value)){
                     if(empty($id_parent)){
                         $tmp_id_parent='|';
@@ -333,13 +345,33 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         $db=$connection->$dbname;
                         \MongoCursor::$timeout=-1;
                         while(($data=fgetcsv($handle,0,';'))!==false){
+                            //last non null
+                            $last_non_null_rank_non_valid=0;
+                            $last_non_null_rank_valid=0;
+                            foreach($syns as $level=>$tab){
+                                $checked_value_non_valid=isset($data[$tab['col_non_valid']])?trim($data[$tab['col_non_valid']]):'';
+                                $checked_value_valid=isset($data[$tab['col_valid']])?trim($data[$tab['col_valid']]):'';
+                                if(!empty($checked_value_non_valid)){
+                                    $last_non_null_rank_non_valid=$level;
+                                }
+                                if(!empty($checked_value_valid)){
+                                    $last_non_null_rank_valid=$level;
+                                }
+                            }
+                            //data
                             $non_valid_identifier='';
                             $valid_identifier='';
                             $non_valid=array();
                             $valid=array();
                             foreach($syns as $level=>$tab){
                                 $string_non_valid=isset($data[$tab['col_non_valid']])?trim($data[$tab['col_non_valid']]):'';
+                                if(empty($string_non_valid)&&$level<$last_non_null_rank_non_valid){
+                                    $string_non_valid='-';
+                                }
                                 $string_valid=isset($data[$tab['col_valid']])?trim($data[$tab['col_valid']]):'';
+                                if(empty($string_valid)&&$level<$last_non_null_rank_valid){
+                                    $string_valid='-';
+                                }
                                 $cur_encoding=mb_detect_encoding($string_non_valid);
                                 if($cur_encoding=="UTF-8"&&mb_check_encoding($string_non_valid,"UTF-8")){
                                     $string_non_valid=$string_non_valid;
