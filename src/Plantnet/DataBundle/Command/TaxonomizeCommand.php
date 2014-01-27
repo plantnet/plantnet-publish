@@ -328,7 +328,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 if($col==$data[1]){
                                     $syns[$level]['col_non_valid']=$key;
                                 }
-                                if($col!=$data[1]&&strlen($col)>=strlen($data[1])&&substr_count($col,$data[1],0,strlen($data[1]))){
+                                if($col==$data[1].'_valid'){
                                     $syns[$level]['col_valid']=$key;
                                 }
                             }
