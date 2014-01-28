@@ -1176,6 +1176,9 @@ class ModulesController extends Controller
                         $order[$row->getSortorder()]=$row->getId();
                     }
                 }
+                elseif($row->getSortorder()){
+                    $order[$row->getSortorder()]=$row->getId();
+                }
             }
             ksort($order);
             //init indexes tab
