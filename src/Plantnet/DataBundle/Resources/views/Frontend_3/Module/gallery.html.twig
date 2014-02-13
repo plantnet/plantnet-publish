@@ -124,6 +124,27 @@
 						event.preventDefault();
 						iv.iviewer('angle',90,false);
 					});
+					//
+					$('.viewer').bind('DOMMouseScroll',function(e){
+						e.preventDefault();
+						if(e.originalEvent.detail>0){
+							iv.iviewer('zoom_by',-1);
+						}
+						else{
+							iv.iviewer('zoom_by',1);
+						}
+						return false;
+					});
+					$('.viewer').bind('mousewheel',function(e){
+						e.preventDefault();
+						if(e.originalEvent.wheelDelta<0){
+							iv.iviewer('zoom_by',-1);
+						}
+						else{
+							iv.iviewer('zoom_by',1);
+						}
+						return false;
+					});
 				}
 			});
 			$('.gallery img').addClass('blind');
