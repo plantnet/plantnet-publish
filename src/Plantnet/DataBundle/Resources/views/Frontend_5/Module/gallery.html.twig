@@ -64,6 +64,7 @@
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
+	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery.mousewheel.js') }}"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$('.pop-tooltip').tooltip();
@@ -118,17 +119,6 @@
 					$('#'+id+'_right').click(function(event){
 						event.preventDefault();
 						iv.iviewer('angle',90,false);
-					});
-					//
-					$('.viewer').bind('DOMMouseScroll',function(e){
-						e.preventDefault();
-						if(e.originalEvent.detail>0){
-							iv.iviewer('zoom_by',-1);
-						}
-						else{
-							iv.iviewer('zoom_by',1);
-						}
-						return false;
 					});
 					$('.viewer').bind('mousewheel',function(e){
 						e.preventDefault();
