@@ -28,6 +28,7 @@ class ApiController extends Controller
     private function get_prefix()
     {
         return $this->container->getParameter('mdb_base').'_';
+        
     }
 
     // ------- ------- ------- ------- ------- ------- ------- ------- ------- -------
