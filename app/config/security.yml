@@ -19,7 +19,7 @@ security:
             request_matcher: plantnet_security.wsse_request_matcher
             stateless: true
             wsse:
-                nonce_dir: null
+                #nonce_dir: null
                 lifetime: 300
             anonymous: true
         main:

@@ -30,7 +30,7 @@
         "stof/doctrine-extensions-bundle": "dev-master",
         "jms/translation-bundle": "dev-master",
         "willdurand/expose-translation-bundle": "0.3.*",
-        "escapestudios/wsse-authentication-bundle": "dev-master",
+        "escapestudios/wsse-authentication-bundle": "2.3.x-dev",
         "nelmio/api-doc-bundle": "2.2.*",
         "jms/i18n-routing-bundle": "dev-master",
         "raulfraile/ladybug-bundle": "dev-master",
