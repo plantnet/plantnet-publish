@@ -546,6 +546,9 @@ class ConfigController extends Controller
     
     private function createWsForm($ips)
     {
+        if(!$ips||empty($ips)){
+            $ips=array();
+        }
         $form=$this->createFormBuilder(null,array(
                 'csrf_protection'=>false
             ))
