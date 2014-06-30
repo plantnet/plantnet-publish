@@ -88,7 +88,6 @@ class TaxonomizeCommand extends ContainerAwareCommand
             }
             $tmp_nb++;
         }
-        print_r($this->tmp_indexes);
         $data=$db->Plantunit->find(array(
             'module.$id'=>new \MongoId($module->getId())
         ),$fields);
