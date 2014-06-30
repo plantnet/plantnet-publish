@@ -311,6 +311,7 @@ class ConfigController extends Controller
                     // $db->Plantunit->ensureIndex(array("attributes"=>"text"));
                     $db->Taxon->ensureIndex(array("name"=>1));
                     $db->Taxon->ensureIndex(array("identifier"=>1));
+                    $db->Plantunit->ensureIndex(array("identifier"=>1));
                     //pages data
                     $db->Page->insert(array('name'=>'Home','alias'=>'home','order'=>1));
                     $db->Page->insert(array('name'=>'Mentions','alias'=>'mentions','order'=>2));

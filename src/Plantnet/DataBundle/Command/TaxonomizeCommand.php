@@ -22,6 +22,8 @@ ini_set('memory_limit','-1');
 
 class TaxonomizeCommand extends ContainerAwareCommand
 {
+    private $tmp_indexes=array();
+
     protected function configure()
     {
         $this
@@ -60,6 +62,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
 
     private function populate($db,$module,$taxo)
     {
+        $tmp_nb=1;
         $tab_tax=array();
         $fields=array(
             'hasimages'=>1,
@@ -74,7 +77,18 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 'label'=>$data[1]
             );
             $field_ordered[]=$data[0];
+            if($tmp_nb==1){
+                $this->tmp_indexes['tmptmp'.$tmp_nb]=array('attributes.'.$data[0]=>1);
+            }
+            else{
+                $this->tmp_indexes['tmptmp'.$tmp_nb]=array_merge(
+                    $this->tmp_indexes['tmptmp'.($tmp_nb-1)],
+                    array('attributes.'.$data[0]=>1)
+                );
+            }
+            $tmp_nb++;
         }
+        print_r($this->tmp_indexes);
         $data=$db->Plantunit->find(array(
             'module.$id'=>new \MongoId($module->getId())
         ),$fields);
@@ -281,6 +295,12 @@ class TaxonomizeCommand extends ContainerAwareCommand
                 $db=$connection->$dbname;
                 //populate
                 $tab_tax=$this->populate($db,$module,$taxo);
+                //set indexes
+                if(count($this->tmp_indexes)){
+                    foreach($this->tmp_indexes as $i_name=>$i_index){
+                        $db->Plantunit->ensureIndex($i_index,array('name'=>$i_name));
+                    }
+                }
                 //save
                 \MongoCursor::$timeout=-1;
                 $this->save($db,$dbname,$dm,$module,$taxo,$tab_tax);
@@ -292,6 +312,13 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     ->findOneBy(array(
                         'id'=>$id_module
                     ));
+                //unset indexes
+                if(count($this->tmp_indexes)){
+                    foreach($this->tmp_indexes as $i_name=>$i_index){
+                        $db->command(array('deleteIndexes'=>'Plantunit','index'=>$i_name));
+                    }
+                }
+                //free
                 $db=null;
                 $connection=null;
             }
