@@ -47,7 +47,7 @@
                         Edit
                     </a>
                 </li>
-                {% if module.nbrows <= 200000 %}
+                {% if module.nbrows <= 5000 %}
                     <li>
                         <a href="{{ path('module_edit_data', { 'id': module.id }) }}" class="ajax">
                             <i class="icon-edit"></i>
@@ -98,7 +98,7 @@
                                 Edit
                             </a>
                         </li>
-                        {% if child.nbrows <= 200000 %}
+                        {% if child.nbrows <= 5000 %}
                             <li>
                                 <a href="{{ path('module_edit_data', { 'id': child.id }) }}" class="ajax">
                                     <i class="icon-edit"></i>
