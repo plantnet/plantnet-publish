@@ -1,5 +1,5 @@
 <td>
-	<span class="example" data-content="<img src='/bundles/plantnetdata/images/tpl_v.png' alt='vertical' />">
+	<span class="example" data-content="<img src='/bundles/plantnetdata/images/tpl_h.png' alt='horizontal' />">
 		Horizontal
 	</span> (display further columns)
 </td>
