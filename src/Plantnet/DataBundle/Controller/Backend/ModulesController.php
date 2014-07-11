@@ -1228,7 +1228,7 @@ class ModulesController extends Controller
      */
     public function module_edit_dataAction($id)
     {
-        $limit=5000;
+        $limit=200000;
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1259,7 +1259,7 @@ class ModulesController extends Controller
      */
     public function module_update_dataAction($id)
     {
-        $limit=5000;
+        $limit=200000;
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1312,6 +1312,7 @@ class ModulesController extends Controller
                     $user=$this->container->get('security.context')->getToken()->getUser();
                     $kernel=$this->get('kernel');
                     $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                    echo $command;exit;
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
                     $this->get('session')->getFlashBag()->add('msg_success','Updating data.');
