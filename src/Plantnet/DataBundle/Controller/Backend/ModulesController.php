@@ -1312,7 +1312,6 @@ class ModulesController extends Controller
                     $user=$this->container->get('security.context')->getToken()->getUser();
                     $kernel=$this->get('kernel');
                     $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
-                    echo $command;exit;
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
                     $this->get('session')->getFlashBag()->add('msg_success','Updating data.');

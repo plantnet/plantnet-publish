@@ -121,7 +121,6 @@ class UpdateCommand extends ContainerAwareCommand
                     'updating'=>false
                 )
             ));
-            echo $message;exit;
         }
     }
 
