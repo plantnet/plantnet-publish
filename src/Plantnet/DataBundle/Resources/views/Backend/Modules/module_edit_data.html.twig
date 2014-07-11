@@ -18,13 +18,24 @@
     {% if is_over is defined and is_over == false %}
         {% if module.type == 'text' %}
             <p>
-                After updating data from a top level module, taxonomy is not updated.
+                After updating data, taxonomy is deleted.
                 <br />
                 You must run manually these tasks (taxonomy, synonymy, taxa description).
             </p>
         {% elseif module.type == 'image' %}
             <p>
+                After updating data, taxonomy is deleted.
+                <br />
+                You must run manually these tasks (taxonomy, synonymy, taxa description).
+            </p>
+            <p>
                 After updating data from an image module, don't forget to upload new images.
+            </p>
+        {% elseif module.type == 'locality' %}
+            <p>
+                After updating data, taxonomy is deleted.
+                <br />
+                You must run manually these tasks (taxonomy, synonymy, taxa description).
             </p>
         {% endif %}
         {% set updating = false %}
