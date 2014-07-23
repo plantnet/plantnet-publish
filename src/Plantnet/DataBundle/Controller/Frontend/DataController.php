@@ -543,6 +543,13 @@ class DataController extends Controller
                 'title3'=>1
             )
         )->sort(array('_id'=>1))->limit($max_per_page)->skip($start);
+        $link_pattern=$this->get('router')->generate('front_details',array(
+            'project'=>$project,
+            'collection'=>$collection->getUrl(),
+            'module'=>$module_parent->getUrl(),
+            'id'=>0
+        ));
+        $link_pattern=substr($link_pattern,0,-1);
         foreach($c_locations as $id=>$l){
             $loc=array();
             $loc['type']='Feature';
@@ -564,12 +571,7 @@ class DataController extends Controller
             if(isset($l['title3'])&&!empty($l['title3'])){
                 $loc['properties']['title3']=$l['title3'];
             }
-            $loc['properties']['punit']=$this->get('router')->generate('front_details',array(
-                'project'=>$project,
-                'collection'=>$collection->getUrl(),
-                'module'=>$module_parent->getUrl(),
-                'id'=>$l['plantunit']['$id']->{'$id'}
-            ));
+            $loc['properties']['punit']=$link_pattern.$l['plantunit']['$id']->{'$id'};
             foreach($l['property'] as $key=>$val){
                 if(array_key_exists($key,$display)){
                     $loc['properties']['loc_data']=$loc['properties']['loc_data'].$display[$key].': '.$val."\n";
