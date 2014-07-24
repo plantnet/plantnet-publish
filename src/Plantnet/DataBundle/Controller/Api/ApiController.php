@@ -1078,4 +1078,133 @@ class ApiController extends Controller
         //
         return $result;
     }
+    
+    /**
+     * @ApiDoc(
+     *  section="Publish v2 - GeoData. Sub-module entity [type = locality]",
+     *  description="Returns geo data from a 'locality' sub-module entity [GeoJson]",
+     *  statusCodes={
+     *      200="Returned when: Successful",
+     *      401="Returned when: Unauthorized client",
+     *      404="Returned when: Resource not found"
+     *  },
+     *  filters={
+     *      {"name"="project", "dataType"="String", "required"=true, "description"="Project url"},
+     *      {"name"="collection", "dataType"="String", "required"=true, "description"="Collection url"},
+     *      {"name"="module", "dataType"="String", "required"=true, "description"="Module url"},
+     *      {"name"="submodule", "dataType"="String", "required"=true, "description"="'Location' Sub-Module url"}
+     *  }
+     * )
+     *
+     * @Route(
+     *      "/{project}/{collection}/{module}/{submodule}/geodata",
+     *      name="api_submodule_geodata"
+     * )
+     * @Method("get")
+     */
+    public function api_submodule_geodataAction($project,$collection,$module,$submodule)
+    {
+        //check project
+        try{
+            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        }
+        catch(\Exception $e){
+            $this->return_404_not_found($e->getMessage());
+            exit;
+        }
+        //init
+        $dm=$this->get('doctrine.odm.mongodb.document_manager');
+        $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
+        $result=array();
+        //get language config
+        $config=ControllerHelp::get_config($project,$dm,$this);
+        $this->check_authorized_client($config);
+        //data1
+        $collection=$dm->getRepository('PlantnetDataBundle:Collection')
+            ->findOneBy(array('url'=>$collection));
+        if(!$collection||$collection->getDeleting()==true){
+            $this->return_404_not_found('Unable to find Collection entity.');
+            exit;
+        }
+        $module=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'url'=>$module,
+                'collection.id'=>$collection->getId()
+            ));
+        if(!$module||$module->getType()!='text'||$module->getDeleting()==true){
+            $this->return_404_not_found('Unable to find Module entity.');
+            exit;
+        }
+        $submodule=$dm->getRepository('PlantnetDataBundle:Module')
+            ->findOneBy(array(
+                'url'=>$submodule,
+                'parent.id'=>$module->getId(),
+                'collection.id'=>$collection->getId()
+            ));
+        if(!$submodule||$submodule->getType()=='text'||$submodule->getDeleting()==true){
+            $this->return_404_not_found('Unable to find Sub-module entity.');
+            exit;
+        }
+        if($submodule->getType()!='locality'){
+            $this->return_404_not_found('Unable to find geo data for this Sub-module entity.');
+            exit;
+        }
+        //data2
+        $display=array();
+        $field=$module->getProperties();
+        foreach($field as $row){
+            if($row->getMain()==true){
+                $display[]=$row->getId();
+            }
+        }
+        $field_sub=$submodule->getProperties();
+        $field_sub_tab=array();
+        foreach($field_sub as $f){
+            if($f->getDetails()==true){
+                $field_sub_tab[$f->getId()]=$f->getName();
+            }
+        }
+        $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
+            ->hydrate(false)
+            ->select('title1')
+            ->select('title2')
+            ->select('title3')
+            ->select('property')
+            ->select('latitude')
+            ->select('longitude')
+            ->select('idparent')
+            ->field('module')->references($submodule)
+            ->getQuery()
+            ->execute()
+            ->toArray();
+        array_walk($locations,function (&$item,$key,$field_sub_tab){
+            $l=array(
+                'type'=>'Feature',
+                'geometry'=>array(
+                    'type'=>'Point',
+                    'coordinates'=>array(
+                        $item['longitude'],
+                        $item['latitude']
+                    )
+                ),
+                'properties'=>array(
+                    'title1'=>$item['title1'],
+                    'title2'=>$item['title2'],
+                    'title3'=>$item['title3'],
+                    'parent_identifier'=>$item['idparent']
+                )
+            );
+            foreach($item['property'] as $key=>$value){
+                if(array_key_exists($key,$field_sub_tab)){
+                    $l['properties'][$field_sub_tab[$key]]=$value;
+                }
+            }
+            $item=$l;
+        },$field_sub_tab);
+        $locations=array_values($locations);
+        //response
+        $response=new Response(json_encode($locations));
+        $response->headers->set('Content-Type','application/json');
+        return $response;
+    }
 }
