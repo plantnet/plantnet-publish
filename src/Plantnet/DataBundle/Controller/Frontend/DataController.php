@@ -551,27 +551,24 @@ class DataController extends Controller
         ));
         $link_pattern=substr($link_pattern,0,-1);
         foreach($c_locations as $id=>$l){
-            $loc=array();
-            $loc['type']='Feature';
-            $loc['id']=$id;
-            $loc['geometry']=array(
-                'type'=>'Point',
-                'coordinates'=>array(
-                    $l['longitude'],
-                    $l['latitude']
+            $loc=array(
+                'type'=>'Feature',
+                'id'=>$id,
+                'geometry'=>array(
+                    'type'=>'Point',
+                    'coordinates'=>array(
+                        $l['longitude'],
+                        $l['latitude']
+                    )
+                ),
+                'properties'=>array(
+                    'punit'=>$link_pattern.$l['plantunit']['$id']->{'$id'},
+                    'title1'=>$l['title1'],
+                    'title2'=>$l['title2'],
+                    'title3'=>$l['title3'],
+                    'loc_data'=>''
                 )
             );
-            $loc['properties']=array(
-                'punit'=>'',
-                'title1'=>$l['title1'],
-                'title2'=>$l['title2'],
-                'title3'=>'',
-                'loc_data'=>''
-            );
-            if(isset($l['title3'])&&!empty($l['title3'])){
-                $loc['properties']['title3']=$l['title3'];
-            }
-            $loc['properties']['punit']=$link_pattern.$l['plantunit']['$id']->{'$id'};
             foreach($l['property'] as $key=>$val){
                 if(array_key_exists($key,$display)){
                     $loc['properties']['loc_data']=$loc['properties']['loc_data'].$display[$key].': '.$val."\n";

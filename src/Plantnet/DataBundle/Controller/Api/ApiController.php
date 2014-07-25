@@ -1161,7 +1161,7 @@ class ApiController extends Controller
         $field_sub_tab=array();
         foreach($field_sub as $f){
             if($f->getDetails()==true){
-                $field_sub_tab[$f->getId()]=$f->getName();
+                $field_sub_tab[$f->getId()]=StringHelp::cleanToKey($f->getName());
             }
         }
         $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
@@ -1203,7 +1203,10 @@ class ApiController extends Controller
         },$field_sub_tab);
         $locations=array_values($locations);
         //response
-        $response=new Response(json_encode($locations));
+        $response=new Response(json_encode(array(
+            'type'=>'FeatureCollection',
+            'features'=>$locations
+        )));
         $response->headers->set('Content-Type','application/json');
         return $response;
     }

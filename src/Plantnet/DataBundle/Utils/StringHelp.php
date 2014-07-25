@@ -47,6 +47,29 @@ class StringHelp
 		return false;
 	}
 
+	static public function cleanToKey($text)
+	{
+		if(empty($text)||$text==''||$text==urlencode($text)){
+			return $text;
+		}
+		$text=strtr(
+			utf8_decode($text),
+			utf8_decode(self::ACCENT_STRINGS),
+			utf8_decode(self::NO_ACCENT_STRINGS)
+		);
+		$text=utf8_encode($text);
+		$text=trim(mb_strtolower($text,'UTF-8'));
+		$text=preg_replace('/([^a-z]+)/i','_',$text);
+		$text=eregi_replace("[_]+",'_',strtolower($text));
+		if($text[0]=='_'){
+			$text=substr($text,1);
+		}
+		if($text[strlen($text)-1]=='_'){
+			$text=substr($text,0,-1);
+		}
+		return $text;
+	}
+
 	static public function cleanToPath($text)
 	{
 		$text=trim(mb_strtolower($text,'UTF-8'));
