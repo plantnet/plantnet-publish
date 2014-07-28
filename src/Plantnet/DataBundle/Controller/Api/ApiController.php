@@ -1104,6 +1104,7 @@ class ApiController extends Controller
      */
     public function api_submodule_geodataAction($project,$collection,$module,$submodule)
     {
+        ini_set('memory_limit','-1');
         //check project
         try{
             ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
@@ -1164,6 +1165,7 @@ class ApiController extends Controller
                 $field_sub_tab[$f->getId()]=StringHelp::cleanToKey($f->getName());
             }
         }
+        \MongoCursor::$timeout=-1;
         $locations=$dm->createQueryBuilder('PlantnetDataBundle:Location')
             ->hydrate(false)
             ->select('title1')
