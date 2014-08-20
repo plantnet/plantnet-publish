@@ -410,15 +410,14 @@ class GlossaryController extends Controller
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $csv=__DIR__.'/../../Resources/uploads/'.$collection->getAlias().'/glossary_syn.csv';
-
-        $deleteSynForm = false;
+        $deleteSynForm=false;
         if(file_exists($csv)){
             $deleteSynForm=$this->createDeleteSynForm($id);
         }
         $deleteForm=$this->createDeleteForm($id);
         return $this->render('PlantnetDataBundle:Backend\Glossary:glossary_edit.html.twig',array(
             'entity'=>$glossary,
-            'delete_syn_form'=>($deleteSynForm != false) ? $deleteSynForm->createView() : false,
+            'delete_syn_form'=>($deleteSynForm!=false)?$deleteSynForm->createView():false,
             'delete_form'=>$deleteForm->createView()
         ));
     }
