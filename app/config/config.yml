@@ -91,6 +91,7 @@ swiftmailer:
     password: %mailer_password%
     spool: { type: memory }
     # delivery_adress: ...
+    disable_delivery: %mailer_disable% 
 
 jms_translation:
     configs:
