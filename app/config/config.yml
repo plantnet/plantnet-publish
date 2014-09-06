@@ -124,7 +124,7 @@ fos_user:
             validation_groups: [ChangePassword]
     registration:
         confirmation:
-            enabled: true
+            enabled: %register_email_confirm%
             template: FOSUserBundle:Registration:email.txt.twig
         form:
             type: plantnet_user_registration

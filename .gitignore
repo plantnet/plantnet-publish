@@ -16,3 +16,4 @@ composer.phar
 app/config/deploy/*
 app/config/deploy-prod/*
 app/config/deploy.rb
+app/config/parameters.yml
