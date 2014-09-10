@@ -10,16 +10,13 @@ parameters:
     mailer_host: 127.0.0.1
     mailer_user: null
     mailer_password: null
-
-    # to desactivate email
-    mailer_disable: true          
+    mailer_disable: true
     register_email_confirm: false
-
     locale: en
     secret: ThisTokenIsNotSoSecretChangeIt
     mdb_base: bota
     php_bin: php
-    node: /usr/local/bin/node
+    node: /usr/bin/nodejs
     node_paths:
         - /usr/local/lib/node_modules
     from_email_adress: support@plantnet-project.org
