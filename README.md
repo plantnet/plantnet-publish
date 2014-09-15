@@ -28,7 +28,7 @@ sudo a2enmod rewrite
 h3. Apache config
 
 Example
-<pre>
+```
 <VirtualHost *:80>
     ServerName publish.local
     ServerSignature Off
@@ -46,7 +46,7 @@ Example
     # alert, emerg.
     LogLevel warn
 </VirtualHost>
-</pre>
+```
 
 WARNING : if you use local name as above, please update your /etc/hosts file :
 <pre>
