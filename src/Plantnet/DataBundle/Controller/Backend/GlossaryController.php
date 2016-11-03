@@ -410,7 +410,6 @@ class GlossaryController extends Controller
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
         $csv=__DIR__.'/../../Resources/uploads/'.$collection->getAlias().'/glossary_syn.csv';
-        $deleteSynForm=false;
         if(file_exists($csv)){
             $deleteSynForm=$this->createDeleteSynForm($id);
         }

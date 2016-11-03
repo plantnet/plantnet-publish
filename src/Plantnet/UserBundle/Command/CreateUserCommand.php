@@ -83,11 +83,11 @@ class CreateUserCommand extends BaseCommand
 	        $db->createCollection('Taxon');
 	        $db->createCollection('Page');
 	        //indexes
-	        $db->Image->ensureIndex(array('title1'=>1,'title2'=>1));
-	        $db->Location->ensureIndex(array('coordinates'=>'2d'));
-	        $db->Plantunit->ensureIndex(array('attributes'=>'text'));
-	        $db->Taxon->ensureIndex(array('name'=>1));
-	        $db->Taxon->ensureIndex(array('identifier'=>1));
+	        $db->Image->ensureIndex(array("title1"=>1,"title2"=>1));
+	        $db->Location->ensureIndex(array("coordinates"=>"2d"));
+	        $db->Plantunit->ensureIndex(array("attributes"=>"text"));
+	        $db->Taxon->ensureIndex(array("name"=>1));
+	        $db->Taxon->ensureIndex(array("identifier"=>1));
 	        //pages data
 	        $db->Page->insert(array('name'=>'home','order'=>1));
 	        $db->Page->insert(array('name'=>'mentions','order'=>2));

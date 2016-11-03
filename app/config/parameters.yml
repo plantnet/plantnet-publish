@@ -11,7 +11,6 @@ parameters:
     mailer_user: null
     mailer_password: null
     mailer_disable: true
-    register_email_confirm: false
     locale: en
     secret: ThisTokenIsNotSoSecretChangeIt
     mdb_base: bota
