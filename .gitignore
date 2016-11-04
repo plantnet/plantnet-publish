@@ -4,6 +4,7 @@
 /web/js/*
 /web/media/*
 /web/uploads/*
+/web/.htpasswd
 
 /app/bootstrap.php.cache
 /app/cache/*
@@ -13,6 +14,7 @@
 /app/config/deploy-prod/*
 /app/config/deploy.rb
 /app/config/parameters.yml
+/app/config/parameters.yml.dist
 
 /build/*
 /vendor/*
