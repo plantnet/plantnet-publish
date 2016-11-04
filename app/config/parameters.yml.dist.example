@@ -1,0 +1,27 @@
+parameters:
+    database_driver: pdo_mysql
+    database_host: 127.0.0.1
+    database_port: ~
+    database_name: symfony
+    database_user: root
+    database_password: ~
+
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: ~
+    mailer_password: ~
+
+    locale: en
+    #locales: [en, fr, es]
+
+    secret: ThisTokenIsNotSoSecretChangeIt
+
+    mdb_base: bota
+
+    php_bin: php
+
+    node: /usr/local/bin/node
+    node_paths: [/usr/local/lib/node_modules]
+
+    from_email_adress: support@plantnet-project.org
+    from_email_sender_name: plantnet-project.org
