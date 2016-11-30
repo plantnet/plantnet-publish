@@ -33,29 +33,29 @@
         {{ form_errors(edit_form) }}
         <div class="field-form">
             {{ form_label(edit_form.name) }}
-            {{ form_errors(edit_form.name) }}
+            <span class="label label-danger">{{ form_errors(edit_form.name) }}</span>
             {{ form_widget(edit_form.name) }}
         </div>
         <div class="field-form">
             {{ form_label(edit_form.url) }}
-            {{ form_errors(edit_form.url) }}
+            <span class="label label-danger">{{ form_errors(edit_form.url) }}</span>
             {{ form_widget(edit_form.url) }}
         </div>
         {% if entity.type == 'text' %}
             <div class="field-form">
                 {{ form_label(edit_form.taxonomy, 'Enable taxonomic browser', {'label_attr': {'class': 'inline'}}) }}
-                {{ form_errors(edit_form.taxonomy) }}
+                <span class="label label-danger">{{ form_errors(edit_form.taxonomy) }}</span>
                 {{ form_widget(edit_form.taxonomy) }}
             </div>
             <div class="field-form">
                 {{ form_label(edit_form.description) }}
-                {{ form_errors(edit_form.description) }}
+                <span class="label label-danger">{{ form_errors(edit_form.description) }}</span>
                 {{ form_widget(edit_form.description, { 'attr': {'class': 'textarea'} }) }}
             </div>
         {% endif %}
         <div class="field-form">
             {{ form_label(edit_form.wsonly, 'Web Service only', {'label_attr': {'class': 'inline'}}) }}
-            {{ form_errors(edit_form.wsonly) }}
+            <span class="label label-danger">{{ form_errors(edit_form.wsonly) }}</span>
             {{ form_widget(edit_form.wsonly) }}
         </div>
         <br />
@@ -66,12 +66,12 @@
                     <th style="display:none;">Type</th>
                     {% if entity.type == 'text' %}
                         <th colspan="3" class="middle">Display</th>
-                    {% elseif entity.type != 'locality' and entity.type != 'image' %}
+                    {% elseif entity.type != 'locality' and entity.type != 'image' and entity.type != 'imageurl' %}
                         <th colspan="3" class="middle">Display</th>
                     {% else %}
                         <th colspan="1" class="middle">Display</th>
                     {% endif %}
-                    {% if entity.type != 'locality' and entity.type != 'image' %}
+                    {% if entity.type != 'locality' and entity.type != 'image' and entity.type != 'imageurl'%}
                         <th class="middle">Sort order</th>
                     {% endif %}
                 </tr>
@@ -82,14 +82,14 @@
                         <th class="middle">Main</th>
                         <th class="middle">Details</th>
                         <th class="middle">Search</th>
-                    {% elseif entity.type != 'locality' and entity.type != 'image' %}
+                    {% elseif ( (entity.type != 'locality') and (entity.type != 'image') and (entity.type != 'imageurl'))%}
                         <th class="middle">Details</th>
                         <th class="middle">Search</th>
                         <th class="middle">Highlight</th>
                     {% else %}
                         <th class="middle">-</th>
                     {% endif %}
-                    {% if entity.type != 'locality' and entity.type != 'image' %}
+                    {% if ( (entity.type != 'locality') and (entity.type != 'image') and (entity.type != 'imageurl'))%}
                         <th></th>
                     {% endif %}
                 <tr>
@@ -98,48 +98,48 @@
                 {% for property in edit_form.properties %}
                     <tr>
                         <td>
-                            {{ form_errors(property.name) }}
+                             <span class="label label-danger">{{ form_errors(property.name) }}</span>
                             {{ form_widget(property.name) }}
                         </td>
                         <td style="display:none;">
-                            {{ form_errors(property.type) }}
+                             <span class="label label-danger">{{ form_errors(property.type) }}</span>
                             {{ form_widget(property.type) }}
                         </td>
                         {% if entity.type == 'text' %}
                             <td class="middle">
-                                {{ form_errors(property.main) }}
+                                 <span class="label label-danger">{{ form_errors(property.main) }}</span>
                                 {{ form_widget(property.main) }}
                             </td>
                             <td class="middle">
-                                {{ form_errors(property.details) }}
+                                 <span class="label label-danger">{{ form_errors(property.details) }}</span>
                                 {{ form_widget(property.details) }}
                             </td>
                             <td class="middle">
-                                {{ form_errors(property.search) }}
+                                 <span class="label label-danger">{{ form_errors(property.search) }}</span>
                                 {{ form_widget(property.search) }}
                             </td>
-                        {% elseif entity.type != 'locality' and entity.type != 'image' %}
+                        {% elseif ( (entity.type != 'locality') and (entity.type != 'image') and (entity.type != 'imageurl'))%}
                             <td class="middle">
-                                {{ form_errors(property.details) }}
+                                <span class="label label-danger"> {{ form_errors(property.details) }}</span>
                                 {{ form_widget(property.details) }}
                             </td>
                             <td class="middle">
-                                {{ form_errors(property.search) }}
+                                 <span class="label label-danger">{{ form_errors(property.search) }}</span>
                                 {{ form_widget(property.search) }}
                             </td>
                             <td class="middle">
-                                {{ form_errors(property.vernacular) }}
+                                <span class="label label-danger"> {{ form_errors(property.vernacular) }}</span>
                                 {{ form_widget(property.vernacular) }}
                             </td>
                         {% else %}
                             <td class="middle">
-                                {{ form_errors(property.details) }}
+                                <span class="label label-danger">{{ form_errors(property.details) }}</span>
                                 {{ form_widget(property.details) }}
                             </td>
                         {% endif %}
-                        {% if entity.type != 'locality' and entity.type != 'image' %}
+                        {% if ( (entity.type != 'locality') and (entity.type != 'image') and (entity.type != 'imageurl'))%}
                             <td class="middle">
-                                {{ form_errors(property.sortorder) }}
+                                <span class="label label-danger">{{ form_errors(property.sortorder) }}</span>
                                 {{ form_widget(property.sortorder, {'attr': {'class': 'span1'}}) }}
                             </td>
                         {% endif %}

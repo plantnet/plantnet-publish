@@ -13,6 +13,7 @@ use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Plantunit,
     Plantnet\DataBundle\Document\Property,
     Plantnet\DataBundle\Document\Image,
+    Plantnet\DataBundle\Document\Imageurl,
     Plantnet\DataBundle\Document\Location,
     Plantnet\DataBundle\Document\Coordinates,
     Plantnet\DataBundle\Document\Other;
@@ -21,6 +22,7 @@ ini_set('memory_limit','-1');
 
 class ImportationCommand extends ContainerAwareCommand
 {
+
     protected function configure()
     {
         $this
@@ -35,6 +37,7 @@ class ImportationCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input,OutputInterface $output)
     {
+
         $id=$input->getArgument('collection');
         $idmodule=$input->getArgument('module');
         $dbname=$input->getArgument('dbname');
@@ -47,8 +50,7 @@ class ImportationCommand extends ContainerAwareCommand
             $configuration=$dm->getConnection()->getConfiguration();
             $configuration->setLoggerCallable(null);
             \MongoCursor::$timeout=-1;
-            $module=$dm->getRepository('PlantnetDataBundle:Module')
-                ->find($idmodule);
+            $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
             if(!$module){
                 $error='Unable to find Module entity.';
             }
@@ -75,7 +77,117 @@ class ImportationCommand extends ContainerAwareCommand
                 $size=0;
                 $rowCount=0;
                 $errorCount=0;
-                if($module->getType()=='image'){
+                if($module->getType()=='imageurl'){
+                    while(($data=fgetcsv($handle,0,';'))!==false){
+                        $num=count($data);
+                        $imageurl=new Imageurl();
+                        $attributes=array();
+                        for($c=0;$c<$num;$c++){
+                            $value=trim($this->data_encode($data[$c]));
+                            //check for int or float value
+                            if(is_numeric($value)){
+                                $tmp_value=intval($value);
+                                if($value==$tmp_value){
+                                    $value=$tmp_value;
+                                }
+                                else{
+                                    $tmp_value=floatval($value);
+                                    if($value==$tmp_value){
+                                        $value=$tmp_value;
+                                    }
+                                }
+                            }
+                            $attributes[$fields[$c]->getId()]=$value;
+
+                            switch($fields[$c]->getType()){
+                                case 'url':
+                                    $imageurl->setUrl($value.'');
+                                    $imageurl->setPath($value.'');
+                                    break;
+                                case 'copyright':
+                                    $imageurl->setCopyright($value.'');
+                                    break;
+                                case 'idparent':
+                                    $imageurl->setIdparent($value.'');
+                                    break;
+                                case 'idmodule':
+                                    $imageurl->setIdentifier($value.'');
+                                    break;
+                            }
+                        }
+                        $imageurl->setProperty($attributes);
+                        $imageurl->setModule($module);
+                        $parent=null;
+                        if($module->getParent()){
+                            $parent_q=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit')
+                                ->field('module.id')->equals($module->getParent()->getId())
+                                ->field('identifier')->equals($imageurl->getIdparent())
+                                ->getQuery()
+                                ->execute();
+                            foreach($parent_q as $p){
+                                $parent=$p;
+                            }
+                        }
+                        if($parent){
+                            $imageurl->setPlantunit($parent);
+                            $imageurl->setTitle1($parent->getTitle1());
+                            $imageurl->setTitle2($parent->getTitle2());
+                            $imageurl->setTitle3($parent->getTitle3());
+                            $dm->persist($imageurl);
+                            $rowCount++;
+                            $size++;
+                            if(!$parent->getHasimagesurl()){
+                                $parent->setHasimagesurl(true);
+                                $dm->persist($parent);
+                                $size++;
+                            }
+                            //update Taxons
+                            $taxons=$parent->getTaxonsrefs();
+                            if(count($taxons)){
+                                foreach($taxons as $taxon){
+                                    if(!$taxon->getHasimagesurl()){
+                                        $taxon->setHasimagesurl(true);
+                                        $dm->persist($taxon);
+                                        $size++;
+                                    }
+                                    if($taxon->getIssynonym()){
+                                        $taxon_valid=$taxon->getChosen();
+                                        if(!$taxon_valid->getHasimagesurl()){
+                                            $taxon_valid->setHasimagesurl(true);
+                                            $dm->persist($taxon_valid);
+                                            $size++;
+                                        }
+                                        $parent_taxon_valid=$taxon_valid->getParent();
+                                        while($parent_taxon_valid){
+                                            if(!$parent_taxon_valid->getHasimagesurl()){
+                                                $parent_taxon_valid->setHasimagesurl(true);
+                                                $dm->persist($parent_taxon_valid);
+                                                $size++;
+                                            }
+                                            $parent_taxon_valid=$parent_taxon_valid->getParent();
+                                        }
+                                    }
+                                }
+                            }
+                            if($size>=$batchSize){
+                                $dm->flush();
+                                $dm->clear();
+                                gc_collect_cycles();
+                                $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                                $size=0;
+                            }
+                        }
+                        else{
+                            $orphans[$imageurl->getIdparent()]=$imageurl->getIdparent();
+                            $errorCount++;
+                            $dm->detach($imageurl);
+                        }
+                    }
+                    $dm->flush();
+                    $dm->clear();
+                    gc_collect_cycles();
+                    $module=$dm->getRepository('PlantnetDataBundle:Module')->find($idmodule);
+                }elseif($module->getType()=='image'){
                     while(($data=fgetcsv($handle,0,';'))!==false){
                         $num=count($data);
                         $image=new Image();
@@ -393,7 +505,7 @@ class ImportationCommand extends ContainerAwareCommand
                 $e=microtime(true);
                 echo ' Inserted '.$rowCount.' objects in '.($e-$s).' seconds'.PHP_EOL;
                 if(file_exists($csvfile)){
-                    unlink($csvfile);
+                //   unlink($csvfile);
                 }
                 $message='Importation Success: '.$rowCount.' objects imported in '.($e-$s).' seconds';
                 $message.="\n";

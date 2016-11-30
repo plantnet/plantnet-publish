@@ -39,6 +39,7 @@
 	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.min.js') }}"></script>
 	<script type="text/javascript">
 		$('.pagerfanta').first().on('click','a', function(event){
+			console.log("datatypes;");
 			event.preventDefault();
 			if($(this).attr('href').length&&$(this).attr('href')!='#'&&!$(this).parent('li').first().hasClass('active')){
 				var url=$(this).attr('href');
@@ -49,6 +50,8 @@
 			}
 		});
 		$('.pagerfanta').last().on('click','a', function(event){
+			console.log("datatypes last;");
+
             event.preventDefault();
             if($(this).attr('href').length&&$(this).attr('href')!='#'&&!$(this).parent('li').first().hasClass('active')){
                 var url=$(this).attr('href');

@@ -16,22 +16,30 @@
 			</a>
 			<ul class="dropdown-menu">
 				{% if module.children|length > 0 %}
-						{% for child in module.children if (child.type == 'image' and child.deleting != true and child.wsonly != true) %}
-							<li>
-								<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
-									<i class="icon-camera"></i>
-									{{ child.name }}
-								</a>
-							</li>
-						{% endfor %}
-						{% for child in module.children if (child.type == 'locality' and child.deleting != true and child.wsonly != true) %}
-							<li>
-								<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
-									<i class="icon-map-marker"></i>
-									{{ child.name }}
-								</a>
-							</li>
-						{% endfor %}
+					{% for child in module.children if (child.type == 'image' and child.deleting != true and child.wsonly != true) %}
+						<li>
+							<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
+								<i class="icon-camera"></i>
+								{{ child.name }}
+							</a>
+						</li>
+					{% endfor %}
+					{% for child in module.children if (child.type == 'imageurl' and child.deleting != true and child.wsonly != true) %}
+						<li>
+							<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
+								<i class="icon-camera"></i>
+								{{ child.name }}
+							</a>
+						</li>
+					{% endfor %}
+					{% for child in module.children if (child.type == 'locality' and child.deleting != true and child.wsonly != true) %}
+						<li>
+							<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
+								<i class="icon-map-marker"></i>
+								{{ child.name }}
+							</a>
+						</li>
+					{% endfor %}
 				{% endif %}
 				{% if module.taxonomy == true %}
 					<li>

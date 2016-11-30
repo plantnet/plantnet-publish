@@ -38,6 +38,11 @@ class Config
     /**
      * @MongoDB\String
      */
+    protected $url;
+
+    /**
+     * @MongoDB\String
+     */
     protected $filepath;
 
     /**
@@ -170,6 +175,28 @@ class Config
     {
         return $this->file;
     }
+
+
+    /**
+     * Set Url
+     *
+     * @param text $url
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    }
+
+    /**
+     * Get Url
+     *
+     * @return text $url
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
 
     /**
      * Set filepath

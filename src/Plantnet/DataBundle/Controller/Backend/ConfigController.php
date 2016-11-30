@@ -299,6 +299,7 @@ class ConfigController extends Controller
                     $db->createCollection('Definition');
                     $db->createCollection('Glossary');
                     $db->createCollection('Image');
+                    $db->createCollection('Imageurl');
                     $db->createCollection('Location');
                     $db->createCollection('Other');
                     $db->createCollection('Module');
@@ -307,6 +308,7 @@ class ConfigController extends Controller
                     $db->createCollection('Page');
                     //indexes
                     $db->Image->ensureIndex(array("title1"=>1,"title2"=>1));
+                    $db->Imageurl->ensureIndex(array("title1"=>1,"title2"=>1));
                     $db->Location->ensureIndex(array("coordinates"=>"2d"));
                     // $db->Plantunit->ensureIndex(array("attributes"=>"text"));
                     $db->Taxon->ensureIndex(array("name"=>1));

@@ -75,7 +75,9 @@
             {% for child in module.children if child.deleting != true %}
                 <li class="dropdown submodule">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        {% if child.type == 'image' %}
+                        {% if child.type == 'imageurl' %}
+                            <i class="icon-camera"></i>
+                        {% elseif child.type == 'image' %}
                             <i class="icon-camera"></i>
                         {% elseif child.type == 'locality' %}
                             <i class="icon-map-marker"></i>
@@ -106,7 +108,7 @@
                                 </a>
                             </li>
                         {% endif %}
-                        {% if child.type=='image' %}
+                        {% if (  (child.type=='image') or (child.type=='imageurl') ) %}
                             <li>
                                 <a href="{{ path('plantnet_file_manager_homepage', {'name': child.uploaddir}) }}" class="ajax">
                                     <i class="icon-upload"></i>

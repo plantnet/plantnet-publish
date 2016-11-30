@@ -94,7 +94,7 @@
                         <tr>
                             <td>
                                 <a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.identifier }) }}">
-                                    {% if plantunit.hasimages > 0 %}
+                                    {% if (plantunit.hasimages > 0) or (plantunit.hasimagesurl > 0) %}
                                         <i class="icon-camera"></i>
                                     {% endif %}
                                 </a>

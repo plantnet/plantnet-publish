@@ -196,6 +196,23 @@ class ApiController extends Controller
         );
     }
 
+    private function format_imageurl($field,$display,$field_sub,$img_dir,$image)
+    {
+        $i=array();
+        $i_attributes=$image->getProperty();
+        foreach($field_sub as $f){
+            if($f->getDetails()==true){
+                $i[$f->getName()]=$i_attributes[$f->getId()];
+            }
+        }
+        $i['title1']=$image->getTitle1();
+        $i['title2']=$image->getTitle2();
+        $i['title3']=$image->getTitle3();
+        $i['image_url']=$img_dir.$image->getPath();
+        $i['punit']=$this->format_punit($field,$display,$image->getPlantunit());
+        return $i;
+    }
+
     private function format_image($field,$display,$field_sub,$img_dir,$image)
     {
         $i=array();
@@ -833,6 +850,29 @@ class ApiController extends Controller
         }
         $field_sub=$submodule->getProperties();
         switch($submodule->getType()){
+            case 'imageurl':
+                $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
+                    ->field('module')->references($submodule)
+                    ->sort('title1','asc')
+                    ->sort('title2','asc');
+                $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+                try{
+                    $paginator->setMaxPerPage(50);
+                    $paginator->setCurrentPage($page);
+                }
+                catch(\Exception $e){
+                    $this->return_404_not_found('Page "'.$page.'" not found.');
+                    exit;
+                }
+                $result['pager']=$this->format_pager($paginator);
+                $img_dir=$this->get('router')->generate('front_index',array(),true).'uploads/'.$submodule->getUploaddir().'/';
+                $result['data']=array();
+                $images=$paginator->getCurrentPageResults();
+                foreach($images as $image){
+                    $result['data'][]=$this->format_imageurl($field,$display,$field_sub,$img_dir,$image);
+                }
+                break;
+
             case 'image':
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
                     ->field('module')->references($submodule)

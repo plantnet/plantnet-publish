@@ -169,33 +169,11 @@ escape_wsse_authentication:
 
 nelmio_api_doc: ~
 
-raul_fraile_ladybug:  
-    #general:              
-    #    expanded: true 
-    #object:               
-    #    max_nesting_level: 3 
-    #    show_data: true 
-    #    show_classinfo: true 
-    #    show_constants: true 
-    #    show_methods: true 
-    #    show_properties: true 
-    #array:                
-    #    max_nesting_level: 8 
-    #processor:            
-    #    active: true 
-    #bool:                 
-    #    html_color: #008 
-    #    cli_color: blue 
-    #float:                
-    #    html_color: #800 
-    #    cli_color: red 
-    #int:                  
-    #    html_color: #800 
-    #    cli_color: red 
-    #string:               
-    #    html_color: #080 
-    #    cli_color: green 
-    #    show_quotes: true
+raul_fraile_ladybug:
+    theme: modern # select the theme: base, modern or custom themes
+    expanded: false # true to expand all the variables tree by default
+    silenced: false # true to ignore all ladybug calls
+    object_max_nesting_level: 3
 
 liip_imagine:
     #cache_clearer: false

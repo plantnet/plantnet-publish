@@ -133,6 +133,16 @@ class Module
 
     /**
      * @MongoDB\ReferenceMany(
+     *      targetDocument="Imageurl",
+     *      mappedBy="module",
+     *      cascade={"remove"}
+     *  )
+     */
+    private $imagesurl = array();
+
+
+    /**
+     * @MongoDB\ReferenceMany(
      *      targetDocument="Location",
      *      mappedBy="module",
      *      cascade={"remove"}
@@ -643,6 +653,50 @@ class Module
     {
         return $this->images;
     }
+
+
+    // ---------------
+
+    /**
+     * Add imagesurl
+     *
+     * @param Plantnet\DataBundle\Document\Imageurl $imagesurl
+     */
+    public function addImageurl(\Plantnet\DataBundle\Document\Imageurl $imagesurl)
+    {
+        $this->imagesurl[] = $imagesurl;
+    }
+
+    /**
+     * Remove imagesurl
+     *
+     * @param <variableType$imagesurl
+     */
+    public function removeImageurl(\Plantnet\DataBundle\Document\Imageurl $imagesurl)
+    {
+        $this->imagesurl->removeElement($imagesurl);
+    }
+
+    /**
+     * Add imagesurl
+     *
+     * @param Plantnet\DataBundle\Document\Imageurl $imagesurl
+     */
+    public function addimagesurl(\Plantnet\DataBundle\Document\Imageurl $imagesurl)
+    {
+        $this->imagesurl[] = $imagesurl;
+    }
+
+    /**
+     * Get imagesurl
+     *
+     * @return Doctrine\Common\Collections\Collection $imagesurl
+     */
+    public function getimagesurl()
+    {
+        return $this->imagesurl;
+    }
+    //-----------
 
     /**
      * Add locations

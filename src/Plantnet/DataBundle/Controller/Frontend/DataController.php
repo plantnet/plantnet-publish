@@ -26,6 +26,12 @@ use Plantnet\DataBundle\Utils\ControllerHelp;
  */
 class DataController extends Controller
 {
+    function mylog($data,$data2=null,$data3=null){
+        if( $data != null){
+            $this->get('ladybug')->log(func_get_args());
+        }
+    }
+
     private function get_prefix()
     {
         return $this->container->getParameter('mdb_base').'_';
@@ -68,8 +74,7 @@ class DataController extends Controller
         //
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
-        $collections=$dm->getRepository('PlantnetDataBundle:Collection')
-            ->findAll();
+        $collections=$dm->getRepository('PlantnetDataBundle:Collection')->findAll();
         $page=$dm->getRepository('PlantnetDataBundle:Page')
             ->findOneBy(array(
                 'alias'=>'home'
@@ -79,7 +84,14 @@ class DataController extends Controller
         }
         //
         $images=array();
+        $imagesurl=array();
         $coll=null;
+
+        // pour le chemin de la mignature de image distante
+        $imgurl_coll = null;
+        $imgurl_mod = null;
+        $imgurl_ssmod = null;
+
         foreach($collections as $collection){
             $collection->setDescription(ControllerHelp::glossarize($dm,$collection,$collection->getDescription()));
             $coll=$collection;
@@ -108,6 +120,28 @@ class DataController extends Controller
                                 }
                             }
                         }
+
+                        if(!$child->getDeleting()&&$child->getType()=='imageurl'){
+
+                            $skip=rand(0,($child->getNbrows()-1-$limit));
+                            $tmp_imagesurl=$dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
+                                ->field('module')->references($child)
+                                ->sort('_id','asc')
+                                ->limit($limit)
+                                ->skip($skip)
+                                ->getQuery()
+                                ->execute();
+
+                            foreach($tmp_imagesurl as $imgurl){
+                                if(!isset($imagesurl[$module->getId()])){
+                                    $imagesurl[$module->getId()]=array();
+                                }
+                                $imagesurl[$module->getId()][]=$imgurl;
+                            }
+                            $imgurl_coll = $coll->getName();
+                            $imgurl_mod = $module->getName();
+                            $imgurl_ssmod = $child->getName();
+                        }
                     }
                 }
             }
@@ -116,14 +150,19 @@ class DataController extends Controller
         //
         $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
+
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').':project.html.twig',array(
             'config'=>$config,
             'project'=>$project,
             'page'=>$page,
             'collections'=>$collections,
             'images'=>$images,
+            'imagesurl'=>$imagesurl,
             'translations'=>$translations,
-            'current'=>'project'
+            'current'=>'project',
+            'imgurl_coll'=>$imgurl_coll,
+            'imgurl_mod'=>$imgurl_mod,
+            'imgurl_ssmod'=>$imgurl_ssmod
         ));
     }
 
@@ -171,6 +210,12 @@ class DataController extends Controller
         }
         //
         $images=array();
+        // pour images distantes
+        $imgurl_coll = null ;
+        $imgurl_mod = null ;
+        $imgurl_ssmod = null ;
+        $imagesurl = array();
+
         $collection->setDescription(ControllerHelp::glossarize($dm,$collection,$collection->getDescription()));
         $modules=$collection->getModules();
         foreach($modules as $module){
@@ -196,6 +241,27 @@ class DataController extends Controller
                                 $images[$module->getId()][]=$img;
                             }
                         }
+                    }elseif(!$child->getDeleting()&&$child->getType()=='imageurl'){
+                        $limit=10;
+                        $skip=rand(0,($child->getNbrows()-1-$limit));
+                        if($skip>0){
+                            $tmp_imagesurl=$dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
+                                ->field('module')->references($child)
+                                ->sort('_id','asc')
+                                ->limit($limit)
+                                ->skip($skip)
+                                ->getQuery()
+                                ->execute();
+                            foreach($tmp_imagesurl as $imgurl){
+                                if(!isset($imagesurl[$module->getId()])){
+                                    $imagesurl[$module->getId()]=array();
+                                }
+                                $imagesurl[$module->getId()][]=$imgurl;
+                            }
+                            $imgurl_coll = $collection->getName();
+                            $imgurl_mod = $module->getName();
+                            $imgurl_ssmod = $child->getName();
+                        }
                     }
                 }
             }
@@ -208,8 +274,12 @@ class DataController extends Controller
             'project'=>$project,
             'collection'=>$collection,
             'images'=>$images,
+            'imagesurl'=>$imagesurl,
             'translations'=>$translations,
-            'current'=>'collection'
+            'current'=>'collection',
+            'imgurl_coll'=>$imgurl_coll,
+            'imgurl_mod'=>$imgurl_mod,
+            'imgurl_ssmod'=>$imgurl_ssmod
         ));
     }
 
@@ -405,12 +475,22 @@ class DataController extends Controller
                 $display[]=$row->getId();
             }
         }
+
+        $modgettype = $module->getType() ;
+
         switch($module->getType()){
-            case 'image':
-                $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-                    ->field('module')->references($module)
-                    ->sort('title1','asc')
-                    ->sort('title2','asc');
+            case 'image':case 'imageurl':
+                if($module->getType() == 'image') {
+                    $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Image')
+                        ->field('module')->references($module)
+                        ->sort('title1', 'asc')
+                        ->sort('title2', 'asc');
+                }else{
+                    $queryBuilder = $dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
+                        ->field('module')->references($module)
+                        ->sort('title1', 'asc')
+                        ->sort('title2', 'asc');
+                }
                 /*
                 // pour trouver les images manquantes avant export IDAO
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
@@ -818,6 +898,17 @@ class DataController extends Controller
         if($start+$max_per_page>=count($images)){
             $next=-1;
         }
+        $imagesurl=$dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
+            ->field('plantunit.id')->equals($plantunit->getId())
+            ->sort('module.id','asc')
+            ->limit($max_per_page)
+            ->skip($start)
+            ->getQuery()
+            ->execute();
+        $nexturl=$page+1;
+        if($start+$max_per_page>=count($imagesurl)){
+            $nexturl=-1;
+        }
         $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Plantunit:details_gallery.html.twig',array(
@@ -827,7 +918,9 @@ class DataController extends Controller
             'module'=>$module,
             'plantunit'=>$plantunit,
             'images'=>$images,
-            'next'=>$next
+            'next'=>$next,
+            'imagesurl'=>$imagesurl,
+            'nexturl'=>$nexturl
         ));
     }
 
@@ -1137,6 +1230,7 @@ class DataController extends Controller
                 'title3'=>1
             );
             $img_filters=array();
+            $imgurl_filters=array();
             $loc_filters=array();
             $other_filters=array();
             //
@@ -1174,6 +1268,19 @@ class DataController extends Controller
             $tmp_ids=array();
             if(count($img_filters)){
                 $ids=$dm->createQueryBuilder('PlantnetDataBundle:Image')
+                    ->hydrate(false)
+                    ->select('plantunit');
+                foreach($img_filters as $filter=>$active){
+                    $ids->addOr($ids->expr()->field($filter)->in(array($string)));
+                }
+                $ids=$ids->getQuery()
+                    ->execute();
+                foreach($ids as $id){
+                    $tmp_ids[]=$id['plantunit']['$id'].'';
+                }
+            }
+            if(count($imgurl_filters)){
+                $ids=$dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
                     ->hydrate(false)
                     ->select('plantunit');
                 foreach($img_filters as $filter=>$active){

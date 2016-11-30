@@ -15,7 +15,7 @@ class TwigPregExtension extends \Twig_Extension
             'truncate'=>new \Twig_Filter_Method($this,'truncate'),
             'fileexists'=>new \Twig_Filter_Method($this,'fileexists'),
             'cleandesc'=>new \Twig_Filter_Method($this,'cleandesc'),
-            'addLinks'=>new \Twig_Filter_Method($this,'addLinks'),
+            'addLinks'=>new \Twig_Filter_Method($this,'addLinks')
         );
     }
 
@@ -83,5 +83,6 @@ class TwigPregExtension extends \Twig_Extension
     {
         return preg_replace('/https?:\/\/[\w\-\.!~?=&+\*\'"(),\/]+/','<a href="$0" target="_blank">$0</a>',$string);
     }
+
 }
 

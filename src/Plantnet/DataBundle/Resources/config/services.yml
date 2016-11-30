@@ -1,0 +1,39 @@
+# src/OC/PlatformBundle/Resources/config/services.yml
+# src/Plantnet/DataBundle/Resources/config/services.yml
+
+# plantnet.myservice est le nom de notre service fraîchement créé.
+# De cette manière, le service sera accessible via $container->get('plantnet.myservice');
+#
+# classe du service
+#<?php
+# // src/Plantnet/DataBundle/Monservice/Monservice.php
+# namespace Plantnet\DataBundle\Monservice;
+# class Monservice {
+#
+#    private $mailer;
+#    private $minLength;
+#
+#    public function __construct(\Swift_Mailer $mailer, $minLength){
+#      $this->mailer    = $mailer;
+#      $this->minLength = (int) $minLength;
+#    }
+#
+#    public function myFct(){
+#       return true ;
+#    }
+# }
+# ?>
+#
+# utilisation du service dans un controller par exemple
+# $monserv = $this->get('plantnet.myservice');
+# $monserv->myFct();
+#
+# services:
+#    plantnet.myservice:
+#         class: Plantnet\DataBundle\Monservice\Monservice
+#         arguments: [@mailer,50] # Tableau d'arguments
+#
+#
+#services:
+#    plantnet_data.service:
+#        class: Plantnet\DataBundle\Service\OCAntispam

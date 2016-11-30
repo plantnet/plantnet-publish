@@ -16,6 +16,14 @@
 						</a>
 					</li>
 				{% endfor %}
+				{% for child in module.children if (child.type == 'imageurl' and child.deleting != true and child.wsonly != true) %}
+					<li class="child">
+						<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
+							<i class="icon-camera"></i>
+							{{ child.name }}
+						</a>
+					</li>
+				{% endfor %}
 				{% for child in module.children if (child.type == 'locality' and child.deleting != true and child.wsonly != true) %}
 					<li class="child">
 						<a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">

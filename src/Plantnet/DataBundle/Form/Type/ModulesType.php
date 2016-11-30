@@ -45,6 +45,13 @@ class ModulesType extends AbstractType
                 ))
             ;
         }
+        elseif($module->getType()=='imageurl'){
+            $builder
+                ->add('properties','collection',array(
+                    'type'=>new PropertiesImageurlType(),
+                ))
+            ;
+        }
         else{
             $builder
                 ->add('properties','collection',array(

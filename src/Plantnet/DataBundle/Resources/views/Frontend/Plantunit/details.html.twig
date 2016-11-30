@@ -164,6 +164,7 @@
             </div>
         {% endif %}
         {% if plantunit.hasimages == true %}
+            hasimages
             <div class="gallery">
                 <h5>{{ "line-gallery"|trans|capitalize }}</h5>
                 <ul id="list_gallery" class="thumbnails per3">
@@ -176,6 +177,22 @@
                 </ul>
             </div>
         {% endif %}
+
+        {% if plantunit.hasimagesurl == true %}
+            hasimagesurl
+            <div class="gallery">
+                <h5>{{ "line-gallery"|trans|capitalize }}</h5>
+                <ul id="list_gallery" class="thumbnails per3">
+                    <li>
+                        <a href="#" class="end_of_gallery_load"></a>
+                    </li>
+                    <li>
+                        <a href="{{ path('front_details_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}/page0" id="end_of_gallery"></a>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+
     </section>
 {% endblock %}
 {% block javascripts %}
@@ -185,6 +202,7 @@
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/jquery-ui-1.9.2.custom.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/plantnetdata/js/iviewer-master/jquery.iviewer.min.js') }}"></script>
     <script type="text/javascript">
+
         function isOnScreen(elem)
         {
             var docViewTop=$(window).scrollTop();
@@ -194,7 +212,15 @@
         }
         function displayGallery()
         {
+
+            console.log("display gallery");
+            console.log("length : "+ $('#end_of_gallery').length );
+            console.log( $('#end_of_gallery').attr('href') );
+
             if($('#end_of_gallery').length>0&&isOnScreen($('#end_of_gallery'))){
+
+                console.log("end of gallery");
+
                 var data_url=$('#end_of_gallery').attr('href');
                 $('#end_of_gallery').parents('li').remove();
                 $.ajax({
@@ -217,12 +243,14 @@
                     $('a.grouped_elements').removeClass('grouped_elements');
                     $('a.html-box').fancybox({
                         onStart:function(){
+                            alert("onstart");
                             var width=$(window).width();
                             var height=$(window).height();
                             $('.viewer').width(Math.round(width*85/100));
                             $('.viewer').height(Math.round(height*75/100));
                         },
                         onComplete:function(){
+                            alert(img_src);
                             var id=$(this).attr('href');
                             var img_src=$(id).attr('data-src');
                             id=id.replace('#','v_');

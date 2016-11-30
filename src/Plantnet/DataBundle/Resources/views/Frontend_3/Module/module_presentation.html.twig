@@ -11,6 +11,17 @@
         {% endfor %}
     {% endif %}
 {% endfor %}
+
+
+<!-- pour les images locales distantes -->
+{% set imgsurl = [] %}
+{% for tmp_mod_key, tmp_mod in imagesurl if imgsurl|length < nb_img %}
+    {% if tmp_mod_key == module.id %}
+        {% for image in tmp_mod if imgsurl|length < nb_img %}
+            {% set imgsurl = imgsurl|merge([image]) %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
 <h3>
     <a href="{{ path('front_module', { 'project': project, 'collection': collection.url, 'module':module.url }) }}">
         {{ module.name }}
@@ -59,6 +70,19 @@
                         </span>
                     </div>
                 {% endfor %}
+                {% for child in module.children if (child.type == 'imageurl' and child.deleting != true and child.wsonly != true) %}
+                    <div>
+                        <i class="icon-camera"></i>
+                        <h5>
+                            <a href="{{ path('front_submodule', { 'project': project, 'collection': collection.url, 'module': module.url, 'submodule': child.url }) }}">
+                                {{ child.name }}
+                            </a>
+                        </h5>
+                        <span class="badge pop-tooltip" data-toggle="tooltip" title="{{ child.nbrows }} {{ "line-images-distantes"|trans }}">
+                            {{ child.nbrows }}
+                        </span>
+                    </div>
+                {% endfor %}
                 {% for child in module.children if (child.type == 'locality' and child.deleting != true and child.wsonly != true) %}
                     <div>
                         <i class="icon-map-marker"></i>
@@ -93,4 +117,16 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="media">
+    {% if imgsurl|length > 0 %}
+        <div class="pull-right">
+            {% for image in imgsurl %}
+                {% set img = image.path %}
+                <img src="/geturlimage.php?src={{ asset(img) |url_encode }}&coll={{ imgurl_coll|url_encode }}&mod={{ imgurl_mod|url_encode }}&ssmod={{ imgurl_ssmod|url_encode }}&width=130&height=75"
+                     class="img-polaroid img-tooltip img_module" data-toggle="tooltip" title="{{ image.title1 }} {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} {{ image.title3 }}{% endif %}" width="130" height="75" />
+            {% endfor %}
+        </div>
+    {% endif %}
 </div>

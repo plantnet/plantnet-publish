@@ -4,6 +4,7 @@
 	{{ parent() }}
 {% endblock %}
 {% block content %}
+
 	<ul class="breadcrumb">
         <li>
             <a href="{{ path('admin_collection_view', { 'collection': collection.url }) }}">
@@ -27,11 +28,19 @@
                 {{ pagerfanta(paginator, 'twitter_bootstrap') }}
             </div>
 			{% for row in paginator %}
-				{% set imgspe = row.path|basename %}
-				{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
-				<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ row.copyright }}">
-					<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" border="0" />
-				</a>
+				{% if module_type == 'imageurl' %}
+					{% set img = row.path %}
+					<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ row.copyright }}">
+						<img src="/geturlimage.php?src={{ asset(img) |url_encode }}&coll={{ collection.name|url_encode }}&mod={{ module_parent.name|url_encode }}&ssmod={{ module.name|url_encode }}&width=100&height=130" alt="{{ asset(img) }}" border="5px" />
+					</a>
+				{% else %}
+					{% set imgspe = row.path|basename %}
+					{% set img = ['uploads/'~module.uploaddir~'/', imgspe]|join('') %}
+					<a href="{{ asset(img) }}" class="grouped_elements" rel="group" title="{{ row.copyright }}">
+						<img src="{{ asset(img) | imagine_filter('thumb_100_100') }}" alt="{{ imgspe }}" border="0" />
+					</a>
+				{% endif %}
+
 			{% endfor %}
 		{% endif %}
 	</div>
