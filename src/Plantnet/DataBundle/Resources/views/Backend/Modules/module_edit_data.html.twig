@@ -22,7 +22,7 @@
                 <br />
                 You must run manually these tasks (taxonomy, synonymy, taxa description).
             </p>
-        {% elseif module.type == 'image' %}
+        {% elseif module.type == 'image' or module.type == 'imageurl'%}
             <p>
                 After updating data, taxonomy is deleted.
                 <br />
@@ -125,10 +125,10 @@
                 </tbody>
             </table>
             <form action="{{ path('module_update_data', { 'id': module.id }) }}" method="post" {{ form_enctype(form) }}>
-                {{ form_errors(form) }}
+                <span class="label label-danger">{{ form_errors(form) }}</span>
                 <div class="field-form">
                     {{ form_label(form.file, 'CSV data') }}
-                    {{ form_errors(form.file) }}
+                    <span class="label label-danger">{{ form_errors(form.file) }}</span>
                     {{ form_widget(form.file) }}
                 </div>
                 {{ form_rest(form) }}

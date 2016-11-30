@@ -1,6 +1,8 @@
 {% block main %}{% endblock %}
 {% block javascripts %}
     <script type="text/javascript">
+        console.log("ajax datatypes;");
+
         $('.pagerfanta').first().on('click','a', function(event){
             event.preventDefault();
             if($(this).attr('href').length&&$(this).attr('href')!='#'&&!$(this).parent('li').first().hasClass('active')){

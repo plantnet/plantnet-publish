@@ -26,7 +26,7 @@
             {{ form_errors(form) }}
             <div class="field-form">
                 {{ form_label(form.descfile, 'CSV description') }}
-                {{ form_errors(form.descfile) }}
+                <span class="label label-danger"> {{ form_errors(form.descfile) }}</span>
                 {{ form_widget(form.descfile) }}
             </div>
             {{ form_rest(form) }}

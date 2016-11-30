@@ -161,6 +161,12 @@ escape_wsse_authentication:
 
 nelmio_api_doc: ~
 
+raul_fraile_ladybug:
+    theme: modern # select the theme: base, modern or custom themes
+    expanded: false # true to expand all the variables tree by default
+    silenced: false # true to ignore all ladybug calls
+    object_max_nesting_level: 3
+
 liip_imagine:
     # cache_clearer: false
     # cache_mkdir_mode: 0777

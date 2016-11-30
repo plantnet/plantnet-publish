@@ -4,6 +4,7 @@
 {% for module in collection.modules if (module.deleting != true and module.wsonly != true) %}
 	{% set tmp_mod_ids = tmp_mod_ids|merge([module.id]) %}
 {% endfor %}
+<!-- pour les images locales -->
 {% for key,tmp_mod in images if (imgs|length < nb_img and key in tmp_mod_ids) %}
 	{% for image in tmp_mod if imgs|length < nb_img %}
 		{% set imgspe = image.path|basename %}
@@ -13,11 +14,23 @@
 		{% endif %}
 	{% endfor %}
 {% endfor %}
+
+<!-- pour les images locales distantes -->
+{% set imgsurl = [] %}
+{% set nb_imgurl = 3 %}
+{% for key,tmp_mod in imagesurl if (imgsurl|length < nb_imgurl and key in tmp_mod_ids) %}
+	{% for image in tmp_mod if imgsurl|length < nb_imgurl %}
+		{% set imgsurl = imgsurl|merge([image]) %}
+	{% endfor %}
+{% endfor %}
+
 <h2>
 	<a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}">
 		{{ collection.name }}
 	</a>
 </h2>
+
+
 <div class="row">
 	<div class="span9">
 		<div class="well">
@@ -45,29 +58,55 @@
 						</div>
 					</div>
 				{% endif %}
+				{% if imgsurl|length > 0 %}
+					<div class="pull-left" style="margin-top: 10px;">
+						<div id="carouselurl_{{ collection.id }}" class="carousel slide img-polaroid">
+							<ol class="carousel-indicators">
+								{% for image in imgsurl %}
+									<li data-target="#carouselurl_{{ collection.id }}" data-slide-to="{{ loop.index0 }}"{% if loop.index0 == 0 %} class="active"{% endif %}></li>
+								{% endfor %}
+							</ol>
+							<div class="carousel-inner">
+								{% for image in imgsurl %}
+									{% set img = image.path %}
+									<div class="{% if loop.index0 == 0 %}active {% endif %}item">
+										<img src="/geturlimage.php?src={{ asset(img) |url_encode }}&coll={{ imgurl_coll|url_encode }}&mod={{ imgurl_mod|url_encode }}&ssmod={{ imgurl_ssmod|url_encode }}&width=370&height=210" alt="{{ image.copyright }}" border="5px" />
+										<div class="carousel-caption">
+											<p>{{ image.title1 }} {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} {{ image.title3 }}{% endif %}</p>
+										</div>
+									</div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				{% endif %}
 				<div class="media-body txt">
 					{% autoescape false %}
 						{{ collection.description }}
 					{% endautoescape %}
 					<a href="{{ path('front_collection', { 'project': project, 'collection': collection.url }) }}" class="btn btn-small pull-right">
-                		{{ "line-details"|trans|capitalize }}
-                	</a>
-                	{% if collection.glossary is not empty %}
+						{{ "line-details"|trans|capitalize }}
+					</a>
+					{% if collection.glossary is not empty %}
 						<a href="{{ path('front_glossary', { 'project': project, 'collection': collection.url }) }}" class="btn btn-small pull-right">
 							{{ "line-glossary"|trans|capitalize }}
 						</a>
 					{% endif %}
 				</div>
 			</div>
+
 		</div>
 	</div>
 	<div class="span3">
 		{% for module in collection.modules if (module.deleting != true and module.wsonly != true) %}
 			{% set nbimg = 0 %}
+			{% set nbimgurl = 0 %}
 			{% set nbloc = 0 %}
 			{% for child in module.children if (child.deleting != true and child.wsonly != true) %}
 				{% if child.type == 'image' %}
 					{% set nbimg = nbimg+child.nbrows %}
+				{% elseif child.type == 'imageurl' %}
+					{% set nbimgurl = nbimgurl+child.nbrows %}
 				{% elseif child.type == 'locality' %}
 					{% set nbloc = nbloc+child.nbrows %}
 				{% endif %}
@@ -89,6 +128,13 @@
 					{{ nbimg }}
 				</span>
 			{% endif %}
+			{% if nbimgurl > 0 %}
+				<span class="badge pop-tooltip" data-toggle="tooltip" title="{{ nbimgurl }} {{ "line-images-distantes"|trans }}">
+					<i class="icon-camera"></i>
+					{{ nbimgurl }}
+				</span>
+			{% endif %}
+
 			{% if nbloc > 0 %}
 				<span class="badge pop-tooltip" data-toggle="tooltip" title="{{ nbloc }} {{ "line-locations"|trans }}">
 					<i class="icon-map-marker"></i>

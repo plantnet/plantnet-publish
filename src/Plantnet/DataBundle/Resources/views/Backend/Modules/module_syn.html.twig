@@ -23,10 +23,10 @@
         </p>
     {% else %}
         <form action="{{ path('module_syn_update', { 'id': module.id }) }}" method="post" {{ form_enctype(form) }}>
-            {{ form_errors(form) }}
+            <span class="label label-danger">{{ form_errors(form) }}</span>
             <div class="field-form">
                 {{ form_label(form.synfile, 'CSV synonymy') }}
-                {{ form_errors(form.synfile) }}
+                <span class="label label-danger">{{ form_errors(form.synfile) }}</span>
                 {{ form_widget(form.synfile) }}
             </div>
             {{ form_rest(form) }}

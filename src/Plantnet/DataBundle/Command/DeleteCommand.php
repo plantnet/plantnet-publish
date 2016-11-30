@@ -13,6 +13,7 @@ use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Plantunit,
     Plantnet\DataBundle\Document\Property,
     Plantnet\DataBundle\Document\Image,
+    Plantnet\DataBundle\Document\Imageurl,
     Plantnet\DataBundle\Document\Location,
     Plantnet\DataBundle\Document\Coordinates,
     Plantnet\DataBundle\Document\Other;
@@ -21,6 +22,12 @@ ini_set('memory_limit','-1');
 
 class DeleteCommand extends ContainerAwareCommand
 {
+    function mylog($data,$data2=null,$data3=null){
+        if( $data != null){
+            $this->get('ladybug')->log(func_get_args());
+        }
+    }
+
     protected function configure()
     {
         $this
@@ -73,6 +80,12 @@ class DeleteCommand extends ContainerAwareCommand
         $this->drop_it($dm,$collection,$module,$dbname);
     }
 
+    private function delete_imageurl($dm,$collection,$module,$dbname,$fast=false)
+    {
+        //todo
+        $this->mylog("delete_imageurl todo");
+
+    }
     private function delete_image($dm,$collection,$module,$dbname,$fast=false)
     {
         $idmodule=$module->getId();
@@ -88,7 +101,7 @@ class DeleteCommand extends ContainerAwareCommand
                     if(count($tmp_children)){
                         foreach($tmp_children as $tmp_child){
                             if($tmp_child->getDeleting()===false){
-                                if($tmp_child->getType()=='image'&&$tmp_child->getId()!=$idmodule){
+                                if(($tmp_child->getType()=='image' || $tmp_child->getType()=='imageurl')  &&$tmp_child->getId()!=$idmodule){
                                     $has_img_child=true;
                                     $img_child_ids[]=$tmp_child->getId();
                                 }
@@ -546,8 +559,14 @@ class DeleteCommand extends ContainerAwareCommand
         }
         //
         switch($module->getType()){
+            case 'imageurl':
+                $this->delete_imageurl($dm,$collection,$module,$dbname,$fast);
+                break;
             case 'image':
                 $this->delete_image($dm,$collection,$module,$dbname,$fast);
+                break;
+            case 'imageurl':
+                $this->delete_imageurl($dm,$collection,$module,$dbname,$fast);
                 break;
             case 'locality':
                 $this->delete_locality($dm,$collection,$module,$dbname,$fast);

@@ -56,6 +56,13 @@ class Plantunit
      */
     private $images = array();
 
+
+    /**
+     * @MongoDB\ReferenceMany(targetDocument="Imageurl", mappedBy="plantunit", cascade={"remove"})
+     */
+    private $imagesurl = array();
+
+
     /**
      * @MongoDB\ReferenceMany(targetDocument="Location", mappedBy="plantunit", cascade={"remove"})
      */
@@ -74,6 +81,11 @@ class Plantunit
     /**
      * @MongoDB\Field(type="bool")ean
      */
+    private $hasimagesurl;
+
+    /**
+     * @MongoDB\Boolean
+     */
     private $haslocations;
 
     /**
@@ -90,6 +102,7 @@ class Plantunit
     {
         $this->files = new \Doctrine\Common\Collections\ArrayCollection();
         $this->images = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->imagesurl = new \Doctrine\Common\Collections\ArrayCollection();
         $this->locations = new \Doctrine\Common\Collections\ArrayCollection();
         $this->others = new \Doctrine\Common\Collections\ArrayCollection();
         $this->taxonsrefs = new \Doctrine\Common\Collections\ArrayCollection();
@@ -336,6 +349,46 @@ class Plantunit
     }
 
     /**
+     * Add imagesurl
+     *
+     * @param Plantnet\DataBundle\Document\Imageurl $imagesurl
+     */
+    public function addImageurl(\Plantnet\DataBundle\Document\Imageurl $imagesurl)
+    {
+        $this->imagesurl[] = $imagesurl;
+    }
+
+    /**
+     * Remove imagesurl
+     *
+     * @param <variableType$imagesurl
+     */
+    public function removeImageurl(\Plantnet\DataBundle\Document\Imageurl $imagesurl)
+    {
+        $this->imagesurl->removeElement($imagesurl);
+    }
+
+    /**
+     * Add imagesurl
+     *
+     * @param Plantnet\DataBundle\Document\Imageurl $imagesurl
+     */
+    public function addImagesurl(\Plantnet\DataBundle\Document\Imageurl $imagesurl)
+    {
+        $this->imagesurl[] = $imagesurl;
+    }
+
+    /**
+     * Get imagesurl
+     *
+     * @return Doctrine\Common\Collections\Collection $imagesurl
+     */
+    public function getImagesurl()
+    {
+        return $this->imagesurl;
+    }
+
+    /**
      * Add locations
      *
      * @param Plantnet\DataBundle\Document\Location $locations
@@ -434,6 +487,27 @@ class Plantunit
     {
         return $this->hasimages;
     }
+
+    /**
+     * Set hasimagesurl
+     *
+     * @param boolean $hasimagesurl
+     */
+    public function setHasimagesurl($hasimagesurl)
+    {
+        $this->hasimagesurl = $hasimagesurl;
+    }
+
+    /**
+     * Get hasimagesurl
+     *
+     * @return boolean $hasimagesurl
+     */
+    public function getHasimagesurl()
+    {
+        return $this->hasimagesurl;
+    }
+
 
     /**
      * Set haslocations

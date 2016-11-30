@@ -23,6 +23,12 @@ ini_set('memory_limit','-1');
 
 class UpdateCommand extends ContainerAwareCommand
 {
+    function mylog($data,$data2=null,$data3=null){
+        if( $data != null){
+            $this->get('ladybug')->log(func_get_args());
+        }
+    }
+
     protected function configure()
     {
         $this

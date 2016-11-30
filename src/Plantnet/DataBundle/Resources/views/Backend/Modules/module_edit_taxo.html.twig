@@ -27,11 +27,11 @@
                 Display / Hide synonyms in taxonomic browser.
             </p>
             <form action="{{ path('module_update_taxo_display_syns', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_display_syns_form) }}>
-                {{ form_errors(edit_display_syns_form) }}
+                <span class="label label-danger">{{ form_errors(edit_display_syns_form) }}</span>
                 {% if entity.type == 'text' %}
                     <div class="field-form">
                         {{ form_label(edit_display_syns_form.displaysyns, 'Display', {'label_attr': {'class': 'inline'}}) }}
-                        {{ form_errors(edit_display_syns_form.displaysyns) }}
+                        <span class="label label-danger">{{ form_errors(edit_display_syns_form.displaysyns) }}</span>
                         {{ form_widget(edit_display_syns_form.displaysyns) }}
                         <button type="submit" class="btn">Update</button>
                     </div>
@@ -61,11 +61,11 @@
                                     {{ property.vars.value }}
                                 </td>
                                 <td class="middle">
-                                    {{ form_errors(property.taxolevel) }}
+                                    <span class="label label-danger">{{ form_errors(property.taxolevel) }}</span>
                                     {{ form_widget(property.taxolevel, {'attr': {'class': 'span1'}}) }}
                                 </td>
                                 <td class="middle">
-                                    {{ form_errors(property.taxolabel) }}
+                                    <span class="label label-danger">{{ form_errors(property.taxolabel) }}</span>
                                     {{ form_widget(property.taxolabel) }}
                                 </td>
                             </tr>

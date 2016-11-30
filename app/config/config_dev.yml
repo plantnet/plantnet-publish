@@ -8,13 +8,14 @@ framework:
 web_profiler:
     toolbar: true
     intercept_redirects: false
+# intercept redirection ici alain
 
 monolog:
     handlers:
         main:
             type: stream
             path: %kernel.logs_dir%/%kernel.environment%.log
-            level: debug
+            level: error
         firephp:
             type: firephp
             level: info

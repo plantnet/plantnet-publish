@@ -24,6 +24,7 @@ use Plantnet\DataBundle\Document\Config,
 //?
 use Plantnet\DataBundle\Document\Plantunit;
 use Plantnet\DataBundle\Document\Image;
+use Plantnet\DataBundle\Document\Imageurl;
 use Plantnet\DataBundle\Document\Location;
 use Plantnet\DataBundle\Document\Other;
 use Plantnet\DataBundle\Document\Database;
@@ -35,6 +36,13 @@ use Plantnet\DataBundle\Document\Database;
  */
 class AdminController extends Controller
 {
+
+    function mylog($data,$data2=null,$data3=null){
+        if( $data != null){
+            $this->get('ladybug')->log(func_get_args());
+        }
+    }
+
     private function database_list()
     {
         //display databases without prefix
@@ -99,6 +107,8 @@ class AdminController extends Controller
      */
     public function indexAction()
     {
+
+        $this->mylog("indexAction");
         $user=$this->container->get('security.context')->getToken()->getUser();
         $this->updateDbList($user);
         $config=null;
@@ -112,6 +122,7 @@ class AdminController extends Controller
             if(!$config){
                 throw $this->createNotFoundException('Unable to find Config entity.');
             }
+            $this->mylog("config",$config);
             $editForm=$this->createForm(new ConfigNameType(),$config);
         }
         return $this->render('PlantnetDataBundle:Backend:index.html.twig',array(
@@ -123,12 +134,16 @@ class AdminController extends Controller
 
     private function updateDbList($user)
     {
+        $this->mylog("updateDbList",$user);
+
         $roles=$user->getRoles();
         if(in_array('ROLE_ADMIN',$roles)&&!in_array('ROLE_SUPER_ADMIN',$roles)){
             $dbs=$user->getDblist();
             if(empty($dbs)){
                 $db=$user->getDbNameUq();
                 if($db){
+                    $this->mylog("updateDbList ROLE_ADMIN",$db);
+
                     $userManager=$this->get('fos_user.user_manager');
                     $dbList=array($this->get_prefix().$db);
                     $user->setDblist($dbList);
@@ -147,6 +162,8 @@ class AdminController extends Controller
      */
     public function config_update_nameAction()
     {
+        $this->mylog("config_update_nameAction");
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -191,6 +208,8 @@ class AdminController extends Controller
      */
     public function collectionAction($collection)
     {
+        $this->mylog("collectionAction init",$collection);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -201,6 +220,9 @@ class AdminController extends Controller
         if(!$collection){
             throw $this->createNotFoundException('Unable to find Collection entity.');
         }
+
+        $this->mylog("collectionAction render",$collection);
+
         return $this->render('PlantnetDataBundle:Backend\Admin:collection.html.twig', array(
             'collection'=>$collection
         ));
@@ -212,6 +234,8 @@ class AdminController extends Controller
      */
     public function moduleAction($collection,$module)
     {
+        $this->mylog("moduleAction init",$collection,$module);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -246,6 +270,9 @@ class AdminController extends Controller
                 $queryBuilder->sort('attributes.'.$prop,'asc');
             }
         }
+
+        $this->mylog("moduleAction render",$collection,$module);
+
         $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
         $paginator->setMaxPerPage(50);
         $paginator->setCurrentPage($this->get('request')->query->get('page',1));
@@ -263,6 +290,9 @@ class AdminController extends Controller
      */
     public function submoduleAction($collection,$module,$submodule)
     {
+        $this->mylog("submoduleAction init",$collection,$module,$submodule);
+
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -297,6 +327,8 @@ class AdminController extends Controller
                 $display[]=$row->getId();
             }
         }
+
+
         switch($mod->getType()){
             case 'image':
                 $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Image')
@@ -312,6 +344,24 @@ class AdminController extends Controller
                     'collection'=>$collection,
                     'module'=>$mod,
                     'module_parent'=>$module,
+                    'module_type' => $mod->getType()
+                ));
+                break;
+            case 'imageurl':
+                $queryBuilder=$dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
+                    ->field('module')->references($mod)
+                    ->sort('title1','asc')
+                    ->sort('title2','asc')
+                    ->hydrate(false);
+                $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($queryBuilder));
+                $paginator->setMaxPerPage(20);
+                $paginator->setCurrentPage($this->get('request')->query->get('page',1));
+                return $this->render('PlantnetDataBundle:Backend\Admin:gallery.html.twig',array(
+                    'paginator'=>$paginator,
+                    'collection'=>$collection,
+                    'module'=>$mod,
+                    'module_parent'=>$module,
+                    'module_type' => $mod->getType()
                 ));
                 break;
             case 'locality':
@@ -445,6 +495,8 @@ class AdminController extends Controller
      */
     public function page_editAction($alias)
     {
+        $this->mylog("page_editAction init",$alias);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -456,6 +508,9 @@ class AdminController extends Controller
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
         $editForm=$this->createForm(new PageType(),$page);
+
+        $this->mylog("page_editAction init",$alias,$page);
+
         return $this->render('PlantnetDataBundle:Backend\Admin:page_edit.html.twig',array(
             'page'=>$page,
             'edit_form'=>$editForm->createView(),
@@ -482,6 +537,9 @@ class AdminController extends Controller
         if(!$page){
             throw $this->createNotFoundException('Unable to find Page entity.');
         }
+
+        $this->mylog("page_updateAction init",$alias,$page);
+
         $editForm=$this->createForm(new PageType(),$page);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
@@ -526,6 +584,8 @@ class AdminController extends Controller
 
     private function createDatabaseNewForm()
     {
+        $this->mylog("createDatabaseNewForm");
+
         //not null, ctype_lower (only lower case letters), 3-50 chars
         return $this->createFormBuilder()
             ->add('dbname','text',array(
@@ -547,8 +607,12 @@ class AdminController extends Controller
      */
     public function database_newAction()
     {
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $form=$this->createDatabaseNewForm();
+
+        $this->mylog("database_newAction",$user,$form);
+
         return $this->render('PlantnetDataBundle:Backend\Admin:database_new.html.twig',array(
             'form'=>$form->createView()
         ));
@@ -563,6 +627,9 @@ class AdminController extends Controller
      */
     public function collection_createAction(Request $request)
     {
+
+        $this->mylog("collection_createAction init",$request);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $form=$this->createDatabaseNewForm();
         $roles=$user->getRoles();
@@ -595,6 +662,9 @@ class AdminController extends Controller
                     $database->setDisplayedname(ucfirst($dbName->getData()));
                     $database->setLink($dbName->getData());
                     $database->setLanguage($language->getData());
+
+                    $this->mylog("collection_createAction new db",$new_db);
+
                     $dm->persist($database);
                     $dm->flush();
                     //create new database
@@ -607,6 +677,7 @@ class AdminController extends Controller
                     $db->createCollection('Definition');
                     $db->createCollection('Glossary');
                     $db->createCollection('Image');
+                    $db->createCollection('Imageurl');
                     $db->createCollection('Location');
                     $db->createCollection('Other');
                     $db->createCollection('Module');
@@ -614,13 +685,14 @@ class AdminController extends Controller
                     $db->createCollection('Taxon');
                     $db->createCollection('Page');
                     //indexes
-                    $db->Image->ensureIndex(array('title1'=>1,'title2'=>1));
-                    $db->Location->ensureIndex(array('coordinates'=>'2d'));
-                    // $db->Plantunit->ensureIndex(array('attributes'=>'text'));
-                    $db->Taxon->ensureIndex(array('name'=>1));
-                    $db->Taxon->ensureIndex(array('identifier'=>1));
-                    $db->Plantunit->ensureIndex(array('identifier'=>1));
-                    $db->Plantunit->ensureIndex(array('taxonsrefs.$id'=>1));
+                    $db->Image->ensureIndex(array("title1"=>1,"title2"=>1));
+                    $db->Imageurl->ensureIndex(array("title1"=>1,"title2"=>1));
+                    $db->Location->ensureIndex(array("coordinates"=>"2d"));
+                    // $db->Plantunit->ensureIndex(array("attributes"=>"text"));
+                    $db->Taxon->ensureIndex(array("name"=>1));
+                    $db->Taxon->ensureIndex(array("identifier"=>1));
+                    $db->Plantunit->ensureIndex(array("identifier"=>1));
+                    $db->Plantunit->ensureIndex(array("taxonsrefs.$id"=>1));
                     //pages data
                     $ref_array = array('name'=>'Home','alias'=>'home','order'=>1);
 					$db->Page->insert($ref_array);
@@ -637,7 +709,7 @@ class AdminController extends Controller
                         'originaldb'=>$new_db,
                         'name'=>ucfirst($dbName->getData())
                     );
-                    $db->Config->insert($ref_array);
+                    $this->mylog("collection_createAction ajout collection");
                     //update user account
                     $userManager=$this->get('fos_user.user_manager');
                     $db_list=$user->getDblist();
@@ -660,6 +732,8 @@ class AdminController extends Controller
      */
     public function database_switchAction($database)
     {
+        $this->mylog("database_switchAction init",$database);
+
         $userManager=$this->get('fos_user.user_manager');
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');

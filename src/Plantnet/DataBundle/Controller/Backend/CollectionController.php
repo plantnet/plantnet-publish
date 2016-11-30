@@ -22,6 +22,13 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class CollectionController extends Controller
 {
+
+    function mylog($data,$data2=null,$data3=null){
+        if( $data != null){
+            $this->get('ladybug')->log(func_get_args());
+        }
+    }
+
     private function getDataBase($user=null,$dm=null)
     {
         if($user){
@@ -35,6 +42,8 @@ class CollectionController extends Controller
 
     public function collection_listAction()
     {
+        $this->mylog("collection_listAction");
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -56,6 +65,8 @@ class CollectionController extends Controller
      */
     public function collection_newAction()
     {
+        $this->mylog("collection_newAction");
+
         $document=new Collection();
         $form=$this->createForm(new CollectionType(),$document);
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_new.html.twig',array(
@@ -73,6 +84,8 @@ class CollectionController extends Controller
      */
     public function collection_createAction()
     {
+        $this->mylog("collection_createAction");
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -130,6 +143,8 @@ class CollectionController extends Controller
      */
     public function collection_editAction($id)
     {
+        $this->mylog("collection_editAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -158,6 +173,8 @@ class CollectionController extends Controller
      */
     public function collection_updateAction($id)
     {
+        $this->mylog("collection_updateAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -208,6 +225,9 @@ class CollectionController extends Controller
      */
     public function collection_deleteAction($id)
     {
+        $this->mylog("collection_deleteAction",$id);
+
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -228,7 +248,10 @@ class CollectionController extends Controller
                 $dm->flush();
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+
+                echo "<br>ModulesController.php:module_desc_deleteAction:  ".$command;
+
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Collection deleted');

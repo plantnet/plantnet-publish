@@ -12,6 +12,7 @@ use Plantnet\DataBundle\Document\Module;
 use Plantnet\DataBundle\Document\Property;
 use Plantnet\DataBundle\Document\File;
 use Plantnet\DataBundle\Document\Image;
+use Plantnet\DataBundle\Document\Imageurl;
 use Symfony\Component\HttpFoundation\Response;
 
 use Pagerfanta\Pagerfanta;

@@ -35,6 +35,13 @@ class ImportFormType extends AbstractType
                 ))
             ;
         }
+        elseif($module->getType()=='imageurl'){
+            $builder
+                ->add('properties','collection',array(
+                    'type'=>new Type\PropertiesImageurlType(),
+                ))
+            ;
+        }
         else{
             $builder
                 ->add('properties','collection',array(

@@ -40,6 +40,13 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class ModulesController extends Controller
 {
+
+    function mylog($data,$data2=null,$data3=null){
+        if( $data != null){
+            $this->get('ladybug')->log(func_get_args());
+        }
+    }
+
     private function getDataBase($user=null,$dm=null)
     {
         if($user){
@@ -59,6 +66,8 @@ class ModulesController extends Controller
      */
     public function module_newAction($id,$type)
     {
+        $this->mylog("module_newAction",$id,$type);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -125,6 +134,7 @@ class ModulesController extends Controller
         }
         $form=$this->createForm(new ModuleFormType(),$module,array('idparent'=>$idparent));
         if('POST'===$request->getMethod()){
+
             $form->bind($request);
             $check_name=$module->getName();
             $url=$module->getUrl();
@@ -203,9 +213,33 @@ class ModulesController extends Controller
                         if($nb_uploaddirs>0){
                             $checked_upload_dir=false;
                         }
+                    }elseif($module->getType()=='imageurl'){
+                        $idparent=$request->request->get('modules');
+                        if(array_key_exists('parent',$idparent)&&$idparent['parent']!=null){
+                            $module_parent=$dm->getRepository('PlantnetDataBundle:Module')->find($idparent['parent']);
+                            $module->setParent($module_parent);
+                        }
+                        $module->setUploaddir($collection->getAlias().'_'.$module->getParent()->getAlias().'_'.$module->getAlias());
+                        $idsup=$request->request->get('modules');
+                        $idsup=$idsup['parent'];
+                        $nb_uploaddirs=$dm->createQueryBuilder('PlantnetDataBundle:Module')
+                            ->field('collection')->references($collection)
+                            ->field('parent.id')->equals($idsup)
+                            ->field('uploaddir')->equals($module->getUploaddir())
+                            ->hydrate(true)
+                            ->getQuery()
+                            ->execute()
+                            ->count();
+                        if($nb_uploaddirs>0){
+                            $checked_upload_dir=false;
+                        }
+
+                        $this->mylog("imageurl modules 247 ",$nb_uploaddirs);
                     }
                     if($checked_upload_dir){
+                        $this->mylog("checked_upload_dir");
                         if($form->isValid()){
+                            $this->mylog("form isvalid");
                             $dm=$this->get('doctrine.odm.mongodb.document_manager');
                             $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                             $module->setCollection($collection);
@@ -233,6 +267,7 @@ class ModulesController extends Controller
                             $csv=__DIR__.'/../../Resources/uploads/'.$module->getCollection()->getAlias().'/'.$module->getAlias().'.csv';
                             $handle=fopen($csv, "r");
                             $field=fgetcsv($handle,0,";");
+
                             foreach($field as $col){
                                 $property=new Property();
                                 $cur_encoding=mb_detect_encoding($col);
@@ -287,6 +322,8 @@ class ModulesController extends Controller
      */
     public function fields_typeAction($id,$idmodule)
     {
+        $this->mylog("fields_typeAction",$id,$idmodule);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -322,6 +359,8 @@ class ModulesController extends Controller
      */
     public function save_fieldsAction($id,$idmodule)
     {
+        $this->mylog("save_fieldsAction",$id,$idmodule);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -355,6 +394,11 @@ class ModulesController extends Controller
                     'file'=>0,
                     'copyright'=>0,
                 ),
+                'imageurl'=>array(
+                    'idparent'=>0,
+                    'url'=>0,
+                    'copyright'=>0,
+                ),
                 'locality'=>array(
                     'idparent'=>0,
                     'lon'=>0,
@@ -364,21 +408,26 @@ class ModulesController extends Controller
                     'idparent'=>0,
                 ),
             );
+
             $data=$request->request->all();
             $data=$data['modules']['properties'];
             foreach($data as $prop){
                 foreach($prop as $key=>$val){
+
                     if($key=='type'&&!empty($val)){
                         $required[$module->getType()][$val]=$required[$module->getType()][$val]+1;
                     }
                 }
             }
+
             $error=false;
             foreach($required[$module->getType()] as $key=>$val){
+                $this->mylog("key val",$key,$val);
                 if($val!=1){
                     $error=true;
                 }
             }
+            $this->mylog("error",$error);
             $form->bind($request);
             if(!$error){
                 if($form->isValid()){
@@ -410,6 +459,8 @@ class ModulesController extends Controller
      */
     public function import_dataAction($id,$idmodule)
     {
+        $this->mylog("import_dataAction",$id,$idmodule);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -445,6 +496,7 @@ class ModulesController extends Controller
      */
     public function importationAction($id, $idmodule)
     {
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -565,7 +617,10 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+
+                echo "<br>ModulesController.php:importationAction:  ".$command;
+
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:import_moduledata.html.twig',array(
@@ -597,6 +652,8 @@ class ModulesController extends Controller
      */
     public function module_editAction($id)
     {
+        $this->mylog("module_editAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -623,6 +680,8 @@ class ModulesController extends Controller
      */
     public function module_updateAction($id)
     {
+        $this->mylog("module_updateAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -722,6 +781,8 @@ class ModulesController extends Controller
      */
     public function module_edit_taxoAction($id)
     {
+        $this->mylog("module_edit_taxoAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -767,6 +828,8 @@ class ModulesController extends Controller
      */
     public function module_update_taxoAction($id)
     {
+        $this->mylog("module_update_taxoAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -794,7 +857,10 @@ class ModulesController extends Controller
                 $dm->flush();
                 //command
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' clean &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' clean &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+
+                echo "<br>ModulesController.php:module_update_taxoAction:  ".$command;
+
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -816,6 +882,8 @@ class ModulesController extends Controller
      */
     public function module_update_taxo_display_synsAction($id)
     {
+        $this->mylog("module_update_taxo_display_synsAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -843,6 +911,8 @@ class ModulesController extends Controller
 
     private function createDeleteSynForm($id)
     {
+        $this->mylog("createDeleteSynForm",$id);
+
         return $this->createFormBuilder(array('id'=>$id))
             ->add('id','hidden')
             ->getForm();
@@ -850,6 +920,7 @@ class ModulesController extends Controller
 
     private function createDeleteDescForm($id)
     {
+        $this->mylog("createDeleteDescForm",$id);
         return $this->createFormBuilder(array('id'=>$id))
             ->add('id','hidden')
             ->getForm();
@@ -863,6 +934,8 @@ class ModulesController extends Controller
      */
     public function module_synAction($id)
     {
+        $this->mylog("module_synAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -888,6 +961,8 @@ class ModulesController extends Controller
      */
     public function module_descAction($id)
     {
+        $this->mylog("module_descAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -914,6 +989,7 @@ class ModulesController extends Controller
      */
     public function module_syn_updateAction($id)
     {
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -948,7 +1024,10 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon syn '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon syn '.$id.' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+
+                echo "<br>ModulesController.php:module_syn_updateAction:  ".$command;
+
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -970,6 +1049,8 @@ class ModulesController extends Controller
      */
     public function module_desc_updateAction($id)
     {
+        $this->mylog("module_desc_updateAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1004,7 +1085,10 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon desc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon desc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+
+                echo "<br>ModulesController.php:module_desc_updateAction:  ".$command;
+
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -1025,6 +1109,8 @@ class ModulesController extends Controller
      */
     public function module_syn_deleteAction($id)
     {
+        $this->mylog("module_syn_deleteAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1050,7 +1136,10 @@ class ModulesController extends Controller
                     $dm->flush();
                     //command
                     $kernel=$this->get('kernel');
-                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+
+                    echo "<br>ModulesController.php:module_syn_deleteAction:  ".$command;
+
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
                     $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -1068,6 +1157,8 @@ class ModulesController extends Controller
      */
     public function module_desc_deleteAction($id)
     {
+        $this->mylog("module_desc_deleteAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1093,7 +1184,10 @@ class ModulesController extends Controller
                     $dm->flush();
                     //command
                     $kernel=$this->get('kernel');
-                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon undesc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon undesc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+
+                    echo "<br>ModulesController.php:module_desc_deleteAction:  ".$command;
+
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
                     $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -1111,6 +1205,8 @@ class ModulesController extends Controller
      */
     public function module_deleteAction($id)
     {
+        $this->mylog("module_deleteAction",$id);
+
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1129,7 +1225,10 @@ class ModulesController extends Controller
                 $dm->flush();
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+
+                echo "<br>ModulesController.php:module_desc_deleteAction:  ".$command;
+
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Module deleted');
@@ -1147,6 +1246,9 @@ class ModulesController extends Controller
 
     private function update_indexes($module)
     {
+        $this->mylog("update_indexes",$module);
+
+
         if($module){
             ini_set('memory_limit','-1');
             $user=$this->container->get('security.context')->getToken()->getUser();
@@ -1228,6 +1330,8 @@ class ModulesController extends Controller
      */
     public function module_edit_dataAction($id)
     {
+        $this->mylog("module_edit_dataAction",$id);
+
         $limit=200000;
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -1311,7 +1415,10 @@ class ModulesController extends Controller
                     $dm->flush();
                     $user=$this->container->get('security.context')->getToken()->getUser();
                     $kernel=$this->get('kernel');
-                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+
+                    echo "<br>ModulesController.php:module_update_dataAction:  ".$command;
+
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
                     $this->get('session')->getFlashBag()->add('msg_success','Updating data.');

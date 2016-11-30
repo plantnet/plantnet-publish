@@ -61,41 +61,41 @@
             {{ form_errors(form) }}
             <div class="field-form" id="txt-container">
                 {{ form_label(form.name) }}
-                {{ form_errors(form.name) }}
+                <span class="label label-danger">{{ form_errors(form.name) }}</span>
                 {{ form_widget(form.name) }}
             </div>
             <div class="field-form" id="url-container">
                 {{ form_label(form.url) }}
-                {{ form_errors(form.url) }}
+                <span class="label label-danger">{{ form_errors(form.url) }}</span>
                 {{ form_widget(form.url) }}
             </div>
             {% if form.type.vars.value is defined and form.type.vars.value == 'text' %}
                 <div class="field-form">
                     {{ form_label(form.taxonomy, 'Enable taxonomic browser', {'label_attr': {'class': 'inline'}}) }}
-                    {{ form_errors(form.taxonomy) }}
+                    <span class="label label-danger">{{ form_errors(form.taxonomy) }}</span>
                     {{ form_widget(form.taxonomy) }}
                 </div>
                 <div class="field-form">
                     {{ form_label(form.description) }}
-                    {{ form_errors(form.description) }}
+                    <span class="label label-danger">{{ form_errors(form.description) }}</span>
                     {{ form_widget(form.description, { 'attr': {'class': 'textarea'} }) }}
                 </div>
             {% endif %}
             <div class="field-form">
                 {{ form_label(form.wsonly, 'Web Service only', {'label_attr': {'class': 'inline'}}) }}
-                {{ form_errors(form.wsonly) }}
+                <span class="label label-danger">{{ form_errors(form.wsonly) }}</span>
                 {{ form_widget(form.wsonly) }}
             </div>
             <div class="field-form">
                 {% if form.type.vars.value is defined and form.type.vars.value!='text' %}
                     {{ form_label(form.type) }}
                 {% endif %}
-                {{ form_errors(form.type) }}
+                <span class="label label-danger">{{ form_errors(form.type) }}</span>
                 {{ form_widget(form.type, { 'separator': '=====' }) }}
             </div>
             <div class="field-form">
                 {{ form_label(form.file, 'CSV data') }}
-                {{ form_errors(form.file) }}
+                <span class="label label-danger">{{ form_errors(form.file) }}</span>
                 {{ form_widget(form.file) }}
             </div>
             {{ form_rest(form) }}

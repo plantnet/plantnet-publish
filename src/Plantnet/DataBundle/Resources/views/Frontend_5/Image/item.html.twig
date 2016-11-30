@@ -10,14 +10,28 @@
 		{% set content = content ~ ': ' ~ image.property[property.id]|replace(',',', ') %}
 	{% endfor %}
 	<div class="thumbnail" data-title="<strong>{{ image.title1 }} - {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} - {{ image.title3 }}{% endif %}</strong>" data-content="{{ content }}">
-		<a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
-			{% set tmp_img_data = '' %}
-			{% if image.title3 is defined and image.title3 is not null %}
-				{% set tmp_img_data = ' - ' ~ image.title3 %}
-			{% endif %}
-			{% set img_data = '<strong>' ~ image.title1 ~ ' - ' ~ image.title2 ~ tmp_img_data ~ '</strong><br />© ' ~ image.copyright %}
-			<img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid" alt="{{ img_data }}" />
-		</a>
+		{% if (image.url is defined) and (image.url is not empty) %}
+			<a href="{{ asset(image.url) }}" class="grouped_elements thumbn" rel="group">
+				{% set tmp_img_data = '' %}
+				{% if image.title3 is defined and image.title3 is not null %}
+					{% set tmp_img_data = ' - ' ~ image.title3 %}
+				{% endif %}
+				{% set img_data = '<strong>' ~ image.title1 ~ ' - ' ~ image.title2 ~ tmp_img_data ~ '</strong><br />© ' ~ image.copyright %}
+				<img src="/geturlimage.php?src={{ asset(image.url) |url_encode }}&coll={{ collection.name|url_encode }}&mod={{ module_parent.name|url_encode }}&ssmod={{ module.name|url_encode }}&width=180&height=120"
+					 class="img-polaroid" alt="{{ image.url }}" />
+			</a>
+
+		{% elseif  (img is not empty)   %}
+			<a href="{{ asset(img) }}" class="grouped_elements thumbn" rel="group">
+				{% set tmp_img_data = '' %}
+				{% if image.title3 is defined and image.title3 is not null %}
+					{% set tmp_img_data = ' - ' ~ image.title3 %}
+				{% endif %}
+				{% set img_data = '<strong>' ~ image.title1 ~ ' - ' ~ image.title2 ~ tmp_img_data ~ '</strong><br />© ' ~ image.copyright %}
+				<img src="{{ asset(img) | imagine_filter('thumb_180_120') }}" class="img-polaroid" alt="{{ img_data }}" />
+			</a>
+
+		{% endif %}
 		<h5>
 			{{ image.title1 }}<br />{{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %}<br />{{ image.title3 }}{% endif %}
 		</h5>

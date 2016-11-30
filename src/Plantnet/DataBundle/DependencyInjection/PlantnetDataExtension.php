@@ -23,8 +23,12 @@ class PlantnetDataExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
+       // $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+       // $loader->load('services.xml');
+
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.yml');
+
 
         $definition = new Definition('Plantnet\DataBundle\Twig\Extension\TwigPregExtension');
         // this is the most important part. Later in the startup process TwigBundle

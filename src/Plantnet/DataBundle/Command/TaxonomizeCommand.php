@@ -13,6 +13,7 @@ use Plantnet\DataBundle\Document\Module,
     Plantnet\DataBundle\Document\Plantunit,
     Plantnet\DataBundle\Document\Property,
     Plantnet\DataBundle\Document\Image,
+    Plantnet\DataBundle\Document\Imageurl,
     Plantnet\DataBundle\Document\Location,
     Plantnet\DataBundle\Document\Coordinates,
     Plantnet\DataBundle\Document\Other,
@@ -22,6 +23,12 @@ ini_set('memory_limit','-1');
 
 class TaxonomizeCommand extends ContainerAwareCommand
 {
+    function mylog($data,$data2=null,$data3=null){
+        if( $data != null){
+            $this->get('ladybug')->log(func_get_args());
+        }
+    }
+
     private $tmp_indexes=array();
 
     protected function configure()
@@ -66,6 +73,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
         $tab_tax=array();
         $fields=array(
             'hasimages'=>1,
+            'hasimagesurl'=>1,
             'haslocations'=>1
         );
         $meta=array();
@@ -102,6 +110,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             }
             //check data
             $img=(isset($line['hasimages'])&&$line['hasimages'])?true:false;
+            $imgurl=(isset($line['hasimagesurl'])&&$line['hasimagesurl'])?true:false;
             $loc=(isset($line['haslocations'])&&$line['haslocations'])?true:false;
             $id_parent='';
             $identifier='';
@@ -132,11 +141,13 @@ class TaxonomizeCommand extends ContainerAwareCommand
                             'level'=>$meta[$column]['level'],
                             'label'=>$meta[$column]['label'],
                             'hasimages'=>$img,
+                            'hasimagesurl'=>$imgurl,
                             'haslocations'=>$loc,
                             'nb'=>1
                         );
                     }
                     else{
+                        $tab_tax[$tmp_id_parent][$identifier]['hasimagesurl']=$tab_tax[$tmp_id_parent][$identifier]['hasimagesurl']||$imgurl;
                         $tab_tax[$tmp_id_parent][$identifier]['hasimages']=$tab_tax[$tmp_id_parent][$identifier]['hasimages']||$img;
                         $tab_tax[$tmp_id_parent][$identifier]['haslocations']=$tab_tax[$tmp_id_parent][$identifier]['haslocations']||$loc;
                         $tab_tax[$tmp_id_parent][$identifier]['nb']=$tab_tax[$tmp_id_parent][$identifier]['nb']+1;
@@ -176,6 +187,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                     $taxon->setNbpunits($tax['nb']);
                     $taxon->setIssynonym(false);
                     $taxon->setHasimages($tax['hasimages']);
+                    $taxon->setHasimagesurl($tax['hasimagesurl']);
                     $taxon->setHaslocations($tax['haslocations']);
                     if($parent){
                         $taxon->setParent($parent);
@@ -247,6 +259,15 @@ class TaxonomizeCommand extends ContainerAwareCommand
             foreach($sub_modules as $sub){
                 if($sub->getType()=='image'){
                     $dm->createQueryBuilder('PlantnetDataBundle:Image')
+                        ->update()
+                        ->multiple(true)
+                        ->field('module')->references($sub)
+                        ->field('taxonsrefs')->unsetField()
+                        ->getQuery()
+                        ->execute();
+                }
+                if($sub->getType()=='imageurl'){
+                    $dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
                         ->update()
                         ->multiple(true)
                         ->field('module')->references($sub)
@@ -514,6 +535,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 $last_valid->setHassynonyms(true);
                                 //
                                 $has_images=$last_non_valid->getHasimages();
+                                $has_imagesurl=$last_non_valid->getHasimagesurl();
                                 $has_locations=$last_non_valid->getHaslocations();
                                 $nb_to_switch=$last_non_valid->getNbpunits();
                                 $parent_tmp=$last_non_valid->getParent();
@@ -526,6 +548,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 if($has_images){
                                     $last_valid->setHasimages(true);
                                 }
+                                if($has_imagesurl){
+                                    $last_valid->setHasimagesurl(true);
+                                }
                                 if($has_locations){
                                     $last_valid->setHaslocations(true);
                                 }
@@ -535,6 +560,9 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                     $parent_tmp->setNbpunits($parent_tmp->getNbpunits()+$nb_to_switch);
                                     if($has_images){
                                         $parent_tmp->setHasimages(true);
+                                    }
+                                    if($has_imagesurl){
+                                        $parent_tmp->setHasimagesurl(true);
                                     }
                                     if($has_locations){
                                         $parent_tmp->setHaslocations(true);

@@ -18,6 +18,11 @@ use Plantnet\DataBundle\Document\Database;
  */
 class UserController extends Controller
 {
+    function mylog($data,$data2=null,$data3=null){
+        if( $data != null){
+            $this->get('ladybug')->log(func_get_args());
+        }
+    }
     private function getDataBase($user=null,$dm=null)
     {
         if($user){
@@ -123,6 +128,9 @@ class UserController extends Controller
      */
     public function users_editAction($username)
     {
+
+        $this->mylog("users_editAction",$username);
+
         $userManager=$this->get('fos_user.user_manager');
         $user=$userManager->findUserByUsername($username);
         if(!$user){
@@ -236,7 +244,7 @@ class UserController extends Controller
                         $this->get('session')->getFlashBag()->add('msg_success','Role Super Admin granted');
                     }
                     else{
-                        echo 'Error...';
+                        echo 'Error users_enable_super_adminAction()...';
                         exit;
                     }
                 }
@@ -260,6 +268,8 @@ class UserController extends Controller
      */
     public function users_enableAction($username)
     {
+        $this->mylog("users_enableAction",$username);
+
         $form=$this->createEnableForm($username);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
@@ -295,6 +305,7 @@ class UserController extends Controller
                         $db->createCollection('Definition');
                         $db->createCollection('Glossary');
                         $db->createCollection('Image');
+                        $db->createCollection('Imageurl');
                         $db->createCollection('Location');
                         $db->createCollection('Other');
                         $db->createCollection('Module');
@@ -302,13 +313,14 @@ class UserController extends Controller
                         $db->createCollection('Taxon');
                         $db->createCollection('Page');
                         //indexes
-                        $db->Image->ensureIndex(array('title1'=>1,'title2'=>1));
-                        $db->Location->ensureIndex(array('coordinates'=>'2d'));
-                        // $db->Plantunit->ensureIndex(array('attributes'=>'text'));
-                        $db->Taxon->ensureIndex(array('name'=>1));
-                        $db->Taxon->ensureIndex(array('identifier'=>1));
-                        $db->Plantunit->ensureIndex(array('identifier'=>1));
-                        $db->Plantunit->ensureIndex(array('taxonsrefs.$id'=>1));
+                        $db->Image->ensureIndex(array("title1"=>1,"title2"=>1));
+                        $db->Imageurl->ensureIndex(array("title1"=>1,"title2"=>1));
+                        $db->Location->ensureIndex(array("coordinates"=>"2d"));
+                        // $db->Plantunit->ensureIndex(array("attributes"=>"text"));
+                        $db->Taxon->ensureIndex(array("name"=>1));
+                        $db->Taxon->ensureIndex(array("identifier"=>1));
+                        $db->Plantunit->ensureIndex(array("identifier"=>1));
+                        $db->Plantunit->ensureIndex(array("taxonsrefs.$id"=>1));
                         //pages data
                         $ref_array = array('name'=>'Home','alias'=>'home','order'=>1);
 					    $db->Page->insert($ref_array);
@@ -330,6 +342,7 @@ class UserController extends Controller
                         $user->setDbName($dbName);
                         $user->setDblist(array($dbName));
                         $user->addRole('ROLE_ADMIN');
+                        $user->setEnabled(true);
                         $userManager->updateUser($user);
                         //send mail
                         $message=\Swift_Message::newInstance()
@@ -346,7 +359,7 @@ class UserController extends Controller
                         $this->get('session')->getFlashBag()->add('msg_success','Role Admin granted');
                     }
                     else{
-                        echo 'Error...';
+                        echo 'Error users_enableAction()...';
                         exit;
                     }
                 }
