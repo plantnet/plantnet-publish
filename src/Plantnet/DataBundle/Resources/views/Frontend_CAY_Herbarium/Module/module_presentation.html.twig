@@ -11,6 +11,17 @@
         {% endfor %}
     {% endif %}
 {% endfor %}
+
+<!-- pour les images locales distantes -->
+{% set imgsurl = [] %}
+{% for tmp_mod_key, tmp_mod in imagesurl if imgsurl|length < nb_img %}
+    {% if tmp_mod_key == module.id %}
+        {% for image in tmp_mod if imgsurl|length < nb_img %}
+            {% set imgsurl = imgsurl|merge([image]) %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+
 <div class="module_presentation">
     <div class="well well-small">
         <h4>
@@ -23,13 +34,13 @@
         </small>
     </div>
     <div class="row">
-        {% if imgs|length > 0 %}
+        {% if (imgs|length > 0) or (imgsurl|length > 0) %}
             <div class="span6">
         {% else %}
             <div class="span12">
         {% endif %}
             <div class="row">
-                {% if imgs|length > 0 %}
+                {% if (imgs|length > 0) or (imgsurl|length > 0) %}
                     <div class="span6">
                 {% else %}
                     <div class="span9">

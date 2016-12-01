@@ -159,7 +159,7 @@
                 <div id="map"></div>
             </div>
         {% endif %}
-        {% if plantunit.hasimages == true %}
+        {% if (plantunit.hasimages == true) or (plantunit.hasimagesurl == true) %}
             <div class="gallery">
                 <h5>{{ "line-gallery"|trans|capitalize }}</h5>
                 <ul id="list_gallery" class="thumbnails per4">
@@ -167,7 +167,7 @@
                         <a href="#" class="end_of_gallery_load"></a>
                     </li>
                     <li>
-                        <a href="{{ path('front_details_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}/page0" id="end_of_gallery"></a>
+                        <a href="{{ path('front_details_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}/page0/pageurl0" id="end_of_gallery"></a>
                     </li>
                 </ul>
             </div>
