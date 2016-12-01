@@ -35,13 +35,13 @@
         </small>
     </div>
     <div class="row">
-        {% if imgs|length > 0 %}
+        {% if (imgs|length > 0) or (imgsurl|length > 0) %}
             <div class="span6">
         {% else %}
             <div class="span12">
         {% endif %}
             <div class="row">
-                {% if imgs|length > 0 %}
+                {% if (imgs|length > 0) or (imgsurl|length > 0) %}
                     <div class="span6">
                 {% else %}
                     <div class="span9">

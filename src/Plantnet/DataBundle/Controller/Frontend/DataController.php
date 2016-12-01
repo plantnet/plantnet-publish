@@ -476,8 +476,6 @@ class DataController extends Controller
             }
         }
 
-        $modgettype = $module->getType() ;
-
         switch($module->getType()){
             case 'image':case 'imageurl':
                 if($module->getType() == 'image') {
@@ -845,21 +843,20 @@ class DataController extends Controller
     /**
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/details_gallery/{id}",
-     *      defaults={"page"=0},
+     *      defaults={"page"=0,"pageurl"=0},
      *      name="front_details_gallery"
      *  )
      * @Route(
-     *      "/project/{project}/collection/{collection}/{module}/details_gallery/{id}/page{page}",
-     *      requirements={"page"="\d+"},
+     *      "/project/{project}/collection/{collection}/{module}/details_gallery/{id}/page{page}/pageurl{pageurl}",
+     *      requirements={"page"="\d+","pageurl"="\d+"},
      *      name="front_details_gallery_paginated"
      *  )
      * @Template()
      */
-    public function details_galleryAction($project,$collection,$module,$id,$page)
+    public function details_galleryAction($project,$collection,$module,$id,$page,$pageurl)
     {
         ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $max_per_page=9;
-        $start=$page*$max_per_page;
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -872,6 +869,17 @@ class DataController extends Controller
         if(!$module||$module->getWsonly()==true){
             throw $this->createNotFoundException('Unable to find Module entity.');
         }
+
+
+        $ssmodulenom = $module->getName();
+        $submodules=$module->getChildren();
+        foreach($submodules as $submodule){
+            if($submodule->getType() == 'imageurl'){
+                $ssmodulenom = $submodule->getName();
+            }
+
+        }
+
         $display=array();
         $field=$module->getProperties();
         foreach($field as $row){
@@ -887,6 +895,7 @@ class DataController extends Controller
         if(!$plantunit){
             throw $this->createNotFoundException('Unable to find Plantunit entity.');
         }
+        $start=$page*$max_per_page;
         $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
             ->field('plantunit.id')->equals($plantunit->getId())
             ->sort('module.id','asc')
@@ -894,10 +903,14 @@ class DataController extends Controller
             ->skip($start)
             ->getQuery()
             ->execute();
+
         $next=$page+1;
         if($start+$max_per_page>=count($images)){
-            $next=-1;
+            $next=0;
+            // alain $next =-1;
         }
+
+        $start=$pageurl*$max_per_page;
         $imagesurl=$dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
             ->field('plantunit.id')->equals($plantunit->getId())
             ->sort('module.id','asc')
@@ -907,10 +920,14 @@ class DataController extends Controller
             ->execute();
         $nexturl=$page+1;
         if($start+$max_per_page>=count($imagesurl)){
-            $nexturl=-1;
+            $nexturl=0;
+            // alain $nexturl =-1;
         }
+
+
         $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
+
         return $this->render('PlantnetDataBundle:'.(($tpl)?$tpl:'Frontend').'\Plantunit:details_gallery.html.twig',array(
             'config'=>$config,
             'project'=>$project,
@@ -920,7 +937,8 @@ class DataController extends Controller
             'images'=>$images,
             'next'=>$next,
             'imagesurl'=>$imagesurl,
-            'nexturl'=>$nexturl
+            'nexturl'=>$nexturl,
+            'ssmodulenom' =>$ssmodulenom
         ));
     }
 
