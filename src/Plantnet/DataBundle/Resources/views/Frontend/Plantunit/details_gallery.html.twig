@@ -56,16 +56,6 @@
     </li>
 {% endfor %}
 
-{% if next > 0 %}
-    <li>
-        <a href="#" class="end_of_gallery_load"></a>
-    </li>
-    <li>
-        <a href="{{ path('front_details_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'id': plantunit.id }) }}/page{{ next }}/pageurl{{ nexturl }}" id="end_of_gallery"></a>
-    </li>
-{% endif %}
-
-
 
 {% for image in imagesurl %}
     {% set img = image.path %}
@@ -126,7 +116,7 @@
         </div>
     </li>
 {% endfor %}
-{% if nexturl > 0 %}
+{% if (next > 0) or (nexturl > 0) %}
     <li>
         <a href="#" class="end_of_gallery_load"></a>
     </li>

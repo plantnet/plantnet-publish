@@ -848,7 +848,7 @@ class DataController extends Controller
      *  )
      * @Route(
      *      "/project/{project}/collection/{collection}/{module}/details_gallery/{id}/page{page}/pageurl{pageurl}",
-     *      requirements={"page"="\d+","pageurl"="\d+"},
+     *      requirements={"page"="-?\d+","pageurl"="-?\d+"},
      *      name="front_details_gallery_paginated"
      *  )
      * @Template()
@@ -856,7 +856,7 @@ class DataController extends Controller
     public function details_galleryAction($project,$collection,$module,$id,$page,$pageurl)
     {
         ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
-        $max_per_page=9;
+        $max_per_page=8;
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -895,35 +895,41 @@ class DataController extends Controller
         if(!$plantunit){
             throw $this->createNotFoundException('Unable to find Plantunit entity.');
         }
-        $start=$page*$max_per_page;
-        $images=$dm->createQueryBuilder('PlantnetDataBundle:Image')
-            ->field('plantunit.id')->equals($plantunit->getId())
-            ->sort('module.id','asc')
-            ->limit($max_per_page)
-            ->skip($start)
-            ->getQuery()
-            ->execute();
+        $images  = array();
+        if($page>=0) {
+            $start = $page * $max_per_page;
+            $images = $dm->createQueryBuilder('PlantnetDataBundle:Image')
+                ->field('plantunit.id')->equals($plantunit->getId())
+                ->sort('module.id', 'asc')
+                ->limit($max_per_page)
+                ->skip($start)
+                ->getQuery()
+                ->execute();
 
-        $next=$page+1;
-        if($start+$max_per_page>=count($images)){
-            $next=0;
-            // alain $next =-1;
+            $next = $page + 1;
+            if ($start + $max_per_page >= count($images)) {
+                $next = -1;
+            }
+        }else{
+            $next = -1;
         }
-
-        $start=$pageurl*$max_per_page;
-        $imagesurl=$dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
-            ->field('plantunit.id')->equals($plantunit->getId())
-            ->sort('module.id','asc')
-            ->limit($max_per_page)
-            ->skip($start)
-            ->getQuery()
-            ->execute();
-        $nexturl=$page+1;
-        if($start+$max_per_page>=count($imagesurl)){
-            $nexturl=0;
-            // alain $nexturl =-1;
+        $imagesurl  = array();
+        if($pageurl>=0) {
+            $start = $pageurl * $max_per_page;
+            $imagesurl = $dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
+                ->field('plantunit.id')->equals($plantunit->getId())
+                ->sort('module.id', 'asc')
+                ->limit($max_per_page)
+                ->skip($start)
+                ->getQuery()
+                ->execute();
+            $nexturl = $pageurl + 1;
+            if ($start + $max_per_page >= count($imagesurl)) {
+                $nexturl = -1;
+            }
+        }else{
+            $nexturl = -1;
         }
-
 
         $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
