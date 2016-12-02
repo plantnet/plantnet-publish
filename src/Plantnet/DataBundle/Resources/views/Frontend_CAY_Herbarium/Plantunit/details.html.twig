@@ -198,6 +198,23 @@
                 }).done(function(data){
                     $('.end_of_gallery_load').parents('li').remove();
                     $('#list_gallery').append(data);
+                    //
+                    var listItems = $("#list_gallery li");
+                    var position = 0;
+                    listItems.each(function(idx, li) {
+                        position++;
+                        var div = $(li).find("div");
+                        if(position == 5){
+                            position = 1;
+                        }
+                        if((position % 3 == 0) || (position % 4 == 0)){
+                            div.addClass( "pop_left");
+                        }else{
+                            div.addClass( "pop_right");
+                        }
+
+                    });
+                    //
                     $('.pop-tooltip').tooltip();
                     $('a.grouped_elements').fancybox({
                         'transitionIn':'elastic',
