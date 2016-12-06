@@ -37,7 +37,7 @@
                                 <td>{{ plantunit.attributes[field] }}</td>
                             {% endfor %}
                             <td>
-                                {{ plantunit.images|length }}+{{ plantunit.imagesurl|length }}
+                                {{ plantunit.images|length + plantunit.imagesurl|length }}
                             </td>
                              <td>
                                 {{ plantunit.locations|length }}
