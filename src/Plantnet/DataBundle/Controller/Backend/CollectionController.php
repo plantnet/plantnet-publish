@@ -225,9 +225,6 @@ class CollectionController extends Controller
      */
     public function collection_deleteAction($id)
     {
-        $this->mylog("collection_deleteAction",$id);
-
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -248,9 +245,9 @@ class CollectionController extends Controller
                 $dm->flush();
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' >symfonyalain.log &';
 
-                echo "<br>ModulesController.php:module_desc_deleteAction:  ".$command;
+                echo "<br>CollectionController.php:collection_deleteAction:  ".$command;
 
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();

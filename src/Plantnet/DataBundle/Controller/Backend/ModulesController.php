@@ -617,9 +617,9 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
 
-                echo "<br>ModulesController.php:importationAction:  ".$command;
+                // echo "<br>ModulesController.php:importationAction:  ".$command;
 
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
@@ -857,9 +857,9 @@ class ModulesController extends Controller
                 $dm->flush();
                 //command
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' clean &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' clean >symfonyalain.log &';
 
-                echo "<br>ModulesController.php:module_update_taxoAction:  ".$command;
+             //   echo "<br>ModulesController.php:module_update_taxoAction:  ".$command;
 
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
@@ -1024,9 +1024,9 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon syn '.$id.' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon syn '.$id.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
 
-                echo "<br>ModulesController.php:module_syn_updateAction:  ".$command;
+                //echo "<br>ModulesController.php:module_syn_updateAction:  ".$command;
 
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
@@ -1085,9 +1085,9 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon desc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon desc '.$id.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
 
-                echo "<br>ModulesController.php:module_desc_updateAction:  ".$command;
+                // echo "<br>ModulesController.php:module_desc_updateAction:  ".$command;
 
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
@@ -1136,9 +1136,9 @@ class ModulesController extends Controller
                     $dm->flush();
                     //command
                     $kernel=$this->get('kernel');
-                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
 
-                    echo "<br>ModulesController.php:module_syn_deleteAction:  ".$command;
+                    //echo "<br>ModulesController.php:module_syn_deleteAction:  ".$command;
 
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
@@ -1184,9 +1184,9 @@ class ModulesController extends Controller
                     $dm->flush();
                     //command
                     $kernel=$this->get('kernel');
-                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon undesc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon undesc '.$id.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
 
-                    echo "<br>ModulesController.php:module_desc_deleteAction:  ".$command;
+                    //echo "<br>ModulesController.php:module_desc_deleteAction:  ".$command;
 
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
@@ -1205,7 +1205,7 @@ class ModulesController extends Controller
      */
     public function module_deleteAction($id)
     {
-        $this->mylog("module_deleteAction",$id);
+
 
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -1225,12 +1225,13 @@ class ModulesController extends Controller
                 $dm->flush();
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' >symfonyalain.log &';
 
-                echo "<br>ModulesController.php:module_desc_deleteAction:  ".$command;
+                $this->mylog("module_deleteAction",$command);
 
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
+
                 $this->get('session')->getFlashBag()->add('msg_success','Module deleted');
             }
         }
@@ -1415,9 +1416,9 @@ class ModulesController extends Controller
                     $dm->flush();
                     $user=$this->container->get('security.context')->getToken()->getUser();
                     $kernel=$this->get('kernel');
-                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' &>> /home/alain/Bureau/symfony.log &>> /home/alain/Bureau/symfonyok.log &';
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
 
-                    echo "<br>ModulesController.php:module_update_dataAction:  ".$command;
+                    //echo "<br>ModulesController.php:module_update_dataAction:  ".$command;
 
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
