@@ -94,47 +94,6 @@ function makeThumbnails($updir, $img, $finalimg,$width=134, $height=189)
 
     }
 }
-/* old version
-function makeThumbnails2($updir, $img, $finalimg,$width=134, $height=189)
-{
-    $thumbnail_width = $width;
-    $thumbnail_height = $height;
-    $arr_image_details = getimagesize("$updir" . "$img");
-    // cl($arr_image_details);
-    $original_width = $arr_image_details[0];
-    $original_height = $arr_image_details[1];
-    if ($original_width > $original_height) {
-        $new_width = $thumbnail_width;
-        $new_height = intval($original_height * $new_width / $original_width);
-    } else {
-        $new_height = $thumbnail_height;
-        $new_width = intval($original_width * $new_height / $original_height);
-    }
-    $dest_x = intval(($thumbnail_width - $new_width) / 2);
-    $dest_y = intval(($thumbnail_height - $new_height) / 2);
-    if ($arr_image_details[2] == IMAGETYPE_GIF) {
-        $imgt = "ImageGIF";
-        $imgcreatefrom = "ImageCreateFromGIF";
-    }
-    if ($arr_image_details[2] == IMAGETYPE_JPEG) {
-        $imgt = "ImageJPEG";
-        $imgcreatefrom = "ImageCreateFromJPEG";
-    }
-    if ($arr_image_details[2] == IMAGETYPE_PNG) {
-        $imgt = "ImagePNG";
-        $imgcreatefrom = "ImageCreateFromPNG";
-    }
-    if ($imgt) {
-        $old_image = $imgcreatefrom("$updir" . "$img");
-        $new_image = imagecreatetruecolor($thumbnail_width, $thumbnail_height);
-        // c'est la meme couleur que celle du fond ou s'affiche les images : #F5F5F5
-        $white = imagecolorallocate($new_image, 245,245,245);
-        imagefill($new_image, 0, 0, $white);
-        imagecopyresampled($new_image, $old_image, $dest_x, $dest_y, 0, 0, $new_width, $new_height, $original_width, $original_height);
-        $imgt($new_image, "$updir" . $finalimg);
-    }
-}
-*/
 
 //crypte le nom pour éviter les erreurs avec caractères bizarre dans nom fichiers
 function toMd5($string){
@@ -153,6 +112,9 @@ function createDir($path){
 
 
 $originalSrc = $_GET["src"];
+
+//$originalSrc = 'http://publish.plantnet-project.org/tmp-data/CAY/JPG/CAY00/0/CAY000809.JPG';
+
 $filename = toMd5($originalSrc);
 $path = 'media/cache_url_thumb/'.$_GET["coll"]."/". $_GET["mod"]."/". $_GET["ssmod"]."/". "thumb_".$_GET["width"]."_".$_GET["height"]."/";
 $path .=  substr($filename,0,3) . "/";
@@ -162,7 +124,6 @@ if(file_exists($path.$filename)){
     sendimg($path,$filename);
 }else{
     // l'image n'existe pas
-
     createDir($path);
 
     // on telecharge l'image
@@ -185,10 +146,12 @@ if(file_exists($path.$filename)){
 
     */
     $tmpfilename = 'original_'.$filename;
-    copy( $originalSrc , $path.$tmpfilename);
-    makeThumbnails($path ,$tmpfilename,$filename,$_GET["width"],$_GET["height"]);
-    unlink($path.$tmpfilename);
-    sendimg($path,$filename);
+
+    if(copy( $originalSrc , $path.$tmpfilename)) {
+        makeThumbnails($path, $tmpfilename, $filename, $_GET["width"], $_GET["height"]);
+        unlink($path . $tmpfilename);
+        sendimg($path, $filename);
+    }
 }
 
 
