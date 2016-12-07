@@ -81,8 +81,6 @@ class DeleteCommand extends ContainerAwareCommand
 
     private function delete_imageurl($dm, $collection, $module, $dbname, $fast = false)
     {
-        echo ("delete_imageurl");
-
         $idmodule = $module->getId();
         $parent_to_update = null;
         if ($module->getParent() && $module->getParent()->getDeleting() === false) {
@@ -247,7 +245,6 @@ class DeleteCommand extends ContainerAwareCommand
                 }
             }
         }
-
         // dans certain controller je n'ai pas reussi à avoir le nom du module parent donc j'ai utiliser collectionName/moduleName/moduleName/
         $thumb = __DIR__ . '/../../../../web/media/cache_url_thumb/' . $collection->getName() . '/' . $module->getParent()->getName() . '/' . $module->getName();
         $this->delete_folder($thumb);
@@ -642,11 +639,8 @@ class DeleteCommand extends ContainerAwareCommand
         $dm->detach($module);
     }
 
-
     private function delete_module($dbname, $id, $fast = false)
     {
-        $debug = true;
-
         $error = '';
         $dm = $this->getContainer()->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($dbname);
@@ -669,33 +663,21 @@ class DeleteCommand extends ContainerAwareCommand
         */
         $csvfile = __DIR__ . '/../Resources/uploads/' . $collection->getAlias() . '/' . $module->getAlias() . '.csv';
         if (file_exists($csvfile)) {
-            if (!$debug) {
-                unlink($csvfile);
-            } else {
-                echo "unlink($csvfile)\n";
-            }
+            unlink($csvfile);
         }
         /*
         * Remove csv syn file
         */
         $csvsynfile = __DIR__ . '/../Resources/uploads/' . $collection->getAlias() . '/' . $module->getAlias() . '_syn.csv';
         if (file_exists($csvsynfile)) {
-            if (!$debug) {
-                unlink($csvsynfile);
-            } else {
-                echo "unlink($csvsynfile)\n";
-            }
+            unlink($csvsynfile);
         }
         /*
         * Remove csv desc file
         */
         $csvdescfile = __DIR__ . '/../Resources/uploads/' . $collection->getAlias() . '/' . $module->getAlias() . '_desc.csv';
         if (file_exists($csvdescfile)) {
-            if (!$debug) {
-                unlink($csvdescfile);
-            } else {
-                echo "unlink($csvdescfile)\n";
-            }
+            unlink($csvdescfile);
         }
         /*
         * Remove upload directory
@@ -735,10 +717,6 @@ class DeleteCommand extends ContainerAwareCommand
             $dir = __DIR__ . '/../../../../web/uploads/' . $dir;
             $this->delete_folder($dir);
         }
-        //
-        if ($debug) {
-            echo "\n\rmodule->getType()" . $module->getType() . "\n\r";
-        }
 
         switch ($module->getType()) {
             case 'image':
@@ -774,7 +752,6 @@ class DeleteCommand extends ContainerAwareCommand
             rmdir($dir);
         }
     }
-
 
     private function delete_collection($dbname, $id)
     {

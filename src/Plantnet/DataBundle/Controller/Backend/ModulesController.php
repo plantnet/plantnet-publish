@@ -40,7 +40,7 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class ModulesController extends Controller
 {
-
+    
     function mylog($data,$data2=null,$data3=null){
         if( $data != null){
             $this->get('ladybug')->log(func_get_args());
@@ -828,8 +828,6 @@ class ModulesController extends Controller
      */
     public function module_update_taxoAction($id)
     {
-        $this->mylog("module_update_taxoAction",$id);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -859,7 +857,8 @@ class ModulesController extends Controller
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' clean >symfonyalain.log &';
 
-             //   echo "<br>ModulesController.php:module_update_taxoAction:  ".$command;
+                echo "<br>ModulesController.php:module_update_taxoAction:  ".$command;
+                $this->mylog("module_update_taxoAction",$command);
 
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
@@ -882,7 +881,6 @@ class ModulesController extends Controller
      */
     public function module_update_taxo_display_synsAction($id)
     {
-        $this->mylog("module_update_taxo_display_synsAction",$id);
 
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
