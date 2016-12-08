@@ -21,7 +21,7 @@ function cl($data){
  *
  *
  * chemin ou sont stocké les images : media/cache_url_thumb/
- *  {{collection}}/{{module}}/{{sousmodule}}/thumb_{{}}_{{}}
+ *  {{collection}}/{{module}}/{{sousmodule}}/thumb_{{h}}_{{w}}
  *
  */
 
@@ -113,7 +113,7 @@ function createDir($path){
 
 $originalSrc = $_GET["src"];
 
-//$originalSrc = 'http://publish.plantnet-project.org/tmp-data/CAY/JPG/CAY00/0/CAY000809.JPG';
+// $originalSrc = 'http://publish.plantnet-project.org/tmp-data/CAY/JPG/CAY00/0/CAY000809.JPG';
 
 $filename = toMd5($originalSrc);
 $path = 'media/cache_url_thumb/'.$_GET["coll"]."/". $_GET["mod"]."/". $_GET["ssmod"]."/". "thumb_".$_GET["width"]."_".$_GET["height"]."/";

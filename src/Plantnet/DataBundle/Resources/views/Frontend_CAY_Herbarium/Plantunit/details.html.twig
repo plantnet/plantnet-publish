@@ -152,14 +152,14 @@
                 </div>
             {% endfor %}
         {% endif %}
-        {% if plantunit.haslocations == true %}
+        {% if plantunit.haslocations %}
             <div>
                 <h5>{{ "line-map"|trans|capitalize }}</h5>
                 {# LEAFLET MAP #}
                 <div id="map"></div>
             </div>
         {% endif %}
-        {% if (plantunit.hasimages == true) and (plantunit.hasimagesurl == true) %}
+        {% if (plantunit.hasimages ) and (plantunit.hasimagesurl) %}
             <div class="gallery">
                 <h5>{{ "line-gallery"|trans|capitalize }}</h5>
                 <ul id="list_gallery" class="thumbnails per4">

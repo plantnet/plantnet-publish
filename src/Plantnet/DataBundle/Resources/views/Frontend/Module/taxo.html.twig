@@ -163,7 +163,7 @@
                     <td class="span2 middle">
                         <a href="{{ path('front_module_taxo_view', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" class="btn btn-mini">
                             <i class="icon-list"></i></a>
-                        {% if taxon.hasimages %}
+                        {% if taxon.hasimages or taxon.hasimagesurl %}
                             <a href="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}" class="btn btn-mini">
                                 <i class="icon-camera"></i></a>
                         {% else %}
