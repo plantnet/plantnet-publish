@@ -41,10 +41,10 @@
                         - {{ punit.title3 }}
                     {% endif %}
                 </a>
-                {% if punit.hasimages == true %}
+                {% if punit.hasimages or punit.hasimagesurl %}
                     <i class="icon-camera"></i>
                 {% endif %}
-                {% if punit.haslocations == true %}
+                {% if punit.haslocations %}
                     <i class="icon-map-marker"></i>
                 {% endif %}
                 <span class="muted">

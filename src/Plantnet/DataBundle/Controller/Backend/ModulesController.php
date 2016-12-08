@@ -40,7 +40,7 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class ModulesController extends Controller
 {
-    
+
     function mylog($data,$data2=null,$data3=null){
         if( $data != null){
             $this->get('ladybug')->log(func_get_args());
