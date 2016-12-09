@@ -13,7 +13,9 @@
 	{% endfor %}
 	{% for property in image.module.properties if property.details == true %}
 		{% set content = content ~ '<br />' ~ '<u>' ~ property.name ~ '</u>' %}
-		{% set content = content ~ ': ' ~ image.property[property.id]|replace(',',', ') %}
+		{%  if image.property[property.id] is defined %}
+			{% set content = content ~ ': ' ~ image.property[property.id]|replace(',',', ') %}
+		{% endif %}
 	{% endfor %}
 	{% set pos_class = 'right' %}
 	{% if pos == 3 or pos == 4 %}

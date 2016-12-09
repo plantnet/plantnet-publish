@@ -126,22 +126,7 @@ class TaxoController extends Controller
             if(!$taxon){
                 throw $this->createNotFoundException('Unable to find Taxon entity.');
             }
-            /*
-            $tab_id=array($taxon->getId());
-            $syns=$taxon->getSynonyms();
-            if(count($syns)){
-                foreach($syns as $syn){
-                    $tab_id[]=$syn->getId();
-                }
-            }
-            $taxons=$dm->createQueryBuilder('PlantnetDataBundle:Taxon')
-                ->field('module')->references($module)
-                ->field('parent.id')->in($tab_id)
-                ->field('issynonym')->equals(false)
-                ->sort('name','asc')
-                ->getQuery()
-                ->execute();
-            */
+
             $taxons=array($taxon);
         }
         $config=ControllerHelp::get_config($project,$dm,$this);
@@ -390,28 +375,7 @@ class TaxoController extends Controller
                 $tab_ref[$syn->getId()]=$syn;
             }
         }
-        /*
-        $children=$taxon->getChildren();
-        while(count($children)){
-            $children_new=array();
-            foreach($children as $child){
-                $tab_ref[$child->getId()]=$child;
-                $syns=$child->getSynonyms();
-                if(count($syns)){
-                    foreach($syns as $syn){
-                        $tab_ref[$syn->getId()]=$syn;
-                    }
-                }
-                $tmp_children=$child->getChildren();
-                if(count($tmp_children)){
-                    foreach($tmp_children as $new_child){
-                        $children_new[$new_child->getId()]=$new_child;
-                    }
-                }
-            }
-            $children=$children_new;
-        }
-        */
+
         $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit');
         $plantunits->field('module')->references($module);
         if(count($tab_ref)>1){
@@ -442,7 +406,7 @@ class TaxoController extends Controller
             throw $this->createNotFoundException('Page not found.');
         }
         //count to display
-        $nb_images=($taxon->getHasimages())?1:0;
+        $nb_images=($taxon->getHasimages()||$taxon->getHasimagesurl())?1:0;
         $nb_locations=($taxon->getHaslocations())?1:0;
         $config=ControllerHelp::get_config($project,$dm,$this);
         $tpl=$config->getTemplate();
@@ -549,28 +513,7 @@ class TaxoController extends Controller
                 $tab_ref[$syn->getId()]=$syn;
             }
         }
-        /*
-        $children=$taxon->getChildren();
-        while(count($children)){
-            $children_new=array();
-            foreach($children as $child){
-                $tab_ref[$child->getId()]=$child;
-                $syns=$child->getSynonyms();
-                if(count($syns)){
-                    foreach($syns as $syn){
-                        $tab_ref[$syn->getId()]=$syn;
-                    }
-                }
-                $tmp_children=$child->getChildren();
-                if(count($tmp_children)){
-                    foreach($tmp_children as $new_child){
-                        $children_new[$new_child->getId()]=$new_child;
-                    }
-                }
-            }
-            $children=$children_new;
-        }
-        */
+
         $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit');
         $plantunits->field('module')->references($module);
         $plantunits->hydrate(false);
@@ -583,34 +526,48 @@ class TaxoController extends Controller
         else{
             $plantunits->field('taxonsrefs')->references($tab_ref[key($tab_ref)]);
         }
+
         $plantunits=$plantunits->getQuery()->execute();
         $pu_ids=array();
         foreach($plantunits as $id){
             $pu_ids[]=$id['_id'];
         }
+
+        $nbResults = 0;
+
+
         $images=$dm->createQueryBuilder('PlantnetDataBundle:Image');
         $images->field('plantunit.$id')->in($pu_ids);
-        /*
-        $images=$dm->createQueryBuilder('PlantnetDataBundle:Image');
-        if(count($tab_ref)>1){
-            foreach($tab_ref as $ref){
-                $images->addOr($images->expr()->field('taxonsrefs')->references($ref));
-            }
-        }
-        else{
-            $images->field('taxonsrefs')->references($tab_ref[key($tab_ref)]);
-        }
-        */
         $images->sort('title1','asc');
         $images->sort('title2','asc');
+
         $paginator=new Pagerfanta(new DoctrineODMMongoDBAdapter($images));
         try{
             $paginator->setMaxPerPage(15);
             $paginator->setCurrentPage($page);
+            $nbResults = $paginator->getNbResults();
         }
         catch(\Pagerfanta\Exception\NotValidCurrentPageException $e){
-            throw $this->createNotFoundException('Page not found.');
+            // throw $this->createNotFoundException('Page not found.');
+            $paginator = null ;
         }
+
+        $imagesurl = $dm->createQueryBuilder('PlantnetDataBundle:Imageurl');
+        $imagesurl->field('plantunit.$id')->in($pu_ids);
+        $imagesurl->sort('title1', 'asc');
+        $imagesurl->sort('title2', 'asc');
+        $paginatorurl = new Pagerfanta(new DoctrineODMMongoDBAdapter($imagesurl));
+
+        try {
+            $paginatorurl->setMaxPerPage(15);
+            $paginatorurl->setCurrentPage($page);
+            $nbResults += $paginatorurl->getNbResults();
+        } catch (\Pagerfanta\Exception\NotValidCurrentPageException $e) {
+            // throw $this->createNotFoundException('Page not found.');
+            $paginatorurl = null ;
+        }
+
+
         //count to display
         $nb_images=1;
         $nb_locations=($taxon->getHaslocations())?1:0;
@@ -624,7 +581,8 @@ class TaxoController extends Controller
             'module'=>$module,
             'taxon'=>$taxon,
             'paginator'=>$paginator,
-            'nbResults'=>$paginator->getNbResults(),
+            'paginatorurl'=>$paginatorurl,
+            'nbResults'=>$nbResults,
             'nb_images'=>$nb_images,
             'nb_locations'=>$nb_locations,
             'display'=>$display,
@@ -697,28 +655,7 @@ class TaxoController extends Controller
                 $tab_ref[$syn->getId()]=$syn;
             }
         }
-        /*
-        $children=$taxon->getChildren();
-        while(count($children)){
-            $children_new=array();
-            foreach($children as $child){
-                $tab_ref[$child->getId()]=$child;
-                $syns=$child->getSynonyms();
-                if(count($syns)){
-                    foreach($syns as $syn){
-                        $tab_ref[$syn->getId()]=$syn;
-                    }
-                }
-                $tmp_children=$child->getChildren();
-                if(count($tmp_children)){
-                    foreach($tmp_children as $new_child){
-                        $children_new[$new_child->getId()]=$new_child;
-                    }
-                }
-            }
-            $children=$children_new;
-        }
-        */
+
         $plantunits=$dm->createQueryBuilder('PlantnetDataBundle:Plantunit');
         $plantunits->field('module')->references($module);
         $plantunits->hydrate(false);
@@ -752,7 +689,7 @@ class TaxoController extends Controller
         $locations=$locations->getQuery()
             ->execute();
         //count to display
-        $nb_images=($taxon->getHasimages())?1:0;
+        $nb_images=($taxon->getHasimages()||$taxon->getHasimagesurl())?1:0;
         $nb_locations=1;
         $dir=$this->get('kernel')->getBundle('PlantnetDataBundle')->getPath().'/Resources/config/';
         $layers=new \SimpleXMLElement($dir.'layers.xml',0,true);
