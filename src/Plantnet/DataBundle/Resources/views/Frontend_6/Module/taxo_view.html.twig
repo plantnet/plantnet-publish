@@ -400,7 +400,7 @@
                             <div class="gallery">
                                 <ul class="thumbnails per4">
                                     {% set pos = 1 %}
-                                    {% for image in paginator %}
+                                    {% for image in paginatorurl %}
                                         {% if pos == 5 %}
                                             {% set pos = 1 %}
                                         {% endif %}
@@ -412,20 +412,20 @@
                             {% if paginatorurl.haveToPaginate() %}
                                 <div class="pagerfanta">
                                     {{ pagerfanta(
-                                    paginatorurl,
-                                    'twitter_bootstrap_translated',
-                                    {
-                                        'proximity': 2,
-                                        'prev_message': '←',
-                                        'next_message': '→',
-                                        'routeName': 'front_module_taxo_view_gallery_paginated',
-                                        'routeParams': {
-                                        'project': project,
-                                        'collection': collection.url,
-                                        'module': module.url,
-                                        'taxon': taxon.identifier
-                                    }
-                                    }
+                                        paginatorurl,
+                                        'twitter_bootstrap_translated',
+                                        {
+                                            'proximity': 2,
+                                            'prev_message': '←',
+                                            'next_message': '→',
+                                            'routeName': 'front_module_taxo_view_gallery_paginated',
+                                            'routeParams': {
+                                                'project': project,
+                                                'collection': collection.url,
+                                                'module': module.url,
+                                                'taxon': taxon.identifier
+                                            }
+                                        }
                                     ) }}
                                 </div>
                             {% endif %}

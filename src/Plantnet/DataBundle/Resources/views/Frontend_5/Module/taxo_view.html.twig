@@ -394,7 +394,7 @@
                             {% endif %}
                             <div class="gallery">
                                 <ul class="thumbnails per3">
-                                    {% for image in paginator %}
+                                    {% for image in paginatorurl %}
                                         {% include "PlantnetDataBundle:Frontend_5\\Image:item.html.twig" with { image: image } %}
                                     {% endfor %}
                                 </ul>
@@ -402,20 +402,20 @@
                             {% if paginatorurl.haveToPaginate() %}
                                 <div class="pagerfanta">
                                     {{ pagerfanta(
-                                    paginatorurl,
-                                    'twitter_bootstrap_translated',
-                                    {
-                                        'proximity': 2,
-                                        'prev_message': '←',
-                                        'next_message': '→',
-                                        'routeName': 'front_module_taxo_view_gallery_paginated',
-                                        'routeParams': {
-                                        'project': project,
-                                        'collection': collection.url,
-                                        'module': module.url,
-                                        'taxon': taxon.identifier
-                                    }
-                                    }
+                                        paginatorurl,
+                                        'twitter_bootstrap_translated',
+                                        {
+                                            'proximity': 2,
+                                            'prev_message': '←',
+                                            'next_message': '→',
+                                            'routeName': 'front_module_taxo_view_gallery_paginated',
+                                            'routeParams': {
+                                                'project': project,
+                                                'collection': collection.url,
+                                                'module': module.url,
+                                                'taxon': taxon.identifier
+                                            }
+                                        }
                                     ) }}
                                 </div>
                             {% endif %}
