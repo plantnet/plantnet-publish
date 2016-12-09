@@ -303,45 +303,19 @@
             </div>
             <div class="tab-pane{% if current_display == 'images' %} active{% endif %}" id="images-tab">
                 {% if current_display == 'images' %}
-                    {% if paginator|length > 0 %}
-                        {% if paginator.haveToPaginate() %}
-                            <div class="pagerfanta">
-                                <form method="get" action="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
-                                    <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}" class="span1" min="1" max="{{ paginator.nbPages }}" />
-                                </form>
-                                {{ pagerfanta(
-                                    paginator,
-                                    'twitter_bootstrap_translated',
-                                    {
-                                        'proximity': 2,
-                                        'prev_message': '←',
-                                        'next_message': '→',
-                                        'routeName': 'front_module_taxo_view_gallery_paginated',
-                                        'routeParams': {
-                                            'project': project,
-                                            'collection': collection.url,
-                                            'module': module.url,
-                                            'taxon': taxon.identifier
-                                        }
-                                    }
-                                ) }}
-                            </div>
+                    {% if paginator is defined %}
+                        {% if ((paginator is defined) and (paginator|length > 0)) and ((paginatorurl is defined) and (paginatorurl|length > 0)) %}
+                            <h2>Images locales</h2>
                         {% endif %}
-                        <div class="gallery">
-                            <ul class="thumbnails per4">
-                                {% set pos = 1 %}
-                                {% for image in paginator %}
-                                    {% if pos == 5 %}
-                                        {% set pos = 1 %}
-                                    {% endif %}
-                                    {% include "PlantnetDataBundle:Frontend_3\\Image:item.html.twig" with { image: image } %}
-                                    {% set pos = pos + 1 %}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        {% if paginator.haveToPaginate() %}
-                            <div class="pagerfanta">
-                                {{ pagerfanta(
+                        {% if paginator|length > 0 %}
+                            {% if paginator.haveToPaginate() %}
+                                <div class="pagerfanta">
+                                    <form method="get"
+                                          action="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
+                                        <input type="number" name="form_page" placeholder="{{ paginator.currentPage }}"
+                                               class="span1" min="1" max="{{ paginator.nbPages }}" />
+                                    </form>
+                                    {{ pagerfanta(
                                     paginator,
                                     'twitter_bootstrap_translated',
                                     {
@@ -350,14 +324,114 @@
                                         'next_message': '→',
                                         'routeName': 'front_module_taxo_view_gallery_paginated',
                                         'routeParams': {
-                                            'project': project,
-                                            'collection': collection.url,
-                                            'module': module.url,
-                                            'taxon': taxon.identifier
-                                        }
+		                                    'project': project,
+		                                    'collection': collection.url,
+		                                    'module': module.url,
+		                                    'taxon': taxon.identifier
+		                                }
                                     }
-                                ) }}
+                                    ) }}
+                                </div>
+                            {% endif %}
+                            <div class="gallery">
+                                <ul class="thumbnails per4">
+                                    {% set pos = 1 %}
+                                    {% for image in paginator %}
+                                        {% if pos == 5 %}
+                                            {% set pos = 1 %}
+                                        {% endif %}
+                                        {% include "PlantnetDataBundle:Frontend_3\\Image:item.html.twig" with { image: image } %}
+                                        {% set pos = pos + 1 %}
+                                    {% endfor %}
+                                </ul>
                             </div>
+                            {% if paginator.haveToPaginate() %}
+                                <div class="pagerfanta">
+                                    {{ pagerfanta(
+                                    paginator,
+                                    'twitter_bootstrap_translated',
+                                    {
+                                        'proximity': 2,
+                                        'prev_message': '←',
+                                        'next_message': '→',
+                                        'routeName': 'front_module_taxo_view_gallery_paginated',
+                                        'routeParams': {
+		                                    'project': project,
+		                                    'collection': collection.url,
+		                                    'module': module.url,
+		                                    'taxon': taxon.identifier
+		                                }
+                                    }
+                                    ) }}
+                                </div>
+                            {% endif %}
+
+                        {% endif %}
+                    {% endif %}
+                    {% if paginatorurl is defined %}
+                        {% if ((paginator is defined) and (paginator|length > 0)) and ((paginatorurl is defined) and (paginatorurl|length > 0)) %}
+                            <br>
+                            <h2>Images distantes</h2>
+                        {% endif %}
+                        {% if paginatorurl|length > 0 %}
+                            {% if paginatorurl.haveToPaginate() %}
+                                <div class="pagerfanta">
+                                    <form method="get"
+                                          action="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
+                                        <input type="number" name="form_page"
+                                               placeholder="{{ paginatorurl.currentPage }}" class="span1" min="1"
+                                               max="{{ paginatorurl.nbPages }}" />
+                                    </form>
+                                    {{ pagerfanta(
+                                    paginatorurl,
+                                    'twitter_bootstrap_translated',
+                                    {
+                                        'proximity': 2,
+                                        'prev_message': '←',
+                                        'next_message': '→',
+                                        'routeName': 'front_module_taxo_view_gallery_paginated',
+                                        'routeParams': {
+		                                    'project': project,
+		                                    'collection': collection.url,
+		                                    'module': module.url,
+		                                    'taxon': taxon.identifier
+		                                }
+                                    }
+                                    ) }}
+                                </div>
+                            {% endif %}
+                            <div class="gallery">
+                                <ul class="thumbnails per4">
+                                    {% set pos = 1 %}
+                                    {% for image in paginatorurl %}
+                                        {% if pos == 5 %}
+                                            {% set pos = 1 %}
+                                        {% endif %}
+                                        {% include "PlantnetDataBundle:Frontend_3\\Image:item.html.twig" with { image: image } %}
+                                        {% set pos = pos + 1 %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% if paginatorurl.haveToPaginate() %}
+                                <div class="pagerfanta">
+                                    {{ pagerfanta(
+                                    paginatorurl,
+                                    'twitter_bootstrap_translated',
+                                    {
+                                        'proximity': 2,
+                                        'prev_message': '←',
+                                        'next_message': '→',
+                                        'routeName': 'front_module_taxo_view_gallery_paginated',
+                                        'routeParams': {
+		                                    'project': project,
+		                                    'collection': collection.url,
+		                                    'module': module.url,
+		                                    'taxon': taxon.identifier
+		                                }
+                                    }
+                                    ) }}
+                                </div>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
                 {% endif %}

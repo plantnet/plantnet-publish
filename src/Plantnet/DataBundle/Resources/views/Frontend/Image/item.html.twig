@@ -13,7 +13,9 @@
 	{% endfor %}
 	{% for property in image.module.properties if property.details == true %}
 		{% set content = content ~ '<br />' ~ '<u>' ~ property.name ~ '</u>' %}
-		{% set content = content ~ ': ' ~ image.property[property.id]|replace(',',', ') %}
+		{%  if image.property[property.id] is defined %}
+			{% set content = content ~ ': ' ~ image.property[property.id]|replace(',',', ') %}
+		{% endif %}
 	{% endfor %}
 	<div class="thumbnail" data-title="<strong>{{ image.title1 }} - {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} - {{ image.title3 }}{% endif %}</strong>" data-content="{{ content }}">
 
