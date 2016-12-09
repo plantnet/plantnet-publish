@@ -92,7 +92,7 @@ class DataController extends Controller
         $imgurl_coll = null;
         $imgurl_mod = null;
         $imgurl_ssmod = null;
-
+        $limit = 10;
         foreach ($collections as $collection) {
             $collection->setDescription(ControllerHelp::glossarize($dm, $collection, $collection->getDescription()));
             $coll = $collection;
@@ -103,7 +103,6 @@ class DataController extends Controller
                     $children = $module->getChildren();
                     foreach ($children as $child) {
                         if (!$child->getDeleting() && $child->getType() == 'image') {
-                            $limit = 10;
                             $skip = rand(0, ($child->getNbrows() - 1 - $limit));
                             if ($skip > 0) {
                                 $tmp_images = $dm->createQueryBuilder('PlantnetDataBundle:Image')

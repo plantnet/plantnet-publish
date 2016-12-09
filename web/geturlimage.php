@@ -113,7 +113,7 @@ function createDir($path){
 
 $originalSrc = $_GET["src"];
 
-// $originalSrc = 'http://publish.plantnet-project.org/tmp-data/CAY/JPG/CAY00/0/CAY000809.JPG';
+ $originalSrc = 'http://publish.plantnet-project.org/tmp-data/CAY/JPG/CAY00/0/CAY000809.JPG';
 
 $filename = toMd5($originalSrc);
 $path = 'media/cache_url_thumb/'.$_GET["coll"]."/". $_GET["mod"]."/". $_GET["ssmod"]."/". "thumb_".$_GET["width"]."_".$_GET["height"]."/";
@@ -146,12 +146,26 @@ if(file_exists($path.$filename)){
 
     */
     $tmpfilename = 'original_'.$filename;
+    // suppression des warning php not found !!
+    set_error_handler(function($errno, $errstr, $errfile, $errline, array $errcontext) {
+        // error was suppressed with the @-operator
+        if (0 === error_reporting()) {
+            return false;
+        }
 
-    if(copy( $originalSrc , $path.$tmpfilename)) {
-        makeThumbnails($path, $tmpfilename, $filename, $_GET["width"], $_GET["height"]);
-        unlink($path . $tmpfilename);
-        sendimg($path, $filename);
+        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    });
+    try {
+        if (copy($originalSrc, $path . $tmpfilename)) {
+            makeThumbnails($path, $tmpfilename, $filename, $_GET["width"], $_GET["height"]);
+            unlink($path . $tmpfilename);
+            sendimg($path, $filename);
+        }
+
+    } catch (ErrorException $e) {
+        // ...
     }
+
 }
 
 
