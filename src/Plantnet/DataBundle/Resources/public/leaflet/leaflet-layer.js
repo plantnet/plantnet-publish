@@ -261,14 +261,14 @@
     callbacks: {},
     callbackCounter: 0,
     checkSunCal: function() {
-      var el;
-      if (typeof SunCalc !== "undefined" && SunCalc !== null) {
-        return;
-      }
-      el = document.createElement('script');
-      el.src = 'https://raw.github.com/mourner/suncalc/master/suncalc.js';
-      el.type = 'text/javascript';
-      return document.getElementsByTagName('body')[0].appendChild(el);
+      /* var el;
+       if (typeof SunCalc !== "undefined" && SunCalc !== null) {
+       return;
+       }
+       el = document.createElement('script');
+       el.src = 'https://raw.github.com/mourner/suncalc/master/suncalc.js';
+       el.type = 'text/javascript';
+       return document.getElementsByTagName('body')[0].appendChild(el); */
     },
     requestJsonp: function(url, cb) {
       var abort, callback, counter, delim, el,

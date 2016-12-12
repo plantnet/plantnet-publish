@@ -34,6 +34,7 @@
 	<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/plugins/draw/edit/handler/EditToolbar.Delete.js') }}"></script>
 {% endif %}
 {# /DRAW #}
+<script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/suncalc.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/plantnetdata/leaflet/leaflet-layer.js') }}"></script>
 <!-- <script src="http://openweathermap.org/js/leaflet-layer.js"></script> -->
 <script type="text/javascript">
@@ -141,7 +142,7 @@
 			{% endif %}
 			{% set title3 = '' %}
 			{% if location.title3 is defined and location.title3 is not null %}
-				{% set title3 = '<br />' ~ location.title3 %}
+				{% set title3 = location.title3 %}
 			{% endif %}
 			{% set loc_data = '' %}
 			{% if location.module.properties is defined %}
@@ -151,11 +152,15 @@
 		        {% endfor %}
 	        {% endif %}
 			var marker_{{ location.id }}=L.marker([{{ location.latitude }},{{ location.longitude }}]);
-			marker_{{ location.id }}.bindPopup('<b>{{ title1|escape('js') }}</b><br /><b>{{ title2|escape('js') }}</b>{% autoescape false %}{{ title3 }}{% endautoescape %}'
-				+'<br />{{ loc_data|escape('js') }}'
-				{% if current_display is defined %}
-					+'<br /><br /><a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'id': location.plantunit.id }) }}" class="btn btn-small">{{ "line-details"|trans|capitalize }}</a>'
-				{% endif %}
+			marker_{{ location.id }}.bindPopup(
+                    '<b>{{ title1|escape('js') }}</b><br /><b>{{ title2|escape('js') }}</b>'
+                    {% if title3 is defined and title3 is not null %}
+                        +'<br />'+'{% autoescape 'html' %}{{ title3 }}{% endautoescape %}'
+                    {% endif %}
+                    +'<br />{{ loc_data|escape('js') }}'
+                    {% if current_display is defined %}
+                        +'<br /><br /><a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': module_parent.url, 'id': location.plantunit.id }) }}" class="btn btn-small">{{ "line-details"|trans|capitalize }}</a>'
+                    {% endif %}
 			);
 			markers.addLayer(marker_{{ location.id }});
 		{% endfor %}
