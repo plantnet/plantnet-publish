@@ -25,6 +25,32 @@
                 });
             }
         });
+
+        $('.pagerfantaurl').first().on('click','a', function(event){
+            event.preventDefault();
+            if($(this).attr('href').length&&$(this).attr('href')!='#'&&!$(this).parent('li').first().hasClass('active')){
+                var url=$(this).attr('href');
+                $('.pagerfantaurl ul').first().append('<li class="disabled"><a href="#"><div id="page-loading"></div></a></li>');
+                $('#data-load').load(url,function(){
+                    ;
+                });
+            }
+        });
+        $('.pagerfantaurl').last().on('click','a', function(event){
+            event.preventDefault();
+            if($(this).attr('href').length&&$(this).attr('href')!='#'&&!$(this).parent('li').first().hasClass('active')){
+                var url=$(this).attr('href');
+                $('.pagerfantaurl ul').first().append('<li class="disabled"><a href="#"><div id="page-loading"></div></a></li>');
+                $('html, body').animate({
+                    scrollTop:0
+                },'slow').promise().done(function(){
+                    $('#data-load').load(url,function(){
+                        ;
+                    });
+                });
+            }
+        });
         _gaq.push(['_trackPageview','{{ path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) }}']);
+
     </script>
 {% endblock %}

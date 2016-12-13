@@ -85,6 +85,10 @@
         <source>line-images</source>
         <target state="new">images</target>
       </trans-unit>
+      <trans-unit id="18" resname="line-images-distantes">
+        <source>line-images-distantes</source>
+        <target state="new">images distantes</target>
+      </trans-unit>
       <trans-unit id="19" resname="line-locations">
         <source>line-locations</source>
         <target state="new">localisations</target>
