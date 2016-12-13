@@ -128,10 +128,7 @@ class UserController extends Controller
      */
     public function users_editAction($username)
     {
-
-        $this->mylog("users_editAction",$username);
-
-        $userManager=$this->get('fos_user.user_manager');
+	    $userManager=$this->get('fos_user.user_manager');
         $user=$userManager->findUserByUsername($username);
         if(!$user){
             throw $this->createNotFoundException('Unable to find User entity.');
@@ -268,8 +265,6 @@ class UserController extends Controller
      */
     public function users_enableAction($username)
     {
-        $this->mylog("users_enableAction",$username);
-
         $form=$this->createEnableForm($username);
         $request=$this->getRequest();
         if('POST'===$request->getMethod()){
@@ -337,7 +332,8 @@ class UserController extends Controller
                         $user->setDbName($dbName);
                         $user->setDblist(array($dbName));
                         $user->addRole('ROLE_ADMIN');
-                        $user->setEnabled(true);
+                        // Alain active automatiquemnt le nouvel utilisateur
+						// $user->setEnabled(true);
                         $userManager->updateUser($user);
                         //send mail
                         $message=\Swift_Message::newInstance()

@@ -378,7 +378,7 @@
                         {% endif %}
                         {% if paginatorurl|length > 0 %}
                             {% if paginatorurl.haveToPaginate() %}
-                                <div class="pagerfanta">
+                                <div class="pagerfantaurl">
                                     <form method="get"
                                           action="{{ path('front_module_taxo_view_gallery', { 'project': project, 'collection': collection.url, 'module': module.url, 'taxon': taxon.identifier }) }}">
                                         <input type="number" name="form_page"
@@ -416,7 +416,7 @@
                                 </ul>
                             </div>
                             {% if paginatorurl.haveToPaginate() %}
-                                <div class="pagerfanta">
+                                <div class="pagerfantaurl">
                                     {{ pagerfanta(
                                     paginatorurl,
                                     'twitter_bootstrap_translated',
