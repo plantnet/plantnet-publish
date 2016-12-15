@@ -42,8 +42,6 @@ class CollectionController extends Controller
 
     public function collection_listAction()
     {
-        $this->mylog("collection_listAction");
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -65,8 +63,6 @@ class CollectionController extends Controller
      */
     public function collection_newAction()
     {
-        $this->mylog("collection_newAction");
-
         $document=new Collection();
         $form=$this->createForm(new CollectionType(),$document);
         return $this->render('PlantnetDataBundle:Backend\Collection:collection_new.html.twig',array(
@@ -84,8 +80,6 @@ class CollectionController extends Controller
      */
     public function collection_createAction()
     {
-        $this->mylog("collection_createAction");
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -143,8 +137,6 @@ class CollectionController extends Controller
      */
     public function collection_editAction($id)
     {
-        $this->mylog("collection_editAction",$id);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -173,8 +165,6 @@ class CollectionController extends Controller
      */
     public function collection_updateAction($id)
     {
-        $this->mylog("collection_updateAction",$id);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
