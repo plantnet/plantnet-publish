@@ -66,8 +66,6 @@ class ModulesController extends Controller
      */
     public function module_newAction($id,$type)
     {
-        $this->mylog("module_newAction",$id,$type);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -233,13 +231,9 @@ class ModulesController extends Controller
                         if($nb_uploaddirs>0){
                             $checked_upload_dir=false;
                         }
-
-                        $this->mylog("imageurl modules 247 ",$nb_uploaddirs);
                     }
                     if($checked_upload_dir){
-                        $this->mylog("checked_upload_dir");
                         if($form->isValid()){
-                            $this->mylog("form isvalid");
                             $dm=$this->get('doctrine.odm.mongodb.document_manager');
                             $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                             $module->setCollection($collection);
@@ -322,8 +316,6 @@ class ModulesController extends Controller
      */
     public function fields_typeAction($id,$idmodule)
     {
-        $this->mylog("fields_typeAction",$id,$idmodule);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -359,8 +351,6 @@ class ModulesController extends Controller
      */
     public function save_fieldsAction($id,$idmodule)
     {
-        $this->mylog("save_fieldsAction",$id,$idmodule);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -422,12 +412,10 @@ class ModulesController extends Controller
 
             $error=false;
             foreach($required[$module->getType()] as $key=>$val){
-                $this->mylog("key val",$key,$val);
                 if($val!=1){
                     $error=true;
                 }
             }
-            $this->mylog("error",$error);
             $form->bind($request);
             if(!$error){
                 if($form->isValid()){
@@ -459,8 +447,6 @@ class ModulesController extends Controller
      */
     public function import_dataAction($id,$idmodule)
     {
-        $this->mylog("import_dataAction",$id,$idmodule);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -652,8 +638,6 @@ class ModulesController extends Controller
      */
     public function module_editAction($id)
     {
-        $this->mylog("module_editAction",$id);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -680,8 +664,6 @@ class ModulesController extends Controller
      */
     public function module_updateAction($id)
     {
-        $this->mylog("module_updateAction",$id);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -781,8 +763,6 @@ class ModulesController extends Controller
      */
     public function module_edit_taxoAction($id)
     {
-        $this->mylog("module_edit_taxoAction",$id);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -858,7 +838,6 @@ class ModulesController extends Controller
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' clean >symfonyalain.log &';
 
                 echo "<br>ModulesController.php:module_update_taxoAction:  ".$command;
-                $this->mylog("module_update_taxoAction",$command);
 
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
@@ -909,8 +888,6 @@ class ModulesController extends Controller
 
     private function createDeleteSynForm($id)
     {
-        $this->mylog("createDeleteSynForm",$id);
-
         return $this->createFormBuilder(array('id'=>$id))
             ->add('id','hidden')
             ->getForm();
@@ -918,7 +895,6 @@ class ModulesController extends Controller
 
     private function createDeleteDescForm($id)
     {
-        $this->mylog("createDeleteDescForm",$id);
         return $this->createFormBuilder(array('id'=>$id))
             ->add('id','hidden')
             ->getForm();
@@ -932,8 +908,6 @@ class ModulesController extends Controller
      */
     public function module_synAction($id)
     {
-        $this->mylog("module_synAction",$id);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -959,8 +933,6 @@ class ModulesController extends Controller
      */
     public function module_descAction($id)
     {
-        $this->mylog("module_descAction",$id);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1047,8 +1019,6 @@ class ModulesController extends Controller
      */
     public function module_desc_updateAction($id)
     {
-        $this->mylog("module_desc_updateAction",$id);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1107,8 +1077,6 @@ class ModulesController extends Controller
      */
     public function module_syn_deleteAction($id)
     {
-        $this->mylog("module_syn_deleteAction",$id);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1155,8 +1123,6 @@ class ModulesController extends Controller
      */
     public function module_desc_deleteAction($id)
     {
-        $this->mylog("module_desc_deleteAction",$id);
-
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
@@ -1224,9 +1190,6 @@ class ModulesController extends Controller
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' >symfonyalain.log &';
-
-                $this->mylog("module_deleteAction",$command);
-
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
 
@@ -1245,9 +1208,6 @@ class ModulesController extends Controller
 
     private function update_indexes($module)
     {
-        $this->mylog("update_indexes",$module);
-
-
         if($module){
             ini_set('memory_limit','-1');
             $user=$this->container->get('security.context')->getToken()->getUser();
@@ -1329,8 +1289,6 @@ class ModulesController extends Controller
      */
     public function module_edit_dataAction($id)
     {
-        $this->mylog("module_edit_dataAction",$id);
-
         $limit=200000;
         $user=$this->container->get('security.context')->getToken()->getUser();
         $dm=$this->get('doctrine.odm.mongodb.document_manager');

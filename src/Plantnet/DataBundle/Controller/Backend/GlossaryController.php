@@ -436,7 +436,7 @@ class GlossaryController extends Controller
             if($form->isValid()){
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete glossary '.$id.' '.$user->getDbName().' &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete glossary '.$id.' '.$user->getDbName().' >symfonyalain.log &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Glossary deleted');
@@ -524,7 +524,7 @@ class GlossaryController extends Controller
                     throw new \Exception($e->getMessage());
                 }
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:glossary syn '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:glossary syn '.$id.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &'; //' &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Glossary updated');
@@ -570,7 +570,7 @@ class GlossaryController extends Controller
                     $dm=$this->get('doctrine.odm.mongodb.document_manager');
                     $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
                     $kernel=$this->get('kernel');
-                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:glossary unsyn '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:glossary unsyn '.$id.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &'; //' &> /dev/null &';
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
                     $this->get('session')->getFlashBag()->add('msg_success','Glossary updated');

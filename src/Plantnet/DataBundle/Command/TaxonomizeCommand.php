@@ -521,7 +521,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                                 }
                             }
                             $exists=false;
-                            if($last_non_valid->getIssynonym()&&$last_non_valid->getChosen()){
+                            if($last_non_valid&&$last_non_valid->getIssynonym()&&$last_non_valid->getChosen()){
                                 if($last_non_valid->getChosen()->getId()==$last_valid->getId()){
                                     $exists=true;
                                 }

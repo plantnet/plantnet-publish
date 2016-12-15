@@ -505,7 +505,7 @@ class ImportationCommand extends ContainerAwareCommand
                 $e=microtime(true);
                 echo ' Inserted '.$rowCount.' objects in '.($e-$s).' seconds'.PHP_EOL;
                 if(file_exists($csvfile)){
-                //   unlink($csvfile);
+                   unlink($csvfile);
                 }
                 $message='Importation Success: '.$rowCount.' objects imported in '.($e-$s).' seconds';
                 $message.="\n";
