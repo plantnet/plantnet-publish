@@ -235,7 +235,7 @@ class CollectionController extends Controller
                 $dm->flush();
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' >symfonyalain.log &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' &> /dev/null &';
 
                 echo "<br>CollectionController.php:collection_deleteAction:  ".$command;
 

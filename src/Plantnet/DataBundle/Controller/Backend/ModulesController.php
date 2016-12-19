@@ -603,7 +603,7 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
 
                 // echo "<br>ModulesController.php:importationAction:  ".$command;
 
@@ -994,7 +994,7 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon syn '.$id.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon syn '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
 
                 //echo "<br>ModulesController.php:module_syn_updateAction:  ".$command;
 
@@ -1053,7 +1053,7 @@ class ModulesController extends Controller
                 $dm->persist($module);
                 $dm->flush();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon desc '.$id.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon desc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
 
                 // echo "<br>ModulesController.php:module_desc_updateAction:  ".$command;
 
@@ -1102,7 +1102,7 @@ class ModulesController extends Controller
                     $dm->flush();
                     //command
                     $kernel=$this->get('kernel');
-                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
 
                     //echo "<br>ModulesController.php:module_syn_deleteAction:  ".$command;
 
@@ -1148,7 +1148,7 @@ class ModulesController extends Controller
                     $dm->flush();
                     //command
                     $kernel=$this->get('kernel');
-                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon undesc '.$id.' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon undesc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
 
                     //echo "<br>ModulesController.php:module_desc_deleteAction:  ".$command;
 
@@ -1189,7 +1189,7 @@ class ModulesController extends Controller
                 $dm->flush();
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' >symfonyalain.log &';
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete module '.$id.' '.$user->getDbName().' &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
 
@@ -1372,7 +1372,7 @@ class ModulesController extends Controller
                     $dm->flush();
                     $user=$this->container->get('security.context')->getToken()->getUser();
                     $kernel=$this->get('kernel');
-                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' >symfonyalain.log &';
+                    $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
 
                     //echo "<br>ModulesController.php:module_update_dataAction:  ".$command;
 
