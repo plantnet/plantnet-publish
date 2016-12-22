@@ -43,11 +43,11 @@
 		<h5>
 			{{ image.title1 }}<br />{{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %}<br />{{ image.title3 }}{% endif %}
 		</h5>
-		{% if image.copyright is not empty %}
-			<p>
+		<p style="width: 252px; height: 14px;">
+			{% if image.copyright is not empty %}
 				© {{ image.copyright }}
-			</p>
-		{% endif %}
+			{% endif %}
+		</p>
 		<div class="access">
 			<a href="{{ path('front_details', { 'project': project, 'collection': collection.url, 'module': image.plantunit.module.url, 'id': image.plantunit.identifier }) }}" class="btn btn-mini">
 				<i class="icon-list pop-tooltip" data-toggle="tooltip" title="{{ "line-details"|trans|capitalize }}"></i>

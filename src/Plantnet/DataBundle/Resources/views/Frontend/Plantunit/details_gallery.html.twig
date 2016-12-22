@@ -16,11 +16,11 @@
             <h5>
                 {{ image.title1 }} - {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} - {{ image.title3 }}{% endif %}
             </h5>
-            {% if image.copyright is not empty %}
-                <p>
+            <p style="width: 252px; height: 14px;">
+                {% if image.copyright is not empty %}
                     © {{ image.copyright }}
-                </p>
-            {% endif %}
+                {% endif %}
+            </p>
             <div class="access">
                 <a class="html-box btn btn-mini" href="#data_{{ image.id }}">
                     <i class="icon-eye-open pop-tooltip" data-toggle="tooltip" title="Zoom"></i>
@@ -79,11 +79,11 @@
             <h5>
                 {{ image.title1 }} - {{ image.title2 }}{% if image.title3 is defined and image.title3 is not null %} - {{ image.title3 }}{% endif %}
             </h5>
-            {% if image.copyright is not empty %}
-                <p>
-                    © {{ image.copyright }}
-                </p>
-            {% endif %}
+             <p style="width: 252px; height: 14px;">
+                 {% if image.copyright is not empty %}
+                     © {{ image.copyright }}
+                 {% endif %}
+             </p>
             <div class="access">
                 <a class="html-box btn btn-mini" href="#data_{{ image.id }}">
                     <i class="icon-eye-open pop-tooltip" data-toggle="tooltip" title="Zoom"></i>
