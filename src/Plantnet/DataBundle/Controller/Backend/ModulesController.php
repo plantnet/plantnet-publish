@@ -40,13 +40,6 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class ModulesController extends Controller
 {
-
-    function mylog($data,$data2=null,$data3=null){
-        if( $data != null){
-            $this->get('ladybug')->log(func_get_args());
-        }
-    }
-
     private function getDataBase($user=null,$dm=null)
     {
         if($user){
@@ -604,9 +597,6 @@ class ModulesController extends Controller
                 $dm->flush();
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:importation '.$id.' '.$idmodule.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
-
-                // echo "<br>ModulesController.php:importationAction:  ".$command;
-
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 return $this->container->get('templating')->renderResponse('PlantnetDataBundle:Backend\Modules:import_moduledata.html.twig',array(
@@ -835,10 +825,7 @@ class ModulesController extends Controller
                 $dm->flush();
                 //command
                 $kernel=$this->get('kernel');
-                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' clean >symfonyalain.log &';
-
-                echo "<br>ModulesController.php:module_update_taxoAction:  ".$command;
-
+                $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon taxo '.$id.' '.$user->getDbName().' '.$user->getEmail().' clean &> /dev/null &';
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -899,7 +886,7 @@ class ModulesController extends Controller
             ->add('id','hidden')
             ->getForm();
     }
-    
+
     /**
      * Displays a form to add syns to Module entity.
      *
@@ -995,9 +982,6 @@ class ModulesController extends Controller
                 $dm->flush();
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon syn '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
-
-                //echo "<br>ModulesController.php:module_syn_updateAction:  ".$command;
-
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -1054,9 +1038,6 @@ class ModulesController extends Controller
                 $dm->flush();
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon desc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
-
-                // echo "<br>ModulesController.php:module_desc_updateAction:  ".$command;
-
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -1149,9 +1130,6 @@ class ModulesController extends Controller
                     //command
                     $kernel=$this->get('kernel');
                     $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:taxon undesc '.$id.' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
-
-                    //echo "<br>ModulesController.php:module_desc_deleteAction:  ".$command;
-
                     $process=new \Symfony\Component\Process\Process($command);
                     $process->start();
                     $this->get('session')->getFlashBag()->add('msg_success','Taxonomy updated');
@@ -1373,10 +1351,7 @@ class ModulesController extends Controller
                     $user=$this->container->get('security.context')->getToken()->getUser();
                     $kernel=$this->get('kernel');
                     $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:update '.$module->getId().' '.$user->getDbName().' '.$user->getEmail().' &> /dev/null &';
-
-                    //echo "<br>ModulesController.php:module_update_dataAction:  ".$command;
-
-                    $process=new \Symfony\Component\Process\Process($command);
+                    $process=new \Symsfony\Component\Process\Process($command);
                     $process->start();
                     $this->get('session')->getFlashBag()->add('msg_success','Updating data.');
                 }

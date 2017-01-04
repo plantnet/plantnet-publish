@@ -22,13 +22,6 @@ use Plantnet\DataBundle\Utils\StringHelp;
  */
 class CollectionController extends Controller
 {
-
-    function mylog($data,$data2=null,$data3=null){
-        if( $data != null){
-            $this->get('ladybug')->log(func_get_args());
-        }
-    }
-
     private function getDataBase($user=null,$dm=null)
     {
         if($user){

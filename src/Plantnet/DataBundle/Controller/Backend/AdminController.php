@@ -36,13 +36,6 @@ use Plantnet\DataBundle\Document\Database;
  */
 class AdminController extends Controller
 {
-
-    function mylog($data,$data2=null,$data3=null){
-        if( $data != null){
-            $this->get('ladybug')->log(func_get_args());
-        }
-    }
-
     private function database_list()
     {
         //display databases without prefix
