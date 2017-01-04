@@ -26,12 +26,6 @@ use Plantnet\DataBundle\Utils\ControllerHelp;
  */
 class DataController extends Controller
 {
-    function mylog($data, $data2 = null, $data3 = null)
-    {
-        if ($data != null) {
-            $this->get('ladybug')->log(func_get_args());
-        }
-    }
 
     private function get_prefix()
     {

@@ -23,12 +23,6 @@ ini_set('memory_limit','-1');
 
 class TaxonomizeCommand extends ContainerAwareCommand
 {
-    function mylog($data,$data2=null,$data3=null){
-        if( $data != null){
-            $this->get('ladybug')->log(func_get_args());
-        }
-    }
-
     private $tmp_indexes=array();
 
     protected function configure()
