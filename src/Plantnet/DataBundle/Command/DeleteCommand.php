@@ -38,7 +38,7 @@ class DeleteCommand extends ContainerAwareCommand
         $id = $input->getArgument('id');
         $dbname = $input->getArgument('dbname');
         echo ("dbname ".$dbname );
-              if ($type && $id && ($type == 'collection' || $type == 'module' || $type == 'glossary') && $dbname) {
+        if ($type && $id && ($type == 'collection' || $type == 'module' || $type == 'glossary') && $dbname) {
             if ($type == 'module') {
                 $this->delete_module($dbname, $id);
             } elseif ($type == 'collection') {

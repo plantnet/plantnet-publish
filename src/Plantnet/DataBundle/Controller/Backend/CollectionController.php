@@ -229,9 +229,6 @@ class CollectionController extends Controller
                 $user=$this->container->get('security.context')->getToken()->getUser();
                 $kernel=$this->get('kernel');
                 $command=$this->container->getParameter('php_bin').' '.$kernel->getRootDir().'/console publish:delete collection '.$id.' '.$user->getDbName().' &> /dev/null &';
-
-                echo "<br>CollectionController.php:collection_deleteAction:  ".$command;
-
                 $process=new \Symfony\Component\Process\Process($command);
                 $process->start();
                 $this->get('session')->getFlashBag()->add('msg_success','Collection deleted');

@@ -46,7 +46,6 @@ class TaxoController extends Controller
      */
     public function module_taxoAction($project,$collection,$module,$taxon,Request $request)
     {
-        echo "front_module_taxo_details";
         ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $form_identifier=$request->query->get('form_identifier');
         if($this->container->get('request')->get('_route')=='front_module_taxo'&&!empty($form_identifier)){
