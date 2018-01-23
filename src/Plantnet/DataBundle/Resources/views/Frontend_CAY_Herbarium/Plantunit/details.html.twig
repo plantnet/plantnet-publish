@@ -159,7 +159,7 @@
                 <div id="map"></div>
             </div>
         {% endif %}
-        {% if (plantunit.hasimages ) and (plantunit.hasimagesurl) %}
+        {% if (plantunit.hasimages) or (plantunit.hasimagesurl) %}
             <div class="gallery">
                 <h5>{{ "line-gallery"|trans|capitalize }}</h5>
                 <ul id="list_gallery" class="thumbnails per4">
@@ -172,6 +172,7 @@
                 </ul>
             </div>
         {% endif %}
+        <!-- CAY -->
     </section>
 {% endblock %}
 {% block javascripts %}
