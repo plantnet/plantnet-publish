@@ -118,7 +118,8 @@ class DataController extends Controller
                         if (!$child->getDeleting() && $child->getType() == 'imageurl') {
 
                             $skip = rand(0, ($child->getNbrows() - 1 - $limit));
-                            $tmp_imagesurl = $dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
+                            if ($skip > 0) {
+                                $tmp_imagesurl = $dm->createQueryBuilder('PlantnetDataBundle:Imageurl')
                                 ->field('module')->references($child)
                                 ->sort('_id', 'asc')
                                 ->limit($limit)
@@ -126,15 +127,16 @@ class DataController extends Controller
                                 ->getQuery()
                                 ->execute();
 
-                            foreach ($tmp_imagesurl as $imgurl) {
-                                if (!isset($imagesurl[$module->getId()])) {
-                                    $imagesurl[$module->getId()] = array();
+                                foreach ($tmp_imagesurl as $imgurl) {
+                                    if (!isset($imagesurl[$module->getId()])) {
+                                        $imagesurl[$module->getId()] = array();
+                                    }
+                                    $imagesurl[$module->getId()][] = $imgurl;
                                 }
-                                $imagesurl[$module->getId()][] = $imgurl;
+                                $imgurl_coll = $coll->getName();
+                                $imgurl_mod = $module->getName();
+                                $imgurl_ssmod = $child->getName();
                             }
-                            $imgurl_coll = $coll->getName();
-                            $imgurl_mod = $module->getName();
-                            $imgurl_ssmod = $child->getName();
                         }
                     }
                 }
