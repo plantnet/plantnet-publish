@@ -328,8 +328,12 @@ class ImportationCommand extends ContainerAwareCommand
                                     }
                                     $value=str_replace(',','.',$value);
                                     $value=floatval($value);
-                                    $location->setLongitude($value);
-                                    $coordinates->setX($value);
+									if ($value<-180||$value>180) {
+										$geo_error=true;
+									} else {
+										$location->setLongitude($value);
+				                        $coordinates->setX($value);
+									}
                                     break;
                                 case 'lat':
                                     if(strlen($value)==0){
@@ -337,8 +341,12 @@ class ImportationCommand extends ContainerAwareCommand
                                     }
                                     $value=str_replace(',','.',$value);
                                     $value=floatval($value);
-                                    $location->setLatitude($value);
-                                    $coordinates->setY($value);
+									if ($value<-90||$value>90) {
+										$geo_error=true;
+									} else {
+										$location->setLatitude($value);
+				                        $coordinates->setY($value);
+									}
                                     break;
                                 case 'idparent':
                                     $location->setIdparent($value.'');
