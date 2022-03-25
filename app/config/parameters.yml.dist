@@ -27,4 +27,4 @@ parameters:
     node_paths: [/usr/local/lib/node_modules]
 
     from_email_adress: support@plantnet-project.org
-    from_email_sender_name: plantnet-project.org
+    from_email_sender_name: plantnet.org
