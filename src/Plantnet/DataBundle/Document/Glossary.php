@@ -15,7 +15,7 @@ class Glossary
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     private $uploaddir;
 

@@ -16,22 +16,22 @@ class Database
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $name;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $link;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $displayedname;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $language;
 
@@ -56,12 +56,12 @@ class Database
     private $children = array();
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $enable;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 

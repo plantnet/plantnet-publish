@@ -18,22 +18,22 @@ class Collection
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $name;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $alias;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $url;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
     
@@ -49,7 +49,7 @@ class Collection
     private $modules = array();
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $deleting;
 

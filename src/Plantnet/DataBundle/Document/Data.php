@@ -9,27 +9,27 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 class Data
 {
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $attribute;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $value;
     
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $type;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $main;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $details;
 

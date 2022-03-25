@@ -15,32 +15,32 @@ class Module
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $name;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $alias;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $url;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $description;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     private $type;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     private $uploaddir;
     
@@ -104,12 +104,12 @@ class Module
     private $children = array();
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $updating;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $deleting;
 
@@ -150,17 +150,17 @@ class Module
     private $others = array();
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     private $nbrows;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $taxonomy;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $displaysyns;
 
@@ -179,7 +179,7 @@ class Module
     protected $indexes;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $wsonly;
 

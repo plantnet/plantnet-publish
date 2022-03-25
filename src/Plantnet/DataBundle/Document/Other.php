@@ -14,7 +14,7 @@ class Other
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifier;
 
@@ -24,7 +24,7 @@ class Other
     protected $property;
     
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $idparent;
 

@@ -14,22 +14,22 @@ class Definition
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $name;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $displayedname;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $definition;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $path;
 
@@ -62,7 +62,7 @@ class Definition
     private $children = array();
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $haschildren;
 

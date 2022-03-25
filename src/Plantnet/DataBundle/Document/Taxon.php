@@ -14,22 +14,22 @@ class Taxon
     protected $id;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $identifier;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $name;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $label;
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     private $level;
 
@@ -39,7 +39,7 @@ class Taxon
     protected $attributes;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $issynonym;
 
@@ -100,27 +100,27 @@ class Taxon
     private $plantunits = array();
 
     /**
-     * @MongoDB\Int
+     * @MongoDB\Field(type="int")
      */
     private $nbpunits;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $hasimages;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $hassynonyms;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $haslocations;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")ean
      */
     private $haschildren;
 
