@@ -1,6 +1,7 @@
+---
 imports:
-    - { resource: parameters.yml }
-    - { resource: security.yml }
+    - {resource: parameters.yml}
+    - {resource: security.yml}
 
 services:
     plantnet_security.wsse_request_matcher:
@@ -8,15 +9,15 @@ services:
 
 framework:
     esi: ~
-    translator: { fallback: %locale% }
-    secret: %secret%
+    translator: {fallback: "%locale%"}
+    secret: "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
-        strict_requirements: %kernel.debug%
+        strict_requirements: "%kernel.debug%"
     form: true
     csrf_protection: true
-    validation: { enable_annotations: true }
-    templating: { engines: ['twig'] } #assets_version: SomeVersionScheme
+    validation: {enable_annotations: true}
+    templating: {engines: ['twig']}  # assets_version: SomeVersionScheme
     default_locale: "%locale%"
     trusted_proxies: ['127.0.0.1']
     session: ~
@@ -25,49 +26,49 @@ framework:
         path: /_fragment
 
 sensio_framework_extra:
-    router: { annotations: true }
-    request: { converters: true }
-    view: { annotations: false } # More info at https://github.com/FriendsOfSymfony/FOSRestBundle/issues/95
-    cache: { annotations: true }
+    router: {annotations: true}
+    request: {converters: true}
+    view: {annotations: false}  # More info at https://github.com/FriendsOfSymfony/FOSRestBundle/issues/95
+    cache: {annotations: true}
 
 # Twig Configuration
 twig:
-    debug: %kernel.debug%
-    strict_variables: %kernel.debug%
+    debug: "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
     globals:
-        mdb_base: %mdb_base%
+        mdb_base: "%mdb_base%"
 
 # Assetic Configuration
 assetic:
-    debug: %kernel.debug%
+    debug: "%kernel.debug%"
     use_controller: false
-    bundles: [ PlantnetDataBundle ]
+    bundles: [PlantnetDataBundle]
     filters:
         cssrewrite: ~
         yui_css:
             jar: "%kernel.root_dir%/Resources/java/yuicompressor-2.4.2.jar"
         yui_js:
             jar: "%kernel.root_dir%/Resources/java/yuicompressor-2.4.2.jar"
-        less: 
-            node: %node%
-            node_paths: %node_paths%
+        less:
+            node: "%node%"
+            node_paths: "%node_paths%"
         lessphp: ~
 
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver: %database_driver%
-        host: %database_host%
-        port: %database_port%
-        dbname: %database_name%
-        user: %database_user%
-        password: %database_password%
+        driver: "%database_driver%"
+        host: "%database_host%"
+        port: "%database_port%"
+        dbname: "%database_name%"
+        user: "%database_user%"
+        password: "%database_password%"
         charset: UTF8
         # if using pdo_sqlite as your database driver, add the path in parameters.yml
         # e.g. database_path: %kernel.root_dir%/data/data.db3
         # path: %database_path%
     orm:
-        auto_generate_proxy_classes: %kernel.debug%
+        auto_generate_proxy_classes: "%kernel.debug%"
         auto_mapping: true
 
 doctrine_mongodb:
@@ -76,7 +77,7 @@ doctrine_mongodb:
             server: mongodb://localhost:27017
             options:
                 connect: true
-    default_database: %mdb_base%
+    default_database: "%mdb_base%"
     document_managers:
         default:
             auto_mapping: true
@@ -85,21 +86,21 @@ doctrine_mongodb:
 
 # Swiftmailer Configuration
 swiftmailer:
-    transport: %mailer_transport%
-    host: %mailer_host%
-    username: %mailer_user%
-    password: %mailer_password%
-    spool: { type: memory }
+    transport: "%mailer_transport%"
+    host: "%mailer_host%"
+    username: "%mailer_user%"
+    password: "%mailer_password%"
+    spool: {type: memory}
     # delivery_adress: ...
-    disable_delivery: %mailer_disable% 
+    disable_delivery: "%mailer_disable%"
 
 jms_translation:
     configs:
         app:
-            dirs: [%kernel.root_dir%, %kernel.root_dir%/../src]
-            output_dir: %kernel.root_dir%/Resources/translations
+            dirs: ["%kernel.root_dir%", "%kernel.root_dir%/../src"]
+            output_dir: "%kernel.root_dir%/Resources/translations"
             ignored_domains: []
-            excluded_names: [*TestCase.php, *Test.php]
+            excluded_names: ["*TestCase.php", "*Test.php"]
             excluded_dirs: [cache, data, logs]
             extractors: []
 
@@ -110,8 +111,8 @@ fos_user:
     use_listener: true
     use_username_form_type: true
     from_email:
-        address: %from_email_adress%
-        sender_name: %from_email_sender_name%
+        address: "%from_email_adress%"
+        sender_name: "%from_email_sender_name%"
     profile:
         form:
             type: fos_user_profile
@@ -124,7 +125,7 @@ fos_user:
             validation_groups: [ChangePassword]
     registration:
         confirmation:
-            enabled: %register_email_confirm%
+            enabled: "%register_email_confirm%"
             template: FOSUserBundle:Registration:email.txt.twig
         form:
             type: plantnet_user_registration
@@ -169,59 +170,31 @@ escape_wsse_authentication:
 
 nelmio_api_doc: ~
 
-raul_fraile_ladybug:  
-    #general:              
-    #    expanded: true 
-    #object:               
-    #    max_nesting_level: 3 
-    #    show_data: true 
-    #    show_classinfo: true 
-    #    show_constants: true 
-    #    show_methods: true 
-    #    show_properties: true 
-    #array:                
-    #    max_nesting_level: 8 
-    #processor:            
-    #    active: true 
-    #bool:                 
-    #    html_color: #008 
-    #    cli_color: blue 
-    #float:                
-    #    html_color: #800 
-    #    cli_color: red 
-    #int:                  
-    #    html_color: #800 
-    #    cli_color: red 
-    #string:               
-    #    html_color: #080 
-    #    cli_color: green 
-    #    show_quotes: true
-
 liip_imagine:
-    #cache_clearer: false
-    #cache_mkdir_mode: 0777
+    # cache_clearer: false
+    # cache_mkdir_mode: 0777
     filter_sets:
         max_width_900:
             filters:
-                relative_resize: { widen: 900 }
+                relative_resize: {widen: 900}
         thumb_100_100:
             filters:
-                thumbnail: { size: [100, 100], mode: outbound }
+                thumbnail: {size: [100, 100], mode: outbound}
         thumb_template:
             filters:
-                crop: { start: [0, 0], size: [270, 350] }
+                crop: {start: [0, 0], size: [270, 350]}
         thumb_idao:
             filters:
-                thumbnail: { size: [120, 80], mode: outbound }
+                thumbnail: {size: [120, 80], mode: outbound}
         thumb_180_120:
             filters:
-                thumbnail: { size: [180, 120], mode: outbound }
+                thumbnail: {size: [180, 120], mode: outbound}
         thumb_370_210:
             filters:
-                thumbnail: { size: [370, 210], mode: outbound }
+                thumbnail: {size: [370, 210], mode: outbound}
         thumb_130_75:
             filters:
-                thumbnail: { size: [130, 75], mode: outbound }
+                thumbnail: {size: [130, 75], mode: outbound}
         thumb_max_width_100:
             filters:
-                relative_resize: { widen: 100 }
+                relative_resize: {widen: 100}
