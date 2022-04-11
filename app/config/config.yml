@@ -144,8 +144,8 @@ fos_user:
         email_canonicalizer: fos_user.util.canonicalizer.default
         username_canonicalizer: fos_user.util.canonicalizer.default
         user_manager: fos_user.user_manager.default
-    template:
-        engine: twig
+#    template:
+#        engine: twig
 
 fos_rest:
     view:
