@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "04f78637b470d49f81b8982120fca441",
+    "content-hash": "e461e9251c2550408728d304a8710281",
     "packages": [
         {
             "name": "alcaeus/mongo-php-adapter",
@@ -1714,30 +1714,30 @@
         },
         {
             "name": "friendsofsymfony/user-bundle",
-            "version": "v1.3.7",
-            "target-dir": "FOS/UserBundle",
+            "version": "v2.0.0-alpha2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "113cc4e48fac19d20fc039cfecae9b41103be706"
+                "reference": "1b13cfdeaea2b277d5e8dd6232cf3eaac25e6b2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/113cc4e48fac19d20fc039cfecae9b41103be706",
-                "reference": "113cc4e48fac19d20fc039cfecae9b41103be706",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/1b13cfdeaea2b277d5e8dd6232cf3eaac25e6b2f",
+                "reference": "1b13cfdeaea2b277d5e8dd6232cf3eaac25e6b2f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2",
+                "php": ">=5.3.9",
+                "symfony/form": "~2.3",
                 "symfony/framework-bundle": "~2.3",
-                "symfony/security-bundle": "~2.3"
+                "symfony/security-bundle": "~2.3",
+                "symfony/twig-bundle": "~2.3"
             },
             "require-dev": {
                 "doctrine/doctrine-bundle": "~1.3",
                 "swiftmailer/swiftmailer": "~4.3|~5",
                 "symfony/validator": "~2.3",
                 "symfony/yaml": "~2.3",
-                "twig/twig": "~1.5",
                 "willdurand/propel-typehintable-behavior": "~1.0"
             },
             "suggest": {
@@ -1750,8 +1750,8 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "FOS\\UserBundle": ""
+                "psr-4": {
+                    "FOS\\UserBundle\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1778,11 +1778,11 @@
                 "User management"
             ],
             "support": {
-                "docs": "https://symfony.com/doc/1.3.x/bundles/FOSUserBundle/index.html",
+                "docs": "https://symfony.com/doc/master/bundles/FOSUserBundle/index.html",
                 "issues": "https://github.com/FriendsOfSymfony/FOSUserBundle/issues",
-                "source": "https://github.com/FriendsOfSymfony/FOSUserBundle/tree/1.3.x"
+                "source": "https://github.com/FriendsOfSymfony/FOSUserBundle/tree/master"
             },
-            "time": "2016-08-12T09:53:32+00:00"
+            "time": "2015-09-15T12:27:56+00:00"
         },
         {
             "name": "gedmo/doctrine-extensions",
