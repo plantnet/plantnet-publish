@@ -60,7 +60,7 @@ class StringHelp
 		$text=utf8_encode($text);
 		$text=trim(mb_strtolower($text,'UTF-8'));
 		$text=preg_replace('/([^a-z]+)/i','_',$text);
-		$text=eregi_replace("[_]+",'_',strtolower($text));
+		$text=preg_replace('/[_]+/i','_',strtolower($text));
 		if($text[0]=='_'){
 			$text=substr($text,1);
 		}
@@ -73,7 +73,7 @@ class StringHelp
 	static public function cleanToPath($text)
 	{
 		$text=trim(mb_strtolower($text,'UTF-8'));
-        $text=eregi_replace("[ ]+",'-',strtolower($text));
+        $text=preg_replace('/[ ]+/i','-',strtolower($text));
         $text=preg_replace('/([^.a-z0-9]+)/i','_',$text);
         return $text;
 	}
