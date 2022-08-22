@@ -19,7 +19,7 @@
     {% endfor %}
     {% if updating == true %}
         <p class="text-warning">
-            There is a work in progress, taxonomy configuration is disabled few minutes.
+            There is a work in progress, taxonomy configuration is disabled for a few minutes.
         </p>
     {% else %}
         <form action="{{ path('module_desc_update', { 'id': module.id }) }}" method="post" {{ form_enctype(form) }}>
