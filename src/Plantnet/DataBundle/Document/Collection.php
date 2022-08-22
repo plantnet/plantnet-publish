@@ -60,7 +60,7 @@ class Collection
      *      cascade={"remove"}
      *  )
      */
-    private $glossary = array();
+    private $glossary;
 
     /**
      * To String
