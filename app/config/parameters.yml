@@ -6,17 +6,22 @@ parameters:
     database_name: symfony
     database_user: root
     database_password: null
+
     mailer_transport: smtp
     mailer_host: 127.0.0.1
     mailer_user: null
     mailer_password: null
     mailer_disable: true
     register_email_confirm: false
+    from_email_adress: support@plantnet-project.org
+    from_email_sender_name: plantnet-project.org
+
     locale: en
     secret: ThisTokenIsNotSoSecretChangeIt
-    mdb_base: bota
+    mdb_base: publish
+    mdb_username: root
+    mad_password: example
+
     php_bin: php
     node: /usr/bin/node
     node_paths: [/usr/lib/node_modules]
-    from_email_adress: support@plantnet-project.org
-    from_email_sender_name: plantnet-project.org
