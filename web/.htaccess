@@ -2,10 +2,11 @@ php_flag magic_quotes_gpc off
 
 php_value short_open_tag Off
 php_value date.timezone Europe/Paris
-php_value memory_limit 256M
+php_value memory_limit 2048M
 php_value post_max_size 2000M
 php_value upload_max_filesize 2000M
 php_value max_file_uploads 20
+php_value max_execution_time 300
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
