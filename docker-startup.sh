@@ -49,5 +49,3 @@ fi
 
 # @TODO at first run, create Database collection ?
 
-# empty cache
-php app/console cache:clear --env=prod
