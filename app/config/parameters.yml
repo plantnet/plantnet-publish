@@ -1,26 +1,20 @@
 # This file is auto-generated during the composer install
 parameters:
-    database_driver: pdo_mysql
-    database_host: 127.0.0.1
-    database_port: null
-    database_name: symfony
-    database_user: root
-    database_password: null
-
     mailer_transport: smtp
     mailer_host: 127.0.0.1
     mailer_user: null
     mailer_password: null
-    mailer_disable: true
-    register_email_confirm: false
+    mailer_disable: false
+    register_email_confirm: true
     from_email_adress: support@plantnet-project.org
     from_email_sender_name: plantnet-project.org
 
     locale: en
     secret: ThisTokenIsNotSoSecretChangeIt
+
     mdb_base: publish
     mdb_username: root
-    mad_password: example
+    mdb_password: null
 
     php_bin: php
     node: /usr/bin/node

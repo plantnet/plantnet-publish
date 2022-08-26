@@ -189,7 +189,7 @@ Edit app/config/parameters.yml
  mailer_password: null
 </pre>
 
-If no mail serveur is available, add in parameters.yml
+If no mail server is available, add in parameters.yml
 
 <pre>
     mailer_disable: true
