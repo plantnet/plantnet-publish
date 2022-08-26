@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "This is plantnet-publish startup script!"
 
 function set_parameter {
