@@ -32,7 +32,7 @@ RUN mkdir app/cache; mkdir app/logs; mkdir -p web/media/cache; mkdir web/banners
 
 RUN composer install
 
-# @TODO config using env vars
+# config using env vars
 ENTRYPOINT ["./docker-entrypoint.sh"]
 
 RUN php app/console assets:install --symlink && php app/console assetic:dump --env=prod
