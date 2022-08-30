@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker build . -t plantnet/publish:latest
+docker build . -t plantnet/publish:latest $@
 docker tag plantnet/publish:latest publish_local

@@ -13,8 +13,6 @@ parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
 
     mdb_base: publish
-    mdb_username: root
-    mdb_password: null
 
     php_bin: php
     node: /usr/bin/node

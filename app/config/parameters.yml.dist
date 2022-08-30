@@ -11,8 +11,6 @@ parameters:
     locale: en
     secret: ThisTokenIsNotSoSecretChangeIt
     mdb_base: publish
-    mdb_username: root
-    mdb_password: ~
 
     php_bin: php
     node: /usr/bin/node

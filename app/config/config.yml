@@ -68,8 +68,6 @@ doctrine_mongodb:
             server: mongodb://mongo:27017
             options:
                 connect: true
-                username: "%mdb_username%"
-                password: "%mdb_password%"
     default_database: "%mdb_base%"
     document_managers:
         default:

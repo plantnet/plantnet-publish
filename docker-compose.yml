@@ -9,13 +9,13 @@ services:
     depends_on:
       - mongo
     restart: always
+    volumes:
+      - web:/var/www/plantnet-publish/web
     environment:
       PUBLISH_SYMFONY_LOCALE: en
       PUBLISH_SYMFONY_SECRET: get_your_own_secret_string
       PUBLISH_PHP_MEMORY_LIMIT: 2048M
-      PUBLISH_MONGO_DATABASE: publish
-      PUBLISH_MONGO_USERNAME: root
-      PUBLISH_MONGO_PASSWORD: example
+      PUBLISH_MONGO_DATABASE: publish_prod
       PUBLISH_ADMIN_USER: admin
       PUBLISH_ADMIN_PASSWORD: _change_me_
       PUBLISH_ADMIN_EMAIL: admin@_change_me_
@@ -32,9 +32,6 @@ services:
     restart: always
     volumes:
       - /opt/plantnet-publish/db:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
 
   mongo-express:
     image: mongo-express
@@ -42,8 +39,9 @@ services:
     ports:
       - 8062:8081
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/
       ME_CONFIG_BASICAUTH_USERNAME: admin
       ME_CONFIG_BASICAUTH_PASSWORD: _change_me_
+
+volumes:
+  web:
