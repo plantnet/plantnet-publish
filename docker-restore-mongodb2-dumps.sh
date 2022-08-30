@@ -25,5 +25,4 @@ for BSON in $BSONFILES; do
 	eval $CMD
 	CMD2="sudo docker exec -i plantnet-publish_mongo_1 sh -c 'mongoimport -u $USERNAME -p $PASSWORD --authenticationDatabase admin -d $DB -c $COLLECTION --drop' < $DBPATH/$JSON"
 	eval $CMD2
-	break
 done
