@@ -9,18 +9,18 @@ if [ "$#" -lt 1 ]; then
 	exit 1
 fi
 
-DB=`basename "$1"`
+DBPATH=$1
+DB=`basename "$DBPATH"`
 
 echo "Restoring database $DB"
 
-BSONFILES=`ls "$DB" | grep ".bson"`
+BSONFILES=`ls "$DBPATH" | grep ".bson"`
 
 for BSON in $BSONFILES; do
 	COLLECTION=`basename -s .bson $BSON`
 	JSON="$COLLECTION.json"
-	CMD="bsondump $DB/$BSON > $DB/$JSON"
+	CMD="bsondump $DBPATH/$BSON > $DBPATH/$JSON"
 	eval $CMD
-	CMD2="mongoimport -d $DB -c $COLLECTION $DB/$JSON"
+	CMD2="mongoimport -d $DB -c $COLLECTION $DBPATH/$JSON"
 	eval $CMD2
 done
-
