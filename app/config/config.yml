@@ -65,7 +65,7 @@ doctrine:
 doctrine_mongodb:
     connections:
         default:
-            server: mongodb://mongo:27017
+            server: "%mdb_connection_url%"
             options:
                 connect: true
     default_database: "%mdb_base%"

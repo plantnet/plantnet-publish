@@ -418,7 +418,7 @@ class ImportationCommand extends ContainerAwareCommand
             $transport=$this->getContainer()->get('swiftmailer.transport.real');
             $spool->flushQueue($transport);
             //
-            $connection=new \MongoClient();
+            $connection=new \MongoClient($this->getContainer()->getParameter('mdb_connection_url'));
             $db=$connection->$dbname;
             $db->Module->update(array('_id'=>new \MongoId($idmodule)),array(
                 '$set'=>array(

@@ -290,7 +290,7 @@ class ConfigController extends Controller
                     $dm->persist($new_database);
                     $dm->flush();
                     //create new database
-                    $connection=new \MongoClient();
+                    $connection=new \MongoClient($this->container->getParameter('mdb_connection_url'));
                     $db=$connection->$new_name;
                     $db->listCollections();
                     //collections
@@ -534,7 +534,7 @@ class ConfigController extends Controller
             }
         }
         foreach($dbs as $db){
-            $connection=new \MongoClient();
+            $connection=new \MongoClient($this->container->getParameter('mdb_connection_url'));
             $db=$connection->$db;
             $db->Config->update(array(),array(
                 '$set'=>array(
@@ -658,7 +658,7 @@ class ConfigController extends Controller
             }
         }
         foreach($dbs as $db){
-            $connection=new \MongoClient();
+            $connection=new \MongoClient($this->container->getParameter('mdb_connection_url'));
             $db=$connection->$db;
             $db->Config->update(array(),array(
                 '$set'=>array(

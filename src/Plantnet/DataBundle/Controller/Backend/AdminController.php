@@ -40,7 +40,7 @@ class AdminController extends Controller
         //display databases without prefix
         $prefix=$this->get_prefix();
         $dbs_array=array();
-        $connection=new \MongoClient();
+        $connection=new \MongoClient($this->container->getParameter('mdb_connection_url'));
         $dbs=$connection->admin->command(array(
             'listDatabases'=>1
         ));
@@ -316,7 +316,7 @@ class AdminController extends Controller
                 break;
             case 'locality':
                 $db=$this->getDataBase($user);
-                $m=new \MongoClient();
+                $m=new \MongoClient($this->container->getParameter('mdb_connection_url'));
                 // $plantunits=array();
                 // $c_plantunits=$m->$db->Plantunit->find(
                 //     array('module.$id'=>new \MongoId($module->getId())),
@@ -598,7 +598,7 @@ class AdminController extends Controller
                     $dm->persist($database);
                     $dm->flush();
                     //create new database
-                    $connection=new \MongoClient();
+                    $connection=new \MongoClient($this->container->getParameter('mdb_connection_url'));
                     $db=$connection->$new_db;
                     $db->listCollections();
                     //collections

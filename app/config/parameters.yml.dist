@@ -10,6 +10,8 @@ parameters:
 
     locale: en
     secret: ThisTokenIsNotSoSecretChangeIt
+
+    mdb_connection_url: mongodb://mongo:27017
     mdb_base: publish
 
     php_bin: php

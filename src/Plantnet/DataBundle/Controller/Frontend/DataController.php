@@ -55,7 +55,7 @@ class DataController extends Controller
      */
     public function projectAction($project)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -129,7 +129,7 @@ class DataController extends Controller
 
     public function collection_listAction($project,$selected=null)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collections=$dm->getRepository('PlantnetDataBundle:Collection')
@@ -150,7 +150,7 @@ class DataController extends Controller
      */
     public function collectionAction($project,$collection)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -235,7 +235,7 @@ class DataController extends Controller
      */
     public function moduleAction($project,$collection,$module,$page,$sortby,$sortorder,Request $request)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;
@@ -346,7 +346,7 @@ class DataController extends Controller
      */
     public function submoduleAction($project,$collection,$module,$submodule,$page,Request $request)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $form_page=$request->query->get('form_page');
         if(!empty($form_page)){
             $page=$form_page;
@@ -490,7 +490,7 @@ class DataController extends Controller
      */
     public function datamapAction($project,$collection,$module,$submodule,$page)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $max_per_page=5000;
         $start=$page*$max_per_page;
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -526,7 +526,7 @@ class DataController extends Controller
         }
         //data extract
         $db=$this->get_prefix().$project;
-        $m=new \MongoClient();
+        $m=new \MongoClient($this->container->getParameter('mdb_connection_url'));
         $locations=array();
         $c_locations=$m->$db->Location->find(
             array(
@@ -609,7 +609,7 @@ class DataController extends Controller
      */
     public function detailsAction($project,$collection,$module,$id)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -777,7 +777,7 @@ class DataController extends Controller
      */
     public function details_galleryAction($project,$collection,$module,$id,$page)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $max_per_page=9;
         $start=$page*$max_per_page;
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
@@ -847,7 +847,7 @@ class DataController extends Controller
      */
     public function glossaryAction($project,$collection,$page)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         if($this->container->get('request')->get('_route')=='front_glossary_paginated'&&$page==1){
             return $this->redirect($this->generateUrl('front_glossary',array(
                 'project'=>$project,
@@ -909,7 +909,7 @@ class DataController extends Controller
      */
     public function creditsAction($project)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -946,7 +946,7 @@ class DataController extends Controller
      */
     public function mentionsAction($project)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -983,7 +983,7 @@ class DataController extends Controller
      */
     public function contactsAction($project)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -1028,7 +1028,7 @@ class DataController extends Controller
      */
     public function glossary_queryAction($project,$collection,$term)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         if($term=='null'){
             $response=new Response(json_encode(array()));
             $response->headers->set('Content-Type','application/json');
@@ -1075,7 +1075,7 @@ class DataController extends Controller
      */
     public function sitemapAction($project)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -1108,7 +1108,7 @@ class DataController extends Controller
      */
     public function searchAction($project,Request $request)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),

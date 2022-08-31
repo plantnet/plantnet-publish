@@ -1153,7 +1153,7 @@ class ModulesController extends Controller
             $dm=$this->get('doctrine.odm.mongodb.document_manager');
             $dm->getConfiguration()->setDefaultDB($this->getDataBase($user,$dm));
             $db=$this->getDataBase($user);
-            $m=new \MongoClient();
+            $m=new \MongoClient($this->container->getParameter('mdb_connection_url'));
             \MongoCursor::$timeout=-1;
             //old indexes
             $old_indexes=$module->getIndexes();

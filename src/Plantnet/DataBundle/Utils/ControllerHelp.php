@@ -23,11 +23,11 @@ class ControllerHelp
         return $string;
     }
 
-    static public function database_list($prefix)
+    static public function database_list($prefix,$container)
     {
         //display databases without prefix
         $dbs_array=array();
-        $connection=new \MongoClient();
+        $connection=new \MongoClient($container->getParameter('mdb_connection_url'));
         $dbs=$connection->admin->command(array(
             'listDatabases'=>1
         ));
@@ -40,10 +40,10 @@ class ControllerHelp
         return $dbs_array;
     }
 
-    static public function check_enable_project($project,$prefix,$context)
+    static public function check_enable_project($project,$prefix,$context,$container)
     {
         $cleaned_prefix=substr($prefix,0,-1);
-        $connection=new \MongoClient();
+        $connection=new \MongoClient($container->getParameter('mdb_connection_url'));
         $db=$connection->$cleaned_prefix->Database->findOne(array(
             'link'=>$project
         ),array(
@@ -54,7 +54,7 @@ class ControllerHelp
                 throw $context->createNotFoundException('Unable to find Project "'.$project.'".');
             }
         }
-        $projects=self::database_list($prefix);
+        $projects=self::database_list($prefix,$container);
         if(!in_array($project,$projects)){
             throw $context->createNotFoundException('Unable to find Project "'.$project.'".');
         }

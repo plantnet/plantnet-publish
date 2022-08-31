@@ -19,7 +19,7 @@ class RegistrationController extends BaseController
         //display databases without prefix
         $prefix=$this->get_prefix();
         $dbs_array=array();
-        $connection=new \MongoClient();
+        $connection=new \MongoClient($this->container->getParameter('mdb_connection_url'));
         $dbs=$connection->admin->command(array(
             'listDatabases'=>1
         ));

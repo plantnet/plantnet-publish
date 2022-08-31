@@ -291,7 +291,7 @@ class ApiController extends Controller
     {
         //check project
         try{
-            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         }
         catch(\Exception $e){
             $this->return_404_not_found($e->getMessage());
@@ -348,7 +348,7 @@ class ApiController extends Controller
     {
         //check project
         try{
-            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         }
         catch(\Exception $e){
             $this->return_404_not_found($e->getMessage());
@@ -411,7 +411,7 @@ class ApiController extends Controller
     {
         //check project
         try{
-            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         }
         catch(\Exception $e){
             $this->return_404_not_found($e->getMessage());
@@ -503,7 +503,7 @@ class ApiController extends Controller
     {
         //check project
         try{
-            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         }
         catch(\Exception $e){
             $this->return_404_not_found($e->getMessage());
@@ -609,7 +609,7 @@ class ApiController extends Controller
     {
         //check project
         try{
-            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         }
         catch(\Exception $e){
             $this->return_404_not_found($e->getMessage());
@@ -698,7 +698,7 @@ class ApiController extends Controller
     {
         //check project
         try{
-            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         }
         catch(\Exception $e){
             $this->return_404_not_found($e->getMessage());
@@ -781,7 +781,7 @@ class ApiController extends Controller
     {
         //check project
         try{
-            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         }
         catch(\Exception $e){
             $this->return_404_not_found($e->getMessage());
@@ -965,7 +965,7 @@ class ApiController extends Controller
     {
         //check project
         try{
-            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         }
         catch(\Exception $e){
             $this->return_404_not_found($e->getMessage());
@@ -1107,7 +1107,7 @@ class ApiController extends Controller
         ini_set('memory_limit','-1');
         //check project
         try{
-            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+            ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         }
         catch(\Exception $e){
             $this->return_404_not_found($e->getMessage());

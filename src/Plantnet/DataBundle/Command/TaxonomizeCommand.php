@@ -290,7 +290,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $last_level=key($taxo);
             reset($taxo);
             if($action=='taxo'){
-                $connection=new \MongoClient();
+                $connection=new \MongoClient($this->getContainer()->getParameter('mdb_connection_url'));
                 $db=$connection->$dbname;
                 //populate
                 $tab_tax=$this->populate($db,$module,$taxo);
@@ -367,7 +367,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
                         }
                     }
                     if(!$csv_error){
-                        $connection=new \MongoClient();
+                        $connection=new \MongoClient($this->getContainer()->getParameter('mdb_connection_url'));
                         $db=$connection->$dbname;
                         \MongoCursor::$timeout=-1;
                         while(($data=fgetcsv($handle,0,';'))!==false){
@@ -732,7 +732,7 @@ class TaxonomizeCommand extends ContainerAwareCommand
             $transport=$this->getContainer()->get('swiftmailer.transport.real');
             $spool->flushQueue($transport);
         }
-        $connection=new \MongoClient();
+        $connection=new \MongoClient($this->getContainer()->getParameter('mdb_connection_url'));
         $db=$connection->$dbname;
         $db->Module->update(array('_id'=>new \MongoId($id_module)),array(
             '$set'=>array(

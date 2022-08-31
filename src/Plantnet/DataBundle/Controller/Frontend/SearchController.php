@@ -119,7 +119,7 @@ class SearchController extends Controller
      */
     public function module_searchAction($project,$collection,$module)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $translations=ControllerHelp::make_translations(
             $project,
             $this->container->get('request')->get('_route'),
@@ -210,7 +210,7 @@ class SearchController extends Controller
      */
     public function module_resultAction($project,$collection,$module,$mode,Request $request)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $translations=ControllerHelp::make_translations(
             $project,
             'front_module_search',
@@ -513,7 +513,7 @@ class SearchController extends Controller
                             ->execute()
                             ->count();
                         */
-                        $connection=new \MongoClient();
+                        $connection=new \MongoClient($this->container->getParameter('mdb_connection_url'));
                         $db=$this->get_prefix().$project;
                         $db=$connection->$db;
                         $nb_images=$db->Image->find(array('plantunit.$id'=>array('$in'=>array_values($ids_tab))))->count();
@@ -636,7 +636,7 @@ class SearchController extends Controller
                             ->execute()
                             ->count();
                         */
-                        $connection=new \MongoClient();
+                        $connection=new \MongoClient($this->container->getParameter('mdb_connection_url'));
                         $db=$this->get_prefix().$project;
                         $db=$connection->$db;
                         $nb_locations=$db->Location->find(array('plantunit.$id'=>array('$in'=>array_values($ids_tab))))->count();
@@ -747,7 +747,7 @@ class SearchController extends Controller
                             ->execute()
                             ->count();
                         */
-                        $connection=new \MongoClient();
+                        $connection=new \MongoClient($this->container->getParameter('mdb_connection_url'));
                         $db=$this->get_prefix().$project;
                         $db=$connection->$db;
                         $nb_images=$db->Image->find(array('plantunit.$id'=>array('$in'=>array_values($ids_tab))))->count();
@@ -814,7 +814,7 @@ class SearchController extends Controller
      */
     public function module_search_queryAction($project,$collection,$module,$attribute,$query)
     {
-        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this);
+        ControllerHelp::check_enable_project($project,$this->get_prefix(),$this,$this->container);
         $dm=$this->get('doctrine.odm.mongodb.document_manager');
         $dm->getConfiguration()->setDefaultDB($this->get_prefix().$project);
         $collection=$dm->getRepository('PlantnetDataBundle:Collection')

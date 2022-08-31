@@ -440,7 +440,7 @@ class DeleteCommand extends ContainerAwareCommand
     private function drop_it($dm,$collection,$module,$dbname)
     {
         //indexes
-        $m=new \MongoClient();
+        $m=new \MongoClient($this->getContainer()->getParameter('mdb_connection_url'));
         \MongoCursor::$timeout=-1;
         $old_indexes=$module->getIndexes();
         if(count($old_indexes)){
@@ -510,7 +510,7 @@ class DeleteCommand extends ContainerAwareCommand
         if($config){
             $original_db=$config->getOriginaldb();
             if($original_db){
-                $connection=new \MongoClient();
+                $connection=new \MongoClient($this->getContainer()->getParameter('mdb_connection_url'));
                 \MongoCursor::$timeout=-1;
                 $dbs_array=array();
                 $dbs=$connection->admin->command(array(
@@ -654,7 +654,7 @@ class DeleteCommand extends ContainerAwareCommand
         if($config){
             $original_db=$config->getOriginaldb();
             if($original_db){
-                $connection=new \MongoClient();
+                $connection=new \MongoClient($this->getContainer()->getParameter('mdb_connection_url'));
                 $dbs_array=array();
                 $dbs=$connection->admin->command(array(
                     'listDatabases'=>1

@@ -34,7 +34,7 @@ class UserController extends Controller
         //display databases without prefix
         $prefix=$this->get_prefix();
         $dbs_array=array();
-        $connection=new \MongoClient();
+        $connection=new \MongoClient($this->container->getParameter('mdb_connection_url'));
         $dbs=$connection->admin->command(array(
             'listDatabases'=>1
         ));
@@ -286,7 +286,7 @@ class UserController extends Controller
                         $dm->persist($database);
                         $dm->flush();
                         //create new database
-                        $connection=new \MongoClient();
+                        $connection=new \MongoClient($this->container->getParameter('mdb_connection_url'));
                         $db=$connection->$dbName;
                         $db->listCollections();
                         //collections
