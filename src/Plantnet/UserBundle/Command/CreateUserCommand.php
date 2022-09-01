@@ -89,10 +89,14 @@ class CreateUserCommand extends BaseCommand
 	        $db->Taxon->ensureIndex(array('name'=>1));
 	        $db->Taxon->ensureIndex(array('identifier'=>1));
 	        //pages data
-	        $db->Page->insert(array('name'=>'home','order'=>1));
-	        $db->Page->insert(array('name'=>'mentions','order'=>2));
-	        $db->Page->insert(array('name'=>'credits','order'=>3));
-	        $db->Page->insert(array('name'=>'contacts','order'=>4));
+	        $ref_array = array('name'=>'home','order'=>1);
+			$db->Page->insert($ref_array);
+	        $ref_array = array('name'=>'mentions','order'=>2);
+			$db->Page->insert($ref_array);
+	        $ref_array = array('name'=>'credits','order'=>3);
+			$db->Page->insert($ref_array);
+	        $ref_array = array('name'=>'contacts','order'=>4);
+			$db->Page->insert($ref_array);
 	        */
 		}
 		else{

@@ -314,10 +314,14 @@ class ConfigController extends Controller
                     $db->Plantunit->ensureIndex(array('identifier'=>1));
                     $db->Plantunit->ensureIndex(array('taxonsrefs.$id'=>1));
                     //pages data
-                    $db->Page->insert(array('name'=>'Home','alias'=>'home','order'=>1));
-                    $db->Page->insert(array('name'=>'Mentions','alias'=>'mentions','order'=>2));
-                    $db->Page->insert(array('name'=>'Credits','alias'=>'credits','order'=>3));
-                    $db->Page->insert(array('name'=>'Contacts','alias'=>'contacts','order'=>4));
+                    $ref_array = array('name'=>'Home','alias'=>'home','order'=>1);
+					$db->Page->insert($ref_array);
+                    $ref_array = array('name'=>'Mentions','alias'=>'mentions','order'=>2);
+					$db->Page->insert($ref_array);
+                    $ref_array = array('name'=>'Credits','alias'=>'credits','order'=>3);
+					$db->Page->insert($ref_array);
+                    $ref_array = array('name'=>'Contacts','alias'=>'contacts','order'=>4);
+					$db->Page->insert($ref_array);
                     //init config
                     $db->Config->insert(array(
                         'islocked'=>true,
