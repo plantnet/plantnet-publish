@@ -2,7 +2,7 @@
 {% block fos_user_content %}
 	<h2>Please sign in</h2>
 	{% if error %}
-	    <div class="error">{{ error|trans({}, 'FOSUserBundle') }}</div>
+	    <div class="error">{{ error ? "Bad credentials" : "" }}</div>
 	{% endif %}
 	<form action="{{ path("fos_user_security_check") }}" method="post">
 	    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
