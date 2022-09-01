@@ -9,13 +9,23 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # DEB packages
-RUN curl -fsSL https://deb.nodesource.com/setup_10.x | bash - ; apt-get update; apt-get install -y imagemagick libmagickwand-dev tidy libtidy-dev libzip-dev git varnish nodejs=10.24.1-deb-1nodesource1 unzip libssl-dev libcurl4-openssl-dev openjdk-17-jre sudo
+RUN curl -fsSL https://deb.nodesource.com/setup_10.x | bash - ; \
+    apt-get update; \
+    apt-get install -y imagemagick libmagickwand-dev tidy libtidy-dev libzip-dev git varnish nodejs=10.24.1-deb-1nodesource1 unzip libssl-dev libcurl4-openssl-dev openjdk-17-jre sudo libfreetype6-dev libjpeg62-turbo-dev libpng-dev
 
 # PHP extensions
-RUN printf "\n" | pecl install imagick; docker-php-ext-enable imagick; pecl install mongodb; docker-php-ext-enable mongodb; docker-php-ext-install exif gd gettext intl pcntl tidy zip opcache
+RUN printf "\n" | pecl install imagick; \
+    docker-php-ext-enable imagick; \
+    pecl install mongodb; \
+    docker-php-ext-enable mongodb; \
+    docker-php-ext-install exif gettext intl pcntl tidy zip opcache; \
+    docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install -j$(nproc) gd
 
 # other tools
-RUN curl -sS https://getcomposer.org/installer -o composer-setup.php; php composer-setup.php --version=2.2.9 --install-dir=/usr/local/bin --filename=composer; rm composer-setup.php; npm install -g less; ln -s /usr/bin/node /usr/bin/nodejs; ln -s /usr/lib/node_modules /usr/local/lib/node_modules
+RUN curl -sS https://getcomposer.org/installer -o composer-setup.php; php composer-setup.php --version=2.2.9 --install-dir=/usr/local/bin --filename=composer; \
+    rm composer-setup.php; \
+    npm install -g less; ln -s /usr/bin/node /usr/bin/nodejs; \
+    ln -s /usr/lib/node_modules /usr/local/lib/node_modules
 
 RUN a2enmod rewrite; service apache2 restart
 
@@ -28,7 +38,10 @@ RUN chown www-data:www-data -R .
 USER www-data
 
 # fix directories and permissions
-RUN mkdir app/cache; mkdir app/logs; mkdir -p web/media/cache; mkdir web/banners; mkdir web/uploads
+RUN mkdir app/cache; mkdir app/logs; \
+    mkdir -p web/media/cache; \
+    mkdir web/banners; \
+    mkdir web/uploads
 
 RUN composer install
 
