@@ -323,14 +323,15 @@ class ConfigController extends Controller
                     $ref_array = array('name'=>'Contacts','alias'=>'contacts','order'=>4);
 					$db->Page->insert($ref_array);
                     //init config
-                    $db->Config->insert(array(
+                    $ref_array = array(
                         'islocked'=>true,
                         'originaldb'=>$default_db,
                         'defaultlanguage'=>$language,
                         'name'=>ucfirst($default_link).' '.$language,
                         'template'=>$default_template,
                         'hasimageprotection'=>$imgprotect
-                    ));
+                    );
+                    $db->Config->insert($ref_array);
                 }
             }
         }

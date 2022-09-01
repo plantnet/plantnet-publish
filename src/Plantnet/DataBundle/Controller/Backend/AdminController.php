@@ -631,12 +631,13 @@ class AdminController extends Controller
                     $ref_array = array('name'=>'Contacts','alias'=>'contacts','order'=>4);
 					$db->Page->insert($ref_array);
                     //init config
-                    $db->Config->insert(array(
+                    $ref_array = array(
                         'defaultlanguage'=>$language->getData(),
                         'islocked'=>false,
                         'originaldb'=>$new_db,
                         'name'=>ucfirst($dbName->getData())
-                    ));
+                    );
+                    $db->Config->insert($ref_array);
                     //update user account
                     $userManager=$this->get('fos_user.user_manager');
                     $db_list=$user->getDblist();

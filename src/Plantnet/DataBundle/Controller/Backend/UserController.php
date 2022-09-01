@@ -319,12 +319,13 @@ class UserController extends Controller
                         $ref_array = array('name'=>'Contacts','alias'=>'contacts','order'=>4);
 					    $db->Page->insert($ref_array);
                         //init config
-                        $db->Config->insert(array(
+                        $ref_array = array(
                             'defaultlanguage'=>$user->getDefaultlanguage(),
                             'islocked'=>false,
                             'originaldb'=>$dbName,
                             'name'=>ucfirst($user->getDbNameUq())
-                        ));
+                        );
+                        $db->Config->insert($ref_array);
                         //update user account
                         $user->setDbName($dbName);
                         $user->setDblist(array($dbName));
