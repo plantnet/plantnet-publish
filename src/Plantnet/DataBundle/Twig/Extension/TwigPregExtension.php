@@ -81,7 +81,7 @@ class TwigPregExtension extends \Twig_Extension
 
     public function addLinks($string)
     {
-        return preg_replace('/https?:\/\/[\w\-\.!~?=&+\*\'"(),\/]+/','<a href="$0" target="_blank">$0</a>',$string);
+        return preg_replace('/https?:\/\/[\w\-\.!~?=&+\*\'"(),\/:]+/','<a href="$0" target="_blank">$0</a>',$string);
     }
 
 }
