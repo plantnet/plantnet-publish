@@ -641,7 +641,7 @@ class AdminController extends Controller
                     $db->Taxon->ensureIndex(array("name"=>1));
                     $db->Taxon->ensureIndex(array("identifier"=>1));
                     $db->Plantunit->ensureIndex(array("identifier"=>1));
-                    $db->Plantunit->ensureIndex(array("taxonsrefs.$id"=>1));
+                    // $db->Plantunit->ensureIndex(array("taxonsrefs.$id"=>1));
                     //pages data
                     $ref_array = array('name'=>'Home','alias'=>'home','order'=>1);
 					$db->Page->insert($ref_array);
