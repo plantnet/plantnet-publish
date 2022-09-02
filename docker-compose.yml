@@ -40,8 +40,8 @@ services:
       - 8062:8081
     environment:
       ME_CONFIG_MONGODB_URL: mongodb://mongo:27017/
-      ME_CONFIG_BASICAUTH_USERNAME: admin
-      ME_CONFIG_BASICAUTH_PASSWORD: _change_me_
+      # ME_CONFIG_BASICAUTH_USERNAME: admin
+      # ME_CONFIG_BASICAUTH_PASSWORD: _change_me_
 
 volumes:
   web:

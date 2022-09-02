@@ -11,7 +11,7 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 # DEB packages
 RUN curl -fsSL https://deb.nodesource.com/setup_10.x | bash - ; \
     apt-get update; \
-    apt-get install -y imagemagick libmagickwand-dev tidy libtidy-dev libzip-dev git varnish nodejs=10.24.1-deb-1nodesource1 unzip libssl-dev libcurl4-openssl-dev openjdk-17-jre sudo libfreetype6-dev libjpeg62-turbo-dev libpng-dev
+    apt-get install -y imagemagick libmagickwand-dev tidy libtidy-dev libzip-dev git varnish nodejs=10.24.1-deb-1nodesource1 unzip libssl-dev libcurl4-openssl-dev openjdk-17-jre sudo libfreetype6-dev libjpeg62-turbo-dev libpng-dev exim4
 
 # PHP extensions
 RUN printf "\n" | pecl install imagick; \
