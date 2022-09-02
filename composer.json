@@ -54,10 +54,7 @@
         ]
     },
     "config": {
-        "bin-dir": "bin",
-        "allow-plugins": {
-            "raulfraile/ladybug-installer": true
-        }
+        "bin-dir": "bin"
     },
     "minimum-stability": "dev",
     "extra": {
