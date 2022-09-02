@@ -4,6 +4,7 @@
 /web/js/*
 /web/media/*
 /web/uploads/*
+/web/.htpasswd
 
 /app/bootstrap.php.cache
 /app/cache/*
