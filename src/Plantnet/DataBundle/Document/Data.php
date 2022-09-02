@@ -24,12 +24,12 @@ class Data
     protected $type;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $main;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $details;
 

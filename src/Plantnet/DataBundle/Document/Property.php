@@ -24,22 +24,22 @@ class Property
     protected $type;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $main;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $details;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $search;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $vernacular;
 

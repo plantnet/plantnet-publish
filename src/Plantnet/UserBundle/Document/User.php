@@ -33,7 +33,7 @@ class User extends BaseUser
     protected $defaultlanguage;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $super;
 

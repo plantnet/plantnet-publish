@@ -104,12 +104,12 @@ class Module
     private $children = array();
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $updating;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $deleting;
 
@@ -165,12 +165,12 @@ class Module
     private $nbrows;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $taxonomy;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $displaysyns;
 
@@ -189,7 +189,7 @@ class Module
     protected $indexes;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $wsonly;
 

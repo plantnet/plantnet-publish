@@ -39,7 +39,7 @@ class Taxon
     protected $attributes;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $issynonym;
 
@@ -105,27 +105,27 @@ class Taxon
     private $nbpunits;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $hasimages;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $hasimagesurl;
 
     /**
-     * @MongoDB\Boolean
+     * @MongoDB\Field(type="bool")
      */
     private $hassynonyms;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $haslocations;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $haschildren;
 

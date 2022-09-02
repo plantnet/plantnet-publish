@@ -56,7 +56,7 @@ class Database
     private $children = array();
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $enable;
 

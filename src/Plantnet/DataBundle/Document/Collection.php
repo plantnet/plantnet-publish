@@ -49,7 +49,7 @@ class Collection
     private $modules = array();
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $deleting;
 

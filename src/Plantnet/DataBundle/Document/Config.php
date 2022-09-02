@@ -41,7 +41,7 @@ class Config
     protected $url;
 
     /**
-     * @MongoDB\String
+     * @MongoDB\Field(type="string")
      */
     protected $filepath;
 
@@ -51,12 +51,12 @@ class Config
     protected $template;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $hasimageprotection;
 
     /**
-     * @MongoDB\Field(type="bool")ean
+     * @MongoDB\Field(type="bool")
      */
     private $islocked;
 
