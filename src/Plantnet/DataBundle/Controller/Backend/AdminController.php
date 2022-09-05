@@ -658,6 +658,7 @@ class AdminController extends Controller
                         'originaldb'=>$new_db,
                         'name'=>ucfirst($dbName->getData())
                     );
+                    $db->Config->insert($ref_array);
                     //update user account
                     $userManager=$this->get('fos_user.user_manager');
                     $db_list=$user->getDblist();
